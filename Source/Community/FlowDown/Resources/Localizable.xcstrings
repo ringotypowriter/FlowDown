@@ -1,0 +1,301 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Access to local area network is requested, please confirm in the system settings if needed." : {
+
+    },
+    "Access Token" : {
+
+    },
+    "Add Service Provider" : {
+
+    },
+    "Always Dark" : {
+
+    },
+    "Always Light" : {
+
+    },
+    "Appearance" : {
+
+    },
+    "Application" : {
+
+    },
+    "Are you sure to delete this service provider?" : {
+
+    },
+    "Are you sure you want to delete all conversation data?" : {
+
+    },
+    "Are you sure you want to delete all messages after this one?" : {
+
+    },
+    "Are you sure you want to delete this message?" : {
+
+    },
+    "Are you sure you want to discard changes?" : {
+
+    },
+    "Back" : {
+
+    },
+    "Back to New Contents" : {
+
+    },
+    "Base Endpoint" : {
+
+    },
+    "Build" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Chat" : {
+
+    },
+    "Check for updates manually." : {
+
+    },
+    "Check Updates" : {
+
+    },
+    "Communicating with service provider..." : {
+
+    },
+    "Configure default mode for various works." : {
+
+    },
+    "Configure language model providers." : {
+
+    },
+    "Conversation" : {
+
+    },
+    "Conversation Created at %@" : {
+
+    },
+    "Copied" : {
+
+    },
+    "Copy Base Endpoint" : {
+
+    },
+    "Copy Enabled Model List" : {
+
+    },
+    "Copy Model List" : {
+
+    },
+    "Copy Name" : {
+
+    },
+    "Copy Original Text" : {
+
+    },
+    "Copy Token" : {
+
+    },
+    "Data" : {
+
+    },
+    "Deepseek" : {
+
+    },
+    "Default Models" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete All Conversation" : {
+
+    },
+    "Delete all conversation data, including messages and media." : {
+
+    },
+    "Delete All Messages After" : {
+
+    },
+    "Delete Message" : {
+
+    },
+    "Delete Service Provider" : {
+
+    },
+    "Discard" : {
+
+    },
+    "Discard Changes?" : {
+
+    },
+    "Duplicate" : {
+
+    },
+    "Edit Enabled Models" : {
+
+    },
+    "Edit Model Availability" : {
+
+    },
+    "Error" : {
+
+    },
+    "Fetch Model" : {
+
+    },
+    "Fetch Models" : {
+
+    },
+    "FlowDown" : {
+      "comment" : "App name"
+    },
+    "Generic Endpoints" : {
+
+    },
+    "Give it a name will make our life easier." : {
+
+    },
+    "Groq" : {
+
+    },
+    "https://" : {
+
+    },
+    "Invalid endpoint" : {
+
+    },
+    "Invalid URL" : {
+      "comment" : "Invalid URL"
+    },
+    "Model" : {
+
+    },
+    "Model not found" : {
+
+    },
+    "Name" : {
+
+    },
+    "New conversation" : {
+      "comment" : "Button to start a new conversation"
+    },
+    "No Model Selected" : {
+
+    },
+    "No models selected" : {
+
+    },
+    "No response from server" : {
+
+    },
+    "No Service Provider" : {
+
+    },
+    "No updates available." : {
+
+    },
+    "OK" : {
+
+    },
+    "OpenAI" : {
+
+    },
+    "OpenAI Compatible API" : {
+
+    },
+    "OpenRouter" : {
+
+    },
+    "Override" : {
+
+    },
+    "Regenerate" : {
+
+    },
+    "Regenerate Using New Model" : {
+
+    },
+    "Request access to local area network for local inference." : {
+
+    },
+    "Request Local Access" : {
+
+    },
+    "Search..." : {
+
+    },
+    "Select the light or dark appearance." : {
+
+    },
+    "Send" : {
+      "comment" : "Send button"
+    },
+    "Service" : {
+
+    },
+    "Service Provider" : {
+
+    },
+    "Service Providers" : {
+
+    },
+    "Setting" : {
+
+    },
+    "Settings" : {
+      "comment" : "Button to open settings"
+    },
+    "Share" : {
+
+    },
+    "System" : {
+
+    },
+    "Templates" : {
+
+    },
+    "Text" : {
+
+    },
+    "Text Completion" : {
+
+    },
+    "Text completion models generate text based on the input. It is used in conversations to generate responses." : {
+
+    },
+    "The access token for the service provider. Leave blank if not required." : {
+
+    },
+    "The base URL for the service provider. Path is without v1 in suffix." : {
+
+    },
+    "Type a message..." : {
+      "comment" : "Placeholder text for message editor"
+    },
+    "Type a message...  (Press Option + Enter for New Line)" : {
+      "comment" : "Placeholder text for message editor"
+    },
+    "Unable to decode models" : {
+
+    },
+    "Unspecified" : {
+
+    },
+    "Version" : {
+
+    },
+    "Version %@ (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version %1$@ (%2$@)"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
