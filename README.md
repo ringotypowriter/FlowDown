@@ -47,7 +47,7 @@ We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**.
 
 **Open Source Notice**
 
-**FlowDown Community** will be open-sourced soon, with its source code released shortly after the official version in this repository. By sharing our code, we aim to empower developers to build more interactive and responsive AI client apps.
+**FlowDown Community** is now open-source! You can explore the source code in the [Source](./Source) directory of this repository. By sharing our code, we aim to empower developers to build more interactive and responsive AI client apps.
 
 ## Get Started
 
