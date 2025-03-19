@@ -26,3 +26,13 @@ These additional steps are necessary to comply with licensing requirements while
 Please note that the original FlowDown icon (the white pigeon) is **not** licensed for redistribution. You are not permitted to use this icon in your implementations.
 
 Good luck with your project!
+
+---
+
+**Proof of Buildable Product**
+
+If you are unable to resolve the issue yourself, you might as well start learning programming with Swift.
+
+- https://twitter.com/vv_nil/status/1902376369868419118
+- https://twitter.com/kyleswifter/status/1902301951083344187
+- https://twitter.com/afutured/status/1902199626515775982
