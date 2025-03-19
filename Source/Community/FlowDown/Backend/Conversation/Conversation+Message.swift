@@ -7,6 +7,7 @@
 
 import Foundation
 import MarkdownParser
+import MarkdownParserCore
 import UIKit
 
 extension Conversation {

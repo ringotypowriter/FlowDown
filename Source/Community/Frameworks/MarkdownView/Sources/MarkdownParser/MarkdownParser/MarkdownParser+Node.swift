@@ -8,6 +8,7 @@
 import cmark_gfm
 import cmark_gfm_extensions
 import Foundation
+import MarkdownParserCore
 
 extension MarkdownParser {
     func dumpBlocks(root: UnsafeNode?) {

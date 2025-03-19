@@ -6,6 +6,7 @@
 //
 
 import MarkdownParser
+import MarkdownParserCore
 import UIKit
 
 class BulletedListView: BlockView {

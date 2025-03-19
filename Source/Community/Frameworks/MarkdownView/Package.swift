@@ -23,7 +23,7 @@ let package = Package(
         ]),
         .target(name: "MarkdownParser", dependencies: [
             .product(name: "MarkdownParserCore", package: "MarkdownParserCore"),
-            .product(name: "MarkdownParserCoreExtension", package: "MarkdownParserCore"),
+            // .product(name: "MarkdownParserCoreExtension", package: "MarkdownParserCore"),
         ]),
     ]
 )

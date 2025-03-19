@@ -7,6 +7,7 @@
 
 import Foundation
 import MarkdownParser
+import MarkdownParserCore
 
 public extension BlockNode {
     var manifestType: BlockManifest.Type {
@@ -21,8 +22,8 @@ public extension BlockNode {
             TaskListView.Manifest.self
         case .codeBlock:
             CodeBlockView.Manifest.self
-//        case .htmlBlock:
-//            HTMLBlockView.Manifest.self
+        case .htmlBlock:
+            fatalError()
         case .paragraph:
             ParagraphView.Manifest.self
         case .heading:

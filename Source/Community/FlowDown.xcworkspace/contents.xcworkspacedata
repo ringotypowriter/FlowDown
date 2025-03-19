@@ -5,18 +5,9 @@
       location = "group:FlowDown.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Frameworks/ConfigurableKit">
-   </FileRef>
-   <FileRef
       location = "group:Frameworks/MarkdownView">
    </FileRef>
    <FileRef
       location = "group:Frameworks/MarkdownParserCore">
-   </FileRef>
-   <FileRef
-      location = "group:Frameworks/ConfigurableKit">
-   </FileRef>
-   <FileRef
-      location = "group:Frameworks/NumericTransitionLabel">
    </FileRef>
 </Workspace>

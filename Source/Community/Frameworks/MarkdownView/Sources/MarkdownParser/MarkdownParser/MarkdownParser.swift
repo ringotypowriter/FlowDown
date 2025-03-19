@@ -8,6 +8,7 @@
 import cmark_gfm
 import cmark_gfm_extensions
 import Foundation
+import MarkdownParserCore
 
 public class MarkdownParser {
     public internal(set) var blocks: [BlockNode] = [] {
