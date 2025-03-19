@@ -40,8 +40,6 @@ class ConversationController: UIViewController {
         messageEditor.modelSelectButton.delegate = self
 
         titleBar.delegate = self
-
-        hidesBottomBarWhenPushed = true
     }
 
     @available(*, unavailable)
@@ -61,7 +59,8 @@ class ConversationController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        hidesBottomBarWhenPushed = true
         view.backgroundColor = .comfortableBackground
 
         NotificationCenter.default.addObserver(
