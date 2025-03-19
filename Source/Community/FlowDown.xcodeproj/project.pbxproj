@@ -183,6 +183,8 @@
 				50B514D02D232AB20092284C /* XCRemoteSwiftPackageReference "LookinServer" */,
 				50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */,
 				50FF44E02D2FBA350050AA83 /* XCRemoteSwiftPackageReference "EventSource" */,
+				196B96D42D8AD2AD00A44D20 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */,
+				196B96D52D8AD2BF00A44D20 /* XCRemoteSwiftPackageReference "ConfigurableKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -221,7 +223,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/opt/homebrew/bin/swiftformat . --swiftversion 6.0\n";
+			shellScript = "if [ -x \"/opt/homebrew/bin/swiftformat\" ]; then\n    /opt/homebrew/bin/swiftformat . --swiftversion 6.0\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -452,6 +454,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		196B96D42D8AD2AD00A44D20 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ktiays/GlyphixTextFx";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.6;
+			};
+		};
+		196B96D52D8AD2BF00A44D20 /* XCRemoteSwiftPackageReference "ConfigurableKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/ConfigurableKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.3;
+			};
+		};
 		50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marksands/BetterCodable";

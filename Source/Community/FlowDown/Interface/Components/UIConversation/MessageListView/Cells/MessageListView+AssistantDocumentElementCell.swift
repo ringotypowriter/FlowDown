@@ -7,6 +7,7 @@
 
 import Combine
 import MarkdownParser
+import MarkdownParserCore
 import MarkdownView
 import UIKit
 

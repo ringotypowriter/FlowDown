@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MarkdownParserCore
 
 public extension MarkdownParser {
     protocol Delegate: AnyObject {
