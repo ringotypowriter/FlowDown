@@ -1,18 +1,21 @@
 # 浮望
 
-浮望（FlowDown）是一个速度极快、平滑的 AI/LLM 客户端应用程序。
+<p align="center">
+  <a href="../../../README.md">English</a> |
+  <a href="/Resources/i18n/zh-Hans/README.md">简体中文</a>
+</p>
 
-## 访问文档
+浮望（FlowDown）是一款能跟上你思维节奏的 AI/LLM 客户端应用程序。同时提供全链路隐私保护。
+
+![Preview](../../../Resources/SCR-PREVIEW.png)
+
+## 下载
+
+[![App Store Icon](../../../Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/us/app/flowdown-open-fast-ai/id6740553198)
 
 当你从 App Store 下载我们的软件时，浮望内置免费的对话模型。关于使用上的具体事项，请考虑查看文档：[https://apps.qaq.wiki/docs/flowdown/zh/](https://apps.qaq.wiki/docs/flowdown/zh/)
 
-## 保持联系
-
 请考虑加入我们的聊天：[Discord](https://discord.gg/UHKMRyJcgc)。
-
-## 预览
-
-![Preview](../../../Resources/SCR-20250115-lvgw.jpeg)
 
 ## 功能
 
@@ -27,39 +30,26 @@
 
 我们提供两种版本的 FlowDown：**FlowDown** 和 **FlowDown Community**。
 
-| **功能** | **FlowDown** | **FlowDown Community** |
-| -------- | ---------------- | ---------------------- |
-| 只能聊天 | ✅               | ✅                     |
-| 高速渲染 | ✅               | ✅                     |
-| 自建模型 | ✅               | ✅                     |
-| 离线模型 | ✅ (使用 mlx)     | ❌                     |
-| 视觉模型 | ✅               | ❌                     |
-| 隐私保护 | ✅               | ✅                     |
-| 开放代码 | ❌               | ✅                     |
-| 网络搜索 | ✅               | ❌                     |
-| 添加附件 | ✅               | ❌                     |
-| 本地语言 | ✅               | ❌                     |
-
-**开源声明**
-
-**FlowDown Community** 现已开源！您可以在本仓库的 [Source](./Source) 目录中探索源代码。通过分享我们的代码，我们旨在赋能开发者构建更具交互性和响应性的 AI 客户端应用程序。
-
-## 开始使用
-
-### 系统要求
-
-- iOS 16.0 或更高版本
-- macOS 13.0 或更高版本
-
-### 安装
-
-请参阅 [发布](https://github.com/Lakr233/FlowDown-Beta/releases) 以获取详细信息。
+| **功能**       | **FlowDown** | **FlowDown Community** |
+| -------------- | ------------ | ---------------------- |
+| 与 AI 聊天     | ✅           | ✅                     |
+| 高速 Markdown  | ✅           | ✅                     |
+| 设计中的隐私   | ✅           | ✅                     |
+| 自建模型       | ✅           | ✅                     |
+| 离线模型 (MLX) | ✅           | ❌                     |
+| 视觉模型       | ✅           | ❌                     |
+| 开源           | ✅           | ✅                     |
+| 网络搜索       | ✅           | ❌                     |
+| 附件           | ✅           | ❌                     |
+| 语言本地化     | ✅           | ❌                     |
 
 ## 许可证
 
-- **FlowDown** 是专有软件。保留所有权利。
-- **FlowDown Community** 根据 [MIT](../../../LICENSE) 许可证开放。
+FlowDown 基于 AGPL-3.0 许可证授权。您可以在 [LICENSE](../../../LICENSE) 文件中找到完整的许可证文本。
+FlowDown Community 基于 MIT 许可证授权。您可以在 [LICENSE](../../../Resources/CommunityEdition/LICENSE) 文件中找到完整的许可证文本。
+
+图标和艺术资源不以任何形式再授权使用。商业许可证的使用情况请与我们联系。
 
 ---
 
-© 2025 FlowDown 团队 (@Lakr233, @ktiays, @unixzii) 保留所有权利。
+© 2025 FlowDown 团队 (@Lakr233) 保留所有权利。

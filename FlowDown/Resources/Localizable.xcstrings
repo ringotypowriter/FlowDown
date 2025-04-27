@@ -1,0 +1,5066 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+      "shouldTranslate" : false
+    },
+    "..." : {
+      "shouldTranslate" : false
+    },
+    "%@ Copy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 的副本"
+          }
+        }
+      }
+    },
+    "%lld%% Finished" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成 %lld%%"
+          }
+        }
+      }
+    },
+    "5 Pages" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 个页面"
+          }
+        }
+      }
+    },
+    "10 Pages" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 个页面"
+          }
+        }
+      }
+    },
+    "15 Pages" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "15 个页面"
+          }
+        }
+      }
+    },
+    "20 Pages" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 个页面"
+          }
+        }
+      }
+    },
+    "A tool model is required for browsing." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要设置工具模型才能使用网页浏览。"
+          }
+        }
+      }
+    },
+    "A visual model is required for image attachments." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要设置视觉模型以辨认图片附件。"
+          }
+        }
+      }
+    },
+    "Activities" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活动"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加"
+          }
+        }
+      }
+    },
+    "Add Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加模型"
+          }
+        }
+      }
+    },
+    "Add to Calendar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加到日历"
+          }
+        }
+      }
+    },
+    "Add To Calendar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加到日历"
+          }
+        }
+      }
+    },
+    "Additional Prompt" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外提示词"
+          }
+        }
+      }
+    },
+    "Adjust the font size of the markdown content." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调整标记文本的字体大小。"
+          }
+        }
+      }
+    },
+    "Advance" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高级"
+          }
+        }
+      }
+    },
+    "After creating a copy, you can choose a new model. This is useful if the endpoint provides multiple models." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建副本后，您可以选择一个新模型。如果端点提供多个模型，这将很有用。"
+          }
+        }
+      }
+    },
+    "After setting up, click the model identifier to edit it or retrieve a list from the server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在完成后，点击模型标识符即可编辑或从服务器获取模型列表。"
+          }
+        }
+      }
+    },
+    "Agreements" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "协议"
+          }
+        }
+      }
+    },
+    "All day" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全天"
+          }
+        }
+      }
+    },
+    "Allowed in Foreground" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用时允许"
+          }
+        }
+      }
+    },
+    "Allows LLM to access your current location information." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许大语言模型获取你的当前位置信息。"
+          }
+        }
+      }
+    },
+    "Allows LLM to fetch and read content from web pages." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许大语言模型读取网页内容。"
+          }
+        }
+      }
+    },
+    "Allows LLM to read your calendar events." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许大语言模型读取你的日历数据。"
+          }
+        }
+      }
+    },
+    "Allows LLM to save events to your calendar." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许大语言模型添加事件到你的日历。"
+          }
+        }
+      }
+    },
+    "Allows LLM to suggest URLs for you to open." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许语言模型建议并打开 URL。"
+          }
+        }
+      }
+    },
+    "Animals & Nature" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "动物 & 自然"
+          }
+        }
+      }
+    },
+    "Appearance" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外观"
+          }
+        }
+      }
+    },
+    "Are you sure you want to clean the cache? This will also delete partial downloads." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要清理缓存吗？这包括未完成的下载项。"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete all conversations and related data?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要删除所有的对话和相关数据吗？"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete this model? This action cannot be undone." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要删除这个模型吗？这项操作不可撤销。"
+          }
+        }
+      }
+    },
+    "Are you sure you want to remove all content and reset the entire database? App will close after reset." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要抹掉全部内容并重置数据库吗？软件将会退出。"
+          }
+        }
+      }
+    },
+    "Are you sure you want to remove all content inside temporary directory?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要删除临时文件夹内的所有内容吗？"
+          }
+        }
+      }
+    },
+    "Audio" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音频"
+          }
+        }
+      }
+    },
+    "Authorized" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已授权"
+          }
+        }
+      }
+    },
+    "Automation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动化"
+          }
+        }
+      }
+    },
+    "Auxiliary Visual Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视觉辅助模型"
+          }
+        }
+      }
+    },
+    "Bing Search" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必应搜索"
+          }
+        }
+      }
+    },
+    "Browsed %lld website(s)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已阅读 %lld 个网站"
+          }
+        }
+      }
+    },
+    "Browsing %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在浏览 %@"
+          }
+        }
+      }
+    },
+    "Cache" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缓存"
+          }
+        }
+      }
+    },
+    "Calendar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历"
+          }
+        }
+      }
+    },
+    "Calendar access denied: %@. Please enable calendar access in Settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问日历被拒绝：%@。请授予日历权限。"
+          }
+        }
+      }
+    },
+    "Calendar access denied. Please enable calendar access in Settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能访问系统日历。请前往设置检查相关权限。"
+          }
+        }
+      }
+    },
+    "Calendar Events" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历事件"
+          }
+        }
+      }
+    },
+    "Calibrate Size" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "校准大小"
+          }
+        }
+      }
+    },
+    "Camera" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相机"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Capabilities" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "功能"
+          }
+        }
+      }
+    },
+    "Change application behavior, manage language model providers, and get control of your data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改软件配置，管理语言模型，查看个人数据。"
+          }
+        }
+      }
+    },
+    "Change the behavior of the application, adjust text sizes, and more." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改软件通用设置，调整字体大小等。"
+          }
+        }
+      }
+    },
+    "Check" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查"
+          }
+        }
+      }
+    },
+    "Choose Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择模型"
+          }
+        }
+      }
+    },
+    "City: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "城市：%@"
+          }
+        }
+      }
+    },
+    "Clean Cache" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清理缓存"
+          }
+        }
+      }
+    },
+    "Clean image caches, remove partial downloads and more." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清理图片缓存，未完成的下载项等内容。"
+          }
+        }
+      }
+    },
+    "Cleaned" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已清理"
+          }
+        }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清空"
+          }
+        }
+      }
+    },
+    "Clear Editing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清空编辑内容"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "Cloud Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "云端模型"
+          }
+        }
+      }
+    },
+    "Cloud Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "云端模型"
+          }
+        }
+      }
+    },
+    "Code Viewer" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代码查看器"
+          }
+        }
+      }
+    },
+    "Comment" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "备注"
+          }
+        }
+      }
+    },
+    "Complete" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完整"
+          }
+        }
+      }
+    },
+    "Compress Image" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩图片"
+          }
+        }
+      }
+    },
+    "Configure" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
+        }
+      }
+    },
+    "Configure global prompt, adjust parameters when inferencing." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置全局提示词，调整推理参数。"
+          }
+        }
+      }
+    },
+    "Configure tool settings, choose search engine for internet searches." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置工具设置，选择网络搜索引擎。"
+          }
+        }
+      }
+    },
+    "Configured" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已配置"
+          }
+        }
+      }
+    },
+    "Confirmation on Send" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认发送"
+          }
+        }
+      }
+    },
+    "Connect @ LM Studio" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接到 LM Studio"
+          }
+        }
+      }
+    },
+    "Connect @ OLLAMA" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接到 OLLAMA"
+          }
+        }
+      }
+    },
+    "Contact Us" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "联系我们"
+          }
+        }
+      }
+    },
+    "Content truncated due to excessive length." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "过长的内容已被截断。"
+          }
+        }
+      }
+    },
+    "Context" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上下文"
+          }
+        }
+      }
+    },
+    "Context Length" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上下文长度"
+          }
+        }
+      }
+    },
+    "Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话"
+          }
+        }
+      }
+    },
+    "Coordinates: %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Coordinates: %1$@, %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "坐标：%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Copied" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制"
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
+          }
+        }
+      }
+    },
+    "Copy as Image" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制图片"
+          }
+        }
+      }
+    },
+    "Copy Content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制内容"
+          }
+        }
+      }
+    },
+    "Could not determine current location." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法确定当前的地理位置。"
+          }
+        }
+      }
+    },
+    "Could not find view controller" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法找到可用的视图控制器"
+          }
+        }
+      }
+    },
+    "Could not initialize location services." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法初始化位置服务。"
+          }
+        }
+      }
+    },
+    "Country Code: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国家代码：%@"
+          }
+        }
+      }
+    },
+    "Country: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国家：%@"
+          }
+        }
+      }
+    },
+    "Create a new model by copying the current configuration." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过复制当前配置创建一个新模型。"
+          }
+        }
+      }
+    },
+    "Creative @ 1.0" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创造 @ 1.0"
+          }
+        }
+      }
+    },
+    "Current Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前位置"
+          }
+        }
+      }
+    },
+    "Current Location Information:\n\n%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前位置信息：\n\n%@"
+          }
+        }
+      }
+    },
+    "Custom Tag Color" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义的颜色标签"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深色"
+          }
+        }
+      }
+    },
+    "Data Control" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据控制"
+          }
+        }
+      }
+    },
+    "Database" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据库"
+          }
+        }
+      }
+    },
+    "Date range cannot exceed 7 days" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日期范围不能超过 7 天"
+          }
+        }
+      }
+    },
+    "Default" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认"
+          }
+        }
+      }
+    },
+    "Default Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认模型"
+          }
+        }
+      }
+    },
+    "Default Prompt" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认提示词"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        }
+      }
+    },
+    "Delete All Conversations" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除全部对话"
+          }
+        }
+      }
+    },
+    "Delete all conversations and related data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除全部对话和关联的数据。"
+          }
+        }
+      }
+    },
+    "Delete Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除对话"
+          }
+        }
+      }
+    },
+    "Delete Icon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除图标"
+          }
+        }
+      }
+    },
+    "Delete Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除模型"
+          }
+        }
+      }
+    },
+    "Delete this model from your device." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从设备中删除此模型。"
+          }
+        }
+      }
+    },
+    "Delete this model from your local storage." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从本地储存中删除此模型。"
+          }
+        }
+      }
+    },
+    "Delete w/ After" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除当前及后续"
+          }
+        }
+      }
+    },
+    "Deleted" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已删除"
+          }
+        }
+      }
+    },
+    "Denied" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒绝"
+          }
+        }
+      }
+    },
+    "Determining search keywords" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在确认搜索内容"
+          }
+        }
+      }
+    },
+    "Disable Warnings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用警告"
+          }
+        }
+      }
+    },
+    "Discord" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discord"
+          }
+        }
+      }
+    },
+    "Dismiss" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "Display" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
+          }
+        }
+      }
+    },
+    "Do Not Display" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不显示"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
+    },
+    "Download" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载"
+          }
+        }
+      }
+    },
+    "Download @ Hugging Face" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从抱抱脸下载"
+          }
+        }
+      }
+    },
+    "Download Date" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载日期"
+          }
+        }
+      }
+    },
+    "Download in progress, please keep app running in foreground." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在下载，请保持软件在前台运行。"
+          }
+        }
+      }
+    },
+    "Download Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载模型"
+          }
+        }
+      }
+    },
+    "Downloading Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型下载中"
+          }
+        }
+      }
+    },
+    "Duck Duck Go Search" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鸭鸭冲搜索"
+          }
+        }
+      }
+    },
+    "Duplicate" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建副本"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
+          }
+        }
+      }
+    },
+    "Edit Anyway" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
+          }
+        }
+      }
+    },
+    "Edit Content" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑内容"
+          }
+        }
+      }
+    },
+    "Edit Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑对话"
+          }
+        }
+      }
+    },
+    "Edit Endpoint" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑端点"
+          }
+        }
+      }
+    },
+    "Edit Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑模型"
+          }
+        }
+      }
+    },
+    "Edit Model Identifier" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑模型名称"
+          }
+        }
+      }
+    },
+    "Edit Token" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑令牌"
+          }
+        }
+      }
+    },
+    "Edit Workgroup (Optional)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑工作组（可选）"
+          }
+        }
+      }
+    },
+    "Editor" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑器"
+          }
+        }
+      }
+    },
+    "Either model is corrupted or not supported." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可能是模型已损坏或不被支持。"
+          }
+        }
+      }
+    },
+    "Email" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮件"
+          }
+        }
+      }
+    },
+    "email client" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮件"
+          }
+        }
+      }
+    },
+    "Empty message." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空消息。"
+          }
+        }
+      }
+    },
+    "Enable this to require Command + Enter to send message. On touch devices, you will need to tap the send button manually." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当启用这个选项，需要同时按下 Command + 回车 才会发送消息。在触摸设备上，则需要点击发送按钮。"
+          }
+        }
+      }
+    },
+    "End: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束于：%@"
+          }
+        }
+      }
+    },
+    "Erase All" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清空"
+          }
+        }
+      }
+    },
+    "Error" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "错误"
+          }
+        }
+      }
+    },
+    "Error getting location details: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法获取地理位置的详细信息：%@"
+          }
+        }
+      }
+    },
+    "Error Occurred" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遇到错误"
+          }
+        }
+      }
+    },
+    "Even if you download this model, it may not work or even crash the app. Do you still want to download this model?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "即使成功下载了模型，也可能无法运行或使程序崩溃。你依然要下载这个模型吗？"
+          }
+        }
+      }
+    },
+    "Event" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "事件"
+          }
+        }
+      }
+    },
+    "Event added to calendar." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "事件已添加到日历。"
+          }
+        }
+      }
+    },
+    "Event: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "事件：%@"
+          }
+        }
+      }
+    },
+    "Export Database" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出数据库"
+          }
+        }
+      }
+    },
+    "Export Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出"
+          }
+        }
+      }
+    },
+    "Export the database file." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出数据库文件。"
+          }
+        }
+      }
+    },
+    "Export this model to share with others." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出模型以供分享。"
+          }
+        }
+      }
+    },
+    "Exported Database %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出的数据库 %@"
+          }
+        }
+      }
+    },
+    "Exported database contains all conversations data and cloud model configurations, but does not include local model data, also known as weights, and application settings. To export local models, please go to the model management page. Application settings are not supported for export." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出的数据库包含全部的对话数据和云端模型配置，但不包含本地模型数据或应用程序设置。若要导出本地模型数据，请前往模型管理页面。应用程序设置不支持导出。"
+          }
+        }
+      }
+    },
+    "Exporting Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在导出模型"
+          }
+        }
+      }
+    },
+    "Exporting..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在导出"
+          }
+        }
+      }
+    },
+    "external application" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部应用"
+          }
+        }
+      }
+    },
+    "Failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失败"
+          }
+        }
+      }
+    },
+    "Failed to add event: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法添加事件：%@"
+          }
+        }
+      }
+    },
+    "Failed to display confirmation dialog." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法显示确认信息。"
+          }
+        }
+      }
+    },
+    "Failed to display location request dialog." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法显示位置请求对话框。"
+          }
+        }
+      }
+    },
+    "Failed to display results dialog." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法显示结果对话框。"
+          }
+        }
+      }
+    },
+    "Failed to display URL open request dialog." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法显示 URL 授权对话框。"
+          }
+        }
+      }
+    },
+    "Failed to Export" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导出"
+          }
+        }
+      }
+    },
+    "Failed to fetch model profile" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法获取模型数据"
+          }
+        }
+      }
+    },
+    "Failed to fetch the web content." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法获取网页内容。"
+          }
+        }
+      }
+    },
+    "Failed to generate text." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法生成输出。"
+          }
+        }
+      }
+    },
+    "Failed to load model: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法加载模型：%@"
+          }
+        }
+      }
+    },
+    "Failed to parse calendar event details." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取事件数据。"
+          }
+        }
+      }
+    },
+    "Failed to parse ICS content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取事件内容。"
+          }
+        }
+      }
+    },
+    "Failed to query calendar: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法获取日历数据：%@"
+          }
+        }
+      }
+    },
+    "Failed to search" : {
+
+    },
+    "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此页面的操作仅适合对部署大语言模型有经验的用户。在设备上运行超出设备资源的模型可能会导致应用程序或者系统崩溃。请谨慎操作。"
+          }
+        }
+      }
+    },
+    "Fetch" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取"
+          }
+        }
+      }
+    },
+    "Fetch from Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从服务器获取"
+          }
+        }
+      }
+    },
+    "Fetching Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取模型"
+          }
+        }
+      }
+    },
+    "Fetching Model List" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在获取模型列表"
+          }
+        }
+      }
+    },
+    "Fetching Web Content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在获取网页内容"
+          }
+        }
+      }
+    },
+    "Filter Options" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "过滤器选项"
+          }
+        }
+      }
+    },
+    "Flags" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旗帜"
+          }
+        }
+      }
+    },
+    "FlowDown" : {
+      "comment" : "App name",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浮望"
+          }
+        }
+      }
+    },
+    "Font Size" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字体大小"
+          }
+        }
+      }
+    },
+    "Food & Drink" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "食物 & 饮品"
+          }
+        }
+      }
+    },
+    "Freezing @ 0.0" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "霜冻 @ 0.0"
+          }
+        }
+      }
+    },
+    "From %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来自 %@"
+          }
+        }
+      }
+    },
+    "Full Access" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完整访问"
+          }
+        }
+      }
+    },
+    "General" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
+          }
+        }
+      }
+    },
+    "Generate New Icon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成新图标"
+          }
+        }
+      }
+    },
+    "Generate New Title" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成新标题"
+          }
+        }
+      }
+    },
+    "Generating New Icon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成新图标"
+          }
+        }
+      }
+    },
+    "Generating New Title" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成新标题"
+          }
+        }
+      }
+    },
+    "Get control of your data, export or delete." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理数据，导出、删除等。"
+          }
+        }
+      }
+    },
+    "GitHub" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub"
+          }
+        }
+      }
+    },
+    "Google Search" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "谷歌搜索"
+          }
+        }
+      }
+    },
+    "Have any questions or just wanna keep in touch? Contact us." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有任何疑问反馈或建议？与我们联系。"
+          }
+        }
+      }
+    },
+    "Huge" : {
+      "comment" : "Font Size\nModel Context",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巨大"
+          }
+        }
+      }
+    },
+    "Humankind @ 0.75" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "类人 @ 0.75"
+          }
+        }
+      }
+    },
+    "Identifier" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标识符"
+          }
+        }
+      }
+    },
+    "Identifying an image: %lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Identifying an image: %1$lld/%2$lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在辨认一张图片：%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "If enabled, images will be compressed before added to chat. Compressed image will be easier to upload but may lose some quality." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果启用，照片在添加到对话前将被压缩。压缩后的图片更容易上传，但会丢失细节信息。"
+          }
+        }
+      }
+    },
+    "If this switch is turned off, the newly selected model in the conversation will not be used for new conversations." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通俗来说，如果关闭此选项，在创建新对话时将不沿用对话内选择的新模型。"
+          }
+        }
+      }
+    },
+    "If you encounter any issues, you can try to reset the app. This will remove all content and reset the entire database." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果遇到问题，你可以尝试重置软件。这会抹掉全部内容并重置数据库。软件将会退出。"
+          }
+        }
+      }
+    },
+    "Imagination" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想象力"
+          }
+        }
+      }
+    },
+    "Imaginative @ 1.5" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幻想 @ 1.5"
+          }
+        }
+      }
+    },
+    "Import from File" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从文件导入"
+          }
+        }
+      }
+    },
+    "Import Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入模型"
+          }
+        }
+      }
+    },
+    "Imported %d Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已导入 %d 个模型"
+          }
+        }
+      }
+    },
+    "Importing Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入模型"
+          }
+        }
+      }
+    },
+    "Inference" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理"
+          }
+        }
+      }
+    },
+    "Inference Cache" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理缓存"
+          }
+        }
+      }
+    },
+    "Inference Endpoint" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理端点"
+          }
+        }
+      }
+    },
+    "Inference Service" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理服务"
+          }
+        }
+      }
+    },
+    "Inference Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理设置"
+          }
+        }
+      }
+    },
+    "Infinity" : {
+      "comment" : "Model Context",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无限制"
+          }
+        }
+      }
+    },
+    "Invalid ICS file content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ICS 文件内容不正确"
+          }
+        }
+      }
+    },
+    "Invalid input parameters" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的参数"
+          }
+        }
+      }
+    },
+    "Invalid model configuration." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的模型配置。"
+          }
+        }
+      }
+    },
+    "Invalid model file." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的模型文件。"
+          }
+        }
+      }
+    },
+    "Invalid response." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的响应。"
+          }
+        }
+      }
+    },
+    "Invalid start date format. Use YYYY-MM-DD." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的日期格式：请使用 YYYY-MM-DD。"
+          }
+        }
+      }
+    },
+    "Invalid status code: %d" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的响应代码：%d"
+          }
+        }
+      }
+    },
+    "Invalid URL format." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的 URL 格式。"
+          }
+        }
+      }
+    },
+    "Invalid URL or missing reason." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的请求参数。"
+          }
+        }
+      }
+    },
+    "Invalid URL provided" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的网络地址"
+          }
+        }
+      }
+    },
+    "Join our Discord server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加入我们的 Discord 服务器。"
+          }
+        }
+      }
+    },
+    "Large" : {
+      "comment" : "Font Size",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "很大"
+          }
+        }
+      }
+    },
+    "Leave a message on GitHub issue." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 GitHub 网站中留言。"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浅色"
+          }
+        }
+      }
+    },
+    "Local Area Network" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地网络"
+          }
+        }
+      }
+    },
+    "Local Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地模型"
+          }
+        }
+      }
+    },
+    "Local Model Editor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑本地模型"
+          }
+        }
+      }
+    },
+    "Local Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地模型"
+          }
+        }
+      }
+    },
+    "Local models will use different loaders based on the selected capabilities. For visual models, make sure to enable visual capabilities. Selecting the wrong model capability may result in a crash. If you still cannot load, try switching the model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地模型会根据所选的能力使用不同的加载器。对于视觉模型，请务必启用视觉能力。选择错误的模型能力可能会导致程序崩溃。若依然无法加载，请尝试更换模型。"
+          }
+        }
+      }
+    },
+    "Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置"
+          }
+        }
+      }
+    },
+    "Location Access" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问位置"
+          }
+        }
+      }
+    },
+    "Location access denied by user." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问位置信息被用户拒绝。"
+          }
+        }
+      }
+    },
+    "Location access is not available. Please check your device settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问位置信息。请检查设备设置。"
+          }
+        }
+      }
+    },
+    "Location Request" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置请求"
+          }
+        }
+      }
+    },
+    "Location services are disabled on this device." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定位服务被关闭。"
+          }
+        }
+      }
+    },
+    "Location: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置：%@"
+          }
+        }
+      }
+    },
+    "Long" : {
+      "comment" : "Model Context",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "较长"
+          }
+        }
+      }
+    },
+    "Magical @ 2.0" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "魔幻 @ 2.0"
+          }
+        }
+      }
+    },
+    "Manage language model providers or download local models." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理语言模型提供商，或者下载本地模型。"
+          }
+        }
+      }
+    },
+    "Manage permissions for the application. Your privacy is important to us." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看隐私权限清单。你的隐私由你掌控。"
+          }
+        }
+      }
+    },
+    "Managed Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受管控的模型"
+          }
+        }
+      }
+    },
+    "Management" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理"
+          }
+        }
+      }
+    },
+    "Media" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "媒体"
+          }
+        }
+      }
+    },
+    "Medium" : {
+      "comment" : "Model Context",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中等"
+          }
+        }
+      }
+    },
+    "Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消息"
+          }
+        }
+      }
+    },
+    "Metadata" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元数据"
+          }
+        }
+      }
+    },
+    "Metadata of a local model cannot be changed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地模型的元数据不可被修改。"
+          }
+        }
+      }
+    },
+    "Microphone" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麦克风"
+          }
+        }
+      }
+    },
+    "Middle" : {
+      "comment" : "Font Size",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中等"
+          }
+        }
+      }
+    },
+    "Minimal" : {
+      "comment" : "Prompt Type",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "精简"
+          }
+        }
+      }
+    },
+    "MLX is only available on Apple Silicon devices with Metal 3 support." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MLX 仅在支持 Metal 3 的 Apple Silicon 上可用。"
+          }
+        }
+      }
+    },
+    "Model Added" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型已添加"
+          }
+        }
+      }
+    },
+    "Model Card" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型卡"
+          }
+        }
+      }
+    },
+    "Model Detail" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型详情"
+          }
+        }
+      }
+    },
+    "Model Download Complete" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型下载完成"
+          }
+        }
+      }
+    },
+    "Model Identifier" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型标识符"
+          }
+        }
+      }
+    },
+    "Model is downloaded, but there seems to be a problem loading it." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型已下载，但加载时出现错误。"
+          }
+        }
+      }
+    },
+    "Model List" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型列表"
+          }
+        }
+      }
+    },
+    "Model Management" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型管理"
+          }
+        }
+      }
+    },
+    "Model Name Only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅模型名称"
+          }
+        }
+      }
+    },
+    "Model Name Style" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型名称样式"
+          }
+        }
+      }
+    },
+    "Model not found." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型未找到。"
+          }
+        }
+      }
+    },
+    "Model Selector" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型选择器"
+          }
+        }
+      }
+    },
+    "Model size on your local disk." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型在本地磁盘上占用的空间。"
+          }
+        }
+      }
+    },
+    "Model Verified" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型已验证"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多"
+          }
+        }
+      }
+    },
+    "More Options" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多选项"
+          }
+        }
+      }
+    },
+    "Name: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称：%@"
+          }
+        }
+      }
+    },
+    "Network" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络"
+          }
+        }
+      }
+    },
+    "No events found between %@ and %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No events found between %1$@ and %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 %1$@ 与 %2$@ 中没有找到事件。"
+          }
+        }
+      }
+    },
+    "No events found for %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有找到事件 %@。"
+          }
+        }
+      }
+    },
+    "No events found for the specified criteria." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有找到符合条件的事件。"
+          }
+        }
+      }
+    },
+    "No location details found." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置信息未找到。"
+          }
+        }
+      }
+    },
+    "No Model Available" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无可用模型"
+          }
+        }
+      }
+    },
+    "No model is available for the required capabilities." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有模型能够提供此能力。"
+          }
+        }
+      }
+    },
+    "No models found." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到可用模型。"
+          }
+        }
+      }
+    },
+    "No response from model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型未响应。"
+          }
+        }
+      }
+    },
+    "No web search results." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页搜索未找到有效内容。"
+          }
+        }
+      }
+    },
+    "None" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无"
+          }
+        }
+      }
+    },
+    "Not Allowed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不允许"
+          }
+        }
+      }
+    },
+    "Not Configured" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置"
+          }
+        }
+      }
+    },
+    "Not Configured (Tapped to Fetch)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置（轻点来获取）"
+          }
+        }
+      }
+    },
+    "Not Determined" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知"
+          }
+        }
+      }
+    },
+    "Objects" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "物品"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好的"
+          }
+        }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开"
+          }
+        }
+      }
+    },
+    "Open %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 %@"
+          }
+        }
+      }
+    },
+    "Open in Hugging Face" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在抱抱脸中打开"
+          }
+        }
+      }
+    },
+    "Open in Safari" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Safari 中打开"
+          }
+        }
+      }
+    },
+    "Open Setting" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        }
+      }
+    },
+    "Open Source Licenses" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开源许可"
+          }
+        }
+      }
+    },
+    "Open the setting page." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在系统设置中打开此软件的设置页面。"
+          }
+        }
+      }
+    },
+    "Open URL" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 URL"
+          }
+        }
+      }
+    },
+    "Open..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开…"
+          }
+        }
+      }
+    },
+    "Operation Cancelled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作被取消"
+          }
+        }
+      }
+    },
+    "Operation completed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作成功完成。"
+          }
+        }
+      }
+    },
+    "Operations" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
+        }
+      }
+    },
+    "Other" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
+        }
+      }
+    },
+    "Override system appearance, either light or dark." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为应用程序指定外观，可选明亮或黑暗。"
+          }
+        }
+      }
+    },
+    "Pages that exceed the model’s context length will be ignored. Too many pages may increase network usage and slow down inference." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "超出模型上下文长度的页面将被丢弃。过多的页面可能使用更多的流量并减慢对话速度。"
+          }
+        }
+      }
+    },
+    "Parameters" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参数"
+          }
+        }
+      }
+    },
+    "Paste as File" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘贴为文件"
+          }
+        }
+      }
+    },
+    "People & Body" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "人物 & 肢体"
+          }
+        }
+      }
+    },
+    "Permission List" : {
+      "comment" : "Permission Setting Page Title",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "权限清单"
+          }
+        }
+      }
+    },
+    "phone call" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电话"
+          }
+        }
+      }
+    },
+    "Pick New Icon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选取新图标"
+          }
+        }
+      }
+    },
+    "Please add some models to use. You can choose to download models, or use cloud model from well known service providers." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请添加一些模型。你可以从下载一个模型，或者添加来自常见服务提供商的云端模型。"
+          }
+        }
+      }
+    },
+    "Please describe the image." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请详细表述这张图片。"
+          }
+        }
+      }
+    },
+    "Please feel free to contact us if you have any questions or suggestions." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如有任何问题，请与我们联系。"
+          }
+        }
+      }
+    },
+    "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请注意，如果你使用云端的模型来处理你的请求，这些数据会被上传。"
+          }
+        }
+      }
+    },
+    "Please read the agreements carefully." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请仔细阅读这些协议。"
+          }
+        }
+      }
+    },
+    "pollinations.ai (free)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pollinations.ai （免费）"
+          }
+        }
+      }
+    },
+    "Postal Code: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮政编码：%@"
+          }
+        }
+      }
+    },
+    "Precise @ 0.25" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "精确 @ 0.25"
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私政策"
+          }
+        }
+      }
+    },
+    "Process %@..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在处理 %@…"
+          }
+        }
+      }
+    },
+    "Processed %lld image(s)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已处理 %lld 张图片"
+          }
+        }
+      }
+    },
+    "Query Calendar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查询日历"
+          }
+        }
+      }
+    },
+    "Raw Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原始消息"
+          }
+        }
+      }
+    },
+    "Recent Used" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近使用"
+          }
+        }
+      }
+    },
+    "Rednering Content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在渲染"
+          }
+        }
+      }
+    },
+    "Refreshed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已刷新"
+          }
+        }
+      }
+    },
+    "Regardless of whether image compression is enabled, the EXIF information of the image will be removed. This will delete information such as the shooting date and location." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不论是否启用图片压缩，图片的 EXIF 信息都会被删除。这将删除包括拍摄日期、位置等信息。"
+          }
+        }
+      }
+    },
+    "Rename" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名"
+          }
+        }
+      }
+    },
+    "Request User Input" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求用户输入"
+          }
+        }
+      }
+    },
+    "Reset" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置"
+          }
+        }
+      }
+    },
+    "Reset App" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置应用程序"
+          }
+        }
+      }
+    },
+    "Reset Temporary Items" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置临时文件"
+          }
+        }
+      }
+    },
+    "Resource not found, please check your installation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "资源未找到，请检查你所安装的软件数据。"
+          }
+        }
+      }
+    },
+    "Restricted" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受限"
+          }
+        }
+      }
+    },
+    "Retrieving Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在获取定位"
+          }
+        }
+      }
+    },
+    "Retry" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试"
+          }
+        }
+      }
+    },
+    "Save Image" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存图片"
+          }
+        }
+      }
+    },
+    "Search" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索"
+          }
+        }
+      }
+    },
+    "Search Emoji" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索表情"
+          }
+        }
+      }
+    },
+    "Search Limit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索限制"
+          }
+        }
+      }
+    },
+    "Search Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索模型"
+          }
+        }
+      }
+    },
+    "Search Results" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索结果"
+          }
+        }
+      }
+    },
+    "Searched %lld website(s), fetching them" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已找到 %lld 个网站，正在获取数据"
+          }
+        }
+      }
+    },
+    "Select as Default" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择为默认"
+          }
+        }
+      }
+    },
+    "Select Model Type" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择模型类型"
+          }
+        }
+      }
+    },
+    "Send us an email." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向我们发送电子邮件。"
+          }
+        }
+      }
+    },
+    "Sending Hello..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在打招呼..."
+          }
+        }
+      }
+    },
+    "Set a new title for the conversation. Leave empty to keep unchanged. This will disable auto-renaming." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置此对话的新名字。留空将不应用修改。此操作会禁用自动命名。"
+          }
+        }
+      }
+    },
+    "Set the strategy for handling runtime resource cache. Allowing the use of cache can speed up inference and save energy, but may cause the software to close unexpectedly." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置处理运行时资源缓存的策略。允许使用缓存会加快推理速度，节约能源，但可能会导致软件意外关闭。"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享"
+          }
+        }
+      }
+    },
+    "Share Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享定位"
+          }
+        }
+      }
+    },
+    "Short" : {
+      "comment" : "Model Context",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "较短"
+          }
+        }
+      }
+    },
+    "Shortcuts" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快捷操作"
+          }
+        }
+      }
+    },
+    "Show Cloud Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示云端模型"
+          }
+        }
+      }
+    },
+    "Show full model name and information in the quick setting bar under the input box or not." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是否在输入框下方的快速设置栏中显示完整模型名称和信息。"
+          }
+        }
+      }
+    },
+    "Show Local Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示本地模型"
+          }
+        }
+      }
+    },
+    "Size" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小"
+          }
+        }
+      }
+    },
+    "Small" : {
+      "comment" : "Font Size",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "较小"
+          }
+        }
+      }
+    },
+    "Smileys & Emotion" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "笑脸 & 表情"
+          }
+        }
+      }
+    },
+    "Software Resources" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "软件资源"
+          }
+        }
+      }
+    },
+    "Some messages have been removed to fit the model context length." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一些消息已被删除，以适应模型的上下文长度。"
+          }
+        }
+      }
+    },
+    "Speech Recognition" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音识别"
+          }
+        }
+      }
+    },
+    "Stable @ 0.5" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稳定 @ 0.5"
+          }
+        }
+      }
+    },
+    "Start New Chat" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始新对话"
+          }
+        }
+      }
+    },
+    "Start: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始于：%@"
+          }
+        }
+      }
+    },
+    "State/Province: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "省：%@"
+          }
+        }
+      }
+    },
+    "Street: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "街道：%@"
+          }
+        }
+      }
+    },
+    "Support" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持"
+          }
+        }
+      }
+    },
+    "Symbols" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "符号"
+          }
+        }
+      }
+    },
+    "System" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统"
+          }
+        }
+      }
+    },
+    "Task Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任务模型"
+          }
+        }
+      }
+    },
+    "Tells you how we handle your data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这些内容将解释我们如何处理你的数据。"
+          }
+        }
+      }
+    },
+    "Terminate" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "终止"
+          }
+        }
+      }
+    },
+    "Text Content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本内容"
+          }
+        }
+      }
+    },
+    "Text Editor" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本编辑器"
+          }
+        }
+      }
+    },
+    "Text Model Only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅显示文本模型"
+          }
+        }
+      }
+    },
+    "The above parameters will be applied to all conversations." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此处的参数将应用到所有对话中。"
+          }
+        }
+      }
+    },
+    "The above setting only adjusts the text size in conversations. To change the font size globally, please go to the system settings, as this app follows the system’s font size preferences." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此处的设置仅调整对话中的文本大小。若要修改全局字体大小，请考虑前往系统设置。此软件遵循系统字体大小设置。"
+          }
+        }
+      }
+    },
+    "The additional prompt will be appended to the default prompt. You can make requests here, such as language preferences, response formats, etc." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外提示词会追加到默认提示词后。你可在此处提出需求，如语言偏好，回答格式等。"
+          }
+        }
+      }
+    },
+    "The AI assistant is requesting your current location information. Do you want to share your location?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 助理正在请求你的位置信息。你确定要共享你的位置吗？"
+          }
+        }
+      }
+    },
+    "The AI assistant suggests opening this URL:\n\n%@\n\nReason: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The AI assistant suggests opening this URL:\n\n%1$@\n\nReason: %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 助手想要打开 URL：\n\n%1$@\n\n原因：%2$@"
+          }
+        }
+      }
+    },
+    "The context length for inference refers to the amount of information the model can retain and process at a given time. This context serves as the model’s memory, allowing it to understand and generate responses based on prior input." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理时的上下文长度指的是模型在特定时间内可以保留和处理的信息量。这个上下文相当于模型的记忆，使其能够基于先前输入理解并生成响应。"
+          }
+        }
+      }
+    },
+    "The date when the model was downloaded." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型下载完成时的日期。"
+          }
+        }
+      }
+    },
+    "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认提示会影响模型的回应。我们提供常用的预设指令和信息，以提升模型表现。更详细的提示可以获得更好的结果，但可能会增加费用。"
+          }
+        }
+      }
+    },
+    "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理端点需要写入完整的路径才能工作。路径通常是 /v1/chat/completions。"
+          }
+        }
+      }
+    },
+    "The maximum number of search results to fetch." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大搜索结果数量。"
+          }
+        }
+      }
+    },
+    "The model is used for auxiliary tasks such as generating conversation titles and web search keywords." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型用于诸如生成对话标题或网络搜索关键字等辅助场景。"
+          }
+        }
+      }
+    },
+    "The model is used for visual input when the current model does not support it. It will extract information before using the current model for inference." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型将在当前所选模型不支持视觉输入时提供帮助。这会在所选模型进行推理前，使用此模型提取信息。"
+          }
+        }
+      }
+    },
+    "The model used for new conversations." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型将在新对话创建时使用。"
+          }
+        }
+      }
+    },
+    "The name of the model to be used." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "希望使用的模型的名称。"
+          }
+        }
+      }
+    },
+    "These are the open-source licenses for the frameworks used in this app." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在此查看软件所使用的开源框架及其许可证。"
+          }
+        }
+      }
+    },
+    "These operations cannot be undone." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这些操作不可撤销。"
+          }
+        }
+      }
+    },
+    "These tools can only be used by models that support tool calls, and whether to use them is determined by the model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这些工具仅供支持工具调用的模型使用，且由模型决定是否使用。"
+          }
+        }
+      }
+    },
+    "Thinking finished without output any content." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "思考已完成，但没有输出任何内容。"
+          }
+        }
+      }
+    },
+    "Third Party Content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第三方内容"
+          }
+        }
+      }
+    },
+    "This app wont be possible without the help of open source community." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "非常感谢开源社区对该软件提供的支持。"
+          }
+        }
+      }
+    },
+    "This endpoint is used to send inference requests." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个端点被用于发送推理请求。"
+          }
+        }
+      }
+    },
+    "This model can use client provided tools." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个模型可以使用客户端提供的工具。"
+          }
+        }
+      }
+    },
+    "This model configuration is managed by the cloud and may become unusable if you continue editing. Please proceed with caution." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型配置受云端管控，若继续编辑，则可能导致无法使用。请谨慎操作。"
+          }
+        }
+      }
+    },
+    "This model is likely too large to fit in the available memory." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型似乎过大，可能无法在此设备上加载。"
+          }
+        }
+      }
+    },
+    "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此参数可用于控制模型的性格。想象力越丰富，输出越不稳定。此参数亦可称为温度。"
+          }
+        }
+      }
+    },
+    "This value will be added to the request to distinguish the workgroup on the remote." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此选项的值将添加到请求报文中，用于在远端区分工作组。"
+          }
+        }
+      }
+    },
+    "This value will be added to the request to distinguish the workgroup on the remote. This part is optional, if not used, leave it blank." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此选项的值将添加到请求报文中，用于在远端区分工作组。此部分可选，若不使用，请留空。"
+          }
+        }
+      }
+    },
+    "This will delete all edits, including unsent conversation text and attachments." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将删除所有编辑内容，包括未发送的对话文本和附件。"
+          }
+        }
+      }
+    },
+    "This will remove all contents inside temporary directory." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会删除临时文件夹内的全部内容。"
+          }
+        }
+      }
+    },
+    "Thought for %lld seconds" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "思考了 %lld 秒"
+          }
+        }
+      }
+    },
+    "Time Zone: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时区：%@"
+          }
+        }
+      }
+    },
+    "Tiny" : {
+      "comment" : "Font Size",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "微小"
+          }
+        }
+      }
+    },
+    "Title" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标题"
+          }
+        }
+      }
+    },
+    "To change the language used by the software, please go to the system settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要更改软件使用的语言，请前往系统设置。"
+          }
+        }
+      }
+    },
+    "Tool" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
+          }
+        }
+      }
+    },
+    "Tool Call" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具调用"
+          }
+        }
+      }
+    },
+    "Tool call for %@ completed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具 %@ 的调用已完成。"
+          }
+        }
+      }
+    },
+    "Tools" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
+          }
+        }
+      }
+    },
+    "Tools Configuration" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具配置"
+          }
+        }
+      }
+    },
+    "Travel & Places" : {
+      "comment" : "Emoji Category",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行& 地点"
+          }
+        }
+      }
+    },
+    "Unable to decode image." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开这张图片。"
+          }
+        }
+      }
+    },
+    "Unable to Determine" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法确认"
+          }
+        }
+      }
+    },
+    "Unable to Export" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导出"
+          }
+        }
+      }
+    },
+    "Unable to generate icon" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法生成图标"
+          }
+        }
+      }
+    },
+    "Unable to generate tittle" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法生成标题"
+          }
+        }
+      }
+    },
+    "Unable to identify the image with tool model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法使用工具模型辨认图片。"
+          }
+        }
+      }
+    },
+    "Unable to open link." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开链接。"
+          }
+        }
+      }
+    },
+    "Unable to process tool request with name: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法处理工具调用：%@"
+          }
+        }
+      }
+    },
+    "Ungrouped" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未分组"
+          }
+        }
+      }
+    },
+    "Unique identifier of this model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型唯一标识符。"
+          }
+        }
+      }
+    },
+    "Unique Model Name" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "唯一模型标识符"
+          }
+        }
+      }
+    },
+    "Unknown" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知"
+          }
+        }
+      }
+    },
+    "Unknown authorization status for location services." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定位服务状态未知。"
+          }
+        }
+      }
+    },
+    "Unlimited Pages" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不设限制"
+          }
+        }
+      }
+    },
+    "Unrestricted" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不作限制"
+          }
+        }
+      }
+    },
+    "Unsupporte" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不支持"
+          }
+        }
+      }
+    },
+    "Unsupported model type." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不支持的模型类型。"
+          }
+        }
+      }
+    },
+    "Unsupported processor type." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "处理器不受支持。"
+          }
+        }
+      }
+    },
+    "Unsupported." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不受支持。"
+          }
+        }
+      }
+    },
+    "Untitled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无标题"
+          }
+        }
+      }
+    },
+    "Unverified Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未验证的模型"
+          }
+        }
+      }
+    },
+    "Update All" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部更新"
+          }
+        }
+      }
+    },
+    "Update All Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新全部模型"
+          }
+        }
+      }
+    },
+    "URL Access" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL 访问"
+          }
+        }
+      }
+    },
+    "Use Chat Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用对话模型"
+          }
+        }
+      }
+    },
+    "Use None" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不使用"
+          }
+        }
+      }
+    },
+    "User cancelled sharing calendar events." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户取消了数据共享。"
+          }
+        }
+      }
+    },
+    "User cancelled the operation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户已取消操作。"
+          }
+        }
+      }
+    },
+    "User declined to share location information." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户拒绝了定位请求。"
+          }
+        }
+      }
+    },
+    "Using a local or mini model for this purpose will lower overall costs while maintaining a consistent experience." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用本地模型或者云端小模型可以降低推理成本，节约开销，同时提供一致的体验。"
+          }
+        }
+      }
+    },
+    "Usually, you don't need to clean caches and temporary files. But if you have any issues, try these." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通常来说，缓存和临时文件夹不需要手动清理。但在遇到问题时，不妨试试。"
+          }
+        }
+      }
+    },
+    "Utilize the current chat model to assist with auxiliary tasks." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用对话模型完成辅助任务。"
+          }
+        }
+      }
+    },
+    "Utilizing tool call" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在使用工具"
+          }
+        }
+      }
+    },
+    "Utilizing tool: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在使用工具：%@"
+          }
+        }
+      }
+    },
+    "Verification" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证"
+          }
+        }
+      }
+    },
+    "Verification process will send a standard inference request to the inference node and verify the returned status code. This process requires the server to return status code: 200. The verification process may incur standard charges from your service provider." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证过程会发送标准的生成请求到推理节点，并验证返回的状态代码。此过程要求服务器返回状态代码：200。验证过程可能会被你的服务提供商收取标准费用。"
+          }
+        }
+      }
+    },
+    "Verified Model Only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅显示验证的模型"
+          }
+        }
+      }
+    },
+    "Verify Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证模型"
+          }
+        }
+      }
+    },
+    "Verify the model by sending a test request." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送标准请求以验证这个模型。"
+          }
+        }
+      }
+    },
+    "Verify this model with corresponding capabilities." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证当前模型及其功能。"
+          }
+        }
+      }
+    },
+    "Verifying Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在验证模型"
+          }
+        }
+      }
+    },
+    "Version %@ (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version %1$@ (%2$@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本 %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "View" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看"
+          }
+        }
+      }
+    },
+    "View Raw" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原始数据"
+          }
+        }
+      }
+    },
+    "View this model on Hugging Face." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在抱抱脸上查看这个模型。"
+          }
+        }
+      }
+    },
+    "Visual" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视觉"
+          }
+        }
+      }
+    },
+    "Visual Assessment" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视觉辅助"
+          }
+        }
+      }
+    },
+    "Visual model can be used for image recognition." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视觉模型可被用于识别图像信息"
+          }
+        }
+      }
+    },
+    "Warning" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警告"
+          }
+        }
+      }
+    },
+    "We are not responsible for the content of this website you are about to visit." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们不对你将要访问的内容负责。请谨慎操作。"
+          }
+        }
+      }
+    },
+    "We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们不对你所下载的模型负责。如果此模型无法加载，应用程序可能会崩溃。你确定要继续吗？"
+          }
+        }
+      }
+    },
+    "We are unable to process the link you tapped, either it is invalid or not supported." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此链接已损坏或不受支持，无法打开。"
+          }
+        }
+      }
+    },
+    "We cannot determine the context length supported by the model. Please choose the correct configuration here. Configuring a context length smaller than the capacity can save costs. A context that is too long may be truncated during inference." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们无法确认模型所支持的上下文长度，请在此处选择正确的配置。配置小于容量的上下文可以节省开销。过长的上下文可能会在推理时截断。"
+          }
+        }
+      }
+    },
+    "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们无法确认这个模型是否具备某些额外的功能。如果你确认此模型支持这些功能，你可以在这里手动开启。但需要注意，如果模型实际上不支持这些功能，尝试开启可能会导致错误。"
+          }
+        }
+      }
+    },
+    "We have requested your system to prioritize local processing of your audio data. However, there still remains a possibility that your audio data may be sent to Apple’s servers for processing. We are unable to determine whether your data has been sent to Apple’s servers." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们已请求您的系统优先在本地处理您的音频数据。然而，您的音频数据仍有可能被发送到 Apple 的服务器进行处理。我们无法确定您的数据是否已被发送至 Apple 的服务器。"
+          }
+        }
+      }
+    },
+    "We requires LAN access for interact with local service providers. We do not collect any information from your LAN." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们需要本地网络访问权限来连接到你所请求的服务提供商。"
+          }
+        }
+      }
+    },
+    "We use calendar access to allow the assistant to view, create and modify events in your calendar. Calendar data is only accessed when you explicitly use calendar-related features." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们使用你的日历权限以提供数据给助手查看或修改。这些数据仅在明确请求时提供。"
+          }
+        }
+      }
+    },
+    "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们需要音频输入权限来进行听写。我们不会收集你的数据，但可能会被系统上传处理。"
+          }
+        }
+      }
+    },
+    "We use your camera to take picture. Your photo may be uploaded by your choice." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们需要相机权限来拍照。照片会按照你所请求的方式上传。"
+          }
+        }
+      }
+    },
+    "We use your location data to provide location-based services when requested. Your location is only accessed when you explicitly use location-related features." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们使用此权限提供定位数据。你的数据仅在明确请求时提供。"
+          }
+        }
+      }
+    },
+    "Web Content from: %@\nTitle: %@\n\n%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Web Content from: %1$@\nTitle: %2$@\n\n%3$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来自 %1$@ 的网页内容：%2$@\n\n%3$@"
+          }
+        }
+      }
+    },
+    "Web Scraper" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页爬虫"
+          }
+        }
+      }
+    },
+    "Web Search" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页搜索"
+          }
+        }
+      }
+    },
+    "Web Search Engines" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页搜搜 - 引擎"
+          }
+        }
+      }
+    },
+    "Web search will fetch results from Bing if enabled." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络搜索将会从必应获取搜索结果。"
+          }
+        }
+      }
+    },
+    "Web search will fetch results from Duck Duck Go if enabled." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络搜索将会从鸭鸭冲获取结果。"
+          }
+        }
+      }
+    },
+    "Web search will fetch results from Google if enabled." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络搜索将会从谷歌获取搜索结果。"
+          }
+        }
+      }
+    },
+    "Web search will fetch results from Yahoo if enabled." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络搜索将会从雅虎获取搜索结果。"
+          }
+        }
+      }
+    },
+    "website" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网站"
+          }
+        }
+      }
+    },
+    "When enabled, large content pasted into the editor will be attached as a file. You can tap on the file to edit it." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果启用，粘贴进编辑器的大段文本将会被转换成附件，以提供更流畅的编辑体验。你可以点击附件来编辑内容。"
+          }
+        }
+      }
+    },
+    "When selecting a new chat model, also set it as the default model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当选择新的对话模型时，将此模型设为默认对话模型。"
+          }
+        }
+      }
+    },
+    "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "虽然使用视觉评估模型可能会丢失一些信息，但它能使需要视觉输入的任务成为可能。"
+          }
+        }
+      }
+    },
+    "Workgroup (Optional)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作组（可选）"
+          }
+        }
+      }
+    },
+    "Would you like to apply the new workgroup to all? This requires the inference endpoint and the old workgroup equal to the current editing." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你是否希望将新的工作组应用到全部模型上？这要求推理端点与旧工作组和当前编辑的内容一致。"
+          }
+        }
+      }
+    },
+    "Write Only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅能添加"
+          }
+        }
+      }
+    },
+    "Yahoo Search" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雅虎搜索"
+          }
+        }
+      }
+    },
+    "You can grant unrestricted pasteboard access in Settings for convenience." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你可以在设置中授权不受限的剪贴板访问以提供便利。"
+          }
+        }
+      }
+    },
+    "You must enable at least one search engine for web search to work properly." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络搜索需要至少一个引擎才能正常运作。"
+          }
+        }
+      }
+    },
+    "You need to add a model to use." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你需要添加一个模型才能对话。"
+          }
+        }
+      }
+    },
+    "You need to select a model to use." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要选择模型。"
+          }
+        }
+      }
+    },
+    "Your device does not support MLX." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的设备不支持 MLX。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,23 +1,21 @@
 # FlowDown
 
-FlowDown is a blazing fast and smooth client app for using AI/LLM.
-
 <p align="center">
   <a href="README.md">English</a> |
   <a href="/Resources/i18n/zh-Hans/README.md">简体中文</a>
 </p>
 
-## Documentations
+FlowDown is a blazing fast and smooth client app for using AI/LLM with full protection of your privacy.
 
-By downloading FlowDown from App Store, free models are included. To use our product, have a look at: [https://apps.qaq.wiki/docs/flowdown/](https://apps.qaq.wiki/docs/flowdown/) 
+![Preview](./Resources/SCR-PREVIEW.png)
 
-## Keep in touch
+## Download
+
+[![App Store Icon](./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/us/app/flowdown-open-fast-ai/id6740553198)
+
+By downloading FlowDown from App Store, free models are included. To use our product, have a look at: [https://apps.qaq.wiki/docs/flowdown/](https://apps.qaq.wiki/docs/flowdown/)
 
 Please consider join our discussion on [Discord](https://discord.gg/UHKMRyJcgc).
-
-## Preview
-
-![Preview](./Resources/SCR-20250115-lvgw.jpeg)
 
 ## Features
 
@@ -33,38 +31,25 @@ Please consider join our discussion on [Discord](https://discord.gg/UHKMRyJcgc).
 We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**.
 
 | **Feature**           | **FlowDown** | **FlowDown Community** |
-| --------------------- | ---------------- | ---------------------- |
-| Chat with AI          | ✅               | ✅                     |
-| Fast Markdown         | ✅               | ✅                     |
-| Privacy by Design     | ✅               | ✅                     |
-| Bring Your Own LLM    | ✅               | ✅                     |
-| Offline LLM w/ MLX    | ✅               | ❌                     |
-| Visual LLM            | ✅               | ❌                     |
-| Open-Source           | ❌               | ✅                     |
-| Web Search            | ✅               | ❌                     |
-| Attachments           | ✅               | ❌                     |
-| Language Localization | ✅               | ❌                     |
-
-**Open Source Notice**
-
-**FlowDown Community** is now open-source! You can explore the source code in the [Source](./Source) directory of this repository. By sharing our code, we aim to empower developers to build more interactive and responsive AI client apps.
-
-## Get Started
-
-### System Requirements
-
-- iOS 16.0 or later
-- macOS 13.0 or later
-
-### Installation
-
-See [Releases](https://github.com/Lakr233/FlowDown-Beta/releases) for details.
+| --------------------- | ------------ | ---------------------- |
+| Chat with AI          | ✅           | ✅                     |
+| Fast Markdown         | ✅           | ✅                     |
+| Privacy by Design     | ✅           | ✅                     |
+| Bring Your Own LLM    | ✅           | ✅                     |
+| Offline LLM w/ MLX    | ✅           | ❌                     |
+| Visual LLM            | ✅           | ❌                     |
+| Open-Source           | ✅           | ✅                     |
+| Web Search            | ✅           | ❌                     |
+| Attachments           | ✅           | ❌                     |
+| Language Localization | ✅           | ❌                     |
 
 ## License
 
-- **FlowDown** is proprietary software. All rights reserved.
-- **FlowDown Community** is licensed under [MIT](./LICENSE).
+FlowDown is licensed under AGPL-3.0. You can find the full license text in the [LICENSE](./LICENSE) file.
+FlowDown Community is licensed under MIT. You can find the full license text in the [LICENSE](./Resources/CommunityEdition/LICENSE) file.
+
+Artwork and resources are not licensed for use for any purpose. Commercial license for FlowDown is available case by case. Please contact us.
 
 ---
 
-© 2025 FlowDown Team (@Lakr233, @ktiays, @unixzii) All Rights Reserved.
+© 2025 FlowDown Team (@Lakr233) All Rights Reserved.

@@ -1,0 +1,1316 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		50014D7F2D8A9B3C00C10932 /* GlyphixTextFx in Frameworks */ = {isa = PBXBuildFile; productRef = 50014D7E2D8A9B3C00C10932 /* GlyphixTextFx */; };
+		500373C52D62757700585574 /* ScrubberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 500373C42D62757700585574 /* ScrubberKit */; };
+		501C98E12D3E52CE00CD8E11 /* RichEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 501C98E02D3E52CE00CD8E11 /* RichEditor */; };
+		502B98062D535F25003200B6 /* Emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 502B98052D535F25003200B6 /* Emoji.json */; };
+		502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 502BCBD02D43DB2B00500180 /* ConfigurableKit */; };
+		50343FCD2DA2515C00CC6820 /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC02DA2515C00CC6820 /* Respring */; };
+		50343FCE2DA2515C00CC6820 /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBD2DA2515C00CC6820 /* Litext */; };
+		50343FCF2DA2515C00CC6820 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB72DA2515C00CC6820 /* Digger */; };
+		50343FD02DA2515C00CC6820 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAB2DA2515C00CC6820 /* Storage */; };
+		50343FD12DA2515C00CC6820 /* RichEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAA2DA2515C00CC6820 /* RichEditor */; };
+		50343FD22DA2515C00CC6820 /* SPIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB82DA2515C00CC6820 /* SPIndicator */; };
+		50343FD32DA2515C00CC6820 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB42DA2515C00CC6820 /* MLXLMCommon */; };
+		50343FD42DA2515C00CC6820 /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC22DA2515C00CC6820 /* GPTEncoder */; };
+		50343FD52DA2515C00CC6820 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB02DA2515C00CC6820 /* MLX */; };
+		50343FD62DA2515C00CC6820 /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBE2DA2515C00CC6820 /* ChatClientKit */; };
+		50343FD72DA2515C00CC6820 /* SwifterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA42DA2515C00CC6820 /* SwifterSwift */; };
+		50343FD82DA2515C00CC6820 /* GlyphixTextFx in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC62DA2515C00CC6820 /* GlyphixTextFx */; };
+		50343FD92DA2515C00CC6820 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBB2DA2515C00CC6820 /* ZIPFoundation */; };
+		50343FDA2DA2515C00CC6820 /* AlertController in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAC2DA2515C00CC6820 /* AlertController */; };
+		50343FDB2DA2515C00CC6820 /* ScrubberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBF2DA2515C00CC6820 /* ScrubberKit */; };
+		50343FDC2DA2515C00CC6820 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB52DA2515C00CC6820 /* Transformers */; };
+		50343FDD2DA2515C00CC6820 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAF2DA2515C00CC6820 /* ChidoriMenu */; };
+		50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA72DA2515C00CC6820 /* BetterCodable */; };
+		50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAD2DA2515C00CC6820 /* ConfigurableKit */; };
+		50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB22DA2515C00CC6820 /* MLXLLM */; };
+		50343FE12DA2515C00CC6820 /* ThatListView in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA92DA2515C00CC6820 /* ThatListView */; };
+		50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBA2DA2515C00CC6820 /* MLXVLM */; };
+		50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */; };
+		50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA62DA2515C00CC6820 /* MarkdownView */; };
+		50343FE52DA2515C00CC6820 /* RunestoneEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC42DA2515C00CC6820 /* RunestoneEditor */; };
+		50343FE62DA2515C00CC6820 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA22DA2515C00CC6820 /* SnapKit */; };
+		50343FE82DA2515C00CC6820 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
+		50343FE92DA2515C00CC6820 /* PrivacyPolicy.md in Resources */ = {isa = PBXBuildFile; fileRef = 505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */; };
+		50343FEA2DA2515C00CC6820 /* Emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 502B98052D535F25003200B6 /* Emoji.json */; };
+		50383CEA2D2E1E0D00426941 /* BetterCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 50383CE92D2E1E0D00426941 /* BetterCodable */; };
+		5050E8D82D466E5E00634B81 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 5050E8D72D466E5E00634B81 /* ChidoriMenu */; };
+		5050EACF2D46D41400634B81 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EACE2D46D41400634B81 /* MLX */; };
+		5050EB092D46DCB400634B81 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB082D46DCB400634B81 /* MLXLLM */; };
+		5050EB0B2D46DCB900634B81 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB0A2D46DCB900634B81 /* MLXLMCommon */; };
+		5050EB7C2D4789A300634B81 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB7B2D4789A300634B81 /* Transformers */; };
+		505535BC2D72F38900F54B28 /* AlignedCollectionViewFlowLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */; };
+		505535C12D72F7EF00F54B28 /* PrivacyPolicy.md in Resources */ = {isa = PBXBuildFile; fileRef = 505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */; };
+		505BC6F92D42A73600894BB0 /* AlertController in Frameworks */ = {isa = PBXBuildFile; productRef = 505BC6F82D42A73600894BB0 /* AlertController */; };
+		505FC6192D4945E500F4CB17 /* SPIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 505FC6182D4945E500F4CB17 /* SPIndicator */; };
+		505FC65B2D4A754F00F4CB17 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 505FC65A2D4A754F00F4CB17 /* MLXVLM */; };
+		506C2E762DA252D800E370BE /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B5146A2D2305F20092284C /* main.swift */; };
+		5078496A2D285B5900B1F430 /* MarkdownView in Frameworks */ = {isa = PBXBuildFile; productRef = 507849692D285B5900B1F430 /* MarkdownView */; };
+		5081A0142D6DBBBA0079ECBE /* RunestoneEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 5081A0132D6DBBBA0079ECBE /* RunestoneEditor */; };
+		50B492942D4F609E00F4D2B3 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 50B492932D4F609E00F4D2B3 /* ZIPFoundation */; };
+		50B4CDAC2D4794F90028EB33 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50B4CDAB2D4794F90028EB33 /* Digger */; };
+		50B5146B2D2305F20092284C /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B5146A2D2305F20092284C /* main.swift */; };
+		50B514782D23157A0092284C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50B514772D23157A0092284C /* SnapKit */; };
+		50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50B5149A2D2316EC0092284C /* SwifterSwift */; };
+		50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 50C9035A2D428DAD00E6E3A8 /* Storage */; };
+		50D2848C2D72E8EE0048CE31 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
+		50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50E3FA082D6D7FB8000405BD /* GPTEncoder */; };
+		ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED16359B2D5C5BDA0081BD0B /* ChatClientKit */; };
+		ED74633E2D5A706C0009E83F /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = ED74633D2D5A706C0009E83F /* Litext */; };
+		EDB65C732D36580F0071FC8E /* ThatListView in Frameworks */ = {isa = PBXBuildFile; productRef = EDB65C722D36580F0071FC8E /* ThatListView */; };
+		EDF9A13E2D67788A001D183C /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = EDF9A13D2D67788A001D183C /* Respring */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		502B98052D535F25003200B6 /* Emoji.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Emoji.json; sourceTree = "<group>"; };
+		50343FF02DA2515C00CC6820 /* FlowDown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlowDown.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		503498BD2D23053D004672BD /* FlowDown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlowDown.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		505535BF2D72F7EF00F54B28 /* en */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = en; path = en.lproj/PrivacyPolicy.md; sourceTree = "<group>"; };
+		505535C22D72F7F200F54B28 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "zh-Hans"; path = "zh-Hans.lproj/PrivacyPolicy.md"; sourceTree = "<group>"; };
+		50B514642D2305A70092284C /* Entitlements.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Entitlements.entitlements; sourceTree = "<group>"; };
+		50B5146A2D2305F20092284C /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = OpenSourceLicenses.md; sourceTree = "<group>"; };
+		EDFAC1BB2D6B874A00D1890C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		EDFAC1BD2D6B874A00D1890C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		506C2E872DA2547F00E370BE /* Exceptions for "Resources" folder in "FlowDown" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"InfoPlist/Info-Catalyst.plist",
+				"InfoPlist/Info-Creem.plist",
+				"InfoPlist/Info-iOS.plist",
+			);
+			target = 503498BC2D23053D004672BD /* FlowDown */;
+		};
+		506C2F762DA2565D00E370BE /* Exceptions for "Resources" folder in "FlowDown-Catalyst" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"InfoPlist/Info-Catalyst.plist",
+				"InfoPlist/Info-Creem.plist",
+				"InfoPlist/Info-iOS.plist",
+			);
+			target = 50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5050EB812D478A5800634B81 /* Backend */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Backend;
+			sourceTree = "<group>";
+		};
+		50B514652D2305C00092284C /* Application */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Application;
+			sourceTree = "<group>";
+		};
+		50B514682D2305E30092284C /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				506C2E872DA2547F00E370BE /* Exceptions for "Resources" folder in "FlowDown" target */,
+				506C2F762DA2565D00E370BE /* Exceptions for "Resources" folder in "FlowDown-Catalyst" target */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		50B514732D23133F0092284C /* Extension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		50B514922D2316700092284C /* Interface */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Interface;
+			sourceTree = "<group>";
+		};
+		50D148142D71F292008E9F03 /* PlatformSupport */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PlatformSupport;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		50343FCC2DA2515C00CC6820 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50343FCD2DA2515C00CC6820 /* Respring in Frameworks */,
+				50343FCE2DA2515C00CC6820 /* Litext in Frameworks */,
+				50343FCF2DA2515C00CC6820 /* Digger in Frameworks */,
+				50343FD02DA2515C00CC6820 /* Storage in Frameworks */,
+				50343FD12DA2515C00CC6820 /* RichEditor in Frameworks */,
+				50343FD22DA2515C00CC6820 /* SPIndicator in Frameworks */,
+				50343FD32DA2515C00CC6820 /* MLXLMCommon in Frameworks */,
+				50343FD42DA2515C00CC6820 /* GPTEncoder in Frameworks */,
+				50343FD52DA2515C00CC6820 /* MLX in Frameworks */,
+				50343FD62DA2515C00CC6820 /* ChatClientKit in Frameworks */,
+				50343FD72DA2515C00CC6820 /* SwifterSwift in Frameworks */,
+				50343FD82DA2515C00CC6820 /* GlyphixTextFx in Frameworks */,
+				50343FD92DA2515C00CC6820 /* ZIPFoundation in Frameworks */,
+				50343FDA2DA2515C00CC6820 /* AlertController in Frameworks */,
+				50343FDB2DA2515C00CC6820 /* ScrubberKit in Frameworks */,
+				50343FDC2DA2515C00CC6820 /* Transformers in Frameworks */,
+				50343FDD2DA2515C00CC6820 /* ChidoriMenu in Frameworks */,
+				50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */,
+				50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */,
+				50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */,
+				50343FE12DA2515C00CC6820 /* ThatListView in Frameworks */,
+				50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */,
+				50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */,
+				50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */,
+				50343FE52DA2515C00CC6820 /* RunestoneEditor in Frameworks */,
+				50343FE62DA2515C00CC6820 /* SnapKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		503498BA2D23053D004672BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EDF9A13E2D67788A001D183C /* Respring in Frameworks */,
+				ED74633E2D5A706C0009E83F /* Litext in Frameworks */,
+				50B4CDAC2D4794F90028EB33 /* Digger in Frameworks */,
+				50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */,
+				501C98E12D3E52CE00CD8E11 /* RichEditor in Frameworks */,
+				505FC6192D4945E500F4CB17 /* SPIndicator in Frameworks */,
+				5050EB0B2D46DCB900634B81 /* MLXLMCommon in Frameworks */,
+				50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */,
+				5050EACF2D46D41400634B81 /* MLX in Frameworks */,
+				ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */,
+				50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */,
+				50014D7F2D8A9B3C00C10932 /* GlyphixTextFx in Frameworks */,
+				50B492942D4F609E00F4D2B3 /* ZIPFoundation in Frameworks */,
+				505BC6F92D42A73600894BB0 /* AlertController in Frameworks */,
+				500373C52D62757700585574 /* ScrubberKit in Frameworks */,
+				5050EB7C2D4789A300634B81 /* Transformers in Frameworks */,
+				5050E8D82D466E5E00634B81 /* ChidoriMenu in Frameworks */,
+				50383CEA2D2E1E0D00426941 /* BetterCodable in Frameworks */,
+				502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */,
+				5050EB092D46DCB400634B81 /* MLXLLM in Frameworks */,
+				EDB65C732D36580F0071FC8E /* ThatListView in Frameworks */,
+				505FC65B2D4A754F00F4CB17 /* MLXVLM in Frameworks */,
+				505535BC2D72F38900F54B28 /* AlignedCollectionViewFlowLayout in Frameworks */,
+				5078496A2D285B5900B1F430 /* MarkdownView in Frameworks */,
+				5081A0142D6DBBBA0079ECBE /* RunestoneEditor in Frameworks */,
+				50B514782D23157A0092284C /* SnapKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		502B98042D535F13003200B6 /* BundledResources */ = {
+			isa = PBXGroup;
+			children = (
+				505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */,
+				50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */,
+				502B98052D535F25003200B6 /* Emoji.json */,
+			);
+			path = BundledResources;
+			sourceTree = "<group>";
+		};
+		502BCBCF2D43DB2B00500180 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EDFAC1BB2D6B874A00D1890C /* WidgetKit.framework */,
+				EDFAC1BD2D6B874A00D1890C /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		503498B42D23053D004672BD = {
+			isa = PBXGroup;
+			children = (
+				50B5145B2D2305890092284C /* FlowDown */,
+				503498BE2D23053D004672BD /* Products */,
+				502BCBCF2D43DB2B00500180 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		503498BE2D23053D004672BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				503498BD2D23053D004672BD /* FlowDown.app */,
+				50343FF02DA2515C00CC6820 /* FlowDown.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		50B5145B2D2305890092284C /* FlowDown */ = {
+			isa = PBXGroup;
+			children = (
+				50B5146A2D2305F20092284C /* main.swift */,
+				50B514642D2305A70092284C /* Entitlements.entitlements */,
+				50B514652D2305C00092284C /* Application */,
+				5050EB812D478A5800634B81 /* Backend */,
+				50B514922D2316700092284C /* Interface */,
+				50B514732D23133F0092284C /* Extension */,
+				50D148142D71F292008E9F03 /* PlatformSupport */,
+				50B514682D2305E30092284C /* Resources */,
+				502B98042D535F13003200B6 /* BundledResources */,
+			);
+			path = FlowDown;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 50343FED2DA2515C00CC6820 /* Build configuration list for PBXNativeTarget "FlowDown-Catalyst" */;
+			buildPhases = (
+				50343FC82DA2515C00CC6820 /* Generate Anchored Resources */,
+				50343FCA2DA2515C00CC6820 /* Sources */,
+				50343FCC2DA2515C00CC6820 /* Frameworks */,
+				50343FE72DA2515C00CC6820 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5050EB812D478A5800634B81 /* Backend */,
+				50B514652D2305C00092284C /* Application */,
+				50B514682D2305E30092284C /* Resources */,
+				50B514732D23133F0092284C /* Extension */,
+				50B514922D2316700092284C /* Interface */,
+				50D148142D71F292008E9F03 /* PlatformSupport */,
+			);
+			name = "FlowDown-Catalyst";
+			packageProductDependencies = (
+				50343FA22DA2515C00CC6820 /* SnapKit */,
+				50343FA42DA2515C00CC6820 /* SwifterSwift */,
+				50343FA62DA2515C00CC6820 /* MarkdownView */,
+				50343FA72DA2515C00CC6820 /* BetterCodable */,
+				50343FA92DA2515C00CC6820 /* ThatListView */,
+				50343FAA2DA2515C00CC6820 /* RichEditor */,
+				50343FAB2DA2515C00CC6820 /* Storage */,
+				50343FAC2DA2515C00CC6820 /* AlertController */,
+				50343FAD2DA2515C00CC6820 /* ConfigurableKit */,
+				50343FAF2DA2515C00CC6820 /* ChidoriMenu */,
+				50343FB02DA2515C00CC6820 /* MLX */,
+				50343FB22DA2515C00CC6820 /* MLXLLM */,
+				50343FB42DA2515C00CC6820 /* MLXLMCommon */,
+				50343FB52DA2515C00CC6820 /* Transformers */,
+				50343FB72DA2515C00CC6820 /* Digger */,
+				50343FB82DA2515C00CC6820 /* SPIndicator */,
+				50343FBA2DA2515C00CC6820 /* MLXVLM */,
+				50343FBB2DA2515C00CC6820 /* ZIPFoundation */,
+				50343FBD2DA2515C00CC6820 /* Litext */,
+				50343FBE2DA2515C00CC6820 /* ChatClientKit */,
+				50343FBF2DA2515C00CC6820 /* ScrubberKit */,
+				50343FC02DA2515C00CC6820 /* Respring */,
+				50343FC22DA2515C00CC6820 /* GPTEncoder */,
+				50343FC42DA2515C00CC6820 /* RunestoneEditor */,
+				50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */,
+				50343FC62DA2515C00CC6820 /* GlyphixTextFx */,
+			);
+			productName = FlowDown;
+			productReference = 50343FF02DA2515C00CC6820 /* FlowDown.app */;
+			productType = "com.apple.product-type.application";
+		};
+		503498BC2D23053D004672BD /* FlowDown */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 503498D02D23053E004672BD /* Build configuration list for PBXNativeTarget "FlowDown" */;
+			buildPhases = (
+				50F70AB12D74BFE7005DD7FC /* Generate Anchored Resources */,
+				503498B92D23053D004672BD /* Sources */,
+				503498BA2D23053D004672BD /* Frameworks */,
+				503498BB2D23053D004672BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5050EB812D478A5800634B81 /* Backend */,
+				50B514652D2305C00092284C /* Application */,
+				50B514682D2305E30092284C /* Resources */,
+				50B514732D23133F0092284C /* Extension */,
+				50B514922D2316700092284C /* Interface */,
+				50D148142D71F292008E9F03 /* PlatformSupport */,
+			);
+			name = FlowDown;
+			packageProductDependencies = (
+				50B514772D23157A0092284C /* SnapKit */,
+				50B5149A2D2316EC0092284C /* SwifterSwift */,
+				507849692D285B5900B1F430 /* MarkdownView */,
+				50383CE92D2E1E0D00426941 /* BetterCodable */,
+				EDB65C722D36580F0071FC8E /* ThatListView */,
+				501C98E02D3E52CE00CD8E11 /* RichEditor */,
+				50C9035A2D428DAD00E6E3A8 /* Storage */,
+				505BC6F82D42A73600894BB0 /* AlertController */,
+				502BCBD02D43DB2B00500180 /* ConfigurableKit */,
+				5050E8D72D466E5E00634B81 /* ChidoriMenu */,
+				5050EACE2D46D41400634B81 /* MLX */,
+				5050EB082D46DCB400634B81 /* MLXLLM */,
+				5050EB0A2D46DCB900634B81 /* MLXLMCommon */,
+				5050EB7B2D4789A300634B81 /* Transformers */,
+				50B4CDAB2D4794F90028EB33 /* Digger */,
+				505FC6182D4945E500F4CB17 /* SPIndicator */,
+				505FC65A2D4A754F00F4CB17 /* MLXVLM */,
+				50B492932D4F609E00F4D2B3 /* ZIPFoundation */,
+				ED74633D2D5A706C0009E83F /* Litext */,
+				ED16359B2D5C5BDA0081BD0B /* ChatClientKit */,
+				500373C42D62757700585574 /* ScrubberKit */,
+				EDF9A13D2D67788A001D183C /* Respring */,
+				50E3FA082D6D7FB8000405BD /* GPTEncoder */,
+				5081A0132D6DBBBA0079ECBE /* RunestoneEditor */,
+				505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */,
+				50014D7E2D8A9B3C00C10932 /* GlyphixTextFx */,
+			);
+			productName = FlowDown;
+			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		503498B52D23053D004672BD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					503498BC2D23053D004672BD = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = 503498B82D23053D004672BD /* Build configuration list for PBXProject "FlowDown" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				"zh-Hans",
+			);
+			mainGroup = 503498B42D23053D004672BD;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				50B514762D23157A0092284C /* XCRemoteSwiftPackageReference "SnapKit" */,
+				50B514982D2316CA0092284C /* XCRemoteSwiftPackageReference "SwifterSwift" */,
+				50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */,
+				502BCBCE2D43DADD00500180 /* XCRemoteSwiftPackageReference "ConfigurableKit" */,
+				5050E8DC2D46725C00634B81 /* XCRemoteSwiftPackageReference "ChidoriMenu" */,
+				5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */,
+				5050EB072D46DC9300634B81 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
+				5050EB7A2D4789A300634B81 /* XCRemoteSwiftPackageReference "swift-transformers" */,
+				505FC6172D4945B300F4CB17 /* XCRemoteSwiftPackageReference "SPIndicator" */,
+				50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				EDF9A13C2D67788A001D183C /* XCRemoteSwiftPackageReference "Respring" */,
+				50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */,
+				50014D7B2D8A98F900C10932 /* XCRemoteSwiftPackageReference "ScrubberKit" */,
+				50014D7C2D8A996300C10932 /* XCRemoteSwiftPackageReference "AlertController" */,
+				50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				503498BC2D23053D004672BD /* FlowDown */,
+				50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		50343FE72DA2515C00CC6820 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50343FE82DA2515C00CC6820 /* OpenSourceLicenses.md in Resources */,
+				50343FE92DA2515C00CC6820 /* PrivacyPolicy.md in Resources */,
+				50343FEA2DA2515C00CC6820 /* Emoji.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		503498BB2D23053D004672BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50D2848C2D72E8EE0048CE31 /* OpenSourceLicenses.md in Resources */,
+				505535C12D72F7EF00F54B28 /* PrivacyPolicy.md in Resources */,
+				502B98062D535F25003200B6 /* Emoji.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		50343FC82DA2515C00CC6820 /* Generate Anchored Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Anchored Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Resources/DevKit/scripts/anchor.version.sh\n";
+		};
+		50F70AB12D74BFE7005DD7FC /* Generate Anchored Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Anchored Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Resources/DevKit/scripts/anchor.version.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		50343FCA2DA2515C00CC6820 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				506C2E762DA252D800E370BE /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		503498B92D23053D004672BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50B5146B2D2305F20092284C /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */ = {
+			isa = PBXVariantGroup;
+			children = (
+				505535BF2D72F7EF00F54B28 /* en */,
+				505535C22D72F7F200F54B28 /* zh-Hans */,
+			);
+			name = PrivacyPolicy.md;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		50343FEE2DA2515C00CC6820 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 50;
+				DEVELOPMENT_TEAM = 964G86XT2P;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-Catalyst.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to take picture. Your photo may be uploaded by your choice.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
+				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.5;
+				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.fdp;
+				PRODUCT_NAME = FlowDown;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		50343FEF2DA2515C00CC6820 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 50;
+				DEVELOPMENT_TEAM = 964G86XT2P;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-Catalyst.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to take picture. Your photo may be uploaded by your choice.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
+				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.5;
+				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.flow;
+				PRODUCT_NAME = FlowDown;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		503498D12D23053E004672BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-iOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 50;
+				DEVELOPMENT_TEAM = 964G86XT2P;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to take picture. Your photo may be uploaded by your choice.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.5;
+				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.fdp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		503498D22D23053E004672BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-iOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 50;
+				DEVELOPMENT_TEAM = 964G86XT2P;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to take picture. Your photo may be uploaded by your choice.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.5;
+				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.flow;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		503498D32D23053E004672BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		503498D42D23053E004672BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		50343FED2DA2515C00CC6820 /* Build configuration list for PBXNativeTarget "FlowDown-Catalyst" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50343FEE2DA2515C00CC6820 /* Debug */,
+				50343FEF2DA2515C00CC6820 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		503498B82D23053D004672BD /* Build configuration list for PBXProject "FlowDown" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				503498D32D23053E004672BD /* Debug */,
+				503498D42D23053E004672BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		503498D02D23053E004672BD /* Build configuration list for PBXNativeTarget "FlowDown" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				503498D12D23053E004672BD /* Debug */,
+				503498D22D23053E004672BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		50014D7B2D8A98F900C10932 /* XCRemoteSwiftPackageReference "ScrubberKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/ScrubberKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		50014D7C2D8A996300C10932 /* XCRemoteSwiftPackageReference "AlertController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/AlertController";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+		50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ktiays/GlyphixTextFx/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
+		502BCBCE2D43DADD00500180 /* XCRemoteSwiftPackageReference "ConfigurableKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/ConfigurableKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.3;
+			};
+		};
+		50343FA32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		50343FA52DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SwifterSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwifterSwift/SwifterSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		50343FA82DA2515C00CC6820 /* XCRemoteSwiftPackageReference "BetterCodable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marksands/BetterCodable";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+			};
+		};
+		50343FAE2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ConfigurableKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/ConfigurableKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.3;
+			};
+		};
+		50343FB12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.21.3;
+			};
+		};
+		50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		50343FB62DA2515C00CC6820 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.15;
+			};
+		};
+		50343FB92DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ivanvorobei/SPIndicator";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.5;
+			};
+		};
+		50343FBC2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
+		50343FC12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "Respring" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ktiays/Respring";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		50343FC32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GPTEncoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alfianlosari/GPTEncoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+		50343FC72DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ktiays/GlyphixTextFx/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
+		50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marksands/BetterCodable";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+			};
+		};
+		5050E8DC2D46725C00634B81 /* XCRemoteSwiftPackageReference "ChidoriMenu" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/ChidoriMenu";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.2;
+			};
+		};
+		5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.21.3;
+			};
+		};
+		5050EB072D46DC9300634B81 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		5050EB7A2D4789A300634B81 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.15;
+			};
+		};
+		505FC6172D4945B300F4CB17 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ivanvorobei/SPIndicator";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.5;
+			};
+		};
+		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
+		50B514762D23157A0092284C /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		50B514982D2316CA0092284C /* XCRemoteSwiftPackageReference "SwifterSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwifterSwift/SwifterSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alfianlosari/GPTEncoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+		EDF9A13C2D67788A001D183C /* XCRemoteSwiftPackageReference "Respring" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ktiays/Respring";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		50014D7E2D8A9B3C00C10932 /* GlyphixTextFx */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */;
+			productName = GlyphixTextFx;
+		};
+		500373C42D62757700585574 /* ScrubberKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ScrubberKit;
+		};
+		501C98E02D3E52CE00CD8E11 /* RichEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RichEditor;
+		};
+		502BCBD02D43DB2B00500180 /* ConfigurableKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 502BCBCE2D43DADD00500180 /* XCRemoteSwiftPackageReference "ConfigurableKit" */;
+			productName = ConfigurableKit;
+		};
+		50343FA22DA2515C00CC6820 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FA32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		50343FA42DA2515C00CC6820 /* SwifterSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FA52DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SwifterSwift" */;
+			productName = SwifterSwift;
+		};
+		50343FA62DA2515C00CC6820 /* MarkdownView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MarkdownView;
+		};
+		50343FA72DA2515C00CC6820 /* BetterCodable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FA82DA2515C00CC6820 /* XCRemoteSwiftPackageReference "BetterCodable" */;
+			productName = BetterCodable;
+		};
+		50343FA92DA2515C00CC6820 /* ThatListView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ThatListView;
+		};
+		50343FAA2DA2515C00CC6820 /* RichEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RichEditor;
+		};
+		50343FAB2DA2515C00CC6820 /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Storage;
+		};
+		50343FAC2DA2515C00CC6820 /* AlertController */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlertController;
+		};
+		50343FAD2DA2515C00CC6820 /* ConfigurableKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FAE2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ConfigurableKit" */;
+			productName = ConfigurableKit;
+		};
+		50343FAF2DA2515C00CC6820 /* ChidoriMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChidoriMenu;
+		};
+		50343FB02DA2515C00CC6820 /* MLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FB12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLX;
+		};
+		50343FB22DA2515C00CC6820 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		50343FB42DA2515C00CC6820 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		50343FB52DA2515C00CC6820 /* Transformers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FB62DA2515C00CC6820 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Transformers;
+		};
+		50343FB72DA2515C00CC6820 /* Digger */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Digger;
+		};
+		50343FB82DA2515C00CC6820 /* SPIndicator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FB92DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SPIndicator" */;
+			productName = SPIndicator;
+		};
+		50343FBA2DA2515C00CC6820 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXVLM;
+		};
+		50343FBB2DA2515C00CC6820 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FBC2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		50343FBD2DA2515C00CC6820 /* Litext */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Litext;
+		};
+		50343FBE2DA2515C00CC6820 /* ChatClientKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatClientKit;
+		};
+		50343FBF2DA2515C00CC6820 /* ScrubberKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ScrubberKit;
+		};
+		50343FC02DA2515C00CC6820 /* Respring */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FC12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "Respring" */;
+			productName = Respring;
+		};
+		50343FC22DA2515C00CC6820 /* GPTEncoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FC32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GPTEncoder" */;
+			productName = GPTEncoder;
+		};
+		50343FC42DA2515C00CC6820 /* RunestoneEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RunestoneEditor;
+		};
+		50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlignedCollectionViewFlowLayout;
+		};
+		50343FC62DA2515C00CC6820 /* GlyphixTextFx */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50343FC72DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */;
+			productName = GlyphixTextFx;
+		};
+		50383CE92D2E1E0D00426941 /* BetterCodable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */;
+			productName = BetterCodable;
+		};
+		5050E8D72D466E5E00634B81 /* ChidoriMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChidoriMenu;
+		};
+		5050EACE2D46D41400634B81 /* MLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLX;
+		};
+		5050EB082D46DCB400634B81 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5050EB072D46DC9300634B81 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		5050EB0A2D46DCB900634B81 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5050EB072D46DC9300634B81 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		5050EB7B2D4789A300634B81 /* Transformers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5050EB7A2D4789A300634B81 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Transformers;
+		};
+		505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlignedCollectionViewFlowLayout;
+		};
+		505BC6F82D42A73600894BB0 /* AlertController */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlertController;
+		};
+		505FC6182D4945E500F4CB17 /* SPIndicator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 505FC6172D4945B300F4CB17 /* XCRemoteSwiftPackageReference "SPIndicator" */;
+			productName = SPIndicator;
+		};
+		505FC65A2D4A754F00F4CB17 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5050EB072D46DC9300634B81 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXVLM;
+		};
+		507849692D285B5900B1F430 /* MarkdownView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MarkdownView;
+		};
+		5081A0132D6DBBBA0079ECBE /* RunestoneEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RunestoneEditor;
+		};
+		50B492932D4F609E00F4D2B3 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		50B4CDAB2D4794F90028EB33 /* Digger */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Digger;
+		};
+		50B514772D23157A0092284C /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50B514762D23157A0092284C /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		50B5149A2D2316EC0092284C /* SwifterSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50B514982D2316CA0092284C /* XCRemoteSwiftPackageReference "SwifterSwift" */;
+			productName = SwifterSwift;
+		};
+		50C9035A2D428DAD00E6E3A8 /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Storage;
+		};
+		50E3FA082D6D7FB8000405BD /* GPTEncoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */;
+			productName = GPTEncoder;
+		};
+		ED16359B2D5C5BDA0081BD0B /* ChatClientKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatClientKit;
+		};
+		ED74633D2D5A706C0009E83F /* Litext */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Litext;
+		};
+		EDB65C722D36580F0071FC8E /* ThatListView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ThatListView;
+		};
+		EDF9A13D2D67788A001D183C /* Respring */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDF9A13C2D67788A001D183C /* XCRemoteSwiftPackageReference "Respring" */;
+			productName = Respring;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 503498B52D23053D004672BD /* Project object */;
+}
