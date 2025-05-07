@@ -3,11 +3,11 @@
 import Foundation
 
 enum AnchorVersion {
-   static let version: String = "1.6"
-   static let build: Int = 61
+   static let version: String = "1.7"
+   static let build: Int = 70
 #if DEBUG
    static let magical: String = "deadbeef"
 #else
-   static let magical: String = "a9b2685135511ce87b941fce920957ca"
+   static let magical: String = "bae4e2f0d24257f62a1b9a77e4896447"
 #endif
 }

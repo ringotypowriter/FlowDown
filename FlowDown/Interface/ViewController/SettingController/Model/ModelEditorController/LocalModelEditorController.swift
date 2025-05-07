@@ -14,7 +14,7 @@ import UIKit
 
 extension ModelCapabilities {
     static var localModelEditable: [ModelCapabilities] = [
-        .visual,
+//        .visual, // currently broken due to mlx-swift-libraries broken
     ]
 }
 
@@ -173,37 +173,39 @@ class LocalModelEditorController: StackScrollController {
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Capabilities"))
-        ) { $0.bottom /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
-        for cap in ModelCapabilities.localModelEditable {
-            let view = ConfigurableToggleActionView()
-            view.boolValue = model?.capabilities.contains(cap) ?? false
-            view.actionBlock = { [weak self] value in
-                guard let self else { return }
-                ModelManager.shared.editLocalModel(identifier: identifier) { model in
-                    if value {
-                        model.capabilities.insert(cap)
-                    } else {
-                        model.capabilities.remove(cap)
+        if !ModelCapabilities.localModelEditable.isEmpty {
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionHeaderView()
+                    .with(header: String(localized: "Capabilities"))
+            ) { $0.bottom /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+            
+            for cap in ModelCapabilities.localModelEditable {
+                let view = ConfigurableToggleActionView()
+                view.boolValue = model?.capabilities.contains(cap) ?? false
+                view.actionBlock = { [weak self] value in
+                    guard let self else { return }
+                    ModelManager.shared.editLocalModel(identifier: identifier) { model in
+                        if value {
+                            model.capabilities.insert(cap)
+                        } else {
+                            model.capabilities.remove(cap)
+                        }
                     }
                 }
+                view.configure(icon: .init(systemName: cap.icon))
+                view.configure(title: cap.title)
+                view.configure(description: cap.description)
+                stackView.addArrangedSubviewWithMargin(view)
+                stackView.addArrangedSubview(SeparatorView())
             }
-            view.configure(icon: .init(systemName: cap.icon))
-            view.configure(title: cap.title)
-            view.configure(description: cap.description)
-            stackView.addArrangedSubviewWithMargin(view)
+            
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionFooterView()
+                    .with(footer: String(localized: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors."))
+            ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
         }
-
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionFooterView()
-                .with(footer: String(localized: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors."))
-        ) { $0.top /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
