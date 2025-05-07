@@ -1517,6 +1517,16 @@
         }
       }
     },
+    "Execute tool call timed out" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行工具调用超时"
+          }
+        }
+      }
+    },
     "Export Database" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1637,16 +1647,6 @@
         }
       }
     },
-    "Failed to display location request dialog." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法显示位置请求对话框。"
-          }
-        }
-      }
-    },
     "Failed to display results dialog." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1748,7 +1748,14 @@
       }
     },
     "Failed to search" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法进行搜索"
+          }
+        }
+      }
     },
     "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution." : {
       "localizations" : {
@@ -2413,16 +2420,6 @@
         }
       }
     },
-    "Location Request" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "位置请求"
-          }
-        }
-      }
-    },
     "Location services are disabled on this device." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2743,6 +2740,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更多"
+          }
+        }
+      }
+    },
+    "More events available" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多事件可用"
           }
         }
       }
@@ -3567,16 +3574,6 @@
         }
       }
     },
-    "Share Location" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "共享定位"
-          }
-        }
-      }
-    },
     "Short" : {
       "comment" : "Model Context",
       "localizations" : {
@@ -3857,16 +3854,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "额外提示词会追加到默认提示词后。你可在此处提出需求，如语言偏好，回答格式等。"
-          }
-        }
-      }
-    },
-    "The AI assistant is requesting your current location information. Do you want to share your location?" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI 助理正在请求你的位置信息。你确定要共享你的位置吗？"
           }
         }
       }
@@ -4499,6 +4486,16 @@
         }
       }
     },
+    "Use Tool" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用工具"
+          }
+        }
+      }
+    },
     "User cancelled sharing calendar events." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4515,16 +4512,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用户已取消操作。"
-          }
-        }
-      }
-    },
-    "User declined to share location information." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用户拒绝了定位请求。"
           }
         }
       }
@@ -5057,6 +5044,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你的设备不支持 MLX。"
+          }
+        }
+      }
+    },
+    "Your model is calling a tool: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的模型请求调用工具：%@"
           }
         }
       }

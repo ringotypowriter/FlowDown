@@ -9,7 +9,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MarkdownParserCore",
-            targets: ["MarkdownParserCore"]),
+            targets: ["MarkdownParserCore"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-cmark", from: "0.5.0"),
@@ -23,6 +24,6 @@ let package = Package(
                 .product(name: "cmark-gfm", package: "swift-cmark"),
                 .product(name: "cmark-gfm-extensions", package: "swift-cmark"),
             ]
-        )
+        ),
     ]
 )

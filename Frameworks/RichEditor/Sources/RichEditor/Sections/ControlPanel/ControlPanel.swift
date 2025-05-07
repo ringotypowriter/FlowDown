@@ -31,12 +31,20 @@ public class ControlPanel: EditorSectionView {
         icon: "link"
     )
 
-    lazy var buttonViews: [GiantButton] = [
-        cameraButton,
-        photoButton,
-        fileButton,
-        webButton,
-    ]
+    #if targetEnvironment(macCatalyst)
+        lazy var buttonViews: [GiantButton] = [
+            photoButton,
+            fileButton,
+            webButton,
+        ]
+    #else
+        lazy var buttonViews: [GiantButton] = [
+            cameraButton,
+            photoButton,
+            fileButton,
+            webButton,
+        ]
+    #endif
 
     weak var delegate: Delegate? = nil
 

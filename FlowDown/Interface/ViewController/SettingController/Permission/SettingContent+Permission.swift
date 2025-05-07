@@ -77,15 +77,17 @@ extension SettingController.SettingContent {
         override func setupContentViews() {
             super.setupContentViews()
 
-            stackView.addArrangedSubviewWithMargin(
-                ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Media")
-                )
-            ) { $0.bottom /= 2 }
-            stackView.addArrangedSubview(SeparatorView())
+            #if !targetEnvironment(macCatalyst)
+                stackView.addArrangedSubviewWithMargin(
+                    ConfigurableSectionHeaderView().with(
+                        header: String(localized: "Media")
+                    )
+                ) { $0.bottom /= 2 }
+                stackView.addArrangedSubview(SeparatorView())
 
-            stackView.addArrangedSubviewWithMargin(cameraUsage)
-            stackView.addArrangedSubview(SeparatorView())
+                stackView.addArrangedSubviewWithMargin(cameraUsage)
+                stackView.addArrangedSubview(SeparatorView())
+            #endif
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(

@@ -59,7 +59,7 @@ class ConversationController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         hidesBottomBarWhenPushed = true
         view.backgroundColor = .comfortableBackground
 

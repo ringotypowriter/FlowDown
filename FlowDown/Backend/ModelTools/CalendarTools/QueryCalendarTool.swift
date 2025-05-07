@@ -213,7 +213,16 @@ class MTQueryCalendarTool: ModelTool {
         var displayLines = [String]()
         let lines = markdownResult.split(separator: "\n")
 
+        var lineCount = 0
+        var lineLimitExceeded = false
+
         for line in lines {
+            lineCount += 1
+            if lineCount > 6 {
+                lineLimitExceeded = true
+                break
+            }
+
             let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
             if trimmedLine.hasPrefix("# ") {
@@ -234,6 +243,10 @@ class MTQueryCalendarTool: ModelTool {
                 // 其他非空行
                 displayLines.append(trimmedLine)
             }
+        }
+
+        if lineLimitExceeded {
+            displayLines.append("\n... \(String(localized: "More events available"))")
         }
 
         return displayLines.joined(separator: "\n")

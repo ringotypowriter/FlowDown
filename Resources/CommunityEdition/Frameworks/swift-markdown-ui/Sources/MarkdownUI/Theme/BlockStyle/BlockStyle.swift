@@ -38,25 +38,25 @@ import SwiftUI
 ///
 /// ![](CustomBlockquote)
 public struct BlockStyle<Configuration> {
-  private let body: (Configuration) -> AnyView
+    private let body: (Configuration) -> AnyView
 
-  /// Creates a block style that customizes a block by applying the given body.
-  /// - Parameter body: A view builder that returns the customized block.
-  public init<Body: View>(@ViewBuilder body: @escaping (_ configuration: Configuration) -> Body) {
-    self.body = { AnyView(body($0)) }
-  }
+    /// Creates a block style that customizes a block by applying the given body.
+    /// - Parameter body: A view builder that returns the customized block.
+    public init(@ViewBuilder body: @escaping (_ configuration: Configuration) -> some View) {
+        self.body = { AnyView(body($0)) }
+    }
 
-  func makeBody(configuration: Configuration) -> AnyView {
-    self.body(configuration)
-  }
+    func makeBody(configuration: Configuration) -> AnyView {
+        body(configuration)
+    }
 }
 
-extension BlockStyle where Configuration == Void {
-  /// Creates a block style for a block with no content, like a thematic break.
-  /// - Parameter body: A view builder that returns the customized block.
-  public init<Body: View>(@ViewBuilder body: @escaping () -> Body) {
-    self.init { _ in
-      body()
+public extension BlockStyle where Configuration == Void {
+    /// Creates a block style for a block with no content, like a thematic break.
+    /// - Parameter body: A view builder that returns the customized block.
+    init(@ViewBuilder body: @escaping () -> some View) {
+        self.init { _ in
+            body()
+        }
     }
-  }
 }

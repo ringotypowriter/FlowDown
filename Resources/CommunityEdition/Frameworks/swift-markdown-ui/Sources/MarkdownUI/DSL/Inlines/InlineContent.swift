@@ -2,7 +2,7 @@ import Foundation
 
 /// A protocol that represents any Markdown inline content.
 public protocol InlineContentProtocol {
-  var _inlineContent: InlineContent { get }
+    var _inlineContent: InlineContent { get }
 }
 
 /// A Markdown inline content value.
@@ -33,18 +33,18 @@ public protocol InlineContentProtocol {
 /// }
 /// ```
 public struct InlineContent: Equatable, InlineContentProtocol {
-  public var _inlineContent: InlineContent { self }
-  let inlines: [InlineNode]
+    public var _inlineContent: InlineContent { self }
+    let inlines: [InlineNode]
 
-  init(inlines: [InlineNode] = []) {
-    self.inlines = inlines
-  }
+    init(inlines: [InlineNode] = []) {
+        self.inlines = inlines
+    }
 
-  init(_ components: [InlineContentProtocol]) {
-    self.init(inlines: components.map(\._inlineContent).flatMap(\.inlines))
-  }
+    init(_ components: [InlineContentProtocol]) {
+        self.init(inlines: components.map(\._inlineContent).flatMap(\.inlines))
+    }
 
-  init(_ text: String) {
-    self.init(inlines: [.text(text)])
-  }
+    init(_ text: String) {
+        self.init(inlines: [.text(text)])
+    }
 }

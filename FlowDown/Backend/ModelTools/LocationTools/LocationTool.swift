@@ -97,42 +97,12 @@ class MTLocationTool: ModelTool {
     @MainActor
     func requestLocationWithUserInteraction(controller: UIViewController, locale: Locale) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
-            // 确认用户同意获取位置信息
-            let alert = AlertViewController(
-                title: String(localized: "Location Request"),
-                message: String(
-                    localized:
-                    "The AI assistant is requesting your current location information. Do you want to share your location?"
-                )
-            ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
-                    context.dispose {
-                        continuation.resume(
-                            throwing: Error(
-                                displayableText: String(localized: "User declined to share location information.")
-                            )
-                        )
-                    }
-                }
-                context.addAction(title: String(localized: "Share Location"), attribute: .dangerous) {
-                    context.dispose {
-                        // 用户同意，开始获取位置
-                        self.getLocationAndAddress(controller: controller, locale: locale) { result, isSuccess in
-                            if isSuccess {
-                                continuation.resume(returning: result)
-                            } else {
-                                continuation.resume(throwing: Error(displayableText: result))
-                            }
-                        }
-                    }
-                }
-            }
-
-            controller.present(alert, animated: true) {
-                guard alert.isVisible else {
-                    continuation.resume(
-                        returning: String(localized: "Failed to display location request dialog."))
-                    return
+            // App Store Review said don't ask for that
+            self.getLocationAndAddress(controller: controller, locale: locale) { result, isSuccess in
+                if isSuccess {
+                    continuation.resume(returning: result)
+                } else {
+                    continuation.resume(throwing: Error(displayableText: result))
                 }
             }
         }

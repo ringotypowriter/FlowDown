@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ktiays/GlyphixTextFx/",
       "state" : {
-        "revision" : "f8abaa8c8be1fd386adc041195f5e9a03149ca46",
-        "version" : "2.1.1"
+        "revision" : "b408e8cfbfd2114372a60e7323ff95e2b4719446",
+        "version" : "2.1.2"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnmai-dev/Jinja",
       "state" : {
-        "revision" : "bbddb92fc51ae420b87300298370fd1dfc308f73",
-        "version" : "1.1.1"
+        "revision" : "31c4dd39bcdc07eaa42a384bdc88ea599022b800",
+        "version" : "1.1.2"
       }
     },
     {
@@ -114,7 +114,7 @@
       "location" : "https://github.com/ml-explore/mlx-swift-examples/",
       "state" : {
         "branch" : "main",
-        "revision" : "289bb6794b4f6c206bc2bc41d3739268919b06ce"
+        "revision" : "3013e713017ff5d6c65d803f9ad391e4728dbc12"
       }
     },
     {
@@ -212,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/huggingface/swift-transformers",
       "state" : {
-        "revision" : "be855fac725dbae27264e47a3eb535cc422a4ba8",
-        "version" : "0.1.18"
+        "revision" : "940a4fac109d7d68817b22382de4894a8ea945c3",
+        "version" : "0.1.20"
       }
     },
     {
@@ -239,8 +239,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Tencent/wcdb",
       "state" : {
-        "revision" : "f54d02ea07294d142b0fae9a4c942343b9e9c8b3",
-        "version" : "2.1.10"
+        "revision" : "db68d174876d4c50c9843d0e6e22c58adebf2431",
+        "version" : "2.1.11"
       }
     },
     {
@@ -248,8 +248,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ktiays/With",
       "state" : {
-        "revision" : "2bbdb3846c850043b850e2b8859d74f8e20e3044",
-        "version" : "1.2.0"
+        "revision" : "22b09c886751816992d04a04cc3024bdba5ca95c",
+        "version" : "2.0.0"
       }
     },
     {
