@@ -27,20 +27,21 @@ To generate enterprise model configuration, aka call over custom api, there is a
 - [x] **Blazing Fast Text Rendering** Delivers a seamless user experience
 - [x] **Automated Chat Titles** Streamlines conversations and boosts productivity
 - [x] **Privacy by Design** We don't collect your data
+- [x] **Open Sourced** You can verify our promise in person
 
 ## Editions
 
-We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**.
+We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**. Community edition is deprecated.
 
 | **Feature**           | **FlowDown** | **FlowDown Community** |
 | --------------------- | ------------ | ---------------------- |
 | Chat with AI          | ✅           | ✅                     |
 | Fast Markdown         | ✅           | ✅                     |
 | Privacy by Design     | ✅           | ✅                     |
-| Bring Your Own LLM    | ✅           | ✅                     |
-| Offline LLM w/ MLX    | ✅           | ❌                     |
+| Bring Your Own LLM    | ✅ [Guide](https://apps.qaq.wiki/docs/flowdown/en/documents/advanced_settings/enterprise.html) | ✅ |
+| Offline LLM w/ MLX    | ✅ [List](https://apps.qaq.wiki/docs/flowdown/en/documents/quickstart/local_models.html) | ❌ |
 | Visual LLM            | ✅           | ❌                     |
-| Open-Source           | ✅           | ✅                     |
+| Open-Source           | ✅ *Finally* | ✅                     |
 | Web Search            | ✅           | ❌                     |
 | Attachments           | ✅           | ❌                     |
 | Language Localization | ✅           | ❌                     |
