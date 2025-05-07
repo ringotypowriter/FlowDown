@@ -44,13 +44,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice."
+            "value" : "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "浮望需要被授予日历权限才能在 AI 调用时正常使用。你的日历数据将会被模型处理，若使用云端模型，此数据可能会被上传到你所配置的服务提供商处。"
+            "value" : "浮望需要日历权限来访问您的日程信息，以提供诸如推荐可用会议时间、安排与联系人的约会以及发送即将到来的事件提醒等功能。例如，当您询问\"为下周的团队会议找一个时间\"时，浮望将检查您的日历以确定空闲时段。您的日历数据仅在回答查询时临时处理，而不会被浮望存储。如果您使用基于云的 AI 模型，这些数据可能会在处理过程中发送给您选择的服务提供商。\n"
           }
         }
       }
@@ -115,14 +115,14 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider."
+            "state" : "translated",
+            "value" : "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "需要此权限以便在 AI 需要时访问您的位置。您的数据将用于查询，并可能上传至您的服务提供商。"
+            "value" : "浮望需要位置权限以便在您请求时提供基于位置的帮助。例如，当您询问\"查找附近的咖啡店\"或\"到达下一个会议需要多长时间\"时，浮望将访问您的当前位置以提供相关建议或行程时间。您的位置仅在特定请求需要时被访问，而不会被浮望存储。如果使用基于云的 AI 模型，这些数据可能会发送给您选择的服务提供商。"
           }
         }
       }

@@ -87,7 +87,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"InfoPlist/Info-Catalyst.plist",
-				"InfoPlist/Info-Creem.plist",
 				"InfoPlist/Info-iOS.plist",
 			);
 			target = 503498BC2D23053D004672BD /* FlowDown */;
@@ -96,7 +95,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"InfoPlist/Info-Catalyst.plist",
-				"InfoPlist/Info-Creem.plist",
 				"InfoPlist/Info-iOS.plist",
 			);
 			target = 50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */;
@@ -528,7 +526,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 61;
 				DEVELOPMENT_TEAM = 964G86XT2P;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -536,10 +534,10 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
-				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
@@ -574,7 +572,7 @@
 				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 61;
 				DEVELOPMENT_TEAM = 964G86XT2P;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -582,10 +580,10 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
-				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
@@ -626,12 +624,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to take picture. Your photo may be uploaded by your choice.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
@@ -670,12 +669,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to function normally when the AI attempts to utilize tools. Your calendar data will be processed by the model. If you are using a cloud-based model, this data may be uploaded to the service provider of your choice.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We use your camera to take picture. Your photo may be uploaded by your choice.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FlowDown needs this permission to access your location when required by AI. Your data will be available for the query and may be uploaded to your service provider.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
