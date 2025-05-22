@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/AlertController",
       "state" : {
-        "revision" : "ab5ac5969bf145064a15d344d34b165abd917074",
-        "version" : "1.0.1"
+        "revision" : "27bc85ec9a25916b6c87df214c43312e6922c7df",
+        "version" : "1.1.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/listviewkit",
       "state" : {
-        "revision" : "f962d84d7fae81a94910483f5f15583368cfde12",
-        "version" : "1.0.0"
+        "revision" : "1bad58bd35f2ccc0eae5738c61f3a70e5fdba7f8",
+        "version" : "1.0.1"
       }
     },
     {
@@ -123,7 +123,7 @@
       "location" : "https://github.com/ml-explore/mlx-swift-examples/",
       "state" : {
         "branch" : "main",
-        "revision" : "3013e713017ff5d6c65d803f9ad391e4728dbc12"
+        "revision" : "a7c2e7b6580a2ccf5ce0afa8d243026830fb84df"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
-        "version" : "1.1.4"
+        "revision" : "c1805596154bb3a265fd91b8ac0c4433b4348fb0",
+        "version" : "1.2.0"
       }
     },
     {

@@ -272,7 +272,10 @@ final class MessageListView: UIView {
         }
 
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
-        if shouldScrolling { listView.scroll(to: listView.maximumContentOffset, animated: true) }
+        if shouldScrolling {
+            print("[*] scrolling to \(listView.maximumContentOffset)")
+            listView.scroll(to: listView.maximumContentOffset, animated: true)
+        }
     }
 }
 
@@ -294,9 +297,7 @@ extension MessageListView: UIScrollViewDelegate {
     func scrollViewDidScroll(_: UIScrollView) {
         let numberOfItems = dataSource.numberOfItems(in: listView)
         let lastIndex = numberOfItems - 1
-        if lastIndex < 0 {
-            return
-        }
+        if lastIndex < 0 { return }
         guard let rowView = listView.rowView(at: lastIndex) else {
             return
         }
