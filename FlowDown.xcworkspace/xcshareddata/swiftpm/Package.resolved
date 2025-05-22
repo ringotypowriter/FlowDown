@@ -91,6 +91,15 @@
       }
     },
     {
+      "identity" : "listviewkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/listviewkit",
+      "state" : {
+        "revision" : "f962d84d7fae81a94910483f5f15583368cfde12",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "litext",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/Litext",

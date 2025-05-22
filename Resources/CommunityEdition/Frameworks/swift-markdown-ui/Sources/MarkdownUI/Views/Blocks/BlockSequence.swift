@@ -45,7 +45,7 @@ struct BlockSequence<Data, Content>: View
             tightSpacingEnabled ? 0 : blockMargins[predecessor.hashValue]?.bottom
 
         return [topSpacing, predecessorBottomSpacing]
-            .compactMap { $0 }
+            .compactMap(\.self)
             .max()
     }
 }

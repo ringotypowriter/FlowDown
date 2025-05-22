@@ -8,7 +8,7 @@ import Foundation
 /// ``TaskList/init(tight:items:)``.
 @resultBuilder public enum TaskListContentBuilder {
     public static func buildBlock(_ components: [TaskListItem]...) -> [TaskListItem] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildExpression(_ expression: String) -> [TaskListItem] {
@@ -20,7 +20,7 @@ import Foundation
     }
 
     public static func buildArray(_ components: [[TaskListItem]]) -> [TaskListItem] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildOptional(_ component: [TaskListItem]?) -> [TaskListItem] {

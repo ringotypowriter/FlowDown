@@ -7,7 +7,7 @@ import Foundation
 /// `@TextTableRowBuilder` attribute, implicitly calling this builder for you.
 @resultBuilder public enum TextTableRowBuilder<Value> {
     public static func buildBlock(_ components: [TextTableRow<Value>]...) -> [TextTableRow<Value>] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildExpression(_ expression: TextTableRow<Value>) -> [TextTableRow<Value>] {
@@ -15,7 +15,7 @@ import Foundation
     }
 
     public static func buildArray(_ components: [[TextTableRow<Value>]]) -> [TextTableRow<Value>] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildOptional(_ component: [TextTableRow<Value>]?) -> [TextTableRow<Value>] {

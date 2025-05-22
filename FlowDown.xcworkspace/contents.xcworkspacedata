@@ -20,9 +20,6 @@
       location = "group:Frameworks/RichEditor">
    </FileRef>
    <FileRef
-      location = "group:Frameworks/ThatListView">
-   </FileRef>
-   <FileRef
       location = "group:Frameworks/ObjectPool">
    </FileRef>
    <FileRef

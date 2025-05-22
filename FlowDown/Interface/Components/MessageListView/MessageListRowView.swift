@@ -3,12 +3,12 @@
 //  Copyright (c) 2025 ktiays. All rights reserved.
 //
 
+import ListViewKit
 import Litext
 import MarkdownView
-import ThatListView
 import UIKit
 
-class MessageListRowView: ThatListRowView {
+class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
     var theme: MarkdownTheme = .default {
         didSet {
             themeDidUpdate()
@@ -16,9 +16,22 @@ class MessageListRowView: ThatListRowView {
         }
     }
 
+    let contentView = UIView()
+    var handleContextMenu: ((_ location: CGPoint) -> Void)?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = false
+        addSubview(contentView)
+
+        contentView.isUserInteractionEnabled = true
+
+        #if targetEnvironment(macCatalyst)
+            contentView.addInteraction(UIContextMenuInteraction(delegate: self))
+        #endif
+
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        contentView.addGestureRecognizer(longPress)
     }
 
     @available(*, unavailable)
@@ -28,9 +41,7 @@ class MessageListRowView: ThatListRowView {
 
     override func layoutSubviews() {
         themeDidUpdate()
-
         super.layoutSubviews()
-
         let insets = MessageListView.listRowInsets
         contentView.frame = .init(
             x: insets.left,
@@ -45,6 +56,8 @@ class MessageListRowView: ThatListRowView {
     override func prepareForReuse() {
         super.prepareForReuse()
 
+        handleContextMenu = nil
+
         var bfs: [UIView] = subviews
         while let firstView = bfs.first {
             bfs.removeFirst()
@@ -53,5 +66,17 @@ class MessageListRowView: ThatListRowView {
                 ltxLabel.clearSelection()
             }
         }
+    }
+
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        handleContextMenu?(location)
+        return nil
+    }
+
+    @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        handleContextMenu?(gesture.location(in: contentView))
     }
 }

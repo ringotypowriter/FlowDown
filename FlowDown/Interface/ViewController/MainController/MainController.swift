@@ -246,7 +246,7 @@ class MainController: UIViewController {
         guard presentedViewController == nil else { return }
         guard let touch = touches.first else { return }
         if !isSidebarCollapsed, !touchesMoved, contentView.frame.contains(touch.location(in: view)) {
-            view.withAnimation { self.isSidebarCollapsed = true }
+            view.doWithAnimation { self.isSidebarCollapsed = true }
             return
         }
     }
@@ -273,7 +273,7 @@ class MainController: UIViewController {
     }
 
     @objc private func contentViewButtonTapped() {
-        view.withAnimation { self.isSidebarCollapsed.toggle() }
+        view.doWithAnimation { self.isSidebarCollapsed.toggle() }
     }
 
     @objc func requestNewChat() {

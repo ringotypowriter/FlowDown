@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIView {
-    func withAnimation(duration: TimeInterval = 0.5, _ execute: @escaping () -> Void, completion: @escaping () -> Void = {}) {
+    func doWithAnimation(duration: TimeInterval = 0.5, _ execute: @escaping () -> Void, completion: @escaping () -> Void = {}) {
         layoutIfNeeded()
         UIView.animate(
             withDuration: duration,
@@ -29,7 +29,7 @@ extension UIView {
         generator.impactOccurred()
         transform = CGAffineTransform(scaleX: 0.975, y: 0.975)
         layoutIfNeeded()
-        withAnimation { self.transform = .identity }
+        doWithAnimation { self.transform = .identity }
     }
 
     func shake() {

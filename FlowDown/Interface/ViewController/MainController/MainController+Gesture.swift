@@ -12,12 +12,12 @@ extension MainController {
         updateLayoutGuide(withOffset: offset)
         if isSidebarCollapsed {
             if offset > 100 {
-                view.withAnimation { self.isSidebarCollapsed = false }
+                view.doWithAnimation { self.isSidebarCollapsed = false }
                 return true
             }
         } else {
             if offset < -100 {
-                view.withAnimation { self.isSidebarCollapsed = true }
+                view.doWithAnimation { self.isSidebarCollapsed = true }
                 return true
             }
         }
@@ -30,7 +30,7 @@ extension MainController {
 
     private func updateLayoutGuide(withOffset offset: CGFloat) {
         var offset = offset
-        view.withAnimation { [self] in
+        view.doWithAnimation { [self] in
             if isSidebarCollapsed {
                 gestureLayoutGuide.snp.updateConstraints { make in
                     make.width.equalTo(max(0, offset))

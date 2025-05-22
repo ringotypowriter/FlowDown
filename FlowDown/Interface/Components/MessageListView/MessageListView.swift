@@ -6,21 +6,21 @@
 import AlertController
 import ChidoriMenu
 import Combine
+import ListViewKit
 import Litext
 import MarkdownNode
 import MarkdownParser
 import MarkdownView
 import SnapKit
 import Storage
-import ThatListView
 import UIKit
 
 final class MessageListView: UIView {
-    private lazy var listView: ListView = .init()
+    private lazy var listView: MessageListViewCore = .init()
     var contentSize: CGSize { listView.contentSize }
 
     private(set) lazy var markdownDrawingViewProvider: DrawingViewProvider = .init()
-    lazy var dataSource: ThatListViewDiffableDataSource<Entry> = .init(listView: listView)
+    lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
 
     private var entryCount = 0
 
@@ -81,7 +81,6 @@ final class MessageListView: UIView {
 
         listView.delegate = self
         listView.adapter = self
-        listView.dataSource = dataSource
         listView.alwaysBounceVertical = true
         listView.alwaysBounceHorizontal = false
         listView.contentInsetAdjustmentBehavior = .never
@@ -325,7 +324,7 @@ extension MessageListView: UIScrollViewDelegate {
         return entries[lastIndex] != lastItem
     }
 
-    private func rowViewInSuppressedRect(_ rowView: ThatListRowView) -> Bool {
+    private func rowViewInSuppressedRect(_ rowView: ListRowView) -> Bool {
         let rect = rowView.convert(rowView.bounds, to: listView)
         // If the tail of the last row exceeds the visible area by a certain distance,
         // the list update can be paused.
@@ -335,7 +334,7 @@ extension MessageListView: UIScrollViewDelegate {
 }
 
 extension MessageListView {
-    final class ListView: ThatListView {
+    final class MessageListViewCore: ListViewKit.ListView {
         var layoutSubviewsCallback: (() -> Void)?
 
         override func layoutSubviews() {

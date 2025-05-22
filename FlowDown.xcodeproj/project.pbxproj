@@ -32,7 +32,6 @@
 		50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA72DA2515C00CC6820 /* BetterCodable */; };
 		50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAD2DA2515C00CC6820 /* ConfigurableKit */; };
 		50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB22DA2515C00CC6820 /* MLXLLM */; };
-		50343FE12DA2515C00CC6820 /* ThatListView in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA92DA2515C00CC6820 /* ThatListView */; };
 		50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBA2DA2515C00CC6820 /* MLXVLM */; };
 		50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */; };
 		50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA62DA2515C00CC6820 /* MarkdownView */; };
@@ -62,10 +61,11 @@
 		50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50B5149A2D2316EC0092284C /* SwifterSwift */; };
 		50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 50C9035A2D428DAD00E6E3A8 /* Storage */; };
 		50D2848C2D72E8EE0048CE31 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
+		50DDB1712DDF16F200351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1702DDF16F200351E46 /* ListViewKit */; };
+		50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1722DDF170000351E46 /* ListViewKit */; };
 		50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50E3FA082D6D7FB8000405BD /* GPTEncoder */; };
 		ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED16359B2D5C5BDA0081BD0B /* ChatClientKit */; };
 		ED74633E2D5A706C0009E83F /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = ED74633D2D5A706C0009E83F /* Litext */; };
-		EDB65C732D36580F0071FC8E /* ThatListView in Frameworks */ = {isa = PBXBuildFile; productRef = EDB65C722D36580F0071FC8E /* ThatListView */; };
 		EDF9A13E2D67788A001D183C /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = EDF9A13D2D67788A001D183C /* Respring */; };
 /* End PBXBuildFile section */
 
@@ -163,10 +163,10 @@
 				50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */,
 				50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */,
 				50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */,
-				50343FE12DA2515C00CC6820 /* ThatListView in Frameworks */,
 				50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */,
 				50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */,
 				50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */,
+				50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */,
 				50343FE52DA2515C00CC6820 /* RunestoneEditor in Frameworks */,
 				50343FE62DA2515C00CC6820 /* SnapKit in Frameworks */,
 			);
@@ -196,10 +196,10 @@
 				50383CEA2D2E1E0D00426941 /* BetterCodable in Frameworks */,
 				502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */,
 				5050EB092D46DCB400634B81 /* MLXLLM in Frameworks */,
-				EDB65C732D36580F0071FC8E /* ThatListView in Frameworks */,
 				505FC65B2D4A754F00F4CB17 /* MLXVLM in Frameworks */,
 				505535BC2D72F38900F54B28 /* AlignedCollectionViewFlowLayout in Frameworks */,
 				5078496A2D285B5900B1F430 /* MarkdownView in Frameworks */,
+				50DDB1712DDF16F200351E46 /* ListViewKit in Frameworks */,
 				5081A0142D6DBBBA0079ECBE /* RunestoneEditor in Frameworks */,
 				50B514782D23157A0092284C /* SnapKit in Frameworks */,
 			);
@@ -291,7 +291,6 @@
 				50343FA42DA2515C00CC6820 /* SwifterSwift */,
 				50343FA62DA2515C00CC6820 /* MarkdownView */,
 				50343FA72DA2515C00CC6820 /* BetterCodable */,
-				50343FA92DA2515C00CC6820 /* ThatListView */,
 				50343FAA2DA2515C00CC6820 /* RichEditor */,
 				50343FAB2DA2515C00CC6820 /* Storage */,
 				50343FAC2DA2515C00CC6820 /* AlertController */,
@@ -313,6 +312,7 @@
 				50343FC42DA2515C00CC6820 /* RunestoneEditor */,
 				50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */,
 				50343FC62DA2515C00CC6820 /* GlyphixTextFx */,
+				50DDB1722DDF170000351E46 /* ListViewKit */,
 			);
 			productName = FlowDown;
 			productReference = 50343FF02DA2515C00CC6820 /* FlowDown.app */;
@@ -345,7 +345,6 @@
 				50B5149A2D2316EC0092284C /* SwifterSwift */,
 				507849692D285B5900B1F430 /* MarkdownView */,
 				50383CE92D2E1E0D00426941 /* BetterCodable */,
-				EDB65C722D36580F0071FC8E /* ThatListView */,
 				501C98E02D3E52CE00CD8E11 /* RichEditor */,
 				50C9035A2D428DAD00E6E3A8 /* Storage */,
 				505BC6F82D42A73600894BB0 /* AlertController */,
@@ -367,6 +366,7 @@
 				5081A0132D6DBBBA0079ECBE /* RunestoneEditor */,
 				505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */,
 				50014D7E2D8A9B3C00C10932 /* GlyphixTextFx */,
+				50DDB1702DDF16F200351E46 /* ListViewKit */,
 			);
 			productName = FlowDown;
 			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
@@ -412,6 +412,7 @@
 				50014D7B2D8A98F900C10932 /* XCRemoteSwiftPackageReference "ScrubberKit" */,
 				50014D7C2D8A996300C10932 /* XCRemoteSwiftPackageReference "AlertController" */,
 				50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */,
+				50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1055,6 +1056,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/listviewkit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/alfianlosari/GPTEncoder";
@@ -1110,10 +1119,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50343FA82DA2515C00CC6820 /* XCRemoteSwiftPackageReference "BetterCodable" */;
 			productName = BetterCodable;
-		};
-		50343FA92DA2515C00CC6820 /* ThatListView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ThatListView;
 		};
 		50343FAA2DA2515C00CC6820 /* RichEditor */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1288,6 +1293,16 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Storage;
 		};
+		50DDB1702DDF16F200351E46 /* ListViewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */;
+			productName = ListViewKit;
+		};
+		50DDB1722DDF170000351E46 /* ListViewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */;
+			productName = ListViewKit;
+		};
 		50E3FA082D6D7FB8000405BD /* GPTEncoder */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */;
@@ -1300,10 +1315,6 @@
 		ED74633D2D5A706C0009E83F /* Litext */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Litext;
-		};
-		EDB65C722D36580F0071FC8E /* ThatListView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ThatListView;
 		};
 		EDF9A13D2D67788A001D183C /* Respring */ = {
 			isa = XCSwiftPackageProductDependency;

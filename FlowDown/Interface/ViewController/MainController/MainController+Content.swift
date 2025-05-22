@@ -28,7 +28,7 @@ extension MainController {
 
         #if !targetEnvironment(macCatalyst)
             chatView.escapeButton.actionBlock = { [weak self] in
-                self?.view.withAnimation {
+                self?.view.doWithAnimation {
                     self?.isSidebarCollapsed.toggle()
                 }
             }
@@ -66,7 +66,7 @@ extension MainController: Sidebar.Delegate {
                 guard self.presentedViewController == nil else { return }
                 let tableView = self.sidebar.conversationListView.tableView
                 guard !tableView.isEditing else { return }
-                self.view.withAnimation { self.isSidebarCollapsed = true }
+                self.view.doWithAnimation { self.isSidebarCollapsed = true }
             }
         #endif
     }

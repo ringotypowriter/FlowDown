@@ -66,7 +66,7 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
     /// You can use this property to access the contents of a blockquote or a list. Returns `nil` if
     /// there are no container blocks.
     public var childContent: MarkdownContent? {
-        let children = blocks.map(\.children).flatMap { $0 }
+        let children = blocks.map(\.children).flatMap(\.self)
         return children.isEmpty ? nil : .init(blocks: children)
     }
 

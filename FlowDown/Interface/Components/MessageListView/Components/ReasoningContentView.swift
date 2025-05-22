@@ -37,7 +37,7 @@ final class ReasoningContentView: MessageListRowView {
             thinkingTile.isRevealed = isRevealed
             setNeedsLayout()
             layoutIfNeeded()
-        } }
+        }}
     }
 
     var isThinking: Bool = false {

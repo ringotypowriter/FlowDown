@@ -168,7 +168,7 @@ extension WebSearchStateView {
                 updateProgressBarFrame()
                 return
             }
-            withAnimation { self.updateProgressBarFrame() }
+            doWithAnimation { self.updateProgressBarFrame() }
         }
 
         static func intrinsicHeight(withLabelFont labelFont: UIFont) -> CGFloat {

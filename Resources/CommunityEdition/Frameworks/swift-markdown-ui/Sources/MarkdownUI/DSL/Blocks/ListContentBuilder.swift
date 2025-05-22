@@ -8,7 +8,7 @@ import Foundation
 /// ``NumberedList/init(tight:start:items:)``.
 @resultBuilder public enum ListContentBuilder {
     public static func buildBlock(_ components: [ListItem]...) -> [ListItem] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildExpression(_ expression: String) -> [ListItem] {
@@ -20,7 +20,7 @@ import Foundation
     }
 
     public static func buildArray(_ components: [[ListItem]]) -> [ListItem] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildOptional(_ component: [ListItem]?) -> [ListItem] {

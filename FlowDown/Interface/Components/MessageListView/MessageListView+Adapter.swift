@@ -4,12 +4,12 @@
 //
 
 import AlertController
+import ListViewKit
 import Litext
 import MarkdownParser
 import MarkdownView
 import RichEditor
 import Storage
-import ThatListView
 import UIKit
 
 private extension MessageListView {
@@ -25,8 +25,26 @@ private extension MessageListView {
     }
 }
 
-extension MessageListView: ThatListViewAdapter {
-    func makeThatListRowView(for kind: RowKind) -> ThatListRowView {
+extension MessageListView: ListViewAdapter {
+    func listView(_: ListViewKit.ListView, rowKindFor item: ItemType, at _: Int) -> RowKind {
+        guard let entry = item as? Entry else {
+            assertionFailure("Invalid item type")
+            return RowType.userContent
+        }
+
+        return switch entry {
+        case .userContent: RowType.userContent
+        case .userAttachment: RowType.userAttachment
+        case .aiContent: RowType.aiContent
+        case .webSearchContent: RowType.webSearch
+        case .hint: RowType.hint
+        case .activityReporting: RowType.activityReporting
+        case .reasoningContent: RowType.reasoningContent
+        case .toolCallStatus: RowType.toolCallHint
+        }
+    }
+
+    func listViewMakeRow(for kind: RowKind) -> ListViewKit.ListRowView {
         guard let rowType = kind as? RowType else {
             assertionFailure("Invalid row kind")
             return .init()
@@ -54,14 +72,7 @@ extension MessageListView: ThatListViewAdapter {
         return view
     }
 
-    private func boundingSize(with width: CGFloat, for attributedString: NSAttributedString) -> CGSize {
-        labelForSizeCalculation.preferredMaxLayoutWidth = width
-        labelForSizeCalculation.attributedText = attributedString
-        let contentSize = labelForSizeCalculation.intrinsicContentSize
-        return .init(width: ceil(contentSize.width), height: ceil(contentSize.height))
-    }
-
-    func thatListView(_ list: ThatListView, heightFor item: ItemType, at _: Int) -> CGFloat {
+    func listView(_ list: ListViewKit.ListView, heightFor item: ItemType, at _: Int) -> CGFloat {
         let listRowInsets = MessageListView.listRowInsets
         let containerWidth = max(0, list.bounds.width - listRowInsets.horizontal)
         if containerWidth == 0 {
@@ -120,33 +131,17 @@ extension MessageListView: ThatListViewAdapter {
         return contentHeight + bottomInset
     }
 
-    func thatListView(_: ThatListView, rowKindFor item: ItemType, at _: Int) -> RowKind {
-        guard let entry = item as? Entry else {
-            assertionFailure("Invalid item type")
-            return RowType.userContent
-        }
-
-        return switch entry {
-        case .userContent: RowType.userContent
-        case .userAttachment: RowType.userAttachment
-        case .aiContent: RowType.aiContent
-        case .webSearchContent: RowType.webSearch
-        case .hint: RowType.hint
-        case .activityReporting: RowType.activityReporting
-        case .reasoningContent: RowType.reasoningContent
-        case .toolCallStatus: RowType.toolCallHint
-        }
-    }
-
-    func thatListView(
-        _: ThatListView,
-        configureRowView rowView: ThatListRowView,
-        for item: ItemType,
-        at _: Int
-    ) {
+    func listView(_ listView: ListViewKit.ListView, configureRowView rowView: ListViewKit.ListRowView, for item: ItemType, at index: Int) {
         guard let entry = item as? Entry else {
             assertionFailure("Invalid item type")
             return
+        }
+
+        if let rowView = rowView as? MessageListRowView {
+            rowView.handleContextMenu = { pointInRowContentView in
+                let pointInListView = listView.convert(pointInRowContentView, from: rowView.contentView)
+                self.processContextMenu(listView, anchor: pointInListView, for: item, at: index)
+            }
         }
 
         if let userMessageView = rowView as? UserMessageView {
@@ -163,7 +158,7 @@ extension MessageListView: ThatListViewAdapter {
                 let nodes = markdownNodesCache.nodes(for: message)
                 aiMessageView.markdownView.nodes = nodes
                 aiMessageView.linkTapHandler = { [weak self] link, range, touchLocation in
-                    self?.handleLinkTapped(link, in: range, at: aiMessageView.contentView.convert(touchLocation, to: self))
+                    self?.handleLinkTapped(link, in: range, at: aiMessageView.convert(touchLocation, to: self))
                 }
                 aiMessageView.codePreviewHandler = { [weak self] lang, code in
                     let viewer = self?.handleCodePreview(code: code, language: lang)
@@ -237,18 +232,14 @@ extension MessageListView: ThatListViewAdapter {
         }
     }
 
-    func thatListView(
-        _ listView: ThatListView,
-        willDisplayContextMenuAt point: CGPoint,
-        for item: ItemType,
-        at index: Int,
-        view: ThatListRowView
-    ) {
-        assert(Thread.isMainThread)
-        processContextMenu(listView, willDisplayContextMenuAt: point, for: item, at: index, view: view)
+    private func boundingSize(with width: CGFloat, for attributedString: NSAttributedString) -> CGSize {
+        labelForSizeCalculation.preferredMaxLayoutWidth = width
+        labelForSizeCalculation.attributedText = attributedString
+        let contentSize = labelForSizeCalculation.intrinsicContentSize
+        return .init(width: ceil(contentSize.width), height: ceil(contentSize.height))
     }
 
-    private func hasActivatedEventOnLabel(listView: ThatListView, location: CGPoint) -> Bool {
+    private func hasActivatedEventOnLabel(listView: ListViewKit.ListView, location: CGPoint) -> Bool {
         var lookup: [UIView] = listView.subviews
         while !lookup.isEmpty {
             let view = lookup.removeFirst()
@@ -267,12 +258,16 @@ extension MessageListView: ThatListViewAdapter {
         return false
     }
 
+    func listView(_ list: ListViewKit.ListView, onEvent event: ListViewKit.ListViewEvent) {
+        _ = list
+        _ = event
+    }
+
     private func processContextMenu(
-        _ listView: ThatListView,
-        willDisplayContextMenuAt point: CGPoint,
+        _ listView: ListViewKit.ListView,
+        anchor point: CGPoint,
         for item: ItemType,
         at index: Int,
-        view _: ThatListRowView
     ) {
         guard !hasActivatedEventOnLabel(listView: listView, location: point) else { return }
         guard let view = listView.rowView(at: index) else { return }

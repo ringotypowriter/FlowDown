@@ -19,11 +19,11 @@ extension BlockNode {
         case let .blockquote(children):
             children
         case let .bulletedList(_, items):
-            items.map(\.children).flatMap { $0 }
+            items.map(\.children).flatMap(\.self)
         case let .numberedList(_, _, items):
-            items.map(\.children).flatMap { $0 }
+            items.map(\.children).flatMap(\.self)
         case let .taskList(_, items):
-            items.map(\.children).flatMap { $0 }
+            items.map(\.children).flatMap(\.self)
         default:
             []
         }

@@ -9,7 +9,7 @@ import Foundation
     public static func buildBlock(
         _ components: [TextTableColumn<RowValue>]...
     ) -> [TextTableColumn<RowValue>] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildExpression(
@@ -21,7 +21,7 @@ import Foundation
     public static func buildArray(
         _ components: [[TextTableColumn<RowValue>]]
     ) -> [TextTableColumn<RowValue>] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildOptional(

@@ -93,8 +93,8 @@ public extension View {
         transformPreference(BlockMarginsPreference.self) { value in
             let newValue = BlockMargin(top: top, bottom: bottom)
 
-            value.top = [value.top, newValue.top].compactMap { $0 }.max()
-            value.bottom = [value.bottom, newValue.bottom].compactMap { $0 }.max()
+            value.top = [value.top, newValue.top].compactMap(\.self).max()
+            value.bottom = [value.bottom, newValue.bottom].compactMap(\.self).max()
         }
     }
 }
@@ -105,7 +105,7 @@ struct BlockMarginsPreference: PreferenceKey {
     static func reduce(value: inout BlockMargin, nextValue: () -> BlockMargin) {
         let newValue = nextValue()
 
-        value.top = [value.top, newValue.top].compactMap { $0 }.max()
-        value.bottom = [value.bottom, newValue.bottom].compactMap { $0 }.max()
+        value.top = [value.top, newValue.top].compactMap(\.self).max()
+        value.bottom = [value.bottom, newValue.bottom].compactMap(\.self).max()
     }
 }

@@ -79,7 +79,7 @@ class HubModelDetailController: StackScrollController {
                     #endif
                     self?.present(holder, animated: true)
                 }
-                self.view.withAnimation {
+                self.view.doWithAnimation {
                     self.markdownContainerView.addSubview(markdownView)
                     markdownView.snp.makeConstraints { make in
                         make.edges.equalToSuperview()

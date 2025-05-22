@@ -14,7 +14,7 @@ import UIKit
 
 extension ModelCapabilities {
     static var localModelEditable: [ModelCapabilities] = [
-//        .visual, // currently broken due to mlx-swift-libraries broken
+        //        .visual, // currently broken due to mlx-swift-libraries broken
     ]
 }
 
@@ -179,7 +179,7 @@ class LocalModelEditorController: StackScrollController {
                     .with(header: String(localized: "Capabilities"))
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
-            
+
             for cap in ModelCapabilities.localModelEditable {
                 let view = ConfigurableToggleActionView()
                 view.boolValue = model?.capabilities.contains(cap) ?? false
@@ -199,7 +199,7 @@ class LocalModelEditorController: StackScrollController {
                 stackView.addArrangedSubviewWithMargin(view)
                 stackView.addArrangedSubview(SeparatorView())
             }
-            
+
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView()
                     .with(footer: String(localized: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors."))
