@@ -107,7 +107,7 @@ extension ConversationSession {
             do {
                 // 等待一秒以避免过快执行任务用户还没看到内容
                 try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
-                guard let result = try await ModelToolsManager.shared.perform(
+                guard let result = ModelToolsManager.shared.perform(
                     withTool: tool,
                     parms: request.args,
                     anchorTo: currentMessageListView
