@@ -77,6 +77,7 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
     }
 
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
         handleContextMenu?(gesture.location(in: contentView))
     }
 }

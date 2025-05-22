@@ -245,16 +245,21 @@ extension MessageListView: ListViewAdapter {
             let view = lookup.removeFirst()
             lookup.append(contentsOf: view.subviews)
             if let label = view as? LTXLabel {
-                if label.isInteractionInProgress { return true }
+                if label.isInteractionInProgress {
+                    print("[*] event is activate on \(label)")
+                    return true
+                }
                 if label.selectionRange != nil {
                     let location = label.convert(location, from: listView)
                     if label.isLocationInSelection(location: location) {
+                        print("[*] event is activate on \(label)")
                         return true
                     }
                     label.clearSelection()
                 }
             }
         }
+        print("[*] no event, returning false")
         return false
     }
 
@@ -269,7 +274,9 @@ extension MessageListView: ListViewAdapter {
         for item: ItemType,
         at index: Int,
     ) {
-        guard !hasActivatedEventOnLabel(listView: listView, location: point) else { return }
+        let hasActivateEvent = hasActivatedEventOnLabel(listView: listView, location: point)
+        print("[*] context menu checking event \(hasActivateEvent)")
+        guard !hasActivateEvent else { return }
         guard let view = listView.rowView(at: index) else { return }
 
         var isHandled = false

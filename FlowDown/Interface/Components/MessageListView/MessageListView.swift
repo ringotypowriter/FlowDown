@@ -273,7 +273,7 @@ final class MessageListView: UIView {
 
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
         if shouldScrolling {
-            print("[*] scrolling to \(listView.maximumContentOffset)")
+//            print("[*] scrolling to \(listView.maximumContentOffset)")
             listView.scroll(to: listView.maximumContentOffset, animated: true)
         }
     }
