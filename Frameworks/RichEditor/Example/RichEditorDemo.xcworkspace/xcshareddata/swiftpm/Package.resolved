@@ -1,21 +1,30 @@
 {
   "pins" : [
     {
-      "identity" : "flex",
+      "identity" : "alertcontroller",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/FLEXTool/FLEX.git",
+      "location" : "https://github.com/Lakr233/AlertController",
       "state" : {
-        "revision" : "e0acf59d06d498041f65bbea1e5914b6e4b39733",
-        "version" : "5.22.10"
+        "revision" : "27bc85ec9a25916b6c87df214c43312e6922c7df",
+        "version" : "1.1.0"
       }
     },
     {
-      "identity" : "lookinserver",
+      "identity" : "alignedcollectionviewflowlayout",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/QMUI/LookinServer/",
+      "location" : "https://github.com/mischa-hildebrand/AlignedCollectionViewFlowLayout",
       "state" : {
-        "revision" : "e553d1b689d147817dc54ad5c28fcff71e860101",
-        "version" : "1.2.8"
+        "revision" : "236094ac389234d528cc782c140bcb20724b86bf",
+        "version" : "1.1.3"
+      }
+    },
+    {
+      "identity" : "scrubberkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/ScrubberKit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "9db765d4ce66c8eb6778472903c3e8d041349527"
       }
     },
     {
@@ -25,6 +34,15 @@
       "state" : {
         "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
         "version" : "1.1.4"
+      }
+    },
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup",
+      "state" : {
+        "revision" : "bba848db50462894e7fc0891d018dfecad4ef11e",
+        "version" : "2.8.7"
       }
     }
   ],
