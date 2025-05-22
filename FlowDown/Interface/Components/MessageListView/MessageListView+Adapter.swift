@@ -245,10 +245,6 @@ extension MessageListView: ListViewAdapter {
             let view = lookup.removeFirst()
             lookup.append(contentsOf: view.subviews)
             if let label = view as? LTXLabel {
-                if label.isInteractionInProgress {
-                    print("[*] event is activate on \(label)")
-                    return true
-                }
                 if label.selectionRange != nil {
                     let location = label.convert(location, from: listView)
                     if label.isLocationInSelection(location: location) {
