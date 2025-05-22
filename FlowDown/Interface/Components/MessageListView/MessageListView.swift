@@ -96,8 +96,10 @@ final class MessageListView: UIView {
                     return
                 }
                 if listView.contentSize.height > 0 {
-                    // Scrolls to the bottom when the list view is first loaded.
-                    listView.scroll(to: listView.maximumContentOffset)
+                    listView.setContentOffset(
+                        .init(x: 0, y: listView.maximumContentOffset.y),
+                        animated: false
+                    )
                     listView.setNeedsLayout()
                     isFirstLoad = false
                 }
@@ -156,7 +158,7 @@ final class MessageListView: UIView {
         isLoading = true
         dataSource.applySnapshot(snapshot)
         if isAutoScrollingToBottom {
-            listView.scroll(to: listView.maximumContentOffset, animated: true)
+            listView.scroll(to: listView.maximumContentOffset)
         }
     }
 
@@ -274,7 +276,7 @@ final class MessageListView: UIView {
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
         if shouldScrolling {
 //            print("[*] scrolling to \(listView.maximumContentOffset)")
-            listView.scroll(to: listView.maximumContentOffset, animated: true)
+            listView.scroll(to: listView.maximumContentOffset)
         }
     }
 }
