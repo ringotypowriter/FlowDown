@@ -8,9 +8,6 @@
       location = "group:Frameworks/Storage">
    </FileRef>
    <FileRef
-      location = "group:Frameworks/Digger">
-   </FileRef>
-   <FileRef
       location = "group:Frameworks/MarkdownView">
    </FileRef>
    <FileRef

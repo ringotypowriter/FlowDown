@@ -60,6 +60,7 @@
 		50B514782D23157A0092284C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50B514772D23157A0092284C /* SnapKit */; };
 		50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50B5149A2D2316EC0092284C /* SwifterSwift */; };
 		50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 50C9035A2D428DAD00E6E3A8 /* Storage */; };
+		50CB4E752DE30A57009C58E1 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50CB4E742DE30A57009C58E1 /* Digger */; };
 		50D2848C2D72E8EE0048CE31 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
 		50DDB1712DDF16F200351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1702DDF16F200351E46 /* ListViewKit */; };
 		50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1722DDF170000351E46 /* ListViewKit */; };
@@ -189,6 +190,7 @@
 				50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */,
 				50014D7F2D8A9B3C00C10932 /* GlyphixTextFx in Frameworks */,
 				50B492942D4F609E00F4D2B3 /* ZIPFoundation in Frameworks */,
+				50CB4E752DE30A57009C58E1 /* Digger in Frameworks */,
 				505BC6F92D42A73600894BB0 /* AlertController in Frameworks */,
 				500373C52D62757700585574 /* ScrubberKit in Frameworks */,
 				5050EB7C2D4789A300634B81 /* Transformers in Frameworks */,
@@ -367,6 +369,7 @@
 				505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */,
 				50014D7E2D8A9B3C00C10932 /* GlyphixTextFx */,
 				50DDB1702DDF16F200351E46 /* ListViewKit */,
+				50CB4E742DE30A57009C58E1 /* Digger */,
 			);
 			productName = FlowDown;
 			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
@@ -413,6 +416,7 @@
 				50014D7C2D8A996300C10932 /* XCRemoteSwiftPackageReference "AlertController" */,
 				50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */,
 				50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */,
+				50CB4E732DE30A57009C58E1 /* XCRemoteSwiftPackageReference "Digger" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1056,6 +1060,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		50CB4E732DE30A57009C58E1 /* XCRemoteSwiftPackageReference "Digger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/Digger";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.5;
+			};
+		};
 		50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Lakr233/ListViewKit";
@@ -1292,6 +1304,11 @@
 		50C9035A2D428DAD00E6E3A8 /* Storage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Storage;
+		};
+		50CB4E742DE30A57009C58E1 /* Digger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50CB4E732DE30A57009C58E1 /* XCRemoteSwiftPackageReference "Digger" */;
+			productName = Digger;
 		};
 		50DDB1702DDF16F200351E46 /* ListViewKit */ = {
 			isa = XCSwiftPackageProductDependency;
