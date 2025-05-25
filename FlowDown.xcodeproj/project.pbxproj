@@ -412,7 +412,7 @@
 				50014D7B2D8A98F900C10932 /* XCRemoteSwiftPackageReference "ScrubberKit" */,
 				50014D7C2D8A996300C10932 /* XCRemoteSwiftPackageReference "AlertController" */,
 				50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */,
-				50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */,
+				50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1056,9 +1056,9 @@
 				minimumVersion = 7.0.0;
 			};
 		};
-		50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */ = {
+		50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Lakr233/listviewkit";
+			repositoryURL = "https://github.com/Lakr233/ListViewKit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.2;
@@ -1295,12 +1295,12 @@
 		};
 		50DDB1702DDF16F200351E46 /* ListViewKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */;
+			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */;
 			productName = ListViewKit;
 		};
 		50DDB1722DDF170000351E46 /* ListViewKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "listviewkit" */;
+			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */;
 			productName = ListViewKit;
 		};
 		50E3FA082D6D7FB8000405BD /* GPTEncoder */ = {
