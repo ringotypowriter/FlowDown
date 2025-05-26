@@ -118,12 +118,21 @@
       }
     },
     {
+      "identity" : "lrucache",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nicklockwood/LRUCache",
+      "state" : {
+        "revision" : "542f0449556327415409ededc9c43a4bd0a397dc",
+        "version" : "1.0.7"
+      }
+    },
+    {
       "identity" : "markdownview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "7d41df70a8342b0aed708f7cedcdfdcd3ab886c8",
-        "version" : "0.1.4"
+        "revision" : "954589a399c504ab4197a907316b2465928a2b87",
+        "version" : "0.1.6"
       }
     },
     {
