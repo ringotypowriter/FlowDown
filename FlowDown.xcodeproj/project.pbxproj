@@ -417,6 +417,7 @@
 				50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */,
 				50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */,
 				50CB4E732DE30A57009C58E1 /* XCRemoteSwiftPackageReference "Digger" */,
+				50A350B92DE4B5C3008F094E /* XCRemoteSwiftPackageReference "MarkdownView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1034,6 +1035,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.6.5;
+			};
+		};
+		50A350B92DE4B5C3008F094E /* XCRemoteSwiftPackageReference "MarkdownView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/MarkdownView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.2;
 			};
 		};
 		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {

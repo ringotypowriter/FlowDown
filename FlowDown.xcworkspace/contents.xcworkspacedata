@@ -8,16 +8,7 @@
       location = "group:Frameworks/Storage">
    </FileRef>
    <FileRef
-      location = "group:Frameworks/MarkdownView">
-   </FileRef>
-   <FileRef
-      location = "group:Frameworks/MarkdownNode">
-   </FileRef>
-   <FileRef
       location = "group:Frameworks/RichEditor">
-   </FileRef>
-   <FileRef
-      location = "group:Frameworks/ObjectPool">
    </FileRef>
    <FileRef
       location = "group:Frameworks/ChatClientKit">

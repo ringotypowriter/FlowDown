@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MarkdownNode
+import MarkdownParser
 import WCDBSwift
 
 public final class Message: Identifiable, Codable, TableCodable {

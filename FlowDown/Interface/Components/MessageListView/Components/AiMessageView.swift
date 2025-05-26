@@ -34,7 +34,6 @@ final class AiMessageView: MessageListRowView {
     }
 
     private func configureSubviews() {
-        markdownView.ignoresCharacterSetSuffixForCodeHighlighting = ["\u{25CF}", "`"]
         contentView.addSubview(markdownView)
     }
 

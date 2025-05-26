@@ -6,7 +6,6 @@
 import AlertController
 import ListViewKit
 import Litext
-import MarkdownParser
 import MarkdownView
 import RichEditor
 import Storage

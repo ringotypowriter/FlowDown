@@ -100,9 +100,9 @@
       }
     },
     {
-      "identity" : "ListViewKit",
+      "identity" : "listviewkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lakr233/ListViewKit",
+      "location" : "https://github.com/Lakr233/listviewkit",
       "state" : {
         "revision" : "ca20472ed6d4e43bae3b032bfdd9912f46e01a4d",
         "version" : "1.1.2"
@@ -115,6 +115,15 @@
       "state" : {
         "revision" : "0a5abb015a53776d61291a96c4cf452f5b49e13e",
         "version" : "0.4.2"
+      }
+    },
+    {
+      "identity" : "markdownview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/MarkdownView",
+      "state" : {
+        "revision" : "bca960c514062f18338497efe2e7d2147fd0e26f",
+        "version" : "0.1.2"
       }
     },
     {
@@ -210,10 +219,10 @@
     {
       "identity" : "swift-cmark",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-cmark",
+      "location" : "https://github.com/Lakr233/swift-cmark",
       "state" : {
-        "revision" : "b022b08312decdc46585e0b3440d97f6f22ef703",
-        "version" : "0.6.0"
+        "revision" : "65cccbe1098cddf9311061995b70eb439d5901f6",
+        "version" : "0.6.1"
       }
     },
     {
@@ -250,6 +259,15 @@
       "state" : {
         "revision" : "5a6de915bb80234e1e31b3e3e5f7a7995fc1f4db",
         "version" : "7.0.0"
+      }
+    },
+    {
+      "identity" : "swiftmath",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mgriebling/SwiftMath",
+      "state" : {
+        "revision" : "606f9be66db6afe0c41c3b064723a57061723db7",
+        "version" : "1.7.1"
       }
     },
     {
