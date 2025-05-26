@@ -100,9 +100,9 @@
       }
     },
     {
-      "identity" : "listviewkit",
+      "identity" : "ListViewKit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lakr233/listviewkit",
+      "location" : "https://github.com/Lakr233/ListViewKit",
       "state" : {
         "revision" : "ca20472ed6d4e43bae3b032bfdd9912f46e01a4d",
         "version" : "1.1.2"
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "954589a399c504ab4197a907316b2465928a2b87",
-        "version" : "0.1.6"
+        "revision" : "6eae0ecc5f9a721b287fba63c557fdf10ddb3153",
+        "version" : "0.1.7"
       }
     },
     {
