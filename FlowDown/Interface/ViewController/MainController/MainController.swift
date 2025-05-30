@@ -14,7 +14,8 @@ class MainController: UIViewController {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .background
         #if targetEnvironment(macCatalyst)
-            $0.alpha = 0.05
+            $0.alpha = 0
+            $0.isHidden = true
         #else
             $0.alpha = 0.2
             let vfx = UIBlurEffect(style: .systemMaterial)
