@@ -107,11 +107,21 @@ extension ConversationSession {
             do {
                 // 等待一秒以避免过快执行任务用户还没看到内容
                 try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
+
+                // 检查是否是网络搜索工具，如果是则直接执行
+                if let tool = tool as? MTWebSearchTool {
+                    performResult = try await tool.execute(with: request.args, session: self, anchorTo: currentMessageListView)
+                    isSuccessful = true
+                    continue
+                }
+
+                // 标准工具
                 guard let result = ModelToolsManager.shared.perform(
                     withTool: tool,
                     parms: request.args,
                     anchorTo: currentMessageListView
                 ) else { continue }
+
                 performResult = result
                 isSuccessful = true
             } catch {

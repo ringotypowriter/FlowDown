@@ -4960,6 +4960,16 @@
         }
       }
     },
+    "Web search completed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页搜索已完成。"
+          }
+        }
+      }
+    },
     "Web Search Engines" : {
       "localizations" : {
         "zh-Hans" : {

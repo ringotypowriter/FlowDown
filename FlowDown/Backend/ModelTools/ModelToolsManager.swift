@@ -22,6 +22,7 @@ class ModelToolsManager {
             MTQueryCalendarTool(),
 
             MTWebScraperTool(),
+            MTWebSearchTool(),
 
             MTLocationTool(),
 
@@ -44,6 +45,7 @@ class ModelToolsManager {
     var enabledTools: [ModelTool] {
         tools.filter { tool in
             if tool is MTWaitForNextRound { return true }
+            if tool is MTWebSearchTool { return true }
             return tool.isEnabled
         }
     }
@@ -51,6 +53,7 @@ class ModelToolsManager {
     var configurableTools: [ModelTool] {
         tools.filter { tool in
             if tool is MTWaitForNextRound { return false }
+            if tool is MTWebSearchTool { return false }
             return true
         }
     }

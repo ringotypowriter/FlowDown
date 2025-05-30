@@ -439,12 +439,31 @@ extension ConversationSessionManager.Session {
 }
 
 extension ConversationSession {
+    func format(internetDocument: String, title: String, atIndex index: Int) -> String {
+        String(localized: """
+        <web_document id="\(index)">
+        <title>\(title)</title>
+        <note>This document is provided by system, please cite the source if used.</note>
+        <content>
+        \(internetDocument)
+        </content>
+        </web_document>
+        """)
+    }
+
     func preprocessSearchQueries(
         _ currentMessageListView: MessageListView,
         _ object: inout RichEditorView.Object,
         _ webSearchResults: inout [Message.WebSearchStatus.SearchResult]
     ) async throws {
         guard case let .bool(value) = object.options[.browsing], value else {
+            return
+        }
+
+        // 检查是否同时启用了工具调用，如果是，则跳过预处理阶段的网络搜索
+        if case let .bool(tools) = object.options[.tools], tools {
+            // 当同时启用工具调用和网络搜索时，让模型决定何时使用网络搜索工具
+            print("[*] Web search will be handled as a tool call")
             return
         }
 
@@ -506,15 +525,11 @@ extension ConversationSession {
                     name: doc.title,
                     previewImage: .init(),
                     imageRepresentation: .init(),
-                    textRepresentation: String(localized: """
-                    <web_document id="\(idx + 1)">
-                    <title>\(doc.title)</title>
-                    <note>This document is provided by system, please cite the source if used.</note>
-                    <content>
-                    \(doc.textDocument)
-                    </content>
-                    </web_document>
-                    """),
+                    textRepresentation: self.format(
+                        internetDocument: doc.textDocument,
+                        title: doc.title,
+                        atIndex: idx + 1
+                    ),
                     storageSuffix: UUID().uuidString
                 ))
             }

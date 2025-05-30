@@ -32,7 +32,7 @@ class MTWaitForNextRound: ModelTool {
     }
 
     override class var controlObject: ConfigurableObject {
-        fatalError() // this tool is always enabled
+        fatalError("MTWaitForNextRound does not have a control object.")
     }
 
     override func execute(with input: String, anchorTo view: UIView) async throws -> String {
