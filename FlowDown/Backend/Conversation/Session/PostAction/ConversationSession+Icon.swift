@@ -8,6 +8,31 @@
 import ChatClientKit
 import Foundation
 import Storage
+import XMLCoder
+
+// MARK: - XML Models
+
+private struct IconResponse: Codable {
+    let icon: String
+}
+
+private struct IconConversationXML: Codable {
+    let task: String
+    let last_user_message: String
+    let last_assistant_message: String
+    let output_format: OutputFormat
+
+    private enum CodingKeys: String, CodingKey {
+        case task
+        case last_user_message
+        case last_assistant_message
+        case output_format
+    }
+
+    struct OutputFormat: Codable {
+        let icon: String
+    }
+}
 
 extension ConversationSessionManager.Session {
     func generateConversationIcon() async -> String? {
@@ -17,39 +42,113 @@ extension ConversationSessionManager.Session {
         guard let assistantMessage = messages.last(where: { $0.role == .assistant })?.document else {
             return nil
         }
-        let document = """
-        [Begin.User.Message]
-        \(userMessage)
-        [End.User.Message]
-        [Begin.Assistant.Message]
-        \(assistantMessage)
-        [End.Assistant.Message]
-        """
-        let messages: [ChatRequestBody.Message] = ModelManager.iconGenerationMessages(
-            input: document
-        ).map {
-            switch $0.participant {
-            case .system: .system(content: .text($0.document))
-            case .assistant: .assistant(content: .text($0.document))
-            case .user: .user(content: .text($0.document))
-            }
-        }
+
+        let task = "Generate a single emoji icon that best represents this conversation. Only respond with one emoji character."
+
+        let conversationData = IconConversationXML(
+            task: task,
+            last_user_message: userMessage,
+            last_assistant_message: assistantMessage,
+            output_format: IconConversationXML.OutputFormat(icon: "💬")
+        )
 
         do {
+            let encoder = XMLEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let xmlData = try encoder.encode(conversationData, withRootKey: "conversation")
+            let xmlString = String(data: xmlData, encoding: .utf8) ?? ""
+
+            let messages: [ChatRequestBody.Message] = [
+                .system(content: .text(task)),
+                .user(content: .text(xmlString)),
+            ]
+
             guard let model = models.auxiliary else { throw NSError() }
             let ans = try await ModelManager.shared.infer(
                 with: model,
                 maxCompletionTokens: 8,
                 input: messages
             )
+
+            if let icon = extractIconFromXML(ans.content) {
+                return validateIcon(icon)
+            }
+
             let ret = ans.content.trimmingCharacters(in: .whitespacesAndNewlines)
             print("[*] generated conversation icon: \(ret)")
-            // ret.count is the count in unicode scalars, which is good from Swift
-            guard ret.count == 1 else { return nil }
-            return ret
+            return validateIcon(ret)
         } catch {
-            print("[*] failed to generate conversation icon: \(error)")
+            print("[-] failed to generate icon: \(error)")
             return nil
         }
+    }
+
+    private func extractIconFromXML(_ xmlString: String) -> String? {
+        // Try XMLCoder first
+        if let icon = extractIconUsingXMLCoder(xmlString) {
+            return icon
+        }
+
+        // Fallback to regex method
+        return extractIconUsingRegex(xmlString)
+    }
+
+    private func extractIconUsingXMLCoder(_ xmlString: String) -> String? {
+        let decoder = XMLDecoder()
+
+        // Try to decode as IconResponse directly
+        if let data = xmlString.data(using: .utf8),
+           let iconResponse = try? decoder.decode(IconResponse.self, from: data)
+        {
+            let cleanIcon = iconResponse.icon
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return cleanIcon.isEmpty ? nil : cleanIcon
+        }
+
+        return nil
+    }
+
+    private func extractIconUsingRegex(_ xmlString: String) -> String? {
+        let pattern = #"<icon>(.*?)</icon>"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
+            return nil
+        }
+
+        let range = NSRange(xmlString.startIndex ..< xmlString.endIndex, in: xmlString)
+        guard let match = regex.firstMatch(in: xmlString, options: [], range: range) else {
+            return nil
+        }
+
+        guard let iconRange = Range(match.range(at: 1), in: xmlString) else {
+            return nil
+        }
+
+        let icon = String(xmlString[iconRange])
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return icon.isEmpty ? nil : icon
+    }
+
+    private func validateIcon(_ icon: String) -> String? {
+        guard !icon.isEmpty else { return nil }
+
+        // Check if it's a single emoji character
+        guard icon.count == 1 else {
+            // If multiple characters, try to get the first emoji
+            let firstEmoji = icon.first { $0.isEmoji }
+            return firstEmoji.map(String.init)
+        }
+
+        return icon
+    }
+}
+
+// MARK: - Character Extension for Emoji Detection
+
+private extension Character {
+    var isEmoji: Bool {
+        guard let scalar = unicodeScalars.first else { return false }
+        return scalar.properties.isEmoji &&
+            (scalar.value > 0x238C || unicodeScalars.count > 1)
     }
 }

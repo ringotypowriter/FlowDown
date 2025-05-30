@@ -65,6 +65,8 @@
 		50DDB1712DDF16F200351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1702DDF16F200351E46 /* ListViewKit */; };
 		50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1722DDF170000351E46 /* ListViewKit */; };
 		50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50E3FA082D6D7FB8000405BD /* GPTEncoder */; };
+		50FBFC6C2DEA2E5400098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6B2DEA2E5400098EC4 /* XMLCoder */; };
+		50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */; };
 		ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED16359B2D5C5BDA0081BD0B /* ChatClientKit */; };
 		ED74633E2D5A706C0009E83F /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = ED74633D2D5A706C0009E83F /* Litext */; };
 		EDF9A13E2D67788A001D183C /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = EDF9A13D2D67788A001D183C /* Respring */; };
@@ -165,6 +167,7 @@
 				50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */,
 				50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */,
 				50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */,
+				50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */,
 				50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */,
 				50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */,
 				50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */,
@@ -179,6 +182,7 @@
 			files = (
 				EDF9A13E2D67788A001D183C /* Respring in Frameworks */,
 				ED74633E2D5A706C0009E83F /* Litext in Frameworks */,
+				50FBFC6C2DEA2E5400098EC4 /* XMLCoder in Frameworks */,
 				50B4CDAC2D4794F90028EB33 /* Digger in Frameworks */,
 				50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */,
 				501C98E12D3E52CE00CD8E11 /* RichEditor in Frameworks */,
@@ -315,6 +319,7 @@
 				50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */,
 				50343FC62DA2515C00CC6820 /* GlyphixTextFx */,
 				50DDB1722DDF170000351E46 /* ListViewKit */,
+				50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */,
 			);
 			productName = FlowDown;
 			productReference = 50343FF02DA2515C00CC6820 /* FlowDown.app */;
@@ -370,6 +375,7 @@
 				50014D7E2D8A9B3C00C10932 /* GlyphixTextFx */,
 				50DDB1702DDF16F200351E46 /* ListViewKit */,
 				50CB4E742DE30A57009C58E1 /* Digger */,
+				50FBFC6B2DEA2E5400098EC4 /* XMLCoder */,
 			);
 			productName = FlowDown;
 			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
@@ -418,6 +424,7 @@
 				50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */,
 				50CB4E732DE30A57009C58E1 /* XCRemoteSwiftPackageReference "Digger" */,
 				50A350B92DE4B5C3008F094E /* XCRemoteSwiftPackageReference "MarkdownView" */,
+				50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1097,6 +1104,14 @@
 				minimumVersion = 1.0.4;
 			};
 		};
+		50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CoreOffice/XMLCoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.17.1;
+			};
+		};
 		EDF9A13C2D67788A001D183C /* XCRemoteSwiftPackageReference "Respring" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ktiays/Respring";
@@ -1337,6 +1352,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */;
 			productName = GPTEncoder;
+		};
+		50FBFC6B2DEA2E5400098EC4 /* XMLCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			productName = XMLCoder;
+		};
+		50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			productName = XMLCoder;
 		};
 		ED16359B2D5C5BDA0081BD0B /* ChatClientKit */ = {
 			isa = XCSwiftPackageProductDependency;
