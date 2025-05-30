@@ -15,12 +15,60 @@ import XMLCoder
 // MARK: - XML Models for Web Search
 
 private struct WebSearchResponse: Codable {
-    let search_required: Bool
-    let queries: [String]
+    var search_required: Bool
+    var queries: QueryList
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // 容错处理 search_required 字段
+        if let boolValue = try? container.decode(Bool.self, forKey: .search_required) {
+            search_required = boolValue
+        } else if let stringValue = try? container.decode(String.self, forKey: .search_required) {
+            search_required = stringValue.lowercased() != "false"
+        } else {
+            search_required = true // 默认值
+        }
+
+        // 容错处理 queries 字段
+        if let queriesValue = try? container.decode(QueryList.self, forKey: .queries) {
+            queries = queriesValue
+        } else {
+            queries = QueryList(query: [])
+        }
+
+        if !queries.query.isEmpty, !search_required {
+            search_required = true
+        }
+    }
 
     private enum CodingKeys: String, CodingKey {
         case search_required
         case queries
+    }
+
+    struct QueryList: Codable {
+        var query: [String]
+
+        init(query: [String]) {
+            self.query = query
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            if let singleQuery = try? container.decode(String.self, forKey: .query) {
+                query = [singleQuery]
+            } else if let queryArray = try? container.decode([String].self, forKey: .query) {
+                query = queryArray
+            } else {
+                query = []
+            }
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case query
+        }
     }
 }
 
@@ -254,7 +302,7 @@ extension ConversationSessionManager.Session {
         if let data = xmlString.data(using: .utf8),
            let searchResponse = try? decoder.decode(WebSearchResponse.self, from: data)
         {
-            let queries = searchResponse.queries.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            let queries = searchResponse.queries.query.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty }
             return (queries, searchResponse.search_required)
         }
@@ -316,7 +364,7 @@ extension ConversationSessionManager.Session {
             guard searchResponse.search_required else {
                 return []
             }
-            return searchResponse.queries.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            return searchResponse.queries.query.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty }
         }
         return nil
@@ -396,9 +444,7 @@ extension ConversationSession {
         let searchQueries = searchResult.queries
         let searchRequired = searchResult.searchRequired
 
-        // 检查是否需要搜索
         if let required = searchRequired, !required {
-            // 模型明确返回不需要搜索
             print("[*] model determined no web search is needed")
             let hintMessage = appendNewMessage(role: .assistant)
             hintMessage.document = String(localized: "I have determined that no web search is needed for this query.")
@@ -407,13 +453,13 @@ extension ConversationSession {
         }
 
         guard !searchQueries.isEmpty else {
-            // 生成搜索查询失败
             print("[-] failed to generate search queries")
             let hintMessage = appendNewMessage(role: .assistant)
             hintMessage.document = String(localized: "I was unable to generate appropriate search queries for this request.")
             await requestUpdate(view: currentMessageListView)
             return
         }
+        
         let webSearchMessage = appendNewMessage(role: .webSearch)
         webSearchMessage.webSearchStatus.queries = searchQueries
         await requestUpdate(view: currentMessageListView)
@@ -478,5 +524,7 @@ extension ConversationSession {
                 ]
             )
         }
+        
+        await currentMessageListView.loading(with: String(localized: "Processing Web Search Results") + "...")
     }
 }

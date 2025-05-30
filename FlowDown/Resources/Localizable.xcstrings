@@ -3320,6 +3320,16 @@
         }
       }
     },
+    "Processing Web Search Results" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在处理网页搜索的结果"
+          }
+        }
+      }
+    },
     "Query Calendar" : {
       "localizations" : {
         "zh-Hans" : {
