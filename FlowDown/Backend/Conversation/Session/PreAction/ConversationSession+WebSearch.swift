@@ -109,7 +109,18 @@ private struct WebSearchRequest: Codable {
 // MARK: - Web Search Query Generation
 
 extension ConversationSessionManager.Session {
-    private func generateWebSearchTemplate(input: String, documents: [String], previousMessages: [String]) -> [ModelManager.TemplateItem] {
+    struct TemplateItem {
+        enum Participant: String, Codable {
+            case system
+            case user
+            case assistant
+        }
+
+        let participant: Participant
+        let document: String
+    }
+
+    private func generateWebSearchTemplate(input: String, documents: [String], previousMessages: [String]) -> [TemplateItem] {
         let task = """
         Generate relevant web search queries based on the user's input and context. Focus on simple, clear keywords that would be used in search engines. Return 1-3 queries maximum, preferably just one. Use the same language as the user's input.
 

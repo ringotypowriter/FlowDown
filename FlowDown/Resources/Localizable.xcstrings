@@ -2037,6 +2037,16 @@
         }
       }
     },
+    "I have recognized this image." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我已识别这张图片。"
+          }
+        }
+      }
+    },
     "I was unable to generate appropriate search queries for this request." : {
       "localizations" : {
         "zh-Hans" : {

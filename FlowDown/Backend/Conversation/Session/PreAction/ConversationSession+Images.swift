@@ -25,21 +25,30 @@ private let languageIdentifiers: [String] = {
 }()
 
 extension ConversationSession {
-    func processImageToText(image: UIImage) async throws -> String {
+    func processImageToText(
+        image: UIImage,
+        _ currentMessageListView: MessageListView,
+
+    ) async throws -> String {
         try checkCancellation()
 
-        var messages: [ChatRequestBody.Message] = ModelManager.queryForDescribeTheImage().map {
-            switch $0.participant {
-            case .system:
-                return .system(content: .text($0.document))
-            case .assistant:
-                assertionFailure()
-                return .assistant(content: .text($0.document))
-            case .user:
-                assertionFailure()
-                return .user(content: .text($0.document))
-            }
-        }
+        var messages: [ChatRequestBody.Message] = [
+            .system(content: .text(String(localized:
+                """
+                Please provide a detailed description of the following image. The description should include the main elements in the image, the scene, colors, objects, people, and any significant details. Aim to give comprehensive information to help understand the meaning or context of the image.
+
+                1. What is the overall theme or setting of the image?
+                2. Are there any specific objects, buildings, or natural landscapes in the image? If so, please describe them.
+                3. Are there any people in the image? If yes, describe their appearance, expressions, actions, and their relation to other elements.
+                4. How do the colors and lighting in the image appear? Are there any prominent colors or contrasts?
+                5. What is in the foreground and background of the image? Are there any important details to note?
+                6. Does the image convey any specific emotions or atmosphere? If so, describe the mood or feeling.
+                7. Any other details that you find important or interesting, please include them.
+
+                If you are unable to describe the image, you may output [Unable to Identify the image.].
+                """
+            ))),
+        ]
 
         guard let base64 = image.pngBase64String(),
               let url = URL(string: "data:image/png;base64,\(base64)")
@@ -65,17 +74,38 @@ extension ConversationSession {
         print("[*] describing image with model: \(ModelManager.shared.modelName(identifier: decision))")
 
         try checkCancellation()
-        let llmText = try? await ModelManager.shared.infer(
+        try await Task.sleep(for: .seconds(0.5)) // for animation
+
+        var llmText = ""
+        let message = appendNewMessage(role: .assistant)
+        for try await resp in try await ModelManager.shared.streamingInfer(
             with: decision,
             maxCompletionTokens: 2048,
             input: messages
-        ).content
+        ) {
+            await requestUpdate(view: currentMessageListView)
+            startThinking(for: message.id)
+            llmText = resp.content
+            message.reasoningContent = llmText
+            await requestUpdate(view: currentMessageListView)
+        }
+        if !message.reasoningContent.isEmpty {
+            message.document = String(localized: "I have recognized this image.")
+            message.isThinkingFold = true
+        }
+        stopThinking(for: message.id)
+        await requestUpdate(view: currentMessageListView)
+        await currentMessageListView.loading()
+
+        llmText = llmText
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let llmAns = llmText ?? String(localized: "Unable to identify the image with tool model.")
+        if llmText.isEmpty {
+            llmText = String(localized: "Unable to identify the image with tool model.")
+        }
 
         var ans = ""
-        ans += "[Image Description]\n\(llmAns)\n"
+        ans += "[Image Description]\n\(llmText)\n"
 
         try checkCancellation()
         if let ocrAns = try? await executeOpticalCharacterRecognition(on: image), !ocrAns.isEmpty {

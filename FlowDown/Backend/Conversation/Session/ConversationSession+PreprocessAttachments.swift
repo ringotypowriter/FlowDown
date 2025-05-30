@@ -37,7 +37,10 @@ extension ConversationSession {
             }
             let hint = String(localized: "Identifying an image: \(processCount)/\(attachmentThatRequiresProcess.count)")
             await currentMessageListView.loading(with: hint)
-            let text = try await self.processImageToText(image: image)
+            let text = try await self.processImageToText(
+                image: image,
+                currentMessageListView
+            )
             object.attachments[idx].textRepresentation = text
         }
 
