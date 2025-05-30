@@ -18,7 +18,7 @@ extension ConversationSession {
     ) {
         requestMessages.append(
             .system(
-                content: .text(
+                content: .text(String(localized:
                     """
                     System is providing you up to date information about current query:
 
@@ -28,18 +28,18 @@ extension ConversationSession {
 
                     Please use up-to-date information and ensure compliance with the previously provided guidelines.
                     """
-                )
+                ))
             )
         )
 
         if modelWillExecuteTools {
             requestMessages.append(
                 .system(
-                    content: .text(
+                    content: .text(String(localized:
                         """
                         The system provides several tools for your convenience. Please use them wisely and according to the user’s query. Avoid requesting information that is already provided or easily inferred.
                         """
-                    )
+                    ))
                 )
             )
         }

@@ -3204,6 +3204,16 @@
         }
       }
     },
+    "Please provide a detailed description of the following image. The description should include the main elements in the image, the scene, colors, objects, people, and any significant details. Aim to give comprehensive information to help understand the meaning or context of the image.\n\n1. What is the overall theme or setting of the image?\n2. Are there any specific objects, buildings, or natural landscapes in the image? If so, please describe them.\n3. Are there any people in the image? If yes, describe their appearance, expressions, actions, and their relation to other elements.\n4. How do the colors and lighting in the image appear? Are there any prominent colors or contrasts?\n5. What is in the foreground and background of the image? Are there any important details to note?\n6. Does the image convey any specific emotions or atmosphere? If so, describe the mood or feeling.\n7. Any other details that you find important or interesting, please include them.\n\nIf you are unable to describe the image, you may output [Unable to Identify the image.]." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请对以下图像进行详细描述。描述应包含图像中的主要元素、场景、颜色、物体、人物及任何重要细节。旨在提供全面信息以帮助理解图像的含义或背景。\n\n1.  图像的整体主题或场景是什么？\n2.  图像中是否有特定的物体、建筑或自然景观？如果有，请描述它们。\n3.  图像中是否有人物？如果有，请描述他们的外貌、表情、动作以及与其他元素的关系。\n4.  图像中的颜色和光线如何呈现？是否有突出的颜色或对比？\n5.  图像的前景和背景分别是什么？是否有需要注意的重要细节？\n6.  图像是否传达了特定的情感或氛围？如果是，请描述这种情绪或感觉。\n7.  其他您认为重要或有趣的细节，请一并包含。\n\n如果您无法描述该图像，可以输出 [无法识别图像]。"
+          }
+        }
+      }
+    },
     "Please read the agreements carefully." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3768,6 +3778,22 @@
         }
       }
     },
+    "System is providing you up to date information about current query:\n\nModel/Your Name: %@\nCurrent Date: %@\nCurrent User Locale: %@\n\nPlease use up-to-date information and ensure compliance with the previously provided guidelines." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "System is providing you up to date information about current query:\n\nModel/Your Name: %1$@\nCurrent Date: %2$@\nCurrent User Locale: %3$@\n\nPlease use up-to-date information and ensure compliance with the previously provided guidelines."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统正在提供关于当前查询的最新信息：\n\n你的名字： %1$@\n当前日期： %2$@\n用户区域： %3$@\n\n请使用最新信息，并确保符合先前提供的指南。\n"
+          }
+        }
+      }
+    },
     "Task Model" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3960,6 +3986,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "希望使用的模型的名称。"
+          }
+        }
+      }
+    },
+    "The system provides several tools for your convenience. Please use them wisely and according to the user’s query. Avoid requesting information that is already provided or easily inferred." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统提供多种工具以便您使用，请根据用户查询内容明智调用，避免请求已提供或易推断的信息。\n"
           }
         }
       }
