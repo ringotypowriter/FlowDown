@@ -27,11 +27,20 @@ open class RemoteChatClient: ChatService {
 
     public var collectedErrors: String? = nil
 
-    public init(model: String, baseURL: String? = nil, path: String? = nil, apiKey: String? = nil) {
+    public var additionalField: [String: Any] = [:]
+
+    public init(
+        model: String,
+        baseURL: String? = nil,
+        path: String? = nil,
+        apiKey: String? = nil,
+        additionalField: [String: Any] = [:]
+    ) {
         self.model = model
         self.baseURL = baseURL
         self.path = path
         self.apiKey = apiKey
+        self.additionalField = additionalField
     }
 
     public func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
@@ -39,7 +48,7 @@ open class RemoteChatClient: ChatService {
         body.model = model
         body.stream = false
         body.streamOptions = nil
-        let request = try request(for: body)
+        let request = try request(for: body, additionalField: additionalField)
         let (data, _) = try await session.data(for: request)
         var response = try JSONDecoder().decode(ChatResponseBody.self, from: data)
         response.choices = response.choices.map { choice in
@@ -59,8 +68,7 @@ open class RemoteChatClient: ChatService {
 
         // streamOptions is not supported when running up on cohere api
         // body.streamOptions = .init(includeUsage: true)
-
-        let request = try request(for: body)
+        let request = try request(for: body, additionalField: additionalField)
         logger.info("starting streaming request with \(body.messages.count) messages")
 
         let stream = AsyncStream<ChatServiceStreamObject> { continuation in
@@ -254,7 +262,7 @@ open class RemoteChatClient: ChatService {
         ])
     }
 
-    private func request(for body: ChatRequestBody) throws -> URLRequest {
+    private func request(for body: ChatRequestBody, additionalField: [String: Any] = [:]) throws -> URLRequest {
         guard let baseURL else {
             throw Error.invalidURL
         }
@@ -285,6 +293,20 @@ open class RemoteChatClient: ChatService {
         request.httpBody = try JSONEncoder().encode(body)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        if !additionalField.isEmpty {
+            var originalDictionary: [String: Any] = [:]
+            if let data = request.httpBody,
+               let dic = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            { originalDictionary = dic }
+            for (key, value) in additionalField {
+                originalDictionary[key] = value
+            }
+            request.httpBody = try JSONSerialization.data(
+                withJSONObject: originalDictionary,
+                options: []
+            )
+        }
 
         return request
     }

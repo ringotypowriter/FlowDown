@@ -200,7 +200,16 @@ extension ModelManager {
 
     private func chatService(for identifier: ModelIdentifier) throws -> any ChatService {
         if let model = cloudModel(identifier: identifier) {
-            return RemoteChatClient(model: model.model_identifier, baseURL: model.endpoint, apiKey: model.token)
+            var additionalField = [String: Any]()
+            if URL(string: model.endpoint)?.host?.lowercased() == "openrouter.ai" {
+                additionalField["reasoning"] = [String: String]()
+            }
+            return RemoteChatClient(
+                model: model.model_identifier,
+                baseURL: model.endpoint,
+                apiKey: model.token,
+                additionalField: additionalField
+            )
         } else if let model = localModel(identifier: identifier) {
             return MLXChatClient(url: modelContent(for: model))
         } else {
@@ -302,7 +311,10 @@ extension ModelManager {
             switch streamObject {
             case let .chatCompletionChunk(chunk):
                 let delta = chunk.choices.first?.delta
-                msg.reasoningContent = delta?.reasoningContent ?? .init()
+                msg.reasoningContent = [
+                    delta?.reasoning ?? .init(),
+                    delta?.reasoningContent ?? .init(),
+                ].joined()
                 msg.content = delta?.content ?? .init()
             case let .tool(call):
                 msg.toolCallRequests = [call]
