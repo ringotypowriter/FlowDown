@@ -113,6 +113,12 @@ extension ConversationSessionManager.Session {
         let task = """
         Generate relevant web search queries based on the user's input and context. Focus on simple, clear keywords that would be used in search engines. Return 1-3 queries maximum, preferably just one. Use the same language as the user's input.
 
+        Consider the following context:
+        1. User's current question/request
+        2. Previous conversation history (if any)
+        3. Attached documents/files (if any)
+        4. Current date and time for time-sensitive queries
+
         Respond with valid XML format like this example:
         <output>
         <search_required>true</search_required>
@@ -121,7 +127,7 @@ extension ConversationSessionManager.Session {
         </queries>
         </output>
 
-        If no web search is needed, respond with:
+        If no web search is needed (e.g., the question is general knowledge, personal opinion, or can be answered from context), respond with:
         <output>
         <search_required>false</search_required>
         <queries></queries>
@@ -161,6 +167,8 @@ extension ConversationSessionManager.Session {
                     Application name: \(Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "unknown AI app")
 
                     Additional User Request: \(ModelManager.shared.additionalPrompt)
+
+                    Important: Consider all provided context including conversation history and attached documents when determining if web search is needed and what queries to generate.
                     """
                 ),
                 .init(participant: .user, document: xmlString),
@@ -431,13 +439,26 @@ extension ConversationSession {
 
         try checkCancellation()
         await currentMessageListView.loading()
+
+        // 获取更完整的上下文信息，包括角色和时间戳
         let prevMsgs = messages
             .filter { [.user, .assistant].contains($0.role) }
-            .map(\.document)
-            .filter { !$0.isEmpty }
+            .filter { !$0.document.isEmpty }
+            .suffix(5) // 限制最近 n 条消息避免上下文过长
+            .map { message in
+                let rolePrefix = message.role == .user ? "[User]" : "[Assistant]"
+                return "\(rolePrefix): \(message.document)"
+            }
+
+        // 获取附件的完整文本表示
+        let attachmentTexts = object.attachments.compactMap { attachment -> String? in
+            guard !attachment.textRepresentation.isEmpty else { return nil }
+            return "Document: \(attachment.name)\nContent: \(attachment.textRepresentation)"
+        }
+
         let searchResult = await generateSearchQueries(
             for: object.text,
-            attachments: object.attachments.map(\.textRepresentation),
+            attachments: attachmentTexts,
             previousMessages: prevMsgs
         )
 
@@ -459,7 +480,7 @@ extension ConversationSession {
             await requestUpdate(view: currentMessageListView)
             return
         }
-        
+
         let webSearchMessage = appendNewMessage(role: .webSearch)
         webSearchMessage.webSearchStatus.queries = searchQueries
         await requestUpdate(view: currentMessageListView)
@@ -524,7 +545,7 @@ extension ConversationSession {
                 ]
             )
         }
-        
+
         await currentMessageListView.loading(with: String(localized: "Processing Web Search Results") + "...")
     }
 }
