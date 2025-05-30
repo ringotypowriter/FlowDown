@@ -3,6 +3,16 @@
     {
       "filename" : "Cute pigeon-1.jpeg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Not Cute pigeon-1 1.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {
