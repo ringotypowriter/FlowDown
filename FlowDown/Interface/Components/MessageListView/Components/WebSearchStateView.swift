@@ -147,6 +147,13 @@ extension WebSearchStateView {
             progressBar.backgroundColor = .accent
             progressBar.layer.cornerRadius = 1
             addSubview(progressBar)
+
+            progressBar.alpha = 0
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                UIView.animate(withDuration: 0.25) {
+                    self.progressBar.alpha = 1
+                }
+            }
         }
 
         @available(*, unavailable)

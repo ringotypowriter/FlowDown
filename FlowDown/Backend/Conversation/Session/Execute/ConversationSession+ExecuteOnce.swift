@@ -112,18 +112,17 @@ extension ConversationSession {
                 if let tool = tool as? MTWebSearchTool {
                     performResult = try await tool.execute(with: request.args, session: self, anchorTo: currentMessageListView)
                     isSuccessful = true
-                    continue
+                    await currentMessageListView.loading()
+                } else {
+                    // 标准工具
+                    guard let result = ModelToolsManager.shared.perform(
+                        withTool: tool,
+                        parms: request.args,
+                        anchorTo: currentMessageListView
+                    ) else { continue }
+                    performResult = result
+                    isSuccessful = true
                 }
-
-                // 标准工具
-                guard let result = ModelToolsManager.shared.perform(
-                    withTool: tool,
-                    parms: request.args,
-                    anchorTo: currentMessageListView
-                ) else { continue }
-
-                performResult = result
-                isSuccessful = true
             } catch {
                 if let displayableError = error as? DisplayableError {
                     performResult = displayableError.displayableText

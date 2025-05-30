@@ -75,6 +75,10 @@ class MTWebSearchTool: ModelTool {
         var webSearchResults: [Scrubber.Document] = []
         let onSetWebContents: ([Scrubber.Document]) -> Void = { documents in
             webSearchResults.append(contentsOf: documents)
+            let storableContent: [Message.WebSearchStatus.SearchResult] = documents.map { doc in
+                .init(title: doc.title, url: doc.url)
+            }
+            webSearchMessage.webSearchStatus.searchResults.append(contentsOf: storableContent)
         }
 
         for try await phase in await messageListView.session.gatheringWebContent(
