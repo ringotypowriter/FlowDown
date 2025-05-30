@@ -26,7 +26,7 @@ extension ServiceProviders {
             forKey: .serviceProvider,
             defaultValue: []
         )
-        let existingCount = current.filter { $0.template == template }.count
+        let existingCount = current.count(where: { $0.template == template })
         if existingCount >= 1 {
             return "\(template.name) \(existingCount + 1)"
         } else {

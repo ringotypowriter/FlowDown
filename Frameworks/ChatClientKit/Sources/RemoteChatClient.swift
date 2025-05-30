@@ -100,7 +100,10 @@ open class RemoteChatClient: ChatService {
                         }
                         do {
                             var response = try JSONDecoder().decode(ChatCompletionChunk.self, from: data)
-                            let reasoningContent = response.choices.map(\.delta).compactMap(\.reasoningContent)
+                            let reasoningContent = [
+                                response.choices.map(\.delta).compactMap(\.reasoning),
+                                response.choices.map(\.delta).compactMap(\.reasoningContent),
+                            ].flatMap(\.self)
                             let content = response.choices.map(\.delta).compactMap(\.content)
 
                             if canDecodeReasoningContent { canDecodeReasoningContent = reasoningContent.isEmpty }
@@ -298,7 +301,10 @@ open class RemoteChatClient: ChatService {
     /// - Returns: A `ChoiceMessage` object, either the original if `reasoningContent` exists, or a new one
     ///            with extracted reasoning content if applicable; returns the original if extraction fails.
     private func extractReasoningContent(from choice: ChoiceMessage) -> ChoiceMessage {
-        if choice.reasoningContent?.isEmpty == false {
+        if false
+            || choice.reasoning?.isEmpty == false
+            || choice.reasoningContent?.isEmpty == false
+        {
             // A reasoning content already exists, so return the original choice.
             return choice
         }

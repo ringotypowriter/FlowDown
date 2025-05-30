@@ -69,6 +69,7 @@ public struct ChoiceMessage: Decodable {
     public var content: String?
 
     /// The reasoning behin the message.
+    public var reasoning: String?
     public var reasoningContent: String?
 
     /// The role of the author of this message.
@@ -79,13 +80,21 @@ public struct ChoiceMessage: Decodable {
 
     private enum CodingKeys: String, CodingKey {
         case content
+        case reasoning
         case reasoningContent = "reasoning_content"
         case role
         case toolCalls = "tool_calls"
     }
 
-    public init(content: String? = nil, reasoningContent: String? = nil, role: String, toolCalls: [ToolCall]? = nil) {
+    public init(
+        content: String? = nil,
+        reasoning: String? = nil,
+        reasoningContent: String? = nil,
+        role: String,
+        toolCalls: [ToolCall]? = nil
+    ) {
         self.content = content
+        self.reasoning = reasoning
         self.reasoningContent = reasoningContent
         self.role = role
         self.toolCalls = toolCalls

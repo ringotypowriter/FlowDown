@@ -20,7 +20,6 @@ extension ConversationSession {
         completion: @escaping () -> Void
     ) {
         cancelCurrentTask { [self] in
-
             print("[*] do infere called: \(id)")
             print("    - chat - \(ModelManager.shared.modelName(identifier: models.chat))")
             print("    - task - \(ModelManager.shared.modelName(identifier: models.auxiliary))")

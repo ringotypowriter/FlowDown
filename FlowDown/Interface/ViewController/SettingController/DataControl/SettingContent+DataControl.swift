@@ -193,7 +193,6 @@ extension SettingController.SettingContent {
                         title: String(localized: "Reset Temporary Items"),
                         message: String(localized: "Are you sure you want to remove all content inside temporary directory?")
                     ) { context in
-
                         context.addAction(title: String(localized: "Cancel")) {
                             context.dispose()
                         }

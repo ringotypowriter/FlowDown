@@ -17,7 +17,6 @@ extension CloudModel {
         var model: CloudModel {
             switch self {
             case .openai:
-
                 CloudModel(
                     id: "95b2ed31-d84d-4ce5-86a4-d362687bb18a",
                     isProfileInControl: true,
