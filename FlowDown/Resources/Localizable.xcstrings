@@ -27,6 +27,22 @@
         }
       }
     },
+    "<web_document id=\"%lld\">\n<title>%@</title>\n<note>This document is provided by system, please cite the source if used.</note>\n<content>\n%@\n</content>\n</web_document>" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "<web_document id=\"%1$lld\">\n<title>%2$@</title>\n<note>This document is provided by system, please cite the source if used.</note>\n<content>\n%3$@\n</content>\n</web_document>"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "<web_document id=\"%1$lld\">\n<title>%2$@</title>\n<note>本文档由系统提供，使用时请注明来源。</note>\n<content>%3$@</content>\n</web_document>\n"
+          }
+        }
+      }
+    },
     "5 Pages" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2007,6 +2023,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "类人 @ 0.75"
+          }
+        }
+      }
+    },
+    "I have determined not to search." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我认为不需要进行搜索。"
           }
         }
       }
