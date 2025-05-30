@@ -201,7 +201,7 @@ extension ConversationSessionManager.Session {
         }
     }
 
-    func generateSearchQueries(for query: String, attachments: [String], previousMessages: [String]) async -> [String] {
+    func generateSearchQueries(for query: String, attachments: [String], previousMessages: [String]) async -> (queries: [String], searchRequired: Bool?) {
         let messages: [ChatRequestBody.Message] = generateWebSearchTemplate(
             input: query,
             documents: attachments,
@@ -214,7 +214,7 @@ extension ConversationSessionManager.Session {
             }
         }
 
-        guard let model = models.auxiliary else { return [] }
+        guard let model = models.auxiliary else { return ([], nil) }
 
         do {
             let ans = try await ModelManager.shared.infer(
@@ -225,22 +225,79 @@ extension ConversationSessionManager.Session {
 
             let content = ans.content.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            // Try to extract queries from XML first
-            if let queries = extractQueriesFromXML(content) {
-                return validateQueries(queries)
+            if let (queries, searchRequired) = extractQueriesFromXMLWithSearchRequired(content) {
+                return (validateQueries(queries), searchRequired)
             }
 
-            // Fallback to line-based parsing
             let queries = content
                 .components(separatedBy: "\n")
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty }
 
-            return validateQueries(queries)
+            return (validateQueries(queries), nil)
         } catch {
             print("[-] failed to generate search queries: \(error)")
-            return []
+            return ([], nil)
         }
+    }
+
+    private func extractQueriesFromXMLWithSearchRequired(_ xmlString: String) -> (queries: [String], searchRequired: Bool)? {
+        if let result = extractQueriesUsingXMLCoderWithSearchRequired(xmlString) {
+            return result
+        }
+        return extractQueriesUsingRegexWithSearchRequired(xmlString)
+    }
+
+    private func extractQueriesUsingXMLCoderWithSearchRequired(_ xmlString: String) -> (queries: [String], searchRequired: Bool)? {
+        let decoder = XMLDecoder()
+
+        if let data = xmlString.data(using: .utf8),
+           let searchResponse = try? decoder.decode(WebSearchResponse.self, from: data)
+        {
+            let queries = searchResponse.queries.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+            return (queries, searchResponse.search_required)
+        }
+        return nil
+    }
+
+    private func extractQueriesUsingRegexWithSearchRequired(_ xmlString: String) -> (queries: [String], searchRequired: Bool)? {
+        var searchRequired = true
+
+        let searchRequiredPattern = #"<search_required>(.*?)</search_required>"#
+        if let searchRequiredRegex = try? NSRegularExpression(pattern: searchRequiredPattern, options: [.caseInsensitive, .dotMatchesLineSeparators]),
+           let searchRequiredMatch = searchRequiredRegex.firstMatch(in: xmlString, options: [], range: NSRange(xmlString.startIndex ..< xmlString.endIndex, in: xmlString)),
+           let searchRequiredRange = Range(searchRequiredMatch.range(at: 1), in: xmlString)
+        {
+            let searchRequiredValue = String(xmlString[searchRequiredRange]).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            searchRequired = searchRequiredValue != "false"
+        }
+
+        let pattern = #"<queries>(.*?)</queries>"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
+            return nil
+        }
+        let range = NSRange(xmlString.startIndex ..< xmlString.endIndex, in: xmlString)
+        guard let match = regex.firstMatch(in: xmlString, options: [], range: range) else {
+            return nil
+        }
+        guard let queriesRange = Range(match.range(at: 1), in: xmlString) else {
+            return nil
+        }
+        let queriesText = String(xmlString[queriesRange])
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let queryPattern = #"<query>(.*?)</query>"#
+        guard let queryRegex = try? NSRegularExpression(pattern: queryPattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
+            return nil
+        }
+        let queryRange = NSRange(queriesText.startIndex ..< queriesText.endIndex, in: queriesText)
+        let matches = queryRegex.matches(in: queriesText, options: [], range: queryRange)
+        let queries = matches.compactMap { match -> String? in
+            guard let range = Range(match.range(at: 1), in: queriesText) else { return nil }
+            return String(queriesText[range]).trimmingCharacters(in: .whitespacesAndNewlines)
+        }.filter { !$0.isEmpty }
+
+        return (queries, searchRequired)
     }
 
     private func extractQueriesFromXML(_ xmlString: String) -> [String]? {
@@ -330,15 +387,30 @@ extension ConversationSession {
             .filter { [.user, .assistant].contains($0.role) }
             .map(\.document)
             .filter { !$0.isEmpty }
-        let searchQueries = await generateSearchQueries(
+        let searchResult = await generateSearchQueries(
             for: object.text,
             attachments: object.attachments.map(\.textRepresentation),
             previousMessages: prevMsgs
         )
-        guard !searchQueries.isEmpty else {
-            print("[*] no search queries generated, skipping web search")
+
+        let searchQueries = searchResult.queries
+        let searchRequired = searchResult.searchRequired
+
+        // 检查是否需要搜索
+        if let required = searchRequired, !required {
+            // 模型明确返回不需要搜索
+            print("[*] model determined no web search is needed")
             let hintMessage = appendNewMessage(role: .assistant)
-            hintMessage.document = String(localized: "I have determined not to search.")
+            hintMessage.document = String(localized: "I have determined that no web search is needed for this query.")
+            await requestUpdate(view: currentMessageListView)
+            return
+        }
+
+        guard !searchQueries.isEmpty else {
+            // 生成搜索查询失败
+            print("[-] failed to generate search queries")
+            let hintMessage = appendNewMessage(role: .assistant)
+            hintMessage.document = String(localized: "I was unable to generate appropriate search queries for this request.")
             await requestUpdate(view: currentMessageListView)
             return
         }

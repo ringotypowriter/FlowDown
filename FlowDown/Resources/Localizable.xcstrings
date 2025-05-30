@@ -2027,12 +2027,22 @@
         }
       }
     },
-    "I have determined not to search." : {
+    "I have determined that no web search is needed for this query." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "我认为不需要进行搜索。"
+          }
+        }
+      }
+    },
+    "I was unable to generate appropriate search queries for this request." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我无法确认合适的搜索关键词。"
           }
         }
       }
