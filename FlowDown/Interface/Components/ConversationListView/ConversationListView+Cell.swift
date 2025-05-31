@@ -58,6 +58,8 @@ extension ConversationListView {
                 make.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: 24, vertical: 16))
             }
 
+            // TODO: FIND THE CASE
+            tapButton.backgroundColor = .accent.withAlphaComponent(0.001)
             contentView.addSubview(tapButton)
             tapButton.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
