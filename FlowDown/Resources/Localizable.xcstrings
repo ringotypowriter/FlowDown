@@ -1301,16 +1301,6 @@
         }
       }
     },
-    "Edit Anyway" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑"
-          }
-        }
-      }
-    },
     "Edit Content" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2523,16 +2513,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查看隐私权限清单。你的隐私由你掌控。"
-          }
-        }
-      }
-    },
-    "Managed Model" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "受管控的模型"
           }
         }
       }
@@ -4156,22 +4136,22 @@
         }
       }
     },
-    "This model configuration is managed by the cloud and may become unusable if you continue editing. Please proceed with caution." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此模型配置受云端管控，若继续编辑，则可能导致无法使用。请谨慎操作。"
-          }
-        }
-      }
-    },
     "This model is likely too large to fit in the available memory." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "此模型似乎过大，可能无法在此设备上加载。"
+          }
+        }
+      }
+    },
+    "This model is provided by pollinations.ai free of charge. Rate limit applies." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型由 pollinations.ai 提供。包含速率限制。"
           }
         }
       }

@@ -18,9 +18,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public var capabilities: Set<ModelCapabilities> = []
     public var context: ModelContextLength = .short_8k
 
-    // for app store connect reviewers
-    // they can download a profile without providing them so they can test the app
-    public var isProfileInControl: Bool = false
     // can be used when loading model from our server
     // present to user on the top of the editor page
     public var comment: String = ""
@@ -36,7 +33,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(token, isNotNull: true, defaultTo: "")
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: Set<ModelCapabilities>())
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
-            BindColumnConstraint(isProfileInControl, isNotNull: true, defaultTo: false)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
         }
 
@@ -48,13 +44,11 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case token
         case capabilities
         case context
-        case isProfileInControl
         case comment
     }
 
     public init(
         id: String = UUID().uuidString,
-        isProfileInControl: Bool = false,
         model_identifier: String = "",
         model_list_endpoint: String = "$INFERENCE_ENDPOINT$/../../models",
         creation: Date = .init(),
@@ -65,7 +59,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         comment: String = ""
     ) {
         self.id = id
-        self.isProfileInControl = isProfileInControl
         self.model_identifier = model_identifier
         self.model_list_endpoint = model_list_endpoint
         self.creation = creation
@@ -88,7 +81,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(token)
         hasher.combine(capabilities)
         hasher.combine(context)
-        hasher.combine(isProfileInControl)
         hasher.combine(comment)
     }
 }

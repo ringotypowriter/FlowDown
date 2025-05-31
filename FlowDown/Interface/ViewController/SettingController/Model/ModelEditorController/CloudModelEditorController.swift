@@ -60,30 +60,6 @@ class CloudModelEditorController: StackScrollController {
             .store(in: &cancellables)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        guard let model = ModelManager.shared.cloudModel(identifier: identifier) else {
-            return
-        }
-        if model.isProfileInControl {
-            let alert = AlertViewController(
-                title: String(localized: "Managed Model"),
-                message: String(localized: "This model configuration is managed by the cloud and may become unusable if you continue editing. Please proceed with caution.")
-            ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
-                    context.dispose {
-                        self.navigationController?.popViewController(animated: true)
-                    }
-                }
-                context.addAction(title: String(localized: "Edit Anyway"), attribute: .dangerous) {
-                    context.dispose()
-                }
-            }
-            present(alert, animated: true)
-        }
-    }
-
     @objc func checkTapped() {
         navigationController?.popViewController()
     }
@@ -103,7 +79,7 @@ class CloudModelEditorController: StackScrollController {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView()
                     .with(footer: comment)
-            ) { $0.bottom /= 2 }
+            ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
         }
 
@@ -178,11 +154,9 @@ class CloudModelEditorController: StackScrollController {
                 ? String(localized: "Not Configured")
                 : String(localized: "Configured")
         )
-        if model?.isProfileInControl ?? true {
-        } else {
-            stackView.addArrangedSubviewWithMargin(tokenView)
-            stackView.addArrangedSubview(SeparatorView())
-        }
+
+        stackView.addArrangedSubviewWithMargin(tokenView)
+        stackView.addArrangedSubview(SeparatorView())
 
         let modelCanFetchList = !(model?.model_list_endpoint.isEmpty ?? true)
         let modelIdentifierView = ConfigurableInfoView().setTapBlock { [weak self] view in
