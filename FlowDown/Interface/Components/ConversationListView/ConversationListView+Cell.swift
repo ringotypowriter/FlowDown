@@ -37,7 +37,9 @@ extension ConversationListView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        let tapButton = UIButton()
+        #if targetEnvironment(macCatalyst)
+            let tapButton = UIButton()
+        #endif
 
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -59,12 +61,14 @@ extension ConversationListView {
             }
 
             // TODO: FIND THE CASE
-            tapButton.backgroundColor = .accent.withAlphaComponent(0.001)
-            contentView.addSubview(tapButton)
-            tapButton.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
-            }
-            tapButton.addTarget(self, action: #selector(didSelectCell), for: .touchUpInside)
+            #if targetEnvironment(macCatalyst)
+                tapButton.backgroundColor = .accent.withAlphaComponent(0.001)
+                contentView.addSubview(tapButton)
+                tapButton.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                tapButton.addTarget(self, action: #selector(didSelectCell), for: .touchUpInside)
+            #endif
         }
 
         @available(*, unavailable)
