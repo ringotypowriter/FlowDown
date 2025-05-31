@@ -51,6 +51,9 @@ class ModelManager: NSObject {
     @BareCodableStorage(key: "Model.Default.AuxiliaryVisual.SkipIfPossible", defaultValue: true)
     // swiftformat:disable:next redundantFileprivate
     var defaultModelForAuxiliaryVisualTaskSkipIfPossible: Bool
+    var defaultModelForAuxiliaryVisualTaskSkipIfPossibleKey: String {
+        _defaultModelForAuxiliaryVisualTaskSkipIfPossible.key
+    }
 
     @BareCodableStorage(key: "Model.IsFirstBoot", defaultValue: true)
     fileprivate var isFirstBoot: Bool

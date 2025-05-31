@@ -59,17 +59,10 @@ extension SettingController.SettingContent {
             icon: "arrowshape.zigzag.forward",
             title: String(localized: "Skip Recognization If Possible"),
             explain: String(localized: "Skip the visual assessment process when the conversation model natively supports visual input. Enabling this option can improve the efficiency when using visual models, but if you switch to a model that does not support visual input after using it, the image information will be lost."),
-            key: "",
+            key: ModelManager.shared.defaultModelForAuxiliaryVisualTaskSkipIfPossibleKey,
             defaultValue: true,
             annotation: .boolean
         )
-        .whenValueChange(type: Bool.self) { newValue in
-            guard let newValue else {
-                assertionFailure()
-                return
-            }
-            ModelManager.shared.defaultModelForAuxiliaryVisualTaskSkipIfPossible = newValue
-        }
         .createView()
 
         override func setupContentViews() {

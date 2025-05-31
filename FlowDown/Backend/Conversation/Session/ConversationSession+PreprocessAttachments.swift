@@ -23,7 +23,7 @@ extension ConversationSession {
         let attachmentThatRequiresProcess = object.attachments.filter {
             $0.type == .image && $0.textRepresentation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
-        
+
         guard attachmentThatRequiresProcess.count > 0, !skipImageRecognition else {
             print("[*] requires to process \(attachmentThatRequiresProcess.count) attachments but skipImageRecognition is \(skipImageRecognition)")
             return
@@ -38,7 +38,7 @@ extension ConversationSession {
             assert(object.attachments[idx].type == .image)
             assert(object.attachments[idx].textRepresentation.isEmpty)
             processCount += 1
-            
+
             // describe the image into text
             guard let image = UIImage(data: attach.imageRepresentation) else {
                 assertionFailure()
