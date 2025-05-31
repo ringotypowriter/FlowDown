@@ -48,6 +48,9 @@ class ModelManager: NSObject {
     @BareCodableStorage(key: "Model.Default.AuxiliaryVisual", defaultValue: "")
     // swiftformat:disable:next redundantFileprivate
     fileprivate var defaultModelForAuxiliaryVisualTask: String { didSet { checkDefaultModels() } }
+    @BareCodableStorage(key: "Model.Default.AuxiliaryVisual.SkipIfPossible", defaultValue: true)
+    // swiftformat:disable:next redundantFileprivate
+    var defaultModelForAuxiliaryVisualTaskSkipIfPossible: Bool
 
     @BareCodableStorage(key: "Model.IsFirstBoot", defaultValue: true)
     fileprivate var isFirstBoot: Bool

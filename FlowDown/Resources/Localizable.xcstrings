@@ -3701,6 +3701,26 @@
         }
       }
     },
+    "Skip Recognization If Possible" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尝试跳过辨认过程"
+          }
+        }
+      }
+    },
+    "Skip the visual assessment process when the conversation model natively supports visual input. Enabling this option can improve the efficiency when using visual models, but if you switch to a model that does not support visual input after using it, the image information will be lost." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当对话模型支持视觉输入时，跳过辨认图片的过程。开启这个选项可以提高视觉模型的效率，但在使用后若切换到不支持视觉输入的模型，则会丢失图片信息。"
+          }
+        }
+      }
+    },
     "Small" : {
       "comment" : "Font Size",
       "localizations" : {

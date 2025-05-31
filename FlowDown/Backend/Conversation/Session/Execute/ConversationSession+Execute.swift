@@ -150,7 +150,12 @@ extension ConversationSession {
         // MARK: - 预处理图片信息提取
 
         try checkCancellation()
-        try await preprocessAttachments(&object, currentMessageListView, userMessage)
+        try await preprocessAttachments(
+            &object,
+            modelCapabilities.contains(.visual),
+            currentMessageListView,
+            userMessage
+        )
         saveIfNeeded(object)
 
         // MARK: - 开始提取搜索关键词 爬取网页

@@ -55,6 +55,23 @@ extension SettingController.SettingContent {
             $0.configure(description: String(localized: "The model is used for visual input when the current model does not support it. It will extract information before using the current model for inference."))
         }
 
+        private let skipVisualAssessmentView = ConfigurableObject(
+            icon: "arrowshape.zigzag.forward",
+            title: String(localized: "Skip Recognization If Possible"),
+            explain: String(localized: "Skip the visual assessment process when the conversation model natively supports visual input. Enabling this option can improve the efficiency when using visual models, but if you switch to a model that does not support visual input after using it, the image information will be lost."),
+            key: "",
+            defaultValue: true,
+            annotation: .boolean
+        )
+        .whenValueChange(type: Bool.self) { newValue in
+            guard let newValue else {
+                assertionFailure()
+                return
+            }
+            ModelManager.shared.defaultModelForAuxiliaryVisualTaskSkipIfPossible = newValue
+        }
+        .createView()
+
         override func setupContentViews() {
             super.setupContentViews()
 
@@ -95,6 +112,8 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(defaultAuxiliaryVisualModel)
+            stackView.addArrangedSubview(SeparatorView())
+            stackView.addArrangedSubviewWithMargin(skipVisualAssessmentView)
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
