@@ -185,7 +185,7 @@ public class RichEditorView: EditorSectionView {
 
     public func use(identifier: Int64) {
         storage = .init(id: identifier)
-        updateModelInfo()
+        updateModelInfo(postUpdate: false)
         restoreEditorStatusIfPossible()
     }
 

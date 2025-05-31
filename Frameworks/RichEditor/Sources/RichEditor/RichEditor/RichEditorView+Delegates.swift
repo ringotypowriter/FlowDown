@@ -152,7 +152,7 @@ extension RichEditorView: QuickSettingBar.Delegate {
         delegate?.onRichEditorShowAlternativeModelMenu(anchor: quickSettingBar.modelPicker)
     }
 
-    func updateModelInfo() {
+    func updateModelInfo(postUpdate: Bool = true) {
         let newModel = delegate?.onRichEditorRequestCurrentModelName()
         withAnimation { self.quickSettingBar.setModelName(newModel) }
         let newModelIdentifier = delegate?.onRichEditorRequestCurrentModelIdentifier()
@@ -162,7 +162,9 @@ extension RichEditorView: QuickSettingBar.Delegate {
             supportsToolCall = delegate?.onRichEditorCheckIfModelSupportsToolCall(newModelIdentifier) ?? false
         }
         quickSettingBar.updateToolCallAvailability(supportsToolCall)
-        delegate?.onRichEditorUpdateObject(object: collectObject())
+        if postUpdate {
+            delegate?.onRichEditorUpdateObject(object: collectObject())
+        }
     }
 
     func quickSettingBarOnValueChagned() {
