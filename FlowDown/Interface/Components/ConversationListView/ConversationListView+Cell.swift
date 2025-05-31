@@ -37,6 +37,8 @@ extension ConversationListView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
+        let tapButton = UIButton()
+
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             stack.addArrangedSubview(iconView)
@@ -56,9 +58,11 @@ extension ConversationListView {
                 make.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: 24, vertical: 16))
             }
 
-            isUserInteractionEnabled = true
-            let tap = UITapGestureRecognizer(target: self, action: #selector(didSelectCell))
-            addGestureRecognizer(tap)
+            contentView.addSubview(tapButton)
+            tapButton.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            tapButton.addTarget(self, action: #selector(didSelectCell), for: .touchUpInside)
         }
 
         @available(*, unavailable)

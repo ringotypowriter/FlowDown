@@ -75,12 +75,12 @@ class ConversationListView: UIView {
                 var selectedIndexPath = Set(tableView.indexPathsForSelectedRows ?? [])
                 if let identifier {
                     if let indexPath = dataSource.indexPath(for: identifier) {
-                        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+                        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
                         selectedIndexPath.remove(indexPath)
                     }
                 }
                 for index in selectedIndexPath {
-                    tableView.deselectRow(at: index, animated: true)
+                    tableView.deselectRow(at: index, animated: false)
                 }
             }
             .store(in: &cancellables)
