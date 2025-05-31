@@ -42,12 +42,6 @@ extension SettingController.SettingContent {
                     stackView.addArrangedSubviewWithMargin(object.createView())
                     stackView.addArrangedSubview(SeparatorView())
                 }
-                if !section.footer.isEmpty {
-                    stackView.addArrangedSubviewWithMargin(
-                        ConfigurableSectionFooterView().with(footer: section.footer)
-                    ) { $0.top /= 2 }
-                    stackView.addArrangedSubview(SeparatorView())
-                }
             }
         }
     }
@@ -56,44 +50,55 @@ extension SettingController.SettingContent {
 extension SettingController.SettingContent.SupportController {
     typealias SettingSection = (
         title: String,
-        objects: [ConfigurableObject],
-        footer: String
+        objects: [ConfigurableObject]
     )
-    var contactObject: SettingSection {
-        (
-            title: String(localized: "Contact Us"),
-            objects: [
-                ConfigurableObject(
-                    icon: "envelope",
-                    title: String(localized: "Email"),
-                    explain: String(localized: "Send us an email."),
-                    ephemeralAnnotation: .openLink(
-                        title: String(localized: "Open..."),
-                        url: URL(string: "mailto:flowdownapp@qaq.wiki")!
-                    )
-                ),
-                ConfigurableObject(
-                    icon: "safari",
-                    title: String(localized: "GitHub"),
-                    explain: String(localized: "Leave a message on GitHub issue."),
-                    ephemeralAnnotation: .openLink(
-                        title: String(localized: "Open..."),
-                        url: URL(string: "https://github.com/Lakr233/FlowDown-Beta/issues")!
-                    )
-                ),
-                ConfigurableObject(
-                    icon: "bubble.left",
-                    title: String(localized: "Discord"),
-                    explain: String(localized: "Join our Discord server."),
-                    ephemeralAnnotation: .openLink(
-                        title: String(localized: "Open..."),
-                        url: URL(string: "https://discord.gg/UHKMRyJcgc")!
-                    )
-                ),
-            ],
-            footer: String(localized: "Please feel free to contact us if you have any questions or suggestions.")
-        )
-    }
+    var documentObject: SettingSection { (
+        title: String(localized: "Read Documents"),
+        objects: [
+            ConfigurableObject(
+                icon: "safari",
+                title: String(localized: "Open Documentation"),
+                explain: String(localized: "We provided a comprehensive documentation to help you understand how to use this app effectively."),
+                ephemeralAnnotation: .openLink(
+                    title: String(localized: "Open..."),
+                    url: URL(string: "https://apps.qaq.wiki/docs/flowdown/")!
+                )
+            ),
+        ]
+    ) }
+
+    var contactObject: SettingSection { (
+        title: String(localized: "Contact Us"),
+        objects: [
+            ConfigurableObject(
+                icon: "envelope",
+                title: String(localized: "Email"),
+                explain: String(localized: "Send us an email."),
+                ephemeralAnnotation: .openLink(
+                    title: String(localized: "Open..."),
+                    url: URL(string: "mailto:flowdownapp@qaq.wiki")!
+                )
+            ),
+            ConfigurableObject(
+                icon: "safari",
+                title: String(localized: "GitHub"),
+                explain: String(localized: "Leave a message on GitHub issue."),
+                ephemeralAnnotation: .openLink(
+                    title: String(localized: "Open..."),
+                    url: URL(string: "https://github.com/Lakr233/FlowDown-Beta/issues")!
+                )
+            ),
+            ConfigurableObject(
+                icon: "bubble.left",
+                title: String(localized: "Discord"),
+                explain: String(localized: "Join our Discord server."),
+                ephemeralAnnotation: .openLink(
+                    title: String(localized: "Open..."),
+                    url: URL(string: "https://discord.gg/UHKMRyJcgc")!
+                )
+            ),
+        ]
+    ) }
 
     var openSourceObject: SettingSection { (
         title: String(localized: "Software Resources"),
@@ -106,10 +111,8 @@ extension SettingController.SettingContent.SupportController {
                     controller?.navigationController?.pushViewController(OpenSourceLicenseController(), animated: true)
                 }
             ),
-        ],
-        footer: String(localized: "This app wont be possible without the help of open source community.")
-    )
-    }
+        ]
+    ) }
 
     var agreementsObject: SettingSection { (
         title: String(localized: "Agreements"),
@@ -122,11 +125,11 @@ extension SettingController.SettingContent.SupportController {
                     controller?.navigationController?.pushViewController(PrivacyPolicyController(), animated: true)
                 }
             ),
-        ],
-        footer: String(localized: "Please read the agreements carefully.")
+        ]
     ) }
 
     var settingSections: [SettingSection] { [
+        documentObject,
         contactObject,
         agreementsObject,
         openSourceObject,
