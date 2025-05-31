@@ -15,19 +15,35 @@ class ModelToolsManager {
     private let tools: [ModelTool]
 
     private init() {
-        tools = [
-            MTWaitForNextRound(),
+        #if targetEnvironment(macCatalyst)
+            tools = [
+                MTWaitForNextRound(),
 
-            MTAddCalendarTool(),
-            MTQueryCalendarTool(),
+                MTAddCalendarTool(),
+                MTQueryCalendarTool(),
 
-            MTWebScraperTool(),
-            MTWebSearchTool(),
+                MTWebScraperTool(),
+                MTWebSearchTool(),
 
-            MTLocationTool(),
+//            MTLocationTool(),
 
-            MTURLTool(),
-        ]
+                MTURLTool(),
+            ]
+        #else
+            tools = [
+                MTWaitForNextRound(),
+
+                MTAddCalendarTool(),
+                MTQueryCalendarTool(),
+
+                MTWebScraperTool(),
+                MTWebSearchTool(),
+
+                MTLocationTool(),
+
+                MTURLTool(),
+            ]
+        #endif
 
         #if DEBUG
             var registeredToolNames: Set<String> = []
