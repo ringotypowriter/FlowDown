@@ -50,20 +50,38 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
         guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath) else {
             return nil
         }
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.present(menu: .init(children: [
-            UIAction(
-                title: String(localized: "Delete"),
-                attributes: .destructive
+        var actions: [UIMenuElement] = []
+        switch itemIdentifier.type {
+        case .local: break
+        case .cloud:
+            actions.append(UIAction(
+                title: String(localized: "Duplicate")
             ) { _ in
                 switch itemIdentifier.type {
                 case .local:
-                    ModelManager.shared.removeLocalModel(identifier: itemIdentifier.identifier)
+                    preconditionFailure()
                 case .cloud:
-                    ModelManager.shared.removeCloudModel(identifier: itemIdentifier.identifier)
+                    guard let model = ModelManager.shared.cloudModel(identifier: itemIdentifier.identifier) else {
+                        return
+                    }
+                    model.id = .init()
+                    ModelManager.shared.insertCloudModel(model)
                 }
-            },
-        ]))
+            })
+        }
+        actions.append(UIAction(
+            title: String(localized: "Delete"),
+            attributes: .destructive
+        ) { _ in
+            switch itemIdentifier.type {
+            case .local:
+                ModelManager.shared.removeLocalModel(identifier: itemIdentifier.identifier)
+            case .cloud:
+                ModelManager.shared.removeCloudModel(identifier: itemIdentifier.identifier)
+            }
+        })
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.present(menu: .init(children: actions))
         return nil
     }
 }

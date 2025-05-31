@@ -71,7 +71,7 @@ extension SettingController.SettingContent.ModelController {
                 let profile = CloudModel()
                 _ = ModelManager.shared.newCloudModel(profile: profile)
                 let controller = CloudModelEditorController(identifier: profile.id)
-                self.navigationController?.pushViewController(controller, animated: true)
+                navigationController?.pushViewController(controller, animated: true)
             },
         ]
     }
