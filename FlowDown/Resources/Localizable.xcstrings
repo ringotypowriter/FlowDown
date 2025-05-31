@@ -5,7 +5,7 @@
       "shouldTranslate" : false
     },
     "..." : {
-      "shouldTranslate" : false
+
     },
     "%@ Copy" : {
       "localizations" : {
@@ -2790,6 +2790,9 @@
           }
         }
       }
+    },
+    "N/A" : {
+      "shouldTranslate" : false
     },
     "Name: %@" : {
       "localizations" : {

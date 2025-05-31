@@ -79,7 +79,7 @@ class CloudModelEditorController: StackScrollController {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView()
                     .with(footer: comment)
-            ) { $0.top /= 2 }
+            )
             stackView.addArrangedSubview(SeparatorView())
         }
 
@@ -121,7 +121,7 @@ class CloudModelEditorController: StackScrollController {
                 text: model.token
             ) { newToken in
                 ModelManager.shared.editCloudModel(identifier: model.id) { $0.token = newToken }
-                view.configure(value: newToken.isEmpty ? String(localized: "Not Configured") : String(localized: "Configured"))
+                view.configure(value: newToken.isEmpty ? String(localized: "N/A") : String(localized: "Configured"))
                 let list = ModelManager.shared.cloudModels.value.filter {
                     $0.endpoint == model.endpoint && $0.token == oldToken && $0.id != model.id
                 }
@@ -151,7 +151,7 @@ class CloudModelEditorController: StackScrollController {
         tokenView.configure(description: String(localized: "This value will be added to the request to distinguish the workgroup on the remote."))
         tokenView.configure(
             value: (model?.token.isEmpty ?? true)
-                ? String(localized: "Not Configured")
+                ? String(localized: "N/A")
                 : String(localized: "Configured")
         )
 
