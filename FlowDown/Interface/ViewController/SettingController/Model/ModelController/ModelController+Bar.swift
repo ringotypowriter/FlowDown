@@ -63,6 +63,16 @@ extension SettingController.SettingContent.ModelController {
                     }
                 }
             },
+            UIAction(
+                title: String(localized: "Empty Model"),
+                image: .init(systemName: "square.dashed")
+            ) { [weak self] _ in
+                guard let self else { return }
+                let profile = CloudModel()
+                _ = ModelManager.shared.newCloudModel(profile: profile)
+                let controller = CloudModelEditorController(identifier: profile.id)
+                self.navigationController?.pushViewController(controller, animated: true)
+            },
         ]
     }
 

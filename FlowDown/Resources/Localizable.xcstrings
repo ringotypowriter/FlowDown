@@ -5,7 +5,7 @@
       "shouldTranslate" : false
     },
     "..." : {
-
+      "shouldTranslate" : false
     },
     "%@ Copy" : {
       "localizations" : {
@@ -1419,6 +1419,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "空消息。"
+          }
+        }
+      }
+    },
+    "Empty Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空模型配置"
           }
         }
       }
