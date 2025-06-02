@@ -14,6 +14,7 @@ final class ReasoningContentView: MessageListRowView {
     private lazy var textView: LTXLabel = .init().with {
         $0.isSelectable = true
     }
+
     private lazy var thinkingTile: ThinkingTile = .init()
 
     static let paragraphStyle: NSParagraphStyle = {
