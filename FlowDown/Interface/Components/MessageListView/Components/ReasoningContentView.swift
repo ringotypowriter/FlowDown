@@ -11,7 +11,9 @@ import UIKit
 
 final class ReasoningContentView: MessageListRowView {
     private lazy var indicator: UIView = .init()
-    private lazy var textView: LTXLabel = .init().with { $0.isSelectable = true }
+    private lazy var textView: LTXLabel = .init().with {
+        $0.isSelectable = true
+    }
     private lazy var thinkingTile: ThinkingTile = .init()
 
     static let paragraphStyle: NSParagraphStyle = {
@@ -82,6 +84,13 @@ final class ReasoningContentView: MessageListRowView {
 
         textView.backgroundColor = .clear
         contentView.addSubview(textView)
+        
+        textView.alpha = 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            UIView.animate(withDuration: 0.25) {
+                self.textView.alpha = 1
+            }
+        }
     }
 
     @available(*, unavailable)
