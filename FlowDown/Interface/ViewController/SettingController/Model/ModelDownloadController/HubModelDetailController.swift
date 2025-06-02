@@ -50,50 +50,70 @@ class HubModelDetailController: StackScrollController {
             // remove embedded yaml tags
             let yamlBlockPattern = #"(?m)(?s)^(?:---)(.*?)(?:---|\.\.\.)"#
             markdown = markdown.replacingOccurrences(of: yamlBlockPattern, with: "", options: .regularExpression)
-            let nodes = MarkdownParser().feed(markdown)
-            await MainActor.run {
-                var theme = MarkdownTheme()
-                theme.align(to: UIFont.preferredFont(forTextStyle: .subheadline).pointSize)
-                let markdownView = MarkdownTextView()
-                markdownView.theme = theme
-                markdownView.nodes = nodes
-                markdownView.alpha = 0
-                markdownView.codePreviewHandler = { [weak self] language, code in
-                    let viewer = CodeEditorController(language: language, text: code.string)
-                    #if targetEnvironment(macCatalyst)
-                        let nav = UINavigationController(rootViewController: viewer)
-                        nav.view.backgroundColor = .background
-                        let holder = AlertBaseController(
-                            rootViewController: nav,
-                            preferredWidth: 555,
-                            preferredHeight: 555
-                        )
-                        holder.shouldDismissWhenTappedAround = true
-                        holder.shouldDismissWhenEscapeKeyPressed = true
-                    #else
-                        let holder = UINavigationController(rootViewController: viewer)
-                        holder.preferredContentSize = .init(width: 555, height: 555 - holder.navigationBar.frame.height)
-                        holder.modalTransitionStyle = .coverVertical
-                        holder.modalPresentationStyle = .formSheet
-                        holder.view.backgroundColor = .background
-                    #endif
-                    self?.present(holder, animated: true)
-                }
-                self.view.doWithAnimation {
-                    self.markdownContainerView.addSubview(markdownView)
-                    markdownView.snp.makeConstraints { make in
-                        make.edges.equalToSuperview()
-                    }
-                    self.requiresUpdateHeight = true
-                } completion: {
-                    self.indicator.stopAnimating()
-                    UIView.animate(withDuration: 0.3) {
-                        markdownView.alpha = 1
-                    }
-                }
+
+            DispatchQueue.global().async {
+                self.setMarkdownContent(markdown)
             }
         }
         self.task = task
+    }
+
+    func setMarkdownContent(_ markdown: String) {
+        let nodes = MarkdownParser().parse(markdown)
+        var theme = MarkdownTheme()
+        theme.align(to: UIFont.preferredFont(forTextStyle: .subheadline).pointSize)
+        var renderedContexts: [String: RenderedItem] = [:]
+        for (key, value) in nodes.mathContext {
+            let image = MathRenderer.renderToImage(
+                latex: value,
+                fontSize: theme.fonts.body.pointSize,
+                textColor: theme.colors.body
+            )?.withRenderingMode(.alwaysTemplate)
+            let renderedContext = RenderedItem(
+                image: image,
+                text: value
+            )
+            renderedContexts["math://\(key)"] = renderedContext
+        }
+        DispatchQueue.main.async {
+            let markdownView = MarkdownTextView()
+            markdownView.theme = theme
+            markdownView.setMarkdown(nodes.document, renderedContent: renderedContexts)
+            markdownView.alpha = 0
+            markdownView.codePreviewHandler = { [weak self] language, code in
+                let viewer = CodeEditorController(language: language, text: code.string)
+                #if targetEnvironment(macCatalyst)
+                    let nav = UINavigationController(rootViewController: viewer)
+                    nav.view.backgroundColor = .background
+                    let holder = AlertBaseController(
+                        rootViewController: nav,
+                        preferredWidth: 555,
+                        preferredHeight: 555
+                    )
+                    holder.shouldDismissWhenTappedAround = true
+                    holder.shouldDismissWhenEscapeKeyPressed = true
+                #else
+                    let holder = UINavigationController(rootViewController: viewer)
+                    holder.preferredContentSize = .init(width: 555, height: 555 - holder.navigationBar.frame.height)
+                    holder.modalTransitionStyle = .coverVertical
+                    holder.modalPresentationStyle = .formSheet
+                    holder.view.backgroundColor = .background
+                #endif
+                self?.present(holder, animated: true)
+            }
+            self.view.doWithAnimation {
+                self.markdownContainerView.addSubview(markdownView)
+                markdownView.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                self.requiresUpdateHeight = true
+            } completion: {
+                self.indicator.stopAnimating()
+                UIView.animate(withDuration: 0.3) {
+                    markdownView.alpha = 1
+                }
+            }
+        }
     }
 
     private var requiresUpdateHeight: Bool = false

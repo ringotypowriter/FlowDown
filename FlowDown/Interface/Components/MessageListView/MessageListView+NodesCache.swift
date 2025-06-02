@@ -9,30 +9,64 @@ import Storage
 import UIKit
 
 extension MessageListView {
-    final class MarkdownNodesCache {
+    final class MarkdownPackageCache {
         typealias MessageIdentifier = Message.ID
 
-        private var cache: [MessageIdentifier: [MarkdownBlockNode]] = [:]
-        private var contentCache: [MessageIdentifier: String] = [:]
+        struct MarkdownPackage {
+            let blocks: [MarkdownBlockNode]
+            let mathContent: [Int: String]
+            let renderedContent: RenderContext
+        }
 
-        func nodes(for message: MessageRepresentation) -> [MarkdownBlockNode] {
+        private var cache: [MessageIdentifier: MarkdownPackage] = [:]
+        private var messageDidChanged: [MessageIdentifier: Int] = [:]
+
+        func package(for message: MessageRepresentation, theme: MarkdownTheme) -> MarkdownPackage {
             let id = message.id
-            let cachedContent = contentCache[id]
-            if cachedContent == message.content {
+            let cachedContent = messageDidChanged[id]
+            if cachedContent == message.content.hashValue {
                 if let nodes = cache[id] {
                     return nodes
                 }
-                return updateCache(for: message)
+                return updateCache(for: message, theme: theme)
             }
-            return updateCache(for: message)
+            return updateCache(for: message, theme: theme)
         }
 
-        private func updateCache(for message: MessageRepresentation) -> [MarkdownBlockNode] {
+        private func updateCache(for message: MessageRepresentation, theme: MarkdownTheme) -> MarkdownPackage {
             let content = message.content
-            let nodes = MarkdownParser().feed(content)
-            cache[message.id] = nodes
-            contentCache[message.id] = content
-            return nodes
+            let result = MarkdownParser().parse(content)
+            let rendered = MarkdownTextView.prepareMathContent(
+                result.mathContext,
+                theme: theme
+            )
+            let package = MarkdownPackage(
+                blocks: result.document,
+                mathContent: result.mathContext,
+                renderedContent: rendered
+            )
+            cache[message.id] = package
+            messageDidChanged[message.id] = message.content.hashValue
+            return package
         }
+    }
+}
+
+extension MarkdownTextView {
+    static func prepareMathContent(_ content: [Int: String], theme: MarkdownTheme) -> RenderContext {
+        var renderedContexts: RenderContext = [:]
+        for (key, value) in content {
+            let image = MathRenderer.renderToImage(
+                latex: value,
+                fontSize: theme.fonts.body.pointSize,
+                textColor: theme.colors.body
+            )?.withRenderingMode(.alwaysTemplate)
+            let renderedContext = RenderedItem(
+                image: image,
+                text: value
+            )
+            renderedContexts["math://\(key)"] = renderedContext
+        }
+        return renderedContexts
     }
 }
