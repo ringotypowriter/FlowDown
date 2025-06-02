@@ -440,15 +440,15 @@ extension ConversationSessionManager.Session {
 
 extension ConversationSession {
     func formatAsWebArchive(document: String, title: String, atIndex index: Int) -> String {
-        String(localized: """
+        """
         <web_document id="\(index)">
         <title>\(title)</title>
-        <note>This document is provided by system or tool call, please cite the id with [^\(index)] format if used.</note>
+        <note>\(String(localized: "This document is provided by system or tool call, please cite the id with [^\(index)] format if used."))</note>
         <content>
         \(document)
         </content>
         </web_document>
-        """)
+        """
     }
 
     func preprocessSearchQueries(

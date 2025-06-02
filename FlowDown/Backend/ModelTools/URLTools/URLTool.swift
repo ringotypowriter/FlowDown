@@ -79,7 +79,7 @@ class MTURLTool: ModelTool {
 
         guard let viewController = await view.parentViewController else {
             throw NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
-                NSLocalizedDescriptionKey: String(localized: "Could not find view controller."),
+                NSLocalizedDescriptionKey: String(localized: "Unknown Error"),
             ])
         }
 

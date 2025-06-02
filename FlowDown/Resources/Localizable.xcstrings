@@ -27,33 +27,6 @@
         }
       }
     },
-    "<web_document id=\"%lld\">\n<title>%@</title>\n<note>This document is provided by system or tool call, please cite the id with [^%lld] format if used.</note>\n<content>\n%@\n</content>\n</web_document>" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "<web_document id=\"%1$lld\">\n<title>%2$@</title>\n<note>This document is provided by system or tool call, please cite the id with [^%3$lld] format if used.</note>\n<content>\n%4$@\n</content>\n</web_document>"
-          }
-        }
-      }
-    },
-    "<web_document id=\"%lld\">\n<title>%@</title>\n<note>This document is provided by system, please cite the source if used.</note>\n<content>\n%@\n</content>\n</web_document>" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "<web_document id=\"%1$lld\">\n<title>%2$@</title>\n<note>This document is provided by system, please cite the source if used.</note>\n<content>\n%3$@\n</content>\n</web_document>"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<web_document id=\"%1$lld\">\n<title>%2$@</title>\n<note>本文档由系统提供，使用时请注明来源。</note>\n<content>%3$@</content>\n</web_document>\n"
-          }
-        }
-      }
-    },
     "5 Pages" : {
       "localizations" : {
         "zh-Hans" : {
@@ -547,7 +520,14 @@
       }
     },
     "Chat" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话"
+          }
+        }
+      }
     },
     "Check" : {
       "localizations" : {
@@ -670,7 +650,14 @@
       }
     },
     "Collapse Reasoning Content" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "折叠推理"
+          }
+        }
+      }
     },
     "Comment" : {
       "localizations" : {
@@ -897,9 +884,6 @@
           }
         }
       }
-    },
-    "Could not find view controller." : {
-
     },
     "Could not initialize location services." : {
       "localizations" : {
@@ -1454,7 +1438,14 @@
       }
     },
     "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用这个选项将在推理结束时自动折叠推理内容。"
+          }
+        }
+      }
     },
     "Enable this to require Command + Enter to send message. On touch devices, you will need to tap the send button manually." : {
       "localizations" : {
@@ -2298,7 +2289,14 @@
       }
     },
     "Invalid model identifier." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的模型标识符。"
+          }
+        }
+      }
     },
     "Invalid response." : {
       "localizations" : {
@@ -3970,7 +3968,14 @@
       }
     },
     "The above setting will take effect at conversation page." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上面的选项将在对话界面启用。"
+          }
+        }
+      }
     },
     "The additional prompt will be appended to the default prompt. You can make requests here, such as language preferences, response formats, etc." : {
       "localizations" : {
@@ -4144,6 +4149,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "第三方内容"
+          }
+        }
+      }
+    },
+    "This document is provided by system or tool call, please cite the id with [^%lld] format if used." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此文档由系统提供，若使用请按照 [^%lld] 标注引用。"
           }
         }
       }
@@ -4476,6 +4491,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "定位服务状态未知。"
+          }
+        }
+      }
+    },
+    "Unknown Error" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知错误"
           }
         }
       }
@@ -4998,17 +5023,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "网页搜索"
-          }
-        }
-      }
-    },
-    "Web search completed." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "网页搜索已完成。"
           }
         }
       }
