@@ -57,7 +57,7 @@ class ModelManager: NSObject {
 
     @BareCodableStorage(key: "Model.IsFirstBoot", defaultValue: true)
     fileprivate var isFirstBoot: Bool
-    @BareCodableStorage(key: "Model.ChatInterface.CollapseReasoningSectionWhenComplete", defaultValue: true)
+    @BareCodableStorage(key: "Model.ChatInterface.CollapseReasoningSectionWhenComplete", defaultValue: false)
     var collapseReasoningSectionWhenComplete: Bool
     var collapseReasoningSectionWhenCompleteKey: String {
         _collapseReasoningSectionWhenComplete.key
