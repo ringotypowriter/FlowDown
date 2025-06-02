@@ -12,10 +12,6 @@ import Foundation
 import UIKit
 
 class MTURLTool: ModelTool {
-    struct Error: DisplayableError {
-        var displayableText: String
-    }
-
     override var shortDescription: String {
         "open URLs securely with user confirmation"
     }
@@ -70,15 +66,21 @@ class MTURLTool: ModelTool {
               let urlString = json["url"] as? String,
               let reason = json["reason"] as? String
         else {
-            throw Error(displayableText: String(localized: "Invalid URL or missing reason."))
+            throw NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "Invalid URL or missing reason."),
+            ])
         }
 
         guard let url = URL(string: urlString) else {
-            throw Error(displayableText: String(localized: "Invalid URL format."))
+            throw NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "Invalid URL format."),
+            ])
         }
 
         guard let viewController = await view.parentViewController else {
-            throw Error(displayableText: String(localized: "Could not find view controller"))
+            throw NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "Could not find view controller."),
+            ])
         }
 
         return try await requestURLOpenWithUserInteraction(
@@ -114,7 +116,9 @@ class MTURLTool: ModelTool {
                 context.addAction(title: String(localized: "Cancel")) {
                     context.dispose {
                         continuation.resume(
-                            throwing: Error(displayableText: String(localized: "User cancelled the operation."))
+                            throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                                NSLocalizedDescriptionKey: String(localized: "User cancelled the operation."),
+                            ])
                         )
                     }
                 }
@@ -140,7 +144,9 @@ class MTURLTool: ModelTool {
             controller.present(alert, animated: true) {
                 guard alert.isVisible else {
                     continuation.resume(
-                        throwing: Error(displayableText: String(localized: "Failed to display URL open request dialog."))
+                        throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                            NSLocalizedDescriptionKey: String(localized: "Failed to display URL open request dialog."),
+                        ])
                     )
                     return
                 }

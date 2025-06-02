@@ -27,7 +27,18 @@
         }
       }
     },
+    "<web_document id=\"%lld\">\n<title>%@</title>\n<note>This document is provided by system or tool call, please cite the id with [^%lld] format if used.</note>\n<content>\n%@\n</content>\n</web_document>" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "<web_document id=\"%1$lld\">\n<title>%2$@</title>\n<note>This document is provided by system or tool call, please cite the id with [^%3$lld] format if used.</note>\n<content>\n%4$@\n</content>\n</web_document>"
+          }
+        }
+      }
+    },
     "<web_document id=\"%lld\">\n<title>%@</title>\n<note>This document is provided by system, please cite the source if used.</note>\n<content>\n%@\n</content>\n</web_document>" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -880,6 +891,9 @@
           }
         }
       }
+    },
+    "Could not find view controller." : {
+
     },
     "Could not initialize location services." : {
       "localizations" : {
@@ -2273,6 +2287,9 @@
           }
         }
       }
+    },
+    "Invalid model identifier." : {
+
     },
     "Invalid response." : {
       "localizations" : {
@@ -4974,6 +4991,7 @@
       }
     },
     "Web search completed." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

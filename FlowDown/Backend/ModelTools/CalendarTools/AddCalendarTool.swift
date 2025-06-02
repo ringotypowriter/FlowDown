@@ -13,14 +13,6 @@ import Foundation
 import UIKit
 
 class MTAddCalendarTool: ModelTool {
-    struct Error: DisplayableError {
-        var displayableText: String
-
-        init(_ text: String) {
-            displayableText = text
-        }
-    }
-
     override var shortDescription: String {
         "add event to user's default system calendar"
     }
@@ -124,7 +116,9 @@ class MTAddCalendarTool: ModelTool {
         // 首先解析ICS内容获取更多信息
         let eventStore = EKEventStore()
         guard let event = parseICSContent(icsFile, eventStore: eventStore) else {
-            continuation.resume(throwing: Error(String(localized: "Failed to parse calendar event details.")))
+            continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "Failed to parse calendar event details."),
+            ]))
             return
         }
 
@@ -156,7 +150,9 @@ class MTAddCalendarTool: ModelTool {
         ) { context in
             context.addAction(title: String(localized: "Cancel")) {
                 context.dispose {
-                    continuation.resume(throwing: Error(String(localized: "User cancelled the operation.")))
+                    continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                        NSLocalizedDescriptionKey: String(localized: "User cancelled the operation."),
+                    ]))
                 }
             }
             context.addAction(title: String(localized: "Add"), attribute: .dangerous) {
@@ -165,7 +161,9 @@ class MTAddCalendarTool: ModelTool {
                         if success {
                             continuation.resume(returning: String(localized: "Event added to calendar."))
                         } else {
-                            continuation.resume(throwing: Error(String(localized: "Failed to add event: \(error?.localizedDescription ?? "Unknown error")")))
+                            continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                                NSLocalizedDescriptionKey: String(localized: "Failed to add event: \(error?.localizedDescription ?? "Unknown error")"),
+                            ]))
                         }
                     }
                 }
@@ -174,7 +172,9 @@ class MTAddCalendarTool: ModelTool {
 
         controller.present(alert, animated: true) {
             guard alert.isVisible else {
-                continuation.resume(throwing: Error(String(localized: "Failed to display confirmation dialog.")))
+                continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                    NSLocalizedDescriptionKey: String(localized: "Failed to display confirmation dialog."),
+                ]))
                 return
             }
         }

@@ -41,6 +41,11 @@ final class ConversationSession: Identifiable {
 
     var currentTask: Task<Void, Never>?
 
+    // temporary storage for web search results
+    // it can be discarded after closing the app
+    // becase the [^1] ref will be replaced with the real url like [^1](https://example.com)
+    var linkedContents: [Int: URL] = [:]
+
     deinit {
         currentTask?.cancel()
         currentTask = nil
@@ -135,6 +140,7 @@ final class ConversationSession: Identifiable {
         messages.removeAll()
         attachments.removeAll()
         messages = sdb.listMessages(within: id)
+        linkedContents.removeAll()
         for message in messages {
             let id = message.id
             let attachments = sdb.listAttachments(for: id)

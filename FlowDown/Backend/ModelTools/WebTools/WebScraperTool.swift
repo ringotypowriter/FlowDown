@@ -13,14 +13,6 @@ import ScrubberKit
 import UIKit
 
 class MTWebScraperTool: ModelTool {
-    struct Error: DisplayableError {
-        var displayableText: String
-
-        init(_ text: String) {
-            displayableText = text
-        }
-    }
-
     override var shortDescription: String {
         "scrape content from web pages"
     }
@@ -104,7 +96,9 @@ class MTWebScraperTool: ModelTool {
             Scrubber.document(for: url) { doc in
                 indicator.dismiss(animated: true) {
                     guard let doc else {
-                        continuation.resume(throwing: Error(String(localized: "Failed to fetch the web content.")))
+                        continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                            NSLocalizedDescriptionKey: String(localized: "Failed to fetch the web content."),
+                        ]))
                         return
                     }
 

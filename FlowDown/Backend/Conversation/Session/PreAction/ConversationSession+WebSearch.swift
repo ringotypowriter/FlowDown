@@ -439,13 +439,13 @@ extension ConversationSessionManager.Session {
 }
 
 extension ConversationSession {
-    func format(internetDocument: String, title: String, atIndex index: Int) -> String {
+    func formatAsWebArchive(document: String, title: String, atIndex index: Int) -> String {
         String(localized: """
         <web_document id="\(index)">
         <title>\(title)</title>
-        <note>This document is provided by system, please cite the source if used.</note>
+        <note>This document is provided by system or tool call, please cite the id with [^\(index)] format if used.</note>
         <content>
-        \(internetDocument)
+        \(document)
         </content>
         </web_document>
         """)
@@ -454,7 +454,7 @@ extension ConversationSession {
     func preprocessSearchQueries(
         _ currentMessageListView: MessageListView,
         _ object: inout RichEditorView.Object,
-        _ webSearchResults: inout [Message.WebSearchStatus.SearchResult]
+        requestLinkContentIndex: @escaping (URL) -> Int
     ) async throws {
         guard case let .bool(value) = object.options[.browsing], value else {
             return
@@ -519,16 +519,17 @@ extension ConversationSession {
 
         let onSetWebContents: ([Scrubber.Document]) -> Void = { documents in
             print("[*] setting \(documents.count) search result")
-            for (idx, doc) in documents.enumerated() where idx < 8 {
+            for doc in documents {
+                let index = requestLinkContentIndex(doc.url)
                 webAttachments.append(.init(
                     type: .text,
                     name: doc.title,
                     previewImage: .init(),
                     imageRepresentation: .init(),
-                    textRepresentation: self.format(
-                        internetDocument: doc.textDocument,
+                    textRepresentation: self.formatAsWebArchive(
+                        document: doc.textDocument,
                         title: doc.title,
-                        atIndex: idx + 1
+                        atIndex: index
                     ),
                     storageSuffix: UUID().uuidString
                 ))
@@ -558,7 +559,6 @@ extension ConversationSession {
         webSearchMessage.webSearchStatus.proccessProgress = 0
         await requestUpdate(view: currentMessageListView)
 
-        webSearchResults = webSearchMessage.webSearchStatus.searchResults
         object.attachments.append(contentsOf: webAttachments)
 
         if webAttachments.isEmpty {

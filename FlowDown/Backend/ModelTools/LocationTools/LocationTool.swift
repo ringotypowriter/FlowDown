@@ -13,10 +13,6 @@ import Foundation
 import UIKit
 
 class MTLocationTool: ModelTool {
-    struct Error: DisplayableError {
-        var displayableText: String
-    }
-
     private var locationManager: CLLocationManager?
     private var geocoder = CLGeocoder()
 
@@ -102,7 +98,12 @@ class MTLocationTool: ModelTool {
                 if isSuccess {
                     continuation.resume(returning: result)
                 } else {
-                    continuation.resume(throwing: Error(displayableText: result))
+                    continuation.resume(throwing: NSError(
+                        domain: "Tool", code: -1,
+                        userInfo: [
+                            NSLocalizedDescriptionKey: result,
+                        ]
+                    ))
                 }
             }
         }

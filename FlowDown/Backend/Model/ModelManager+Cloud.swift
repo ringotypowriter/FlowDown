@@ -58,7 +58,15 @@ extension CloudModel {
 
 extension ModelManager {
     func scanCloudModels() -> [CloudModel] {
-        sdb.listCloudModels()
+        let models = sdb.listCloudModels()
+        for model in models where model.id.isEmpty {
+            // Ensure all models have a valid ID
+            model.id = UUID().uuidString
+            sdb.remove(identifier: "")
+            sdb.insertOrReplace(object: model)
+            return scanCloudModels()
+        }
+        return models
     }
 
     func newCloudModel() -> CloudModel {

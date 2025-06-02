@@ -119,6 +119,14 @@ extension ConversationSession {
         await MainActor.run { UIApplication.shared.isIdleTimerDisabled = false }
     }
 
+    func requestLinkContentIndex(_ url: URL) -> Int {
+        assert(!Thread.isMainThread)
+        let index = linkedContents.count + 1
+        linkedContents[index] = url
+        print("[*] request link content index: \(index) for url: \(url)")
+        return index
+    }
+
     private func doInfereExecuteCore(
         _ currentMessageListView: MessageListView,
         _ object: inout RichEditorView.Object,
@@ -161,8 +169,11 @@ extension ConversationSession {
         // MARK: - 开始提取搜索关键词 爬取网页
 
         try checkCancellation()
-        var webSearchResults: [Message.WebSearchStatus.SearchResult] = []
-        try await preprocessSearchQueries(currentMessageListView, &object, &webSearchResults)
+        try await preprocessSearchQueries(
+            currentMessageListView,
+            &object,
+            requestLinkContentIndex: requestLinkContentIndex
+        )
         saveIfNeeded(object)
 
         // MARK: - 添加这次的附件
@@ -205,8 +216,9 @@ extension ConversationSession {
                 modelID,
                 &requestMessages,
                 tools,
-                webSearchResults,
-                modelWillExecuteTools
+                modelWillExecuteTools,
+                linkedContents: linkedContents,
+                requestLinkContentIndex: requestLinkContentIndex
             )
             saveIfNeeded(object)
         } while shouldContinue

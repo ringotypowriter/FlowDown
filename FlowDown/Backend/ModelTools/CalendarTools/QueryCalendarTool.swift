@@ -13,14 +13,6 @@ import Foundation
 import UIKit
 
 class MTQueryCalendarTool: ModelTool {
-    struct Error: DisplayableError {
-        var displayableText: String
-
-        init(_ text: String) {
-            displayableText = text
-        }
-    }
-
     override var shortDescription: String {
         "query events from user's system calendars"
     }
@@ -158,9 +150,10 @@ class MTQueryCalendarTool: ModelTool {
                             includeAllDayEvents: includeAllDayEvents
                         ) { result, error in
                             if let error {
-                                cont.resume(throwing: Error(String(localized: "Failed to query calendar: \(error.localizedDescription)")))
+                                cont.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                                    NSLocalizedDescriptionKey: String(localized: "Failed to query calendar: \(error.localizedDescription)"),
+                                ]))
                             } else {
-                                // 展示查询结果对话框
                                 self.showQueryResults(result: result, controller: controller, continuation: cont)
                             }
                         }
@@ -189,7 +182,9 @@ class MTQueryCalendarTool: ModelTool {
         ) { context in
             context.addAction(title: String(localized: "Cancel")) {
                 context.dispose {
-                    continuation.resume(throwing: Error(String(localized: "User cancelled sharing calendar events.")))
+                    continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                        NSLocalizedDescriptionKey: String(localized: "User cancelled sharing calendar events."),
+                    ]))
                 }
             }
             context.addAction(title: String(localized: "Share"), attribute: .dangerous) {
@@ -202,7 +197,9 @@ class MTQueryCalendarTool: ModelTool {
 
         controller.present(alert, animated: true) {
             guard alert.isVisible else {
-                continuation.resume(throwing: Error(String(localized: "Failed to display results dialog.")))
+                continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
+                    NSLocalizedDescriptionKey: String(localized: "Failed to display results dialog."),
+                ]))
                 return
             }
         }

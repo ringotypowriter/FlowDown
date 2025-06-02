@@ -7,6 +7,7 @@
 
 import ChatClientKit
 import Foundation
+import RichEditor
 import Storage
 
 extension ConversationSession {
@@ -15,8 +16,9 @@ extension ConversationSession {
         _ modelID: ModelManager.ModelIdentifier,
         _ requestMessages: inout [ChatRequestBody.Message],
         _ tools: [ChatRequestBody.Tool]?,
-        _ webSearchResults: [Message.WebSearchStatus.SearchResult],
-        _ modelWillExecuteTools: Bool
+        _ modelWillExecuteTools: Bool,
+        linkedContents: [Int: URL],
+        requestLinkContentIndex: @escaping (URL) -> Int
     ) async throws -> Bool {
         await requestUpdate(view: currentMessageListView)
         await currentMessageListView.loading()
@@ -49,7 +51,7 @@ extension ConversationSession {
 
         if !message.document.isEmpty {
             logger.info("\(message.document)")
-            message.document = fixWebReferenceIfNeeded(in: message.document, with: webSearchResults)
+            message.document = fixWebReferenceIfPossible(in: message.document, with: linkedContents.mapValues(\.absoluteString))
         }
         if !message.reasoningContent.isEmpty, message.document.isEmpty {
             message.document = String(localized: "Thinking finished without output any content.")
@@ -89,8 +91,6 @@ extension ConversationSession {
         await requestUpdate(view: currentMessageListView)
         await currentMessageListView.loading(with: String(localized: "Utilizing tool call"))
 
-        var atLeastOneToolHasBeenProcessed = false
-
         for request in pendingToolCalls {
             guard let tool = ModelToolsManager.shared.tool(for: request) else {
                 throw NSError(
@@ -102,49 +102,62 @@ extension ConversationSession {
                 )
             }
             await currentMessageListView.loading(with: String(localized: "Utilizing tool: \(tool.interfaceName)"))
-            let performResult: String
-            var isSuccessful = false
-            do {
-                // 等待一秒以避免过快执行任务用户还没看到内容
-                try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
 
-                // 检查是否是网络搜索工具，如果是则直接执行
-                if let tool = tool as? MTWebSearchTool {
-                    performResult = try await tool.execute(with: request.args, session: self, anchorTo: currentMessageListView)
-                    isSuccessful = true
-                    await currentMessageListView.loading()
-                } else {
-                    // 标准工具
-                    guard let result = ModelToolsManager.shared.perform(
-                        withTool: tool,
-                        parms: request.args,
-                        anchorTo: currentMessageListView
-                    ) else { continue }
-                    performResult = result
-                    isSuccessful = true
+            // 等待一秒以避免过快执行任务用户还没看到内容
+            try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
+
+            // 检查是否是网络搜索工具，如果是则直接执行
+            if let tool = tool as? MTWebSearchTool {
+                let webSearchMessage = appendNewMessage(role: .webSearch)
+                let searchResult = try await tool.execute(
+                    with: request.args,
+                    session: self,
+                    webSearchMessage: webSearchMessage,
+                    anchorTo: currentMessageListView
+                )
+                var webAttachments: [RichEditorView.Object.Attachment] = []
+                for doc in searchResult {
+                    let index = requestLinkContentIndex(doc.url)
+                    webAttachments.append(.init(
+                        type: .text,
+                        name: doc.title,
+                        previewImage: .init(),
+                        imageRepresentation: .init(),
+                        textRepresentation: formatAsWebArchive(
+                            document: doc.textDocument,
+                            title: doc.title,
+                            atIndex: index
+                        ),
+                        storageSuffix: UUID().uuidString
+                    ))
                 }
-            } catch {
-                if let displayableError = error as? DisplayableError {
-                    performResult = displayableError.displayableText
-                } else {
-                    performResult = error.localizedDescription
+                let storableContent: [Message.WebSearchStatus.SearchResult] = searchResult.map { doc in
+                    .init(title: doc.title, url: doc.url)
                 }
+                webSearchMessage.webSearchStatus.searchResults.append(contentsOf: storableContent)
+                await currentMessageListView.loading()
+                requestMessages.append(.tool(
+                    content: .text(webAttachments.map(\.textRepresentation).joined(separator: "\n")),
+                    toolCallID: request.id.uuidString
+                ))
+            } else {
+                // 标准工具
+                guard let result = ModelToolsManager.shared.perform(
+                    withTool: tool,
+                    parms: request.args,
+                    anchorTo: currentMessageListView
+                ) else { continue }
+
+                await requestUpdate(view: currentMessageListView)
+
+                let toolMessage = appendNewMessage(role: .toolHint)
+                toolMessage.toolStatus = .init(name: tool.interfaceName, state: 1, message: result)
+                await requestUpdate(view: currentMessageListView)
+                requestMessages.append(.tool(content: .text(result), toolCallID: request.id.uuidString))
             }
-
-            atLeastOneToolHasBeenProcessed = true
-            await requestUpdate(view: currentMessageListView)
-
-            let toolMessage = appendNewMessage(role: .toolHint)
-            toolMessage.toolStatus = .init(name: tool.interfaceName, state: isSuccessful ? 1 : 0, message: performResult)
-            await requestUpdate(view: currentMessageListView)
-
-            // tool call done this round, and not using tool call content for capbilities issues
-            requestMessages.append(.tool(content: .text(performResult), toolCallID: request.id.uuidString))
         }
 
         await requestUpdate(view: currentMessageListView)
-
-        guard atLeastOneToolHasBeenProcessed else { return false }
         return true
     }
 }

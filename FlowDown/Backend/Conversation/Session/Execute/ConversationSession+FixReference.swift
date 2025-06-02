@@ -11,11 +11,11 @@ import RegexBuilder
 import Storage
 
 extension ConversationSession {
-    func fixWebReferenceIfNeeded(
+    func fixWebReferenceIfPossible(
         in content: String,
-        with searchResults: [Message.WebSearchStatus.SearchResult]
+        with contentLink: [Int: String],
     ) -> String {
-        if content.isEmpty || searchResults.isEmpty { return content }
+        if content.isEmpty || contentLink.isEmpty { return content }
 
         var content = content
 
@@ -54,18 +54,11 @@ extension ConversationSession {
                 .replacingOccurrences(of: "^", with: "")
                 .replacingOccurrences(of: " ", with: "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-            let numbers = source.components(separatedBy: ",").map { Int($0) }
+            let numbers = source.components(separatedBy: ",").compactMap { Int($0) }
             var replacedLink: [String] = []
-            for number in numbers {
-                guard let number else {
-                    continue
-                }
-                let index = number - 1
-                if index < 0 || index >= searchResults.count {
-                    continue
-                }
-                let result = searchResults[index]
-                replacedLink.append("[^\(index + 1)](\(result.url.absoluteString))")
+            for number in numbers where contentLink.keys.contains(number) {
+                guard let result = contentLink[number] else { continue }
+                replacedLink.append("[^\(number)](\(result))")
             }
 
             if replacedLink.isEmpty {

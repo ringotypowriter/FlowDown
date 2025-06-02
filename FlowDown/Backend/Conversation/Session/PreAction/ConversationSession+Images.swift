@@ -61,10 +61,6 @@ extension ConversationSession {
         messages.append(.user(content: .text(String(localized: "Please describe the image."))))
 
         var decision: ModelManager.ModelIdentifier?
-//        if decision == nil,
-//           let model = models.auxiliary,
-//           ModelManager.shared.modelCapabilities(identifier: model).contains(.visual)
-//        { decision = model }
         if decision == nil,
            let model = models.visualAuxiliary,
            ModelManager.shared.modelCapabilities(identifier: model).contains(.visual)

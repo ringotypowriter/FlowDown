@@ -55,8 +55,9 @@ class MTWebSearchTool: ModelTool {
     nonisolated func execute(
         with input: String,
         session: ConversationSession,
+        webSearchMessage: Message,
         anchorTo messageListView: MessageListView
-    ) async throws -> String {
+    ) async throws -> [Scrubber.Document] {
         guard let data = input.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let query = json["query"] as? String
@@ -68,7 +69,6 @@ class MTWebSearchTool: ModelTool {
             )
         }
 
-        let webSearchMessage = session.appendNewMessage(role: .webSearch)
         webSearchMessage.webSearchStatus.queries = [query]
         await session.requestUpdate(view: messageListView)
 
@@ -109,14 +109,6 @@ class MTWebSearchTool: ModelTool {
             )
         }
 
-        let content = webSearchResults.enumerated().map { index, doc in
-            session.format(
-                internetDocument: doc.textDocument,
-                title: doc.title,
-                atIndex: index
-            )
-        }
-
-        return content.joined(separator: "\n\n") + "\n\n" + String(localized: "Web search completed.")
+        return webSearchResults
     }
 }

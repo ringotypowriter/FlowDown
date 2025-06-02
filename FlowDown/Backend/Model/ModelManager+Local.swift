@@ -119,7 +119,7 @@ extension ModelManager {
                 .appendingPathExtension("plist")
             guard FileManager.default.fileExists(atPath: manifest.path),
                   let data = try? Data(contentsOf: manifest),
-                  let model = try? decoder.decode(LocalModel.self, from: data),
+                  var model = try? decoder.decode(LocalModel.self, from: data),
                   FileManager.default.fileExists(atPath: self.modelContent(for: model).path),
                   dirForLocalModel(identifier: model.id) == url // otherwise it's a hacked model
             else {
@@ -127,6 +127,8 @@ extension ModelManager {
                 try? FileManager.default.removeItem(at: url)
                 continue
             }
+
+            if model.id.isEmpty { model.id = UUID().uuidString }
             ans.append(model)
 
             let dirContent = try? FileManager.default.contentsOfDirectory(
@@ -284,6 +286,13 @@ extension ModelManager {
                 throw NSError(domain: "ModelManager", code: 1, userInfo: [
                     NSLocalizedDescriptionKey: String(localized: "Invalid model file."),
                 ])
+            }
+            if model.id.isEmpty {
+                throw NSError(
+                    domain: "Model",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: String(localized: "Invalid model identifier.")]
+                )
             }
             let target = dirForLocalModel(identifier: model.id)
             try? FileManager.default.removeItem(at: target)

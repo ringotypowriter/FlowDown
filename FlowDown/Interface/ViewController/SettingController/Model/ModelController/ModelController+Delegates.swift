@@ -64,7 +64,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
                     guard let model = ModelManager.shared.cloudModel(identifier: itemIdentifier.identifier) else {
                         return
                     }
-                    model.id = .init()
+                    model.id = UUID().uuidString
                     ModelManager.shared.insertCloudModel(model)
                 }
             })
@@ -128,6 +128,7 @@ extension SettingController.SettingContent.ModelController: UIDocumentPickerDele
                     do {
                         let data = try Data(contentsOf: url)
                         let model = try decoder.decode(CloudModel.self, from: data)
+                        if model.id.isEmpty { model.id = UUID().uuidString }
                         ModelManager.shared.insertCloudModel(model)
                         success.append(model.model_identifier)
                     } catch {
