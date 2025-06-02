@@ -21,7 +21,7 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        clipsToBounds = false
+        clipsToBounds = true
         addSubview(contentView)
 
         contentView.isUserInteractionEnabled = true
