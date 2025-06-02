@@ -31,6 +31,16 @@ extension SettingController.SettingContent {
             view.backgroundColor = .background
         }
 
+        let autoCollapse = ConfigurableObject(
+            icon: "arrow.down.right.and.arrow.up.left",
+            title: String(localized: "Collapse Reasoning Content"),
+            explain: String(localized: "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response."),
+            key: ModelManager.shared.collapseReasoningSectionWhenCompleteKey,
+            defaultValue: true,
+            annotation: .boolean
+        )
+        .createView()
+
         override func setupContentViews() {
             super.setupContentViews()
 
@@ -50,6 +60,23 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
                     footer: String(localized: "The above setting only adjusts the text size in conversations. To change the font size globally, please go to the system settings, as this app follows the system’s font size preferences.")
+                )
+            ) { $0.top /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionHeaderView().with(
+                    header: String(localized: "Chat")
+                )
+            ) { $0.bottom /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(autoCollapse)
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionFooterView().with(
+                    footer: String(localized: "The above setting will take effect at conversation page.")
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

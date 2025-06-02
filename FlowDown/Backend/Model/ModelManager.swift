@@ -57,6 +57,11 @@ class ModelManager: NSObject {
 
     @BareCodableStorage(key: "Model.IsFirstBoot", defaultValue: true)
     fileprivate var isFirstBoot: Bool
+    @BareCodableStorage(key: "Model.ChatInterface.CollapseReasoningSectionWhenComplete", defaultValue: true)
+    var collapseReasoningSectionWhenComplete: Bool
+    var collapseReasoningSectionWhenCompleteKey: String {
+        _collapseReasoningSectionWhenComplete.key
+    }
 
     var cancellables: Set<AnyCancellable> = []
 

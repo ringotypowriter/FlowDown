@@ -33,6 +33,8 @@ extension ConversationSession {
 
         var pendingToolCalls: [ToolCallRequest] = []
 
+        let collapseAfterReasoningComplete = ModelManager.shared.collapseReasoningSectionWhenComplete
+
         for try await resp in stream {
             let reasoningContent = resp.reasoningContent
             let content = resp.content
@@ -41,11 +43,13 @@ extension ConversationSession {
             message.document = content
             if !content.isEmpty {
                 stopThinking(for: message.id)
+                if collapseAfterReasoningComplete { message.isThinkingFold = true }
             } else if !reasoningContent.isEmpty {
                 startThinking(for: message.id)
             }
             await requestUpdate(view: currentMessageListView)
         }
+        if collapseAfterReasoningComplete { message.isThinkingFold = true }
         stopThinking(for: message.id)
         await requestUpdate(view: currentMessageListView)
 

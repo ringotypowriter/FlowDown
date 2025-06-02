@@ -546,6 +546,9 @@
         }
       }
     },
+    "Chat" : {
+
+    },
     "Check" : {
       "localizations" : {
         "zh-Hans" : {
@@ -665,6 +668,9 @@
           }
         }
       }
+    },
+    "Collapse Reasoning Content" : {
+
     },
     "Comment" : {
       "localizations" : {
@@ -1446,6 +1452,9 @@
           }
         }
       }
+    },
+    "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response." : {
+
     },
     "Enable this to require Command + Enter to send message. On touch devices, you will need to tap the send button manually." : {
       "localizations" : {
@@ -3959,6 +3968,9 @@
           }
         }
       }
+    },
+    "The above setting will take effect at conversation page." : {
+
     },
     "The additional prompt will be appended to the default prompt. You can make requests here, such as language preferences, response formats, etc." : {
       "localizations" : {

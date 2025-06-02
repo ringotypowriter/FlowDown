@@ -87,8 +87,9 @@ extension ConversationSession {
         }
         if !message.reasoningContent.isEmpty {
             message.document = String(localized: "I have recognized this image.")
-            message.isThinkingFold = true
         }
+        let collapseAfterReasoningComplete = ModelManager.shared.collapseReasoningSectionWhenComplete
+        if collapseAfterReasoningComplete { message.isThinkingFold = true }
         stopThinking(for: message.id)
         await requestUpdate(view: currentMessageListView)
         await currentMessageListView.loading()
