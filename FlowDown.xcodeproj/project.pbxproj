@@ -1054,7 +1054,7 @@
 			repositoryURL = "https://github.com/Lakr233/MarkdownView";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.7;
+				minimumVersion = 0.1.8;
 			};
 		};
 		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
@@ -1094,7 +1094,7 @@
 			repositoryURL = "https://github.com/Lakr233/ListViewKit";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.2;
+				minimumVersion = 1.1.6;
 			};
 		};
 		50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */ = {

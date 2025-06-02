@@ -258,11 +258,6 @@ extension MessageListView: ListViewAdapter {
         return false
     }
 
-    func listView(_ list: ListViewKit.ListView, onEvent event: ListViewKit.ListViewEvent) {
-        _ = list
-        _ = event
-    }
-
     private func processContextMenu(
         _ listView: ListViewKit.ListView,
         anchor point: CGPoint,
