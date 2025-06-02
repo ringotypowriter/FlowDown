@@ -69,7 +69,12 @@ final class ReasoningContentView: MessageListRowView {
     }
 
     override init(frame: CGRect) {
-        super.init(frame: frame)
+        var decisionFrame = frame
+        if decisionFrame == .zero {
+            // prevent unwanted animation with magic
+            decisionFrame = .init(x: 0, y: 0, width: 512, height: 10)
+        }
+        super.init(frame: decisionFrame)
 
         contentView.clipsToBounds = true
 
@@ -84,13 +89,6 @@ final class ReasoningContentView: MessageListRowView {
 
         textView.backgroundColor = .clear
         contentView.addSubview(textView)
-        
-        textView.alpha = 0
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            UIView.animate(withDuration: 0.25) {
-                self.textView.alpha = 1
-            }
-        }
     }
 
     @available(*, unavailable)
