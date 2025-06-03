@@ -55,6 +55,10 @@ extension ConversationListView {
             stack.snp.makeConstraints { make in
                 make.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: 24, vertical: 16))
             }
+
+            isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(didSelectCell))
+            contentView.addGestureRecognizer(tap)
         }
 
         @available(*, unavailable)
@@ -89,6 +93,7 @@ extension ConversationListView {
 
         @objc func didSelectCell() {
             guard let id = conversationIdentifier else { return }
+            print("[cell] did select cell \(id)")
             sidebar?.delegate?.sidebarDidSelectNewChat(id)
             sidebar?.delegate?.sidebarRecivedSingleTapForSelection()
         }
