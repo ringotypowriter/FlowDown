@@ -135,10 +135,6 @@ extension ConversationSession {
                         storageSuffix: UUID().uuidString
                     ))
                 }
-                let storableContent: [Message.WebSearchStatus.SearchResult] = searchResult.map { doc in
-                    .init(title: doc.title, url: doc.url)
-                }
-                webSearchMessage.webSearchStatus.searchResults.append(contentsOf: storableContent)
                 await currentMessageListView.loading()
                 requestMessages.append(.tool(
                     content: .text(webAttachments.map(\.textRepresentation).joined(separator: "\n")),
