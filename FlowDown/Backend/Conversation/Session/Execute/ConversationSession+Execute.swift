@@ -62,12 +62,14 @@ extension ConversationSession {
         let modelCapabilities = ModelManager.shared.modelCapabilities(identifier: modelID)
         let modelContextLength = ModelManager.shared.modelContextLength(identifier: modelID)
         var modelWillExecuteTools = false
+        var modelWillGoSearchWeb = false
         if case let .bool(value) = object.options[.tools], value {
             assert(modelCapabilities.contains(.tool))
             modelWillExecuteTools = true
         }
-        // keep it nil-able
-        let tools = modelWillExecuteTools ? ModelToolsManager.shared.enabledTools.map(\.definition) : nil
+        if case let .bool(value) = object.options[.browsing], value {
+            modelWillGoSearchWeb = true
+        }
 
         assert(models.chat != nil)
 
@@ -75,6 +77,14 @@ extension ConversationSession {
         await MainActor.run { UIApplication.shared.isIdleTimerDisabled = true }
 
         saveIfNeeded(object)
+
+        var tools: [ModelTool] = []
+        if modelWillExecuteTools {
+            tools.append(contentsOf: ModelToolsManager.shared.enabledTools)
+            if modelWillGoSearchWeb {
+                tools.append(MTWebSearchTool())
+            }
+        }
 
         // MARK: - 上下文转译到请求体 不包含当前编辑框中的附件
 
@@ -89,7 +99,8 @@ extension ConversationSession {
                 &requestMessages,
                 modelName,
                 modelWillExecuteTools,
-                tools,
+                // keep it nil otherwise upstream will complaint about it
+                tools.isEmpty ? nil : tools.map(\.definition),
                 modelContextLength,
                 modelID
             )
