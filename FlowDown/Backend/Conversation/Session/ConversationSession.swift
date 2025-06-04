@@ -24,7 +24,7 @@ final class ConversationSession: Identifiable {
 
     private lazy var messagesSubject = CurrentValueSubject<([Message], Bool), Never>((messages, false))
     var messagesDidChange: AnyPublisher<([Message], Bool), Never> {
-        messagesSubject.ensureMainThread().eraseToAnyPublisher()
+        messagesSubject.eraseToAnyPublisher()
     }
 
     private lazy var userDidSendMessageSubject = PassthroughSubject<Message, Never>()

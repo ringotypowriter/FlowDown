@@ -19,6 +19,7 @@ final class MessageListView: UIView {
 
     private(set) lazy var markdownDrawingViewProvider: DrawingViewProvider = .init()
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
+    fileprivate let dataSourceLock: NSLock = .init()
 
     private var entryCount = 0
 
@@ -27,10 +28,11 @@ final class MessageListView: UIView {
             isFirstLoad = true
             sessionScopedCancellables.forEach { $0.cancel() }
             sessionScopedCancellables.removeAll()
-            session.messagesDidChange.ensureMainThread().sink { [unowned self] messages, scrolling in
-                updateFromUpstreamPublisher(messages, scrolling)
-            }
-            .store(in: &sessionScopedCancellables)
+            session.messagesDidChange
+                .sink { [unowned self] messages, scrolling in
+                    updateFromUpstreamPublisher(messages, scrolling)
+                }
+                .store(in: &sessionScopedCancellables)
             session.userDidSendMessage.sink { [unowned self] _ in
                 isAutoScrollingToBottom = true
             }
@@ -251,6 +253,18 @@ final class MessageListView: UIView {
 
     func updateFromUpstreamPublisher(_ messages: [Message], _ scrolling: Bool) {
         let entries = entries(from: messages)
+
+        if !Thread.isMainThread {
+            // do the pre render
+            for entry in entries {
+                switch entry {
+                case let .aiContent(_, messageRepresentation):
+                    _ = markdownPackageCache.package(for: messageRepresentation, theme: theme)
+                default: break
+                }
+            }
+        }
+
         let someEntiresBeingRemoved = entryCount > entries.count
         let shouldScrolling = scrolling && isAutoScrollingToBottom
 
@@ -271,9 +285,21 @@ final class MessageListView: UIView {
             isUpdatingSuppressed = false
         }
 
+        if Thread.isMainThread {
+            sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
+        } else {
+            DispatchQueue.main.async {
+                self.sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
+            }
+        }
+    }
+
+    func sendViewModelToUpdate(_ entries: [MessageListView.Entry], _ someEntiresBeingRemoved: Bool, _ shouldScrolling: Bool) {
+        dataSourceLock.lock()
+        defer { dataSourceLock.unlock() }
+        assert(Thread.isMainThread)
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
         if shouldScrolling {
-//            print("[*] scrolling to \(listView.maximumContentOffset)")
             listView.scroll(to: listView.maximumContentOffset)
         }
     }
