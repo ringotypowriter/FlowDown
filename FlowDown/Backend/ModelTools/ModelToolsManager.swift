@@ -61,7 +61,7 @@ class ModelToolsManager {
     var enabledTools: [ModelTool] {
         tools.filter { tool in
             if tool is MTWaitForNextRound { return true }
-            if tool is MTWebSearchTool { return false }
+            if tool is MTWebSearchTool { return true }
             return tool.isEnabled
         }
     }

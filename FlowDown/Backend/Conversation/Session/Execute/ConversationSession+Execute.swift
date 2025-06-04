@@ -82,7 +82,11 @@ extension ConversationSession {
         if modelWillExecuteTools {
             tools.append(contentsOf: ModelToolsManager.shared.enabledTools)
             if modelWillGoSearchWeb {
-                tools.append(MTWebSearchTool())
+                // enabled by default
+                // tools.append(MTWebSearchTool())
+            } else {
+                // but if user disabled web search here, remove it from available tools
+                tools = tools.filter { !($0 is MTWebSearchTool) }
             }
         }
 
