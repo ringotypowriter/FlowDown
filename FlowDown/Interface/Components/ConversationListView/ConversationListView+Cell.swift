@@ -56,9 +56,12 @@ extension ConversationListView {
                 make.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: 24, vertical: 16))
             }
 
-            isUserInteractionEnabled = true
+            contentView.isUserInteractionEnabled = true
             let tap = UITapGestureRecognizer(target: self, action: #selector(didSelectCell))
             contentView.addGestureRecognizer(tap)
+            #if targetEnvironment(macCatalyst)
+                contentView.backgroundColor = .accent.withAlphaComponent(0.001)
+            #endif
         }
 
         @available(*, unavailable)
