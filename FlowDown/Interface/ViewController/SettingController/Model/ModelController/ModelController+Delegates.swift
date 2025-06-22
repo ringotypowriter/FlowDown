@@ -103,7 +103,9 @@ extension SettingController.SettingContent.ModelController: UIDocumentPickerDele
             .appendingPathComponent("DisposableResources")
             .appendingPathComponent(UUID().uuidString)
         try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        for url in urls { _ = url.startAccessingSecurityScopedResource() }
+        for url in urls {
+            _ = url.startAccessingSecurityScopedResource()
+        }
         ModelManager.shared.importModels(at: urls, controller: self)
     }
 }

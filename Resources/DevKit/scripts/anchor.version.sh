@@ -26,6 +26,8 @@ echo "[*] CURRENT_ANCHOR_BUILD: $CURRENT_ANCHOR_BUILD"
 
 READ_VERSION=$(grep "MARKETING_VERSION =" ./FlowDown.xcodeproj/project.pbxproj | head -1)
 READ_VERSION=$(echo $READ_VERSION | sed -E 's/.*MARKETING_VERSION = (.*);/\1/')
+# 去除首尾引号
+READ_VERSION=$(echo $READ_VERSION | sed -E 's/^"(.*)"$/\1/')
 echo "[*] MARKETING_VERSION: $READ_VERSION"
 
 READ_BUILD=$(grep "CURRENT_PROJECT_VERSION =" ./FlowDown.xcodeproj/project.pbxproj | head -1)

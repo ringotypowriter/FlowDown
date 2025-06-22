@@ -293,7 +293,7 @@ class MainController: UIViewController {
     @objc func openSettings() {
         sidebar.settingButton.buttonAction()
     }
-    
+
     @objc func pickupModels() {
         let models = SceneDelegate.supposeToOpenModel
         SceneDelegate.supposeToOpenModel.removeAll()

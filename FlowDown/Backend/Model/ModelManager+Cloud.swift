@@ -144,7 +144,7 @@ extension ModelManager {
             []
         }
     }
-    
+
     func importCloudModel(at url: URL) throws -> CloudModel {
         let decoder = PropertyListDecoder()
         let data = try Data(contentsOf: url)

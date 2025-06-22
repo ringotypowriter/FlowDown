@@ -5,13 +5,13 @@
 //  Created by 秋星桥 on 1/27/25.
 //
 
+import AlertController
 import Combine
 import ConfigurableKit
 import Foundation
 import OrderedCollections
 import Storage
 import UIKit
-import AlertController
 
 class ModelManager: NSObject {
     static let shared = ModelManager()
@@ -176,7 +176,7 @@ class ModelManager: NSObject {
         }
         return 8192
     }
-    
+
     func importModels(at urls: [URL], controller: UIViewController) {
         Indicator.progress(
             title: String(localized: "Importing Model"),
