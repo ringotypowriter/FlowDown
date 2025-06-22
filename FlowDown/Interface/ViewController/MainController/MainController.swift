@@ -297,6 +297,7 @@ class MainController: UIViewController {
     @objc func pickupModels() {
         let models = SceneDelegate.supposeToOpenModel
         SceneDelegate.supposeToOpenModel.removeAll()
+        guard !models.isEmpty else { return }
         print("[*] opening models \(models)")
         ModelManager.shared.importModels(at: models, controller: self)
     }
