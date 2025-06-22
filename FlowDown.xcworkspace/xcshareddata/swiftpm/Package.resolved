@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ktiays/GlyphixTextFx/",
       "state" : {
-        "revision" : "b408e8cfbfd2114372a60e7323ff95e2b4719446",
-        "version" : "2.1.2"
+        "revision" : "a0433f18b8032a75711e724d0c85c900363438b4",
+        "version" : "2.2.1"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "084684d1d752143119dd829668dea1d6cc63f094",
-        "version" : "2.1.6"
+        "revision" : "2d13b9de15dd3663aa8db562497a1b54c13ce65a",
+        "version" : "2.1.8"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ml-explore/mlx-swift",
       "state" : {
-        "revision" : "b990c58153af70eb0914bca7dd74401d341fa9ae",
-        "version" : "0.21.3"
+        "revision" : "b94473af8c50010edba87a48bbd60c3d7f949852",
+        "version" : "0.25.4"
       }
     },
     {
@@ -150,7 +150,7 @@
       "location" : "https://github.com/ml-explore/mlx-swift-examples/",
       "state" : {
         "branch" : "main",
-        "revision" : "a7c2e7b6580a2ccf5ce0afa8d243026830fb84df"
+        "revision" : "e9dfa74fdec98b9855dbf0c859a58a4ef279deeb"
       }
     },
     {
@@ -257,8 +257,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/huggingface/swift-transformers",
       "state" : {
-        "revision" : "940a4fac109d7d68817b22382de4894a8ea945c3",
-        "version" : "0.1.20"
+        "revision" : "c2f302a74cca59cbde683b1425ab43c05685515a",
+        "version" : "0.1.21"
       }
     },
     {
@@ -284,8 +284,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "bba848db50462894e7fc0891d018dfecad4ef11e",
-        "version" : "2.8.7"
+        "revision" : "aa85ee96017a730031bafe411cde24a08a17a9c9",
+        "version" : "2.8.8"
       }
     },
     {
@@ -293,8 +293,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Tencent/wcdb",
       "state" : {
-        "revision" : "db68d174876d4c50c9843d0e6e22c58adebf2431",
-        "version" : "2.1.11"
+        "revision" : "5d70617cf1054a068a91a1beebb23bf0f8b3549f",
+        "version" : "2.1.12"
       }
     },
     {
@@ -302,8 +302,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ktiays/With",
       "state" : {
-        "revision" : "22b09c886751816992d04a04cc3024bdba5ca95c",
-        "version" : "2.0.0"
+        "revision" : "d8788e5c3733f5b8f12582487f508e6f9617e7ab",
+        "version" : "2.1.0"
       }
     },
     {
