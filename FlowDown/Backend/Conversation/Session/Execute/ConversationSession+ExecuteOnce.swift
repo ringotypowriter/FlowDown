@@ -24,10 +24,17 @@ extension ConversationSession {
         await currentMessageListView.loading()
 
         let message = appendNewMessage(role: .assistant)
+        
+        var additionalField = [String : Any]()
+        if let model = ModelManager.shared.cloudModel(identifier: modelID),
+            URL(string: model.endpoint)?.host?.lowercased() == "openrouter.ai"
+        { additionalField["reasoning"] = [String: String]() }
+        
         let stream = try await ModelManager.shared.streamingInfer(
             with: modelID,
             input: requestMessages,
-            tools: tools
+            tools: tools,
+            additionalField: additionalField
         )
         defer { self.stopThinking(for: message.id) }
 

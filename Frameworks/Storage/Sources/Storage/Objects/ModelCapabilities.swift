@@ -11,6 +11,7 @@ public enum ModelCapabilities: String, Codable, CaseIterable {
 //    case stream
     case visual
     case tool
+    case developerRole
 }
 
 //

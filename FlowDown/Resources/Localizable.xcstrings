@@ -1155,6 +1155,16 @@
         }
       }
     },
+    "Developer Role" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要求开发者角色"
+          }
+        }
+      }
+    },
     "Disable Warnings" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4199,6 +4209,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "此模型由 pollinations.ai 免费提供。包含速率限制。"
+          }
+        }
+      }
+    },
+    "This model requires developer role when dealing with prompt." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型在推理时需要使用开发者角色，而非传统的系统角色。"
           }
         }
       }

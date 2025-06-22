@@ -67,7 +67,8 @@ extension ConversationSessionManager.Session {
             let ans = try await ModelManager.shared.infer(
                 with: model,
                 maxCompletionTokens: 64,
-                input: messages
+                input: messages,
+                additionalField: [:]
             )
 
             let content = ans.content.trimmingCharacters(in: .whitespacesAndNewlines)

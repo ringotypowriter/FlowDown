@@ -67,7 +67,8 @@ extension ConversationSessionManager.Session {
             let ans = try await ModelManager.shared.infer(
                 with: model,
                 maxCompletionTokens: 8,
-                input: messages
+                input: messages,
+                additionalField: [:]
             )
 
             if let icon = extractIconFromXML(ans.content) {

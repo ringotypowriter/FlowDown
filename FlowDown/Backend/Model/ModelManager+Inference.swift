@@ -198,12 +198,8 @@ extension ModelManager {
 extension ModelManager {
     static let indicatorText = " ●"
 
-    private func chatService(for identifier: ModelIdentifier) throws -> any ChatService {
+    private func chatService(for identifier: ModelIdentifier, additionalField: [String : Any]) throws -> any ChatService {
         if let model = cloudModel(identifier: identifier) {
-            var additionalField = [String: Any]()
-            if URL(string: model.endpoint)?.host?.lowercased() == "openrouter.ai" {
-                additionalField["reasoning"] = [String: String]()
-            }
             return RemoteChatClient(
                 model: model.model_identifier,
                 baseURL: model.endpoint,
@@ -252,11 +248,33 @@ extension ModelManager {
         }
     }
 
+    func prepareRequestBody(
+        modelID: ModelIdentifier,
+        messages: [ChatRequestBody.Message]
+    ) throws -> [ChatRequestBody.Message] {
+        var messages = messages
+        if let model = cloudModel(identifier: modelID) {
+            // this model requires developer mode to work
+            if model.capabilities.contains(.developerRole) {
+                messages = messages.map { message in
+                    switch message {
+                    case let .system(content, name):
+                        return .developer(content: content, name: name)
+                    default:
+                        return message
+                    }
+                }
+            }
+        }
+        return messages
+    }
+    
     func infer(
         with modelID: ModelIdentifier,
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
-        tools: [ChatRequestBody.Tool]? = nil
+        tools: [ChatRequestBody.Tool]? = nil,
+        additionalField: [String: Any]
     ) async throws -> InferenceMessage {
         NSObject.cancelPreviousPerformRequests(
             withTarget: self,
@@ -265,10 +283,10 @@ extension ModelManager {
         )
         defer { scheduleDissposeCachedModels() }
 
-        let client = try chatService(for: modelID)
+        let client = try chatService(for: modelID, additionalField: additionalField)
         let response = try await client.chatCompletionRequest(
             body: .init(
-                messages: input,
+                messages: prepareRequestBody(modelID: modelID, messages: input),
                 maxCompletionTokens: maxCompletionTokens,
                 temperature: .init(ModelManager.shared.temperature),
                 tools: tools
@@ -287,7 +305,8 @@ extension ModelManager {
         with modelID: ModelIdentifier,
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
-        tools: [ChatRequestBody.Tool]? = nil
+        tools: [ChatRequestBody.Tool]? = nil,
+        additionalField: [String: Any]
     ) async throws -> AsyncThrowingStream<InferenceMessage, any Error> {
         NSObject.cancelPreviousPerformRequests(
             withTarget: self,
@@ -296,12 +315,12 @@ extension ModelManager {
         )
         defer { scheduleDissposeCachedModels() }
 
-        let client = try chatService(for: modelID)
+        let client = try chatService(for: modelID, additionalField: additionalField)
         client.collectedErrors = nil
-
+    
         let stream = try await client.streamingChatCompletionRequest(
             body: .init(
-                messages: input,
+                messages: prepareRequestBody(modelID: modelID, messages: input),
                 maxCompletionTokens: maxCompletionTokens,
                 temperature: .init(ModelManager.shared.temperature),
                 tools: tools

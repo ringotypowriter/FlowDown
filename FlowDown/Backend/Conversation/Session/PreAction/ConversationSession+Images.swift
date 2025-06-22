@@ -77,7 +77,8 @@ extension ConversationSession {
         for try await resp in try await ModelManager.shared.streamingInfer(
             with: decision,
             maxCompletionTokens: 2048,
-            input: messages
+            input: messages,
+            additionalField: [:]
         ) {
             await requestUpdate(view: currentMessageListView)
             startThinking(for: message.id)

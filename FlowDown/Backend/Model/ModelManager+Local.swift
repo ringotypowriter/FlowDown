@@ -38,6 +38,7 @@ extension ModelCapabilities {
 //        case .stream: "arrow.up.arrow.down"
         case .tool: "hammer"
 //        case .reasoning: "text.bubble"
+        case .developerRole: "person.crop.circle.badge.checkmark"
         }
     }
 
@@ -47,6 +48,7 @@ extension ModelCapabilities {
 //        case .stream: String(localized: "Stream")
         case .tool: String(localized: "Tool")
 //        case .reasoning: String(localized: "Reasoning")
+            case .developerRole: String(localized: "Developer Role")
         }
     }
 
@@ -56,6 +58,7 @@ extension ModelCapabilities {
 //        case .stream: String(localized: "This model can generate streaming text output.")
         case .tool: String(localized: "This model can use client provided tools.")
 //        case .reasoning: String(localized: "This model can provide reasoning output.")
+        case .developerRole: String(localized: "This model requires developer role when dealing with prompt.")
         }
     }
 }
