@@ -17,7 +17,6 @@ final class MessageListView: UIView {
     private lazy var listView: MessageListViewCore = .init()
     var contentSize: CGSize { listView.contentSize }
 
-    private(set) lazy var markdownDrawingViewProvider: DrawingViewProvider = .init()
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
     fileprivate let dataSourceLock: NSLock = .init()
 
@@ -73,7 +72,7 @@ final class MessageListView: UIView {
     }
 
     private(set) lazy var labelForSizeCalculation: LTXLabel = .init()
-    private(set) lazy var markdownViewForSizeCalculation: MarkdownTextView = .init(viewProvider: markdownDrawingViewProvider)
+    private(set) lazy var markdownViewForSizeCalculation: MarkdownTextView = .init()
     private(set) lazy var markdownPackageCache: MarkdownPackageCache = .init()
 
     init() {

@@ -57,7 +57,7 @@ extension MessageListView: ListViewAdapter {
         case .reasoningContent:
             ReasoningContentView()
         case .aiContent:
-            AiMessageView(viewProvider: markdownDrawingViewProvider)
+            AiMessageView()
         case .hint:
             HintMessageView()
         case .webSearch:

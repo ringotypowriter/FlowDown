@@ -189,6 +189,7 @@ class ChatView: UIView {
         offloadModelsToSession(modelIdentifier: modelIdentifier())
 
         removeUnusedListViews()
+        editor.focus()
     }
 
     override func layoutSubviews() {

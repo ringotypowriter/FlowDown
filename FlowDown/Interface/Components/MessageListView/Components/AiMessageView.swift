@@ -22,8 +22,8 @@ final class AiMessageView: MessageListRowView {
         set { markdownView.codePreviewHandler = newValue }
     }
 
-    init(viewProvider: DrawingViewProvider) {
-        self.viewProvider = viewProvider
+    init() {
+        self.viewProvider = .init()
         super.init(frame: .zero)
         configureSubviews()
     }

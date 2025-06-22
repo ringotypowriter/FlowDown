@@ -54,7 +54,9 @@ extension Conversation {
         if let image = UIImage(data: icon) {
             return image
         }
-        return .init(systemName: "quote.bubble")
+        return "💬"
+            .textToImage(size: 64)
+            ?? .init(systemName: "quote.bubble")
             ?? .starShine
     }
 }
