@@ -894,7 +894,7 @@
 			repositoryURL = "https://github.com/ktiays/GlyphixTextFx/";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.1;
+				minimumVersion = 2.2.1;
 			};
 		};
 		502BCBCE2D43DADD00500180 /* XCRemoteSwiftPackageReference "ConfigurableKit" */ = {
@@ -1054,7 +1054,7 @@
 			repositoryURL = "https://github.com/Lakr233/MarkdownView";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.8;
+				minimumVersion = 2.1.9;
 			};
 		};
 		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {

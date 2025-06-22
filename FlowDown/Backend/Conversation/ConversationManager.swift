@@ -44,7 +44,7 @@ class ConversationManager: NSObject {
     @objc private func saveObjects() {
         DispatchQueue.global().async {
             self._temporaryEditorObjects = self.temporaryEditorObjects
-            print("[*] \(self.temporaryEditorObjects.count)  temporary editor objects saved.")
+            print("[*] \(self.temporaryEditorObjects.count) temporary editor objects saved.")
         }
     }
 }

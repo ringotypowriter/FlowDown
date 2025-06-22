@@ -144,6 +144,15 @@ extension ModelManager {
             []
         }
     }
+    
+    func importCloudModel(at url: URL) throws -> CloudModel {
+        let decoder = PropertyListDecoder()
+        let data = try Data(contentsOf: url)
+        let model = try decoder.decode(CloudModel.self, from: data)
+        if model.id.isEmpty { model.id = UUID().uuidString }
+        insertCloudModel(model)
+        return model
+    }
 }
 
 extension ModelManager {

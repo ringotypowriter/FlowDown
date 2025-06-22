@@ -10,6 +10,8 @@ import ConfigurableKit
 import Foundation
 import OrderedCollections
 import Storage
+import UIKit
+import AlertController
 
 class ModelManager: NSObject {
     static let shared = ModelManager()
@@ -173,6 +175,58 @@ class ModelManager: NSObject {
             return localModel.context.rawValue
         }
         return 8192
+    }
+    
+    func importModels(at urls: [URL], controller: UIViewController) {
+        Indicator.progress(
+            title: String(localized: "Importing Model"),
+            controller: controller
+        ) { completionHandler in
+            var success: [String] = []
+            var errors: [String] = []
+            for url in urls {
+                if url.pathExtension.lowercased() == "zip" {
+                    let result = ModelManager.shared.unpackAndImport(modelAt: url)
+                    switch result {
+                    case let .success(model):
+                        success.append(model.model_identifier)
+                    case let .failure(error):
+                        errors.append(error.localizedDescription)
+                    }
+                    continue
+                }
+                if url.pathExtension.lowercased() == "plist" || url.pathExtension.lowercased() == "fdmodel" {
+                    do {
+                        let model = try ModelManager.shared.importCloudModel(at: url)
+                        success.append(model.model_identifier)
+                    } catch {
+                        errors.append(error.localizedDescription)
+                    }
+                    continue
+                }
+                errors.append(url.lastPathComponent)
+            }
+            completionHandler {
+                if let error = errors.first {
+                    let controller = AlertViewController(
+                        title: String(localized: "Error Occurred"),
+                        message: error
+                    ) { context in
+                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                            context.dispose()
+                        }
+                    }
+                    controller.present(controller, animated: true)
+                } else {
+                    Indicator.present(
+                        title: String(
+                            format: String(localized: "Imported %d Models"),
+                            success.count
+                        )
+                    )
+                }
+            }
+        }
     }
 }
 

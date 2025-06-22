@@ -145,7 +145,7 @@ extension SettingController.SettingContent.ModelController {
                         ) { [weak self] _ in
                             guard let self else { return }
                             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [
-                                .zip, .propertyList,
+                                .zip, .propertyList, UTType(filenameExtension: "fdmodel") ?? .data,
                             ], asCopy: true)
                             picker.title = String(localized: "Import Model")
                             picker.delegate = self

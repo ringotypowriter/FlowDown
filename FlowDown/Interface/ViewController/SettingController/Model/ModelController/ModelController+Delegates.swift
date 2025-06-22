@@ -103,61 +103,7 @@ extension SettingController.SettingContent.ModelController: UIDocumentPickerDele
             .appendingPathComponent("DisposableResources")
             .appendingPathComponent(UUID().uuidString)
         try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        for url in urls {
-            _ = url.startAccessingSecurityScopedResource()
-        }
-        Indicator.progress(
-            title: String(localized: "Importing Model"),
-            controller: self
-        ) { completionHandler in
-            var success: [String] = []
-            var errors: [String] = []
-            for url in urls {
-                if url.pathExtension.lowercased() == "zip" {
-                    let result = ModelManager.shared.unpackAndImport(modelAt: url)
-                    switch result {
-                    case let .success(model):
-                        success.append(model.model_identifier)
-                    case let .failure(error):
-                        errors.append(error.localizedDescription)
-                    }
-                    continue
-                }
-                if url.pathExtension.lowercased() == "plist" {
-                    let decoder = PropertyListDecoder()
-                    do {
-                        let data = try Data(contentsOf: url)
-                        let model = try decoder.decode(CloudModel.self, from: data)
-                        if model.id.isEmpty { model.id = UUID().uuidString }
-                        ModelManager.shared.insertCloudModel(model)
-                        success.append(model.model_identifier)
-                    } catch {
-                        errors.append(error.localizedDescription)
-                    }
-                    continue
-                }
-                errors.append(url.lastPathComponent)
-            }
-            completionHandler {
-                if let error = errors.first {
-                    let controller = AlertViewController(
-                        title: String(localized: "Error Occurred"),
-                        message: error
-                    ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                            context.dispose()
-                        }
-                    }
-                    self.present(controller, animated: true)
-                } else {
-                    Indicator.present(
-                        title: String(
-                            format: String(localized: "Imported %d Models"),
-                            success.count
-                        )
-                    )
-                }
-            }
-        }
+        for url in urls { _ = url.startAccessingSecurityScopedResource() }
+        ModelManager.shared.importModels(at: urls, controller: self)
     }
 }

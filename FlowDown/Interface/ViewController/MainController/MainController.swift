@@ -45,8 +45,7 @@ class MainController: UIViewController {
     }
 
     init() {
-        super.init(nibName: nil, bundle: nil)
-        commonInit()
+        fatalError()
     }
 
     required init?(coder: NSCoder) {
@@ -59,6 +58,12 @@ class MainController: UIViewController {
             self,
             selector: #selector(resetGestures),
             name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(pickupModels),
+            name: .openModel,
             object: nil
         )
     }
@@ -110,6 +115,10 @@ class MainController: UIViewController {
         }
 
         setupViews()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
     private var previousLayoutRect: CGRect = .zero
@@ -283,6 +292,13 @@ class MainController: UIViewController {
 
     @objc func openSettings() {
         sidebar.settingButton.buttonAction()
+    }
+    
+    @objc func pickupModels() {
+        let models = SceneDelegate.supposeToOpenModel
+        SceneDelegate.supposeToOpenModel.removeAll()
+        print("[*] opening models \(models)")
+        ModelManager.shared.importModels(at: models, controller: self)
     }
 }
 
