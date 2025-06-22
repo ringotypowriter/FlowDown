@@ -104,6 +104,26 @@ extension ModelManager {
                                 )
                             )
                         )
+                    case .noModelFactoryAvailable:
+                        completion(
+                            .failure(
+                                NSError(
+                                    domain: "Model",
+                                    code: -1,
+                                    userInfo: [NSLocalizedDescriptionKey: String(localized: "Unsupported model type.")]
+                                )
+                            )
+                        )
+                    case .configurationDecodingError:
+                        completion(
+                            .failure(
+                                NSError(
+                                    domain: "Model",
+                                    code: -1,
+                                    userInfo: [NSLocalizedDescriptionKey: String(localized: "Unable to decode configuration.")]
+                                )
+                            )
+                        )
                     }
                 } else if let error = error as? VLMError {
                     print("[*] VLM failed to inference: \(error)")
@@ -198,7 +218,7 @@ extension ModelManager {
 extension ModelManager {
     static let indicatorText = " ●"
 
-    private func chatService(for identifier: ModelIdentifier, additionalField: [String : Any]) throws -> any ChatService {
+    private func chatService(for identifier: ModelIdentifier, additionalField: [String: Any]) throws -> any ChatService {
         if let model = cloudModel(identifier: identifier) {
             return RemoteChatClient(
                 model: model.model_identifier,
@@ -259,16 +279,16 @@ extension ModelManager {
                 messages = messages.map { message in
                     switch message {
                     case let .system(content, name):
-                        return .developer(content: content, name: name)
+                        .developer(content: content, name: name)
                     default:
-                        return message
+                        message
                     }
                 }
             }
         }
         return messages
     }
-    
+
     func infer(
         with modelID: ModelIdentifier,
         maxCompletionTokens: Int? = nil,
@@ -317,7 +337,7 @@ extension ModelManager {
 
         let client = try chatService(for: modelID, additionalField: additionalField)
         client.collectedErrors = nil
-    
+
         let stream = try await client.streamingChatCompletionRequest(
             body: .init(
                 messages: prepareRequestBody(modelID: modelID, messages: input),

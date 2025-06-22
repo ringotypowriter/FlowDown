@@ -23,7 +23,7 @@ final class AiMessageView: MessageListRowView {
     }
 
     init() {
-        self.viewProvider = .init()
+        viewProvider = .init()
         super.init(frame: .zero)
         configureSubviews()
     }

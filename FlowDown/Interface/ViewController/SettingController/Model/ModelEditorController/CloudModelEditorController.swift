@@ -435,7 +435,7 @@ class CloudModelEditorController: StackScrollController {
                 .appendingPathComponent(UUID().uuidString)
             let tempFile = tempFileDir
                 .appendingPathComponent("Export-\(model.modelDisplayName.sanitizedFileName)\(model.auxiliaryIdentifier)")
-                .appendingPathExtension("plist")
+                .appendingPathExtension(ModelManager.flowdownModelConfigurationExtension)
             try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
             FileManager.default.createFile(atPath: tempFile.path, contents: nil)
             let encoder = PropertyListEncoder()

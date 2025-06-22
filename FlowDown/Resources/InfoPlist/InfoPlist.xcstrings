@@ -37,6 +37,16 @@
         }
       }
     },
+    "FlowDown Model File" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浮望模型配置文件"
+          }
+        }
+      }
+    },
     "NSCalendarsUsageDescription" : {
       "comment" : "Privacy - Calendars Usage Description",
       "extractionState" : "extracted_with_value",

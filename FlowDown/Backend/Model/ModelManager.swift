@@ -13,6 +13,7 @@ import Storage
 
 class ModelManager: NSObject {
     static let shared = ModelManager()
+    static let flowdownModelConfigurationExtension = "fdmodel"
 
     typealias ModelIdentifier = String
     typealias LocalModelIdentifier = LocalModel.ID

@@ -48,7 +48,7 @@ extension ModelCapabilities {
 //        case .stream: String(localized: "Stream")
         case .tool: String(localized: "Tool")
 //        case .reasoning: String(localized: "Reasoning")
-            case .developerRole: String(localized: "Developer Role")
+        case .developerRole: String(localized: "Developer Role")
         }
     }
 

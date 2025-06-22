@@ -4385,6 +4385,16 @@
         }
       }
     },
+    "Unable to decode configuration." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解析模型配置。"
+          }
+        }
+      }
+    },
     "Unable to decode image." : {
       "localizations" : {
         "zh-Hans" : {

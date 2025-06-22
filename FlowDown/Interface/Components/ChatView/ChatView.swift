@@ -187,9 +187,13 @@ class ChatView: UIView {
         title.use(identifier: conversation)
 
         offloadModelsToSession(modelIdentifier: modelIdentifier())
-
         removeUnusedListViews()
-        editor.focus()
+        
+        let session = ConversationSessionManager.shared.session(for: conversation)
+        let sessionIsEmpty = !session.messages.contains { message in
+            [.user, .userAttachmentHint, .assistant,].contains(message.role)
+        }
+        if sessionIsEmpty { editor.focus() }
     }
 
     override func layoutSubviews() {
