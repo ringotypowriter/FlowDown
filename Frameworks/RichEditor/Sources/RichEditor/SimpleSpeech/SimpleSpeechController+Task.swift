@@ -37,8 +37,8 @@ extension SimpleSpeechController {
 
     func stopTranscript() {
         for item in sessionItems {
-            if let item = item as? SFSpeechRecognitionTask {
-                item.cancel()
+            if let task = item as? SFSpeechRecognitionTask {
+                task.cancel()
             }
         }
         sessionItems.removeAll()
@@ -60,6 +60,13 @@ extension SimpleSpeechController {
             ])
         }
 
+        // appLang if non‐English, otherwise Locale.preferredLanguages.first
+        let appLang = Bundle.main.preferredLocalizations.first ?? "en"
+        let preferred = (appLang != "en") ? appLang
+                       : Locale.preferredLanguages.first ?? "en"
+        let localeID = preferred.replacingOccurrences(of: "_", with: "-")
+        let speechLocale = Locale(identifier: localeID)
+        
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
@@ -70,7 +77,7 @@ extension SimpleSpeechController {
         recognitionRequest.shouldReportPartialResults = true
         recognitionRequest.requiresOnDeviceRecognition = false
 
-        guard let speechRecognizer = SFSpeechRecognizer() else {
+        guard let speechRecognizer = SFSpeechRecognizer(locale: speechLocale) else {
             throw NSError(domain: "SpeechRecognizer", code: 0, userInfo: [
                 NSLocalizedDescriptionKey: NSLocalizedString("Speech recognizer is not available.", bundle: .module, comment: ""),
             ])
