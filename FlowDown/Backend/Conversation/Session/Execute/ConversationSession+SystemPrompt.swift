@@ -32,6 +32,20 @@ extension ConversationSession {
             )
         )
 
+        if case .bool(true) = object.options[.browsing] {
+            let sensitivity = ModelManager.shared.searchSensitivity
+            requestMessages.append(
+                .system(
+                    content: .text(
+                    """
+                    Web Search Mode: \(sensitivity.title)
+                    \(sensitivity.briefDescription)
+                    """
+                    )
+                )
+            )
+        }
+
         if modelWillExecuteTools {
             requestMessages.append(
                 .system(
@@ -69,9 +83,7 @@ extension ConversationSession {
         }
         if !systemMessage.content.isEmpty {
             requestMessages.removeAll {
-                guard case .system = $0 else {
-                    return false
-                }
+                guard case .system = $0 else { return false }
                 return true
             }
             let message = ChatRequestBody.Message.system(

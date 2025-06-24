@@ -158,24 +158,39 @@ extension ModelManager {
             }
         }
 
+        var briefDescription: String {
+            switch self {
+            case .essential:
+                return "Avoid web searches unless absolutely necessary for time-sensitive or highly uncertain information where your internal knowledge is likely incorrect. Prioritize speed, but not at the cost of severe inaccuracy."
+            case .balanced:
+                return "You MUST perform a web search for topics like politics, current events, weather, sports, scientific developments, cultural trends, or any other dynamic topic. Err on the side of searching if you are even remotely uncertain that your knowledge is complete and up-to-date."
+            case .proactive:
+                return "You MUST conduct a research-level web search to ensure comprehensive and up-to-date coverage, even for topics where you have some existing knowledge, unless the user explicitly asks you not to browse."
+            }
+        }
+
         var promptTemplate: String {
             let base = """
-            You are an expert at deciding when to use a web search to answer a user's query. Your primary goal is to ensure the information you provide is accurate, comprehensive, and up-to-date.
-            
-            It is **critical** that you browse the web for any query that could benefit from up-to-date information or for topics you are uncertain about. It is always better to search than to provide outdated information.
+            You are an expert at deciding when to use a web search to answer a user's query. Ensure your information is accurate and up-to-date.
 
             Context to consider:
             1. User's current question/request
             2. Previous conversation history
             3. Attached documents/files
-            4. Current date and time for time-sensitive queries
+            4. Current date and time (for time-sensitive queries)
 
             Instructions:
-            - Based on your analysis and search mode, decide if a web search is required.
-            - If a search is needed, generate 1-3 simple, clear search queries in the user's language.
-            - Respond with valid XML, indicating if a search is required and providing the queries.
+            - Decide if a web search is required.
+            - If required, generate 1–3 simple, clear search queries in the user's language.
+            - Respond with valid XML indicating search_required and listing queries.
+            """
 
-            Respond with valid XML format like this example:
+            return """
+            \(base)
+
+            Current Search Mode: \(title)
+
+            Respond with XML like:
             <output>
             <search_required>true</search_required>
             <queries>
@@ -183,43 +198,14 @@ extension ModelManager {
             </queries>
             </output>
 
-            If no web search is needed, respond with:
+            If no search is needed:
             <output>
             <search_required>false</search_required>
             <queries></queries>
             </output>
             """
-
-            switch self {
-            case .essential:
-                return """
-                \(base)
-
-                ---
-                **Search Mode: Essential**
-                You are in a fast-response mode. Avoid web searches unless **absolutely necessary** for time-sensitive or highly uncertain information where your internal knowledge is likely incorrect. Prioritize speed, but not at the cost of severe inaccuracy.
-                """
-            case .balanced:
-                return """
-                \(base)
-
-                ---
-                **Search Mode: Balanced**
-                You **MUST** perform a web search for topics like politics, current events, weather, sports, scientific developments, cultural trends, or any other dynamic topic. **Err on the side of searching** if you are even remotely uncertain that your knowledge is complete and up-to-date.
-                """
-            case .proactive:
-                return """
-                \(base)
-
-                ---
-                **Search Mode: Proactive**
-                You **SHOULD** conduct a web search to ensure comprehensive and up-to-date coverage, even for topics where you have some existing knowledge. Generate detailed queries to gather broad information. You SHOULD set <search_required>true</search_required> unless the user explicitly asks you not to browse.
-                """
-            }
         }
     }
-
-    
 
     static let searchSensitivityConfigurableObject: ConfigurableObject = .init(
         icon: "list.bullet.clipboard",
