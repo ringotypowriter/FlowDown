@@ -106,12 +106,12 @@ extension ModelManager {
                     rawValue: 0.5
                 ),
                 .init(
-                    icon: "thermometer.balanced",
+                    icon: "thermometer.medium",
                     title: String(localized: "Humankind @ 0.75"),
                     rawValue: 0.75
                 ),
                 .init(
-                    icon: "thermometer.balanced",
+                    icon: "thermometer.medium",
                     title: String(localized: "Creative @ 1.0"),
                     rawValue: 1
                 ),
