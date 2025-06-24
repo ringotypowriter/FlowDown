@@ -38,6 +38,7 @@ extension ConversationManager {
             preconditionFailure()
         }
         print("[+] created a new conversation with id: \(object.id)")
+        NotificationCenter.default.post(name: .newChatCreated, object: object.id)
         return object
     }
 
@@ -92,4 +93,8 @@ extension ConversationManager {
     func message(within conv: Conversation.ID) -> [Message] {
         sdb.listMessages(within: conv)
     }
+}
+
+extension Notification.Name {
+    static let newChatCreated = Notification.Name("newChatCreated")
 }

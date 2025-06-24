@@ -157,6 +157,14 @@ class ChatView: UIView {
                 self?.editor.updateModelName()
             }
             .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: .newChatCreated)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue(label: "wiki.qaq.editor.focus"))
+            .ensureMainThread()
+            .sink { [weak self] _ in
+                self?.editor.focus()
+            }
+            .store(in: &cancellables)
     }
 
     @available(*, unavailable)
@@ -188,12 +196,6 @@ class ChatView: UIView {
 
         offloadModelsToSession(modelIdentifier: modelIdentifier())
         removeUnusedListViews()
-
-        let session = ConversationSessionManager.shared.session(for: conversation)
-        let sessionIsEmpty = !session.messages.contains { message in
-            [.user, .userAttachmentHint, .assistant].contains(message.role)
-        }
-        if sessionIsEmpty { editor.focus() }
     }
 
     override func layoutSubviews() {
