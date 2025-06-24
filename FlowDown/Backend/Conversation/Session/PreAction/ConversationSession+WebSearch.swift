@@ -120,30 +120,14 @@ extension ConversationSessionManager.Session {
         let document: String
     }
 
-    private func generateWebSearchTemplate(input: String, documents: [String], previousMessages: [String]) -> [TemplateItem] {
-        let task = """
-        Generate relevant web search queries based on the user's input and context. Focus on simple, clear keywords that would be used in search engines. Return 1-3 queries maximum, preferably just one. Use the same language as the user's input.
-
-        Consider the following context:
-        1. User's current question/request
-        2. Previous conversation history (if any)
-        3. Attached documents/files (if any)
-        4. Current date and time for time-sensitive queries
-
-        Respond with valid XML format like this example:
-        <output>
-        <search_required>true</search_required>
-        <queries>
-        <query>example search query</query>
-        </queries>
-        </output>
-
-        If no web search is needed (e.g., the question is general knowledge, personal opinion, or can be answered from context), respond with:
-        <output>
-        <search_required>false</search_required>
-        <queries></queries>
-        </output>
-        """
+    private func generateWebSearchTemplate(
+        input: String,
+        documents: [String],
+        previousMessages: [String]
+    ) -> [TemplateItem] {
+        // prompt depends on sensitivity
+        let sensitivity = ModelManager.shared.searchSensitivity
+        let task = sensitivity.promptTemplate
 
         let attachedDocuments = documents.isEmpty ? nil : documents.enumerated().map { index, content in
             WebSearchRequest.AttachedDocument(id: index, content: content)

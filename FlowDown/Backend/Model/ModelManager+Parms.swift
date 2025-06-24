@@ -131,6 +131,111 @@ extension ModelManager {
 }
 
 extension ModelManager {
+    enum SearchSensitivity: String, CaseIterable, Codable {
+        case essential
+        case balanced
+        case proactive
+
+        var title: String {
+            switch self {
+            case .essential:
+                return NSLocalizedString("Essential", comment: "Search Strategy")
+            case .balanced:
+                return NSLocalizedString("Balanced", comment: "Search Strategy")
+            case .proactive:
+                return NSLocalizedString("Proactive", comment: "Search Strategy")
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .essential:
+                return "bolt"
+            case .balanced:
+                return "magnifyingglass"
+            case .proactive:
+                return "book"
+            }
+        }
+
+        var promptTemplate: String {
+            let base = """
+            You are an expert at deciding when to use a web search to answer a user's query. Your primary goal is to ensure the information you provide is accurate, comprehensive, and up-to-date.
+            
+            It is **critical** that you browse the web for any query that could benefit from up-to-date information or for topics you are uncertain about. It is always better to search than to provide outdated information.
+
+            Context to consider:
+            1. User's current question/request
+            2. Previous conversation history
+            3. Attached documents/files
+            4. Current date and time for time-sensitive queries
+
+            Instructions:
+            - Based on your analysis and search mode, decide if a web search is required.
+            - If a search is needed, generate 1-3 simple, clear search queries in the user's language.
+            - Respond with valid XML, indicating if a search is required and providing the queries.
+
+            Respond with valid XML format like this example:
+            <output>
+            <search_required>true</search_required>
+            <queries>
+            <query>example search query</query>
+            </queries>
+            </output>
+
+            If no web search is needed, respond with:
+            <output>
+            <search_required>false</search_required>
+            <queries></queries>
+            </output>
+            """
+
+            switch self {
+            case .essential:
+                return """
+                \(base)
+
+                ---
+                **Search Mode: Essential**
+                You are in a fast-response mode. Avoid web searches unless **absolutely necessary** for time-sensitive or highly uncertain information where your internal knowledge is likely incorrect. Prioritize speed, but not at the cost of severe inaccuracy.
+                """
+            case .balanced:
+                return """
+                \(base)
+
+                ---
+                **Search Mode: Balanced**
+                You **MUST** perform a web search for topics like politics, current events, weather, sports, scientific developments, cultural trends, or any other dynamic topic. **Err on the side of searching** if you are even remotely uncertain that your knowledge is complete and up-to-date.
+                """
+            case .proactive:
+                return """
+                \(base)
+
+                ---
+                **Search Mode: Proactive**
+                You **SHOULD** conduct a web search to ensure comprehensive and up-to-date coverage, even for topics where you have some existing knowledge. Generate detailed queries to gather broad information. You SHOULD set <search_required>true</search_required> unless the user explicitly asks you not to browse.
+                """
+            }
+        }
+    }
+
+    
+
+    static let searchSensitivityConfigurableObject: ConfigurableObject = .init(
+        icon: "list.bullet.clipboard",
+        title: String(localized: "Search Strategy"),
+        explain: String(localized: "Adjust how aggressively web searches are triggered."),
+        key: "Model.Inference.SearchSensitivity",
+        defaultValue: SearchSensitivity.balanced.rawValue,
+        annotation: ChidoriListAnnotation {
+            SearchSensitivity.allCases.map {
+                .init(icon: $0.icon, title: $0.title, rawValue: $0.rawValue)
+            }
+        }
+    )
+}
+
+extension ModelManager {
     enum PromptType: String, CaseIterable, Codable {
         case none
         case minimal

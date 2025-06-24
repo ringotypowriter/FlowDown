@@ -148,6 +148,16 @@
         }
       }
     },
+    "Adjust how aggressively web searches are triggered." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调整搜索策略积极性。"
+          }
+        }
+      }
+    },
     "Adjust the font size of the markdown content." : {
       "localizations" : {
         "zh-Hans" : {
@@ -375,6 +385,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "视觉辅助模型"
+          }
+        }
+      }
+    },
+    "Balanced" : {
+      "comment" : "Search Strategy",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通常"
           }
         }
       }
@@ -1513,6 +1534,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "遇到错误"
+          }
+        }
+      }
+    },
+    "Essential" : {
+      "comment" : "Search Strategy",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必要"
           }
         }
       }
@@ -3327,6 +3359,17 @@
         }
       }
     },
+    "Proactive" : {
+      "comment" : "Search Strategy",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "积极"
+          }
+        }
+      }
+    },
     "Process %@..." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3573,6 +3616,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜索结果"
+          }
+        }
+      }
+    },
+    "Search Strategy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索策略"
           }
         }
       }
@@ -5062,7 +5115,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "网页搜搜 - 引擎"
+            "value" : "网页搜索 - 引擎"
           }
         }
       }

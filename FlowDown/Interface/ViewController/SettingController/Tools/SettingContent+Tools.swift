@@ -38,8 +38,15 @@ extension SettingController.SettingContent {
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
-
-            stackView.addArrangedSubviewWithMargin(ScrubberConfiguration.limitConfigurableObject.createView())
+            
+            stackView.addArrangedSubviewWithMargin(
+                ModelManager.searchSensitivityConfigurableObject.createView()
+            )
+            stackView.addArrangedSubview(SeparatorView())
+            
+            stackView.addArrangedSubviewWithMargin(
+                ScrubberConfiguration.limitConfigurableObject.createView()
+            )
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
