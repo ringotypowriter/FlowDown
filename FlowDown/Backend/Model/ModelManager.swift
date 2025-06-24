@@ -38,6 +38,8 @@ class ModelManager: NSObject {
     var additionalPrompt: String
     @BareCodableStorage(key: "Model.Inference.Prompt.Temperature", defaultValue: 0.75)
     var temperature: Float
+    @BareCodableStorage(key: "Model.Inference.SearchSensitivity", defaultValue: SearchSensitivity.balanced)
+    var searchSensitivity: SearchSensitivity
 
     @BareCodableStorage(key: "Model.Default.Conversation", defaultValue: "")
     // swiftformat:disable:next redundantFileprivate
