@@ -113,7 +113,7 @@ class MTLocationTool: ModelTool {
         controller: UIViewController, locale: Locale, completion: @escaping (String, Bool) -> Void
     ) {
         var isCompletionCalled = false
-        let completion: (String, Bool) -> Void = { text, success in
+        let wrappedCompletion: (String, Bool) -> Void = { text, success in
             guard !isCompletionCalled else { return }
             isCompletionCalled = true
             completion(text, success)
@@ -130,7 +130,7 @@ class MTLocationTool: ModelTool {
         locationManager?.delegate = self // 设置代理
         locationManager?.desiredAccuracy = kCLLocationAccuracyHundredMeters // 设置精度
 
-        locationCompletion = completion
+        locationCompletion = wrappedCompletion
         loadingIndicator = indicator
         currentLocale = locale
 
@@ -139,7 +139,7 @@ class MTLocationTool: ModelTool {
                 DispatchQueue.main.async { [self] in
                     guard let manager = locationManager else {
                         indicator.dismiss(animated: true) {
-                            completion(String(localized: "Could not initialize location services."), false)
+                            wrappedCompletion(String(localized: "Could not initialize location services."), false)
                         }
                         return
                     }
@@ -151,7 +151,7 @@ class MTLocationTool: ModelTool {
 
                     case .denied, .restricted:
                         indicator.dismiss(animated: true) {
-                            completion(
+                            wrappedCompletion(
                                 String(
                                     localized:
                                     "Location access is not available. Please check your device settings."
@@ -165,7 +165,7 @@ class MTLocationTool: ModelTool {
 
                     @unknown default:
                         indicator.dismiss(animated: true) {
-                            completion(
+                            wrappedCompletion(
                                 String(localized: "Unknown authorization status for location services."), false
                             )
                         }
@@ -177,7 +177,7 @@ class MTLocationTool: ModelTool {
             } else {
                 DispatchQueue.main.async {
                     indicator.dismiss(animated: true) {
-                        completion(String(localized: "Location services are disabled on this device."), false)
+                        wrappedCompletion(String(localized: "Location services are disabled on this device."), false)
                     }
                 }
             }
