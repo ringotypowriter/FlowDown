@@ -184,6 +184,7 @@ class ModelManager: NSObject {
             title: String(localized: "Importing Model"),
             controller: controller
         ) { completionHandler in
+            assert(!Thread.isMainThread)
             var success: [String] = []
             var errors: [String] = []
             for url in urls {

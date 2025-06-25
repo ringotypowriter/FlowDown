@@ -65,8 +65,10 @@ extension ModelManager {
             }
         }
         Task.detached {
+            let token = MLXChatClientQueue.shared.acquire()
             do {
                 let text = try await task.value
+                MLXChatClientQueue.shared.release(token: token)
                 if let text, !text.isEmpty {
                     print("[*] model \(model.model_identifier) generates output for test case: \(text)")
                     completion(.success(()))
@@ -82,6 +84,7 @@ extension ModelManager {
                     )
                 }
             } catch {
+                MLXChatClientQueue.shared.release(token: token)
                 if let error = error as? ModelFactoryError {
                     switch error {
                     case .unsupportedModelType:

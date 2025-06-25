@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     static var supposeToOpenModel: [URL] = [] {
         didSet {
             guard !supposeToOpenModel.isEmpty else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 NotificationCenter.default.post(name: .openModel, object: nil)
             }
         }
@@ -36,14 +36,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         UIView.setAnimationsEnabled(false)
         DispatchQueue.main.async { UIView.setAnimationsEnabled(true) }
 
-        if let urlContext = connectionOptions.urlContexts.first {
+        for urlContext in connectionOptions.urlContexts {
             handleIncomingURL(urlContext.url)
         }
     }
 
-    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        guard let urlContext = URLContexts.first else { return }
-        handleIncomingURL(urlContext.url)
+    func scene(_: UIScene, openURLContexts contexts: Set<UIOpenURLContext>) {
+        for urlContext in contexts {
+            handleIncomingURL(urlContext.url)
+        }
     }
 
     private func handleIncomingURL(_ url: URL) {
@@ -62,27 +63,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func prepareModelImport(from url: URL) {
-        let tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("DisposableResources")
-            .appendingPathComponent("WillImportedModels")
-
-        do {
-            try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-            let tempFileURL = tempDir.appendingPathComponent(url.lastPathComponent)
-
-            if FileManager.default.fileExists(atPath: tempFileURL.path) {
-                try FileManager.default.removeItem(at: tempFileURL)
-            }
-
-            _ = url.startAccessingSecurityScopedResource()
-            defer { url.stopAccessingSecurityScopedResource() }
-
-            try FileManager.default.copyItem(at: url, to: tempFileURL)
-
-            Self.supposeToOpenModel.append(tempFileURL)
-        } catch {
-            print("error handling .fdmodel file: \(error)")
-        }
+        _ = url.startAccessingSecurityScopedResource()
+        try? FileManager.default.startDownloadingUbiquitousItem(at: url)
+        Self.supposeToOpenModel.append(url)
     }
 
     func sceneDidDisconnect(_: UIScene) {}

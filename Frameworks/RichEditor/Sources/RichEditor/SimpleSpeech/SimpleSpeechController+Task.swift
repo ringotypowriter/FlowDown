@@ -63,10 +63,10 @@ extension SimpleSpeechController {
         // appLang if non‐English, otherwise Locale.preferredLanguages.first
         let appLang = Bundle.main.preferredLocalizations.first ?? "en"
         let preferred = (appLang != "en") ? appLang
-                       : Locale.preferredLanguages.first ?? "en"
+            : Locale.preferredLanguages.first ?? "en"
         let localeID = preferred.replacingOccurrences(of: "_", with: "-")
         let speechLocale = Locale(identifier: localeID)
-        
+
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)

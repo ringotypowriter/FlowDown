@@ -12,6 +12,36 @@ import MLXVLM
 import Tokenizers
 import UIKit
 
+// allow max 1 concurrent request
+public class MLXChatClientQueue {
+    let sem = DispatchSemaphore(value: 1)
+    let lock = NSLock()
+    var runningItems: Set<UUID> = []
+    public func acquire() -> UUID {
+        let token = UUID()
+        lock.lock()
+        runningItems.insert(token)
+        lock.unlock()
+
+        print(#function, token)
+        sem.wait()
+        return token
+    }
+
+    public func release(token: UUID) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard runningItems.contains(token) else {
+            return
+        }
+        runningItems.remove(token)
+        print(#function, token)
+        sem.signal()
+    }
+
+    public static let shared = MLXChatClientQueue()
+}
+
 open class MLXChatClient: ChatService {
     private let url: URL
     private let modelConfiguration: ModelConfiguration
@@ -35,17 +65,12 @@ open class MLXChatClient: ChatService {
             .compactMap { chunk -> ChatCompletionChunk? in
                 switch chunk {
                 case let .chatCompletionChunk(chunk): return chunk
-                // TODO: TOOL CALL
-                default: return nil
+                default: return nil // tool call
                 }
             }
-            .compactMap { chunk in
-                chunk.choices.first?.delta
-            }
+            .compactMap { $0.choices.first?.delta }
             .reduce(into: .init(content: "", reasoningContent: "", role: "")) { partialResult, delta in
-                if let content = delta.content {
-                    partialResult.content?.append(content)
-                }
+                if let content = delta.content { partialResult.content?.append(content) }
                 if let reasoningContent = delta.reasoningContent {
                     partialResult.reasoningContent?.append(reasoningContent)
                 }
@@ -60,6 +85,21 @@ open class MLXChatClient: ChatService {
 
     public func streamingChatCompletionRequest(
         body: ChatRequestBody
+    ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
+        let token = MLXChatClientQueue.shared.acquire()
+        do {
+            return try await streamingChatCompletionRequestExecute(body: body, token: token)
+        } catch {
+            MLXChatClientQueue.shared.release(token: token)
+            throw error
+        }
+    }
+
+    // MARK: - PRIVATE
+
+    private func streamingChatCompletionRequestExecute(
+        body: ChatRequestBody,
+        token: UUID
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
         var userInput = userInput(body: body)
         let generateParameters = generateParameters(body: body)
@@ -174,8 +214,11 @@ open class MLXChatClient: ChatService {
                         if let chunk = chunk(for: output) {
                             continuation.yield(ChatServiceStreamObject.chatCompletionChunk(chunk: chunk))
                         }
+
+                        MLXChatClientQueue.shared.release(token: token)
                         continuation.finish()
                     } catch {
+                        MLXChatClientQueue.shared.release(token: token)
                         continuation.finish(throwing: error)
                     }
                 }
