@@ -5,7 +5,10 @@
 //  Created by 秋星桥 on 2024/12/31.
 //
 
+import AlertController
 import Combine
+import RichEditor
+import Storage
 import UIKit
 
 class MainController: UIViewController {
@@ -64,6 +67,12 @@ class MainController: UIViewController {
             self,
             selector: #selector(pickupModels),
             name: .openModel,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleNewMessage),
+            name: .sendNewMessage,
             object: nil
         )
     }
@@ -148,10 +157,11 @@ class MainController: UIViewController {
             return
         }
 
-        contentShadowView.layer.shadowPath = UIBezierPath(
-            roundedRect: contentShadowView.bounds,
-            cornerRadius: contentShadowView.layer.cornerRadius
-        ).cgPath
+        contentShadowView.layer.shadowPath =
+            UIBezierPath(
+                roundedRect: contentShadowView.bounds,
+                cornerRadius: contentShadowView.layer.cornerRadius
+            ).cgPath
     }
 
     var firstTouchLocation: CGPoint? = nil
@@ -182,21 +192,23 @@ class MainController: UIViewController {
         #endif
         lastTouchBegin = .init()
 
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(resetGestures), object: nil)
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self, selector: #selector(resetGestures), object: nil)
         perform(#selector(resetGestures), with: nil, afterDelay: 0.25)
     }
 
     func isTouchingHandlerBarArea(_ touches: Set<UITouch>) -> Bool {
         #if targetEnvironment(macCatalyst)
             if presentedViewController == nil,
-               touches.count == 1,
-               let touch = touches.first,
-               let window = view.window
+                touches.count == 1,
+                let touch = touches.first,
+                let window = view.window
             {
                 if false
                     || touch.location(in: window).y < 32
                     || chatView.title.bounds.contains(touch.location(in: chatView))
-                    || sidebar.brandingLabel.bounds.contains(touch.location(in: sidebar.brandingLabel))
+                    || sidebar.brandingLabel.bounds.contains(
+                        touch.location(in: sidebar.brandingLabel))
                 {
                     return true
                 }
@@ -215,7 +227,8 @@ class MainController: UIViewController {
 
         super.touchesMoved(touches, with: event)
 
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(resetGestures), object: nil)
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self, selector: #selector(resetGestures), object: nil)
         perform(#selector(resetGestures), with: nil, afterDelay: 0.25)
         guard presentedViewController == nil else { return }
         #if !targetEnvironment(macCatalyst)
@@ -235,9 +248,9 @@ class MainController: UIViewController {
     #if targetEnvironment(macCatalyst)
         func performZoom() {
             guard let appClass = NSClassFromString("NSApplication") as? NSObject.Type,
-                  let sharedApp = appClass.value(forKey: "sharedApplication") as? NSObject,
-                  sharedApp.responds(to: NSSelectorFromString("windows")),
-                  let windowsArray = sharedApp.value(forKey: "windows") as? [NSObject]
+                let sharedApp = appClass.value(forKey: "sharedApplication") as? NSObject,
+                sharedApp.responds(to: NSSelectorFromString("windows")),
+                let windowsArray = sharedApp.value(forKey: "windows") as? [NSObject]
             else {
                 return
             }
@@ -255,14 +268,15 @@ class MainController: UIViewController {
         defer { resetGestures() }
         guard presentedViewController == nil else { return }
         guard let touch = touches.first else { return }
-        if !isSidebarCollapsed, !touchesMoved, contentView.frame.contains(touch.location(in: view)) {
+        if !isSidebarCollapsed, !touchesMoved, contentView.frame.contains(touch.location(in: view))
+        {
             view.doWithAnimation { self.isSidebarCollapsed = true }
             return
         }
     }
 
     override var keyCommands: [UIKeyCommand]? {
-        [
+        var commands = [
             UIKeyCommand(
                 input: "n",
                 modifierFlags: .command,
@@ -274,6 +288,7 @@ class MainController: UIViewController {
                 action: #selector(openSettings)
             ),
         ]
+        return commands
     }
 
     @objc func resetGestures() {
@@ -301,15 +316,107 @@ class MainController: UIViewController {
         print("[*] opening models \(models)")
         ModelManager.shared.importModels(at: models, controller: self)
     }
+
+    @objc func handleNewMessage(_ notification: Notification) {
+        guard let message = notification.object as? String else {
+            print("[!] Invalid message object in notification")
+            return
+        }
+        print("[*] handling new message from URL scheme: \(message)")
+
+        DispatchQueue.main.async {
+            // create new conversation
+            let conversation = ConversationManager.shared.createNewConversation()
+            print("[+] Created new conversation with ID: \(conversation.id)")
+
+            self.load(conversation.id)
+
+            // send after ensuring UI is fully ready
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                if self.chatView.conversationIdentifier == conversation.id {
+                    self.sendMessageToCurrentConversation(message)
+                } else {
+                    // retry
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.sendMessageToCurrentConversation(message)
+                    }
+                }
+            }
+        }
+    }
+
+    private func sendMessageToCurrentConversation(_ message: String) {
+        print("[*] Attempting to send message: \(message)")
+
+        guard let currentConversationID = chatView.conversationIdentifier else {
+            // showErrorAlert(title: "Error", message: "No conversation available to send message.")
+            return
+        }
+        print("[*] Current conversation ID: \(currentConversationID)")
+
+        // retrieve session
+        let session = ConversationSessionManager.shared.session(for: currentConversationID)
+        print("[*] Session created/retrieved for conversation")
+
+        let modelID = ModelManager.ModelIdentifier.defaultModelForConversation
+        guard !modelID.isEmpty else {
+            print("[!] No default model configured")
+            showErrorAlert(
+                title: String(localized: "No Model Available"),
+                message: String(
+                    localized:
+                        "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
+                ))
+            return
+        }
+        print("[*] Using model: \(modelID)")
+
+        // check if ui was loaded
+        guard let currentMessageListView = chatView.currentMessageListView else {
+            return
+        }
+
+        // verify message
+        let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedMessage.isEmpty else {
+            showErrorAlert(
+                title: String(localized: "Error"), message: String(localized: "Empty message."))
+            return
+        }
+        print("[*] Message content: '\(trimmedMessage)'")
+
+        let editorObject = RichEditorView.Object(text: trimmedMessage)
+        session.doInfere(
+            modelID: modelID,
+            currentMessageListView: currentMessageListView,
+            inputObject: editorObject
+        ) {
+            print("[+] Message sent and AI response triggered successfully via URL scheme")
+        }
+    }
+
+    private func showErrorAlert(title: String, message: String) {
+        DispatchQueue.main.async {
+            let alert = AlertViewController(
+                title: title,
+                message: message
+            ) { context in
+                context.addAction(title: "OK") {
+                    context.dispose()
+                }
+            }
+            self.present(alert, animated: true)
+        }
+    }
 }
 
 #if targetEnvironment(macCatalyst)
-    private extension UIResponder {
-        func dispatchTouchAsWindowMovement() {
+    extension UIResponder {
+        fileprivate func dispatchTouchAsWindowMovement() {
             guard let appType = NSClassFromString("NSApplication") as? NSObject.Type,
-                  let nsApp = appType.value(forKey: "sharedApplication") as? NSObject,
-                  let currentEvent = nsApp.value(forKey: "currentEvent") as? NSObject,
-                  let nsWindow = currentEvent.value(forKey: "window") as? NSObject
+                let nsApp = appType.value(forKey: "sharedApplication") as? NSObject,
+                let currentEvent = nsApp.value(forKey: "currentEvent") as? NSObject,
+                let nsWindow = currentEvent.value(forKey: "window") as? NSObject
             else { return }
             nsWindow.perform(
                 NSSelectorFromString("performWindowDragWithEvent:"),
