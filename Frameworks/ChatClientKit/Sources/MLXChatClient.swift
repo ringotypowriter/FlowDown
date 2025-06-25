@@ -12,6 +12,15 @@ import MLXVLM
 import Tokenizers
 import UIKit
 
+// allow max 1 concurrent request
+public actor MLXChatClientQueue {
+    public func execute<T>(_ operation: @Sendable () async throws -> T) async throws -> T {
+        try await operation()
+    }
+
+    public nonisolated static let shared = MLXChatClientQueue()
+}
+
 open class MLXChatClient: ChatService {
     private let url: URL
     private let modelConfiguration: ModelConfiguration
@@ -35,17 +44,12 @@ open class MLXChatClient: ChatService {
             .compactMap { chunk -> ChatCompletionChunk? in
                 switch chunk {
                 case let .chatCompletionChunk(chunk): return chunk
-                // TODO: TOOL CALL
-                default: return nil
+                default: return nil // tool call
                 }
             }
-            .compactMap { chunk in
-                chunk.choices.first?.delta
-            }
+            .compactMap { $0.choices.first?.delta }
             .reduce(into: .init(content: "", reasoningContent: "", role: "")) { partialResult, delta in
-                if let content = delta.content {
-                    partialResult.content?.append(content)
-                }
+                if let content = delta.content { partialResult.content?.append(content) }
                 if let reasoningContent = delta.reasoningContent {
                     partialResult.reasoningContent?.append(reasoningContent)
                 }
@@ -59,6 +63,16 @@ open class MLXChatClient: ChatService {
     }
 
     public func streamingChatCompletionRequest(
+        body: ChatRequestBody
+    ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
+        try await MLXChatClientQueue.shared.execute {
+            try await streamingChatCompletionRequestExecute(body: body)
+        }
+    }
+
+    // MARK: - PRIVATE
+
+    private func streamingChatCompletionRequestExecute(
         body: ChatRequestBody
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
         var userInput = userInput(body: body)

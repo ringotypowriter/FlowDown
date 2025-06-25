@@ -66,7 +66,9 @@ extension ModelManager {
         }
         Task.detached {
             do {
-                let text = try await task.value
+                let text = try await MLXChatClientQueue.shared.execute {
+                    try await task.value
+                }
                 if let text, !text.isEmpty {
                     print("[*] model \(model.model_identifier) generates output for test case: \(text)")
                     completion(.success(()))
