@@ -22,7 +22,10 @@ final class ConversationSession: Identifiable {
     private(set) var attachments: [Message.ID: [Attachment]] = [:]
     private var thinkingDurationTimer: [Message.ID: Timer] = [:]
 
-    private lazy var messagesSubject = CurrentValueSubject<([Message], Bool), Never>((messages, false))
+    private lazy var messagesSubject: CurrentValueSubject<
+        ([Message], Bool),
+        Never
+    > = .init((messages, false))
     var messagesDidChange: AnyPublisher<([Message], Bool), Never> {
         messagesSubject.eraseToAnyPublisher()
     }
@@ -34,9 +37,11 @@ final class ConversationSession: Identifiable {
 
     var shouldAutoRename: Bool {
         get { ConversationManager.shared.conversation(identifier: id)?.shouldAutoRename ?? false }
-        set { ConversationManager.shared.editConversation(identifier: id) { conv in
-            conv.shouldAutoRename = newValue
-        }}
+        set {
+            ConversationManager.shared.editConversation(identifier: id) { conv in
+                conv.shouldAutoRename = newValue
+            }
+        }
     }
 
     var currentTask: Task<Void, Never>?
@@ -122,7 +127,11 @@ final class ConversationSession: Identifiable {
     func updateAttachments(_ attachments: [RichEditorView.Object.Attachment], for message: Message) {
         let currentAttachments = self.attachments[message.id] ?? []
         for attachment in attachments {
-            guard let current = currentAttachments.first(where: { $0.objectIdentifier == attachment.id.uuidString }) else {
+            guard
+                let current = currentAttachments.first(where: {
+                    $0.objectIdentifier == attachment.id.uuidString
+                })
+            else {
                 // If the attachment is not found, ignore it.
                 continue
             }
@@ -147,7 +156,9 @@ final class ConversationSession: Identifiable {
             if !attachments.isEmpty { self.attachments[id] = attachments }
             if !message.reasoningContent.isEmpty,
                message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            { message.document = String(localized: "Empty message.") }
+            {
+                message.document = String(localized: "Empty message.")
+            }
         }
         #if DEBUG
             assert(messages.allSatisfy { $0.conversationId == id })
@@ -245,9 +256,26 @@ final class ConversationSession: Identifiable {
     }
 
     func updateModels() {
-        models.chat = .defaultModelForConversation
-        models.auxiliary = .defaultModelForAuxiliaryTask
-        models.visualAuxiliary = .defaultModelForAuxiliaryVisualTask
+        let conversation = ConversationManager.shared.conversation(identifier: id)
+
+        // conversation model
+        if let conversationModelId = conversation?.modelId, !conversationModelId.isEmpty {
+            models.chat = conversationModelId
+        } else if models.chat == nil || models.chat!.isEmpty {
+            models.chat = .defaultModelForConversation
+        }
+
+        // task auxiliary model
+        if ModelManager.ModelIdentifier.defaultModelForAuxiliaryTaskWillUseCurrentChatModel {
+            models.auxiliary = models.chat ?? .defaultModelForAuxiliaryTask
+        } else if models.auxiliary == nil || models.auxiliary!.isEmpty {
+            models.auxiliary = .defaultModelForAuxiliaryTask
+        }
+
+        // visual auxiliary model
+        if models.visualAuxiliary == nil || models.visualAuxiliary!.isEmpty {
+            models.visualAuxiliary = .defaultModelForAuxiliaryVisualTask
+        }
     }
 
     func nearestUserMessage(beforeOrEqual messageIdentifier: Message.ID) -> Message? {
@@ -273,10 +301,13 @@ final class ConversationSession: Identifiable {
         var editorObject = ConversationManager.shared.getRichEditorObject(identifier: id) ?? .init()
         editorObject.text = messageContent
 
-        editorObject.attachments = messageAttachments.compactMap { attachment -> RichEditorView.Object.Attachment? in
-            guard let type = RichEditorView.Object.Attachment.AttachmentType(rawValue: attachment.type) else {
-                return nil
-            }
+        editorObject.attachments = messageAttachments.compactMap {
+            attachment -> RichEditorView.Object.Attachment? in
+            guard let type = RichEditorView
+                .Object
+                .Attachment
+                .AttachmentType(rawValue: attachment.type)
+            else { return nil }
 
             return RichEditorView.Object.Attachment(
                 id: UUID(uuidString: attachment.objectIdentifier) ?? UUID(),
