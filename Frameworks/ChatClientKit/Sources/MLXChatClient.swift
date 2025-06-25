@@ -13,9 +13,12 @@ import Tokenizers
 import UIKit
 
 // allow max 1 concurrent request
-public actor MLXChatClientQueue {
+public class MLXChatClientQueue {
+    let sem = DispatchSemaphore(value: 1)
     public func execute<T>(_ operation: @Sendable () async throws -> T) async throws -> T {
-        try await operation()
+        sem.wait() // TODO: CONCURRENCY IMPL
+        defer { sem.signal() }
+        return try await operation()
     }
 
     public nonisolated static let shared = MLXChatClientQueue()
@@ -66,7 +69,7 @@ open class MLXChatClient: ChatService {
         body: ChatRequestBody
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
         try await MLXChatClientQueue.shared.execute {
-            try await streamingChatCompletionRequestExecute(body: body)
+            try await self.streamingChatCompletionRequestExecute(body: body)
         }
     }
 
