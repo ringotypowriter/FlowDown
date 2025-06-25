@@ -15,13 +15,29 @@ import UIKit
 // allow max 1 concurrent request
 public class MLXChatClientQueue {
     let sem = DispatchSemaphore(value: 1)
-    public func execute<T>(_ operation: @Sendable () async throws -> T) async throws -> T {
-        sem.wait() // TODO: CONCURRENCY IMPL
-        defer { sem.signal() }
-        return try await operation()
+    let lock = NSLock()
+    var runningItems: Set<UUID> = []
+    public func acquire() -> UUID {
+        let token = UUID()
+        lock.lock()
+        runningItems.insert(token)
+        lock.unlock()
+        
+        print(#function, token)
+        sem.wait()
+        return token
     }
-
-    public nonisolated static let shared = MLXChatClientQueue()
+    public func release(token: UUID){
+        lock.lock()
+        defer { lock.unlock() }
+        guard runningItems.contains(token) else {
+            return
+        }
+        runningItems.remove(token)
+        print(#function, token)
+        sem.signal()
+    }
+    public static let shared = MLXChatClientQueue()
 }
 
 open class MLXChatClient: ChatService {
@@ -68,15 +84,20 @@ open class MLXChatClient: ChatService {
     public func streamingChatCompletionRequest(
         body: ChatRequestBody
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
-        try await MLXChatClientQueue.shared.execute {
-            try await self.streamingChatCompletionRequestExecute(body: body)
+        let token = MLXChatClientQueue.shared.acquire()
+        do {
+            return try await self.streamingChatCompletionRequestExecute(body: body, token: token)
+        } catch {
+            MLXChatClientQueue.shared.release(token: token)
+            throw error
         }
     }
 
     // MARK: - PRIVATE
 
     private func streamingChatCompletionRequestExecute(
-        body: ChatRequestBody
+        body: ChatRequestBody,
+        token: UUID
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
         var userInput = userInput(body: body)
         let generateParameters = generateParameters(body: body)
@@ -191,8 +212,11 @@ open class MLXChatClient: ChatService {
                         if let chunk = chunk(for: output) {
                             continuation.yield(ChatServiceStreamObject.chatCompletionChunk(chunk: chunk))
                         }
+                        
+                        MLXChatClientQueue.shared.release(token: token)
                         continuation.finish()
                     } catch {
+                        MLXChatClientQueue.shared.release(token: token)
                         continuation.finish(throwing: error)
                     }
                 }
