@@ -22,8 +22,10 @@ final class ConversationSession: Identifiable {
     private(set) var attachments: [Message.ID: [Attachment]] = [:]
     private var thinkingDurationTimer: [Message.ID: Timer] = [:]
 
-    private lazy var messagesSubject = CurrentValueSubject<([Message], Bool), Never>(
-        (messages, false))
+    private lazy var messagesSubject: CurrentValueSubject<
+        ([Message], Bool),
+        Never
+    > = .init((messages, false))
     var messagesDidChange: AnyPublisher<([Message], Bool), Never> {
         messagesSubject.eraseToAnyPublisher()
     }
@@ -98,9 +100,7 @@ final class ConversationSession: Identifiable {
         return message
     }
 
-    private func updateAttachment(
-        _ attachment: Attachment, using object: RichEditorView.Object.Attachment
-    ) {
+    private func updateAttachment(_ attachment: Attachment, using object: RichEditorView.Object.Attachment) {
         attachment.objectIdentifier = object.id.uuidString
         attachment.type = object.type.rawValue
         attachment.name = object.name
@@ -124,8 +124,7 @@ final class ConversationSession: Identifiable {
         self.attachments[message.id] = current
     }
 
-    func updateAttachments(_ attachments: [RichEditorView.Object.Attachment], for message: Message)
-    {
+    func updateAttachments(_ attachments: [RichEditorView.Object.Attachment], for message: Message) {
         let currentAttachments = self.attachments[message.id] ?? []
         for attachment in attachments {
             guard
@@ -156,7 +155,7 @@ final class ConversationSession: Identifiable {
             let attachments = sdb.listAttachments(for: id)
             if !attachments.isEmpty { self.attachments[id] = attachments }
             if !message.reasoningContent.isEmpty,
-                message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+               message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             {
                 message.document = String(localized: "Empty message.")
             }
@@ -192,8 +191,7 @@ final class ConversationSession: Identifiable {
     }
 
     // 删除自这条消息以后的全部数据
-    func deleteCurrentAndAfter(messageIdentifier: Message.ID, completion: @escaping () -> Void = {})
-    {
+    func deleteCurrentAndAfter(messageIdentifier: Message.ID, completion: @escaping () -> Void = {}) {
         cancelCurrentTask { [self] in
             sdb.deleteAfter(messageIdentifier: messageIdentifier)
             delete(messageIdentifier: messageIdentifier)
@@ -291,8 +289,7 @@ final class ConversationSession: Identifiable {
         return nil
     }
 
-    func retry(byClearAfter messageIdentifier: Message.ID, currentMessageListView: MessageListView)
-    {
+    func retry(byClearAfter messageIdentifier: Message.ID, currentMessageListView: MessageListView) {
         guard let nearestUserMessage = nearestUserMessage(beforeOrEqual: messageIdentifier) else {
             assertionFailure()
             return
@@ -306,12 +303,11 @@ final class ConversationSession: Identifiable {
 
         editorObject.attachments = messageAttachments.compactMap {
             attachment -> RichEditorView.Object.Attachment? in
-            guard
-                let type = RichEditorView.Object.Attachment.AttachmentType(
-                    rawValue: attachment.type)
-            else {
-                return nil
-            }
+            guard let type = RichEditorView
+                .Object
+                .Attachment
+                .AttachmentType(rawValue: attachment.type)
+            else { return nil }
 
             return RichEditorView.Object.Attachment(
                 id: UUID(uuidString: attachment.objectIdentifier) ?? UUID(),
