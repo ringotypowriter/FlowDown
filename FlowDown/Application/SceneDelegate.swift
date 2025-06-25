@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     static var supposeToOpenModel: [URL] = [] {
         didSet {
             guard !supposeToOpenModel.isEmpty else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 NotificationCenter.default.post(name: .openModel, object: nil)
             }
         }
