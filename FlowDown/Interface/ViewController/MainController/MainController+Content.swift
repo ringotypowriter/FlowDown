@@ -15,8 +15,7 @@ extension MainController {
 
         contentView.contentView.addSubview(chatView)
         chatView.onCreateNewChat = { [weak self] in
-            guard let self else { return }
-            sidebar.newChatButton.didTap()
+            self?.requestNewChat()
         }
         chatView.onSuggestNewChat = { [weak self] id in
             guard let self else { return }

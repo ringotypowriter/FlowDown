@@ -157,19 +157,15 @@ class ChatView: UIView {
                 self?.editor.updateModelName()
             }
             .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: .newChatCreated)
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue(label: "wiki.qaq.editor.focus"))
-            .ensureMainThread()
-            .sink { [weak self] _ in
-                self?.editor.focus()
-            }
-            .store(in: &cancellables)
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError()
+    }
+
+    func focusEditor() {
+        editor.focus()
     }
 
     func prepareForReuse() {
@@ -179,8 +175,9 @@ class ChatView: UIView {
         editor.prepareForReuse()
     }
 
-    func use(conversation: Conversation.ID) {
+    func use(conversation: Conversation.ID, completion: (() -> Void)? = nil) {
         if conversationIdentifier == conversation {
+            completion?()
             return
         }
         conversationIdentifier = conversation
@@ -196,6 +193,9 @@ class ChatView: UIView {
 
         offloadModelsToSession(modelIdentifier: modelIdentifier())
         removeUnusedListViews()
+        DispatchQueue.main.async {
+            completion?()
+        }
     }
 
     override func layoutSubviews() {

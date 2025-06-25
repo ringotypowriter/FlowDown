@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Storage
 import UIKit
 
 class MainController: UIViewController {
@@ -115,6 +116,7 @@ class MainController: UIViewController {
         }
 
         setupViews()
+        sidebar.newChatButton.delegate = self
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -287,7 +289,11 @@ class MainController: UIViewController {
     }
 
     @objc func requestNewChat() {
-        sidebar.newChatButton.didTap()
+        let conv = ConversationManager.shared.createNewConversation()
+        sidebar.newChatDidCreated(conv.id)
+        chatView.use(conversation: conv.id) { [weak self] in
+            self?.chatView.focusEditor()
+        }
     }
 
     @objc func openSettings() {
@@ -300,6 +306,13 @@ class MainController: UIViewController {
         guard !models.isEmpty else { return }
         print("[*] opening models \(models)")
         ModelManager.shared.importModels(at: models, controller: self)
+    }
+}
+
+extension MainController: NewChatButton.Delegate {
+    func newChatDidCreated(_ identifier: Conversation.ID) {
+        sidebar.newChatDidCreated(identifier)
+        chatView.use(conversation: identifier)
     }
 }
 
