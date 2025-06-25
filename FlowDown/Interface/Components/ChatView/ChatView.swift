@@ -157,7 +157,7 @@ class ChatView: UIView {
                 self?.editor.updateModelName()
             }
             .store(in: &cancellables)
-        
+
         NotificationCenter.default.publisher(for: .newChatCreated)
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue(label: "wiki.qaq.editor.focus"))
             .ensureMainThread()

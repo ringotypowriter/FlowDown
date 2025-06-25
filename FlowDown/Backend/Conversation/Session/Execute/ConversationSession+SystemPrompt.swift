@@ -37,10 +37,10 @@ extension ConversationSession {
             requestMessages.append(
                 .system(
                     content: .text(
-                    """
-                    Web Search Mode: \(sensitivity.title)
-                    \(sensitivity.briefDescription)
-                    """
+                        """
+                        Web Search Mode: \(sensitivity.title)
+                        \(sensitivity.briefDescription)
+                        """
                     )
                 )
             )

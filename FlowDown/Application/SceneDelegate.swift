@@ -36,11 +36,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         UIView.setAnimationsEnabled(false)
         DispatchQueue.main.async { UIView.setAnimationsEnabled(true) }
 
-        for urlContext in connectionOptions.urlContexts { handleIncomingURL(urlContext.url) }
+        for urlContext in connectionOptions.urlContexts {
+            handleIncomingURL(urlContext.url)
+        }
     }
 
     func scene(_: UIScene, openURLContexts contexts: Set<UIOpenURLContext>) {
-        for urlContext in contexts { handleIncomingURL(urlContext.url) }
+        for urlContext in contexts {
+            handleIncomingURL(urlContext.url)
+        }
     }
 
     private func handleIncomingURL(_ url: URL) {

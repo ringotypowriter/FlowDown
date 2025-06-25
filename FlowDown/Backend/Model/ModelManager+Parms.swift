@@ -139,33 +139,33 @@ extension ModelManager {
         var title: String {
             switch self {
             case .essential:
-                return NSLocalizedString("Essential", comment: "Search Strategy")
+                NSLocalizedString("Essential", comment: "Search Strategy")
             case .balanced:
-                return NSLocalizedString("Balanced", comment: "Search Strategy")
+                NSLocalizedString("Balanced", comment: "Search Strategy")
             case .proactive:
-                return NSLocalizedString("Proactive", comment: "Search Strategy")
+                NSLocalizedString("Proactive", comment: "Search Strategy")
             }
         }
 
         var icon: String {
             switch self {
             case .essential:
-                return "bolt"
+                "bolt"
             case .balanced:
-                return "magnifyingglass"
+                "magnifyingglass"
             case .proactive:
-                return "book"
+                "book"
             }
         }
 
         var briefDescription: String {
             switch self {
             case .essential:
-                return "Avoid web searches unless absolutely necessary for time-sensitive or highly uncertain information where your internal knowledge is likely incorrect. Prioritize speed, but not at the cost of severe inaccuracy."
+                "Avoid web searches unless absolutely necessary for time-sensitive or highly uncertain information where your internal knowledge is likely incorrect. Prioritize speed, but not at the cost of severe inaccuracy."
             case .balanced:
-                return "You MUST perform a web search for topics like politics, current events, weather, sports, scientific developments, cultural trends, or any other dynamic topic. Err on the side of searching if you are even remotely uncertain that your knowledge is complete and up-to-date."
+                "You MUST perform a web search for topics like politics, current events, weather, sports, scientific developments, cultural trends, or any other dynamic topic. Err on the side of searching if you are even remotely uncertain that your knowledge is complete and up-to-date."
             case .proactive:
-                return "You MUST conduct a research-level web search to ensure comprehensive and up-to-date coverage, even for topics where you have some existing knowledge, unless the user explicitly asks you not to browse."
+                "You MUST conduct a research-level web search to ensure comprehensive and up-to-date coverage, even for topics where you have some existing knowledge, unless the user explicitly asks you not to browse."
             }
         }
 
