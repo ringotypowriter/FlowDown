@@ -22,12 +22,13 @@ public class MLXChatClientQueue {
         lock.lock()
         runningItems.insert(token)
         lock.unlock()
-        
+
         print(#function, token)
         sem.wait()
         return token
     }
-    public func release(token: UUID){
+
+    public func release(token: UUID) {
         lock.lock()
         defer { lock.unlock() }
         guard runningItems.contains(token) else {
@@ -37,6 +38,7 @@ public class MLXChatClientQueue {
         print(#function, token)
         sem.signal()
     }
+
     public static let shared = MLXChatClientQueue()
 }
 
@@ -86,7 +88,7 @@ open class MLXChatClient: ChatService {
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
         let token = MLXChatClientQueue.shared.acquire()
         do {
-            return try await self.streamingChatCompletionRequestExecute(body: body, token: token)
+            return try await streamingChatCompletionRequestExecute(body: body, token: token)
         } catch {
             MLXChatClientQueue.shared.release(token: token)
             throw error
@@ -212,7 +214,7 @@ open class MLXChatClient: ChatService {
                         if let chunk = chunk(for: output) {
                             continuation.yield(ChatServiceStreamObject.chatCompletionChunk(chunk: chunk))
                         }
-                        
+
                         MLXChatClientQueue.shared.release(token: token)
                         continuation.finish()
                     } catch {
