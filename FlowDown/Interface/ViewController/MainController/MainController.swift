@@ -8,7 +8,6 @@
 import AlertController
 import Combine
 import RichEditor
-import Storage
 import UIKit
 
 class MainController: UIViewController {
