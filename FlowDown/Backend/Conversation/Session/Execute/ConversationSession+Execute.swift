@@ -25,7 +25,28 @@ extension ConversationSession {
             print("    - task - \(ModelManager.shared.modelName(identifier: models.auxiliary))")
             print("    - view - \(ModelManager.shared.modelName(identifier: models.visualAuxiliary))")
 
+            var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+            backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+                if let id = self?.id {
+                    print("[-] background task expired for conversation: \(id)")
+                } else {
+                    print("[-] background task expired for unknown conversation")
+                }
+                self?.currentTask?.cancel()
+                UIApplication.shared.endBackgroundTask(backgroundTask)
+                backgroundTask = .invalid
+            }
+
             currentTask = Task {
+                defer {
+                    if backgroundTask != .invalid {
+                        let finalBackgroundTask = backgroundTask
+                        backgroundTask = .invalid
+                        DispatchQueue.main.async {
+                            UIApplication.shared.endBackgroundTask(finalBackgroundTask)
+                        }
+                    }
+                }
                 await requestUpdate(view: currentMessageListView)
                 await doInfereExecute(
                     modelID: modelID,
@@ -211,7 +232,8 @@ extension ConversationSession {
         try checkCancellation()
         if try removeOutOfContextContents(&requestMessages, tools, modelContextLength) {
             let hint = appendNewMessage(role: .hint)
-            hint.document = String(localized: "Some messages have been removed to fit the model context length.")
+            hint.document = String(
+                localized: "Some messages have been removed to fit the model context length.")
             await requestUpdate(view: currentMessageListView)
         }
 
