@@ -278,7 +278,7 @@ class MainController: UIViewController {
     }
 
     override var keyCommands: [UIKeyCommand]? {
-        var commands = [
+        let commands = [
             UIKeyCommand(
                 input: "n",
                 modifierFlags: .command,

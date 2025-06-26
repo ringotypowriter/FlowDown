@@ -56,9 +56,13 @@ extension ConversationSession {
             }
             await requestUpdate(view: currentMessageListView)
         }
-        if collapseAfterReasoningComplete { message.isThinkingFold = true }
         stopThinking(for: message.id)
         await requestUpdate(view: currentMessageListView)
+
+        if collapseAfterReasoningComplete {
+            message.isThinkingFold = true
+            await requestUpdate(view: currentMessageListView)
+        }
 
         if !message.document.isEmpty {
             logger.info("\(message.document)")
