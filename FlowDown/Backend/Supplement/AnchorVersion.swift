@@ -3,11 +3,11 @@
 import Foundation
 
 enum AnchorVersion {
-    static let version: String = "1.17"
-    static let build: Int = 170
+    static let version: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+    static let build: Int = 0
     #if DEBUG
         static let magical: String = "deadbeef"
     #else
-        static let magical: String = "75d428d1cfa073253985fbf69ee5c877"
+        static let magical: String = "b4872d2c308883b5a41af895e95aa3b7"
     #endif
 }
