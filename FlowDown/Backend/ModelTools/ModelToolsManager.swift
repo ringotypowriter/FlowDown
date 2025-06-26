@@ -99,7 +99,11 @@ class ModelToolsManager {
                 context.addAction(title: String(localized: "Use Tool"), attribute: .dangerous) {
                     context.dispose {
                         Task {
-                            ans = try await tool.execute(with: parms, anchorTo: view)
+                            do {
+                                ans = try await tool.execute(with: parms, anchorTo: view)
+                            } catch {
+                                ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
+                            }
                             sem.signal()
                         }
                     }
