@@ -23,7 +23,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
 
-    func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    static var supposeToSendMessage: String? {
+        didSet {
+            guard let message = supposeToSendMessage, !message.isEmpty else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                NotificationCenter.default.post(name: .sendNewMessage, object: message)
+            }
+        }
+    }
+
+    func scene(
+        _ scene: UIScene, willConnectTo _: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         #if targetEnvironment(macCatalyst)
             if let titlebar = windowScene.titlebar {
@@ -56,7 +68,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             default: break // dont know how
             }
         case "flowdown":
-            break // just open our app
+            handleFlowDownURL(url)
         default:
             break
         }
@@ -66,6 +78,47 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         _ = url.startAccessingSecurityScopedResource()
         try? FileManager.default.startDownloadingUbiquitousItem(at: url)
         Self.supposeToOpenModel.append(url)
+    }
+
+    private func handleFlowDownURL(_ url: URL) {
+        print("[*] Handling FlowDown URL: \(url)")
+        guard let host = url.host(), !host.isEmpty else {
+            print("[*] No host found, just opening app")
+            return
+        }
+
+        print("[*] URL host: \(host)")
+        switch host {
+        case "new":
+            handleNewMessageURL(url)
+        default:
+            print("[*] Unknown action: \(host), just opening app")
+        }
+    }
+
+    private func handleNewMessageURL(_ url: URL) {
+        print("[*] Handling new message URL: \(url)")
+        let pathComponents = url.pathComponents
+        print("[*] Path components: \(pathComponents)")
+
+        guard pathComponents.count >= 2 else {
+            print("[*] Invalid format, should be /message")
+            return
+        }
+
+        // extract msg from path
+        let encodedMessage = pathComponents[1]
+        print("[*] Encoded message: \(encodedMessage)")
+
+        guard let message = encodedMessage.removingPercentEncoding,
+              !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else {
+            print("[*] Failed to decode message or message is empty")
+            return
+        }
+
+        print("[*] Decoded message: \(message)")
+        Self.supposeToSendMessage = message
     }
 
     func sceneDidDisconnect(_: UIScene) {}
@@ -81,4 +134,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 extension Notification.Name {
     static let openModel = Notification.Name("openModel")
+    static let sendNewMessage = Notification.Name("sendNewMessage")
 }
