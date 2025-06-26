@@ -192,16 +192,17 @@ class MainController: UIViewController {
         lastTouchBegin = .init()
 
         NSObject.cancelPreviousPerformRequests(
-            withTarget: self, selector: #selector(resetGestures), object: nil)
+            withTarget: self, selector: #selector(resetGestures), object: nil
+        )
         perform(#selector(resetGestures), with: nil, afterDelay: 0.25)
     }
 
     func isTouchingHandlerBarArea(_ touches: Set<UITouch>) -> Bool {
         #if targetEnvironment(macCatalyst)
             if presentedViewController == nil,
-                touches.count == 1,
-                let touch = touches.first,
-                let window = view.window
+               touches.count == 1,
+               let touch = touches.first,
+               let window = view.window
             {
                 if false
                     || touch.location(in: window).y < 32
@@ -227,7 +228,8 @@ class MainController: UIViewController {
         super.touchesMoved(touches, with: event)
 
         NSObject.cancelPreviousPerformRequests(
-            withTarget: self, selector: #selector(resetGestures), object: nil)
+            withTarget: self, selector: #selector(resetGestures), object: nil
+        )
         perform(#selector(resetGestures), with: nil, afterDelay: 0.25)
         guard presentedViewController == nil else { return }
         #if !targetEnvironment(macCatalyst)
@@ -247,9 +249,9 @@ class MainController: UIViewController {
     #if targetEnvironment(macCatalyst)
         func performZoom() {
             guard let appClass = NSClassFromString("NSApplication") as? NSObject.Type,
-                let sharedApp = appClass.value(forKey: "sharedApplication") as? NSObject,
-                sharedApp.responds(to: NSSelectorFromString("windows")),
-                let windowsArray = sharedApp.value(forKey: "windows") as? [NSObject]
+                  let sharedApp = appClass.value(forKey: "sharedApplication") as? NSObject,
+                  sharedApp.responds(to: NSSelectorFromString("windows")),
+                  let windowsArray = sharedApp.value(forKey: "windows") as? [NSObject]
             else {
                 return
             }
@@ -267,8 +269,7 @@ class MainController: UIViewController {
         defer { resetGestures() }
         guard presentedViewController == nil else { return }
         guard let touch = touches.first else { return }
-        if !isSidebarCollapsed, !touchesMoved, contentView.frame.contains(touch.location(in: view))
-        {
+        if !isSidebarCollapsed, !touchesMoved, contentView.frame.contains(touch.location(in: view)) {
             view.doWithAnimation { self.isSidebarCollapsed = true }
             return
         }
@@ -364,8 +365,9 @@ class MainController: UIViewController {
                 title: String(localized: "No Model Available"),
                 message: String(
                     localized:
-                        "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
-                ))
+                    "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
+                )
+            )
             return
         }
         print("[*] Using model: \(modelID)")
@@ -379,7 +381,8 @@ class MainController: UIViewController {
         let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedMessage.isEmpty else {
             showErrorAlert(
-                title: String(localized: "Error"), message: String(localized: "Empty message."))
+                title: String(localized: "Error"), message: String(localized: "Empty message.")
+            )
             return
         }
         print("[*] Message content: '\(trimmedMessage)'")
@@ -410,12 +413,12 @@ class MainController: UIViewController {
 }
 
 #if targetEnvironment(macCatalyst)
-    extension UIResponder {
-        fileprivate func dispatchTouchAsWindowMovement() {
+    fileprivate extension UIResponder {
+        func dispatchTouchAsWindowMovement() {
             guard let appType = NSClassFromString("NSApplication") as? NSObject.Type,
-                let nsApp = appType.value(forKey: "sharedApplication") as? NSObject,
-                let currentEvent = nsApp.value(forKey: "currentEvent") as? NSObject,
-                let nsWindow = currentEvent.value(forKey: "window") as? NSObject
+                  let nsApp = appType.value(forKey: "sharedApplication") as? NSObject,
+                  let currentEvent = nsApp.value(forKey: "currentEvent") as? NSObject,
+                  let nsWindow = currentEvent.value(forKey: "window") as? NSObject
             else { return }
             nsWindow.perform(
                 NSSelectorFromString("performWindowDragWithEvent:"),

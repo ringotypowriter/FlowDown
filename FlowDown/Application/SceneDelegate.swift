@@ -93,7 +93,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             handleNewMessageURL(url)
         default:
             print("[*] Unknown action: \(host), just opening app")
-            break
         }
     }
 
@@ -112,7 +111,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         print("[*] Encoded message: \(encodedMessage)")
 
         guard let message = encodedMessage.removingPercentEncoding,
-            !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+              !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else {
             print("[*] Failed to decode message or message is empty")
             return
