@@ -48,7 +48,8 @@ We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**. Comm
 
 ## License
 
-FlowDown is licensed under AGPL-3.0. You can find the full license text in the [LICENSE](./LICENSE) file.
+FlowDown, the app it self, is licensed under AGPL-3.0 while most of its decoupled library components are licensed under MIT. You can find the full license text in the [LICENSE](./LICENSE) file or within each library it depends on.
+
 FlowDown Community is licensed under MIT. You can find the full license text in the [LICENSE](./Resources/CommunityEdition/LICENSE) file.
 
 Artwork and resources are not licensed for use for any purpose. Commercial license for FlowDown is available case by case. Please contact us.
