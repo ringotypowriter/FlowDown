@@ -277,22 +277,6 @@ class MainController: UIViewController {
         }
     }
 
-    override var keyCommands: [UIKeyCommand]? {
-        var commands = [
-            UIKeyCommand(
-                input: "n",
-                modifierFlags: .command,
-                action: #selector(requestNewChat)
-            ),
-            UIKeyCommand(
-                input: ",",
-                modifierFlags: .command,
-                action: #selector(openSettings)
-            ),
-        ]
-        return commands
-    }
-
     @objc func resetGestures() {
         firstTouchLocation = nil
         touchesMoved = false

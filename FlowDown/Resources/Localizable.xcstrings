@@ -1096,6 +1096,16 @@
         }
       }
     },
+    "Delete Chat" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除对话"
+          }
+        }
+      }
+    },
     "Delete Conversation" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2910,6 +2920,16 @@
         }
       }
     },
+    "New Chat" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建对话"
+          }
+        }
+      }
+    },
     "No events found between %@ and %@." : {
       "localizations" : {
         "en" : {
@@ -3726,6 +3746,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设置"
+          }
+        }
+      }
+    },
+    "Settings..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置…"
           }
         }
       }
