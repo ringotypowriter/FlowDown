@@ -43,37 +43,37 @@ extension ConversationManager {
         if ConversationManager.shouldShowGuideMessage {
             if conversations.value.count <= 1 {
                 let session = ConversationSessionManager.shared.session(for: object.id)
-                let guide = String(localized: 
-                                    """
-                                    **Welcome to FlowDown🐦**, a blazing fast and smooth client app for LLMs with respect of your privacy.
+                let guide = String(localized:
+                    """
+                    **Welcome to FlowDown🐦**, a blazing fast and smooth client app for LLMs with respect of your privacy.
 
-                                    Free models included. You can also _configure cloud models_ or _run local models_ on device.
+                    Free models included. You can also _configure cloud models_ or _run local models_ on device.
 
-                                    💡 For more information, check out [our wiki](https://apps.qaq.wiki/docs/flowdown/).
+                    💡 For more information, check out [our wiki](https://apps.qaq.wiki/docs/flowdown/).
 
-                                    ---
-                                    **What to do next?**
+                    ---
+                    **What to do next?**
 
-                                    1. Select or _add a new model_, and **create a new conversation**.
-                                    2. Later, you can go to **Settings** to customize your experience.
-                                    3. For any issues, feel free to [contact us](https://discord.gg/UHKMRyJcgc).
+                    1. Select or _add a new model_, and **create a new conversation**.
+                    2. Later, you can go to **Settings** to customize your experience.
+                    3. For any issues, feel free to [contact us](https://discord.gg/UHKMRyJcgc).
 
-                                    ✨ **Enjoy your FlowDown experience!**
-                                    """
+                    ✨ **Enjoy your FlowDown experience!**
+                    """
                 )
-                
+
                 let message = session.appendNewMessage(role: .assistant)
                 message.document = guide
                 session.save()
                 sdb.insertOrReplace(object: message)
                 session.notifyMessagesDidChange()
-                
+
                 editConversation(identifier: object.id) { conversation in
                     conversation.title = String(localized: "Introduction to FlowDown")
                     conversation.icon = "🥳".textToImage(size: 128)?.pngData() ?? .init()
                     conversation.shouldAutoRename = false
                 }
-                
+
                 ConversationManager.shouldShowGuideMessage = false
             }
         }

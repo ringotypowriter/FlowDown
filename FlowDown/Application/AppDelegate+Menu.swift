@@ -11,10 +11,11 @@ import UIKit
 
 extension AppDelegate {
     // MARK: - Menu Building
+
     override func buildMenu(with builder: UIMenuBuilder) {
         super.buildMenu(with: builder)
         guard builder.system == UIMenuSystem.main else { return }
-        
+
         builder.insertChild(
             UIMenu(
                 title: "",
@@ -25,7 +26,7 @@ extension AppDelegate {
                         action: #selector(requestNewChatFromMenu(_:)),
                         input: "n",
                         modifierFlags: .command
-                    )
+                    ),
                 ]
             ),
             atStartOfMenu: .file
@@ -40,7 +41,7 @@ extension AppDelegate {
                         action: #selector(deleteConversationFromMenu(_:)),
                         input: "\u{8}",
                         modifierFlags: [.command]
-                    )
+                    ),
                 ]
             ),
             atEndOfMenu: .file
@@ -55,7 +56,7 @@ extension AppDelegate {
                         action: #selector(openSettingsFromMenu(_:)),
                         input: ",",
                         modifierFlags: .command
-                    )
+                    ),
                 ]
             ),
             afterMenu: .preferences
@@ -63,6 +64,7 @@ extension AppDelegate {
     }
 
     // MARK: - Menu Actions
+
     var mainWindow: UIWindow? {
         UIApplication.shared.connectedScenes
             .compactMap { ($0 as? UIWindowScene)?.windows.first }
@@ -70,11 +72,11 @@ extension AppDelegate {
     }
 
     // Wire from MainController
-    @objc func requestNewChatFromMenu(_ sender: Any?) {
+    @objc func requestNewChatFromMenu(_: Any?) {
         (mainWindow?.rootViewController as? MainController)?.requestNewChat()
     }
 
-    @objc func openSettingsFromMenu(_ sender: Any?) {
+    @objc func openSettingsFromMenu(_: Any?) {
         (mainWindow?.rootViewController as? MainController)?.openSettings()
     }
 
@@ -89,8 +91,8 @@ extension AppDelegate {
         block(mainVC, conversationID, conversation)
     }
 
-    @objc func deleteConversationFromMenu(_ sender: Any?) {
-        withCurrentConversation { mainVC, conversationID, _ in
+    @objc func deleteConversationFromMenu(_: Any?) {
+        withCurrentConversation { _, conversationID, _ in
             ConversationManager.shared.deleteConversation(identifier: conversationID)
         }
     }
