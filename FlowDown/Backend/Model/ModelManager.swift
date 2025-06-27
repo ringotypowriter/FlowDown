@@ -211,7 +211,7 @@ class ModelManager: NSObject {
             }
             completionHandler {
                 if let error = errors.first {
-                    let controller = AlertViewController(
+                    let alert = AlertViewController(
                         title: String(localized: "Error Occurred"),
                         message: error
                     ) { context in
@@ -219,7 +219,7 @@ class ModelManager: NSObject {
                             context.dispose()
                         }
                     }
-                    controller.present(controller, animated: true)
+                    controller.present(alert, animated: true)
                 } else {
                     Indicator.present(
                         title: String(
