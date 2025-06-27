@@ -13,6 +13,8 @@ FlowDown is a blazing fast and smooth client app for using AI/LLM with full prot
 
 [![App Store Icon](./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/us/app/flowdown-open-fast-ai/id6740553198)
 
+Or `brew install --cask flowdown`. (maintained by 3rd part developer)
+
 By downloading FlowDown from App Store, free models are included. To use our product, have a look at: [https://apps.qaq.wiki/docs/flowdown/](https://apps.qaq.wiki/docs/flowdown/)
 
 Please consider join our discussion on [Discord](https://discord.gg/UHKMRyJcgc).
@@ -48,7 +50,8 @@ We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**. Comm
 
 ## License
 
-FlowDown is licensed under AGPL-3.0. You can find the full license text in the [LICENSE](./LICENSE) file.
+FlowDown, the app it self, is licensed under AGPL-3.0 while most of its decoupled library components are licensed under MIT. You can find the full license text in the [LICENSE](./LICENSE) file or within each library it depends on.
+
 FlowDown Community is licensed under MIT. You can find the full license text in the [LICENSE](./Resources/CommunityEdition/LICENSE) file.
 
 Artwork and resources are not licensed for use for any purpose. Commercial license for FlowDown is available case by case. Please contact us.

@@ -293,6 +293,8 @@ open class RemoteChatClient: ChatService {
         request.httpBody = try JSONEncoder().encode(body)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.addValue("https://flowdown.ai/", forHTTPHeaderField: "HTTP-Referer")
+        request.addValue("FlowDown", forHTTPHeaderField: "X-Title")
 
         if !additionalField.isEmpty {
             var originalDictionary: [String: Any] = [:]
