@@ -7,6 +7,16 @@
     "..." : {
       "shouldTranslate" : false
     },
+    "**Welcome to FlowDown🐦**, a blazing fast and smooth client app for LLMs with respect of your privacy.\n\nFree models included. You can also _configure cloud models_ or _run local models_ on device.\n\n💡 For more information, check out [our wiki](https://apps.qaq.wiki/docs/flowdown/).\n\n---\n**What to do next?**\n\n1. Select or _add a new model_, and **create a new conversation**.\n2. Later, you can go to **Settings** to customize your experience.\n3. For any issues, feel free to [contact us](https://discord.gg/UHKMRyJcgc).\n\n✨ **Enjoy your FlowDown experience!**" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**欢迎使用浮望 🐦**，一款注重隐私、极速流畅且轻量高效的 LLM 客户端。\n\n应用内置免费模型。当然，你也可以 _配置云端模型_ 或在你的设备上 _运行本地模型_，实现完全隐私。\n\n💡 更多信息，请查阅[用户手册](https://apps.qaq.wiki/docs/flowdown/)。\n\n---\n**接下来可以做些什么？**\n\n1.  _选择或添加新模型_，然后 **开始一个新对话**。\n2.  之后，你可以前往 **设置** 来自定义你的使用体验。\n3.  若有任何疑问反馈或建议，欢迎[联系我们](https://discord.gg/UHKMRyJcgc)。\n\n✨ **祝你使用愉快！**"
+          }
+        }
+      }
+    },
     "%@ Copy" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2286,6 +2296,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无限制"
+          }
+        }
+      }
+    },
+    "Introduction to FlowDown" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浮望向导"
           }
         }
       }
