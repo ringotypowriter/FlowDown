@@ -71,6 +71,16 @@
         }
       }
     },
+    "Converting PDF" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "转换 PDF"
+          }
+        }
+      }
+    },
     "Ephemeral Chat" : {
       "localizations" : {
         "zh-Hans" : {
@@ -91,12 +101,32 @@
         }
       }
     },
+    "Failed to convert PDF pages to images." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将 PDF 转换成图片。"
+          }
+        }
+      }
+    },
     "Failed to fetch the web content." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法获取网络内容。"
+          }
+        }
+      }
+    },
+    "Failed to load PDF file." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法加载 PDF 文件。"
           }
         }
       }
@@ -147,6 +177,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "图片"
+          }
+        }
+      }
+    },
+    "Import" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入"
+          }
+        }
+      }
+    },
+    "Import PDF as Images" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以图片格式导入 PDF"
           }
         }
       }
@@ -207,6 +257,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "剪贴板"
+          }
+        }
+      }
+    },
+    "PDF file is empty." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF 文件为空。"
           }
         }
       }
@@ -291,6 +351,26 @@
         }
       }
     },
+    "Success" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功"
+          }
+        }
+      }
+    },
+    "Successfully imported %lld page(s) from PDF." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功从 PDF 文件中导入 %lld 页数据。"
+          }
+        }
+      }
+    },
     "Terminate" : {
       "localizations" : {
         "zh-Hans" : {
@@ -337,6 +417,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所选模型不支持工具调用或未选择模型。"
+          }
+        }
+      }
+    },
+    "This PDF has %lld page(s). Each page will be converted to an image and added as an attachment." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此 PDF 文件有 %lld 页。继续导入会将所有页面转换为图片附件。"
           }
         }
       }

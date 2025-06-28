@@ -7,6 +7,7 @@
 
 import AlertController
 import Foundation
+import PDFKit
 import PhotosUI
 import ScrubberKit
 import UIKit
@@ -57,7 +58,7 @@ extension RichEditorView {
 
     func openFilePicker() {
         guard let parent = parentViewController else { return }
-        let supportedTypes: [UTType] = [.data, .image, .text, .plainText]
+        let supportedTypes: [UTType] = [.data, .image, .text, .plainText, .pdf]
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes)
         picker.delegate = self
         picker.allowsMultipleSelection = true
@@ -77,6 +78,12 @@ extension RichEditorView {
             process(image: image)
             return
         }
+
+        if file.pathExtension.lowercased() == "pdf" {
+            processPDF(file: file)
+            return
+        }
+
         guard let attachment = Object.Attachment(file: file, storage: storage) else {
             delegate?.onRichEditorError(NSLocalizedString("Unsupported format.", bundle: .module, comment: ""))
             return
@@ -86,6 +93,100 @@ extension RichEditorView {
             return
         }
         attachmentsBar.insert(item: attachment)
+    }
+
+    func processPDF(file: URL) {
+        guard let pdfDocument = PDFDocument(url: file) else {
+            delegate?.onRichEditorError(NSLocalizedString("Failed to load PDF file.", bundle: .module, comment: ""))
+            return
+        }
+
+        let pageCount = pdfDocument.pageCount
+        guard pageCount > 0 else {
+            delegate?.onRichEditorError(NSLocalizedString("PDF file is empty.", bundle: .module, comment: ""))
+            return
+        }
+
+        let alert = AlertViewController(
+            title: String(localized: "Import PDF as Images", bundle: .module),
+            message: String(localized: "This PDF has \(pageCount) page(s). Each page will be converted to an image and added as an attachment.", bundle: .module)
+        ) { [weak self] context in
+            context.addAction(title: String(localized: "Cancel", bundle: .module)) {
+                context.dispose()
+            }
+            context.addAction(title: String(localized: "Import", bundle: .module), attribute: .dangerous) {
+                context.dispose()
+                self?.convertPDFToImages(pdfDocument: pdfDocument, fileName: file.lastPathComponent)
+            }
+        }
+        parentViewController?.present(alert, animated: true)
+    }
+
+    func convertPDFToImages(pdfDocument: PDFDocument, fileName _: String) {
+        let pageCount = pdfDocument.pageCount
+
+        let indicator = AlertProgressIndicatorViewController(
+            title: String(localized: "Converting PDF", bundle: .module)
+        )
+        parentViewController?.present(indicator, animated: true) {
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                var convertedImages: [UIImage] = []
+
+                for pageIndex in 0 ..< pageCount {
+                    guard let page = pdfDocument.page(at: pageIndex) else { continue }
+
+                    let pageRect = page.bounds(for: .mediaBox)
+                    let scaleFactor: CGFloat = 1.0
+                    let targetSize = CGSize(
+                        width: pageRect.width * scaleFactor,
+                        height: pageRect.height * scaleFactor
+                    )
+
+                    let renderer = UIGraphicsImageRenderer(size: targetSize)
+                    let image = renderer.image { context in
+                        UIColor.white.set()
+                        context.fill(CGRect(origin: .zero, size: targetSize))
+
+                        context.cgContext.scaleBy(x: scaleFactor, y: scaleFactor)
+                        context.cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
+                        page.draw(with: .mediaBox, to: context.cgContext)
+                    }
+
+                    convertedImages.append(image)
+                }
+
+                DispatchQueue.main.async { [weak self] in
+                    indicator.dismiss(animated: true) {
+                        guard !convertedImages.isEmpty else {
+                            let alert = AlertViewController(
+                                title: String(localized: "Error", bundle: .module),
+                                message: String(localized: "Failed to convert PDF pages to images.", bundle: .module)
+                            ) { context in
+                                context.addAction(title: String(localized: "OK", bundle: .module), attribute: .dangerous) {
+                                    context.dispose()
+                                }
+                            }
+                            self?.parentViewController?.present(alert, animated: true)
+                            return
+                        }
+
+                        for image in convertedImages {
+                            self?.process(image: image)
+                        }
+
+                        let successAlert = AlertViewController(
+                            title: String(localized: "Success", bundle: .module),
+                            message: String(localized: "Successfully imported \(convertedImages.count) page(s) from PDF.", bundle: .module)
+                        ) { context in
+                            context.addAction(title: String(localized: "OK", bundle: .module), attribute: .dangerous) {
+                                context.dispose()
+                            }
+                        }
+                        self?.parentViewController?.present(successAlert, animated: true)
+                    }
+                }
+            }
+        }
     }
 }
 
