@@ -3161,6 +3161,16 @@
         }
       }
     },
+    "New Chat with Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用模版新建对话"
+          }
+        }
+      }
+    },
     "New Conversation" : {
       "localizations" : {
         "zh-Hans" : {

@@ -71,6 +71,16 @@
         }
       }
     },
+    "Convert to Image" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "转换为图片"
+          }
+        }
+      }
+    },
     "Converting PDF" : {
       "localizations" : {
         "zh-Hans" : {
@@ -181,22 +191,22 @@
         }
       }
     },
-    "Import" : {
+    "Import PDF" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "导入"
+            "value" : "导入 PDF"
           }
         }
       }
     },
-    "Import PDF as Images" : {
+    "Import Text" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "以图片格式导入 PDF"
+            "value" : "导入文本"
           }
         }
       }
@@ -421,12 +431,12 @@
         }
       }
     },
-    "This PDF has %lld page(s). Each page will be converted to an image and added as an attachment." : {
+    "This PDF has %lld page(s). You can select whether to import it as text or convert it to images." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此 PDF 文件有 %lld 页。继续导入会将所有页面转换为图片附件。"
+            "value" : "此 PDF 文件有 %lld 页。你可以选择将其转换成图片或者仅保留文档的文本部分。"
           }
         }
       }

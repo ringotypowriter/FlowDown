@@ -108,15 +108,34 @@ extension RichEditorView {
         }
 
         let alert = AlertViewController(
-            title: String(localized: "Import PDF as Images", bundle: .module),
-            message: String(localized: "This PDF has \(pageCount) page(s). Each page will be converted to an image and added as an attachment.", bundle: .module)
+            title: String(localized: "Import PDF", bundle: .module),
+            message: String(localized: "This PDF has \(pageCount) page(s). You can select whether to import it as text or convert it to images.", bundle: .module),
         ) { [weak self] context in
             context.addAction(title: String(localized: "Cancel", bundle: .module)) {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Import", bundle: .module), attribute: .dangerous) {
-                context.dispose()
-                self?.convertPDFToImages(pdfDocument: pdfDocument, fileName: file.lastPathComponent)
+            context.addAction(title: String(localized: "Import Text", bundle: .module), attribute: .dangerous) {
+                context.dispose {
+                    guard let self = self else { return }
+                    let attachment = Object.Attachment(
+                        type: .text,
+                        name: file.lastPathComponent,
+                        previewImage: .init(),
+                        imageRepresentation: .init(),
+                        textRepresentation: pdfDocument.string ?? "",
+                        storageSuffix: file.lastPathComponent
+                    )
+                    if attachment.textRepresentation.count > 1_000_000 {
+                        self.delegate?.onRichEditorError(NSLocalizedString("Text too long.", bundle: .module, comment: ""))
+                        return
+                    }
+                    self.attachmentsBar.insert(item: attachment)
+                }
+            }
+            context.addAction(title: String(localized: "Convert to Image", bundle: .module), attribute: .dangerous) {
+                context.dispose {
+                    self?.convertPDFToImages(pdfDocument: pdfDocument, fileName: file.lastPathComponent)
+                }
             }
         }
         parentViewController?.present(alert, animated: true)
