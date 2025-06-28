@@ -8,8 +8,8 @@
 import ConfigurableKit
 import Foundation
 import OrderedCollections
-import UIKit
 import Storage
+import UIKit
 
 class ChatTemplateManager {
     static let shared = ChatTemplateManager()

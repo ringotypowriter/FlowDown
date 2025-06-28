@@ -73,7 +73,6 @@ extension AppDelegate {
 
     // Wire from MainController
     @objc func requestNewChatFromMenu(_: Any?) {
-        // TODO: use COMMAND + 1/2/3/4... to select chat template
         (mainWindow?.rootViewController as? MainController)?.requestNewChat()
     }
 

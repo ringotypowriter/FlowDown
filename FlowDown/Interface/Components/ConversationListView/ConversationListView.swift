@@ -53,6 +53,9 @@ class ConversationListView: UIView {
         dataSource.defaultRowAnimation = .fade
 
         super.init(frame: .zero)
+        
+        isUserInteractionEnabled = true
+        
         addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -157,6 +160,49 @@ class ConversationListView: UIView {
             select(identifier: item.id)
         } else {
             selection.send(nil)
+        }
+    }
+
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        // detect command + 1/2/3/4 ... 9 to select conversation
+        var resolved = false
+        for press in presses {
+            guard let key = press.key else { continue }
+            let keyCode = key.charactersIgnoringModifiers
+            guard keyCode.count == 1,
+                key.modifierFlags.contains(.command),
+                var digit = Int(keyCode)
+            else { continue }
+            digit -= 1
+            guard digit >= 0, digit < dataSource.snapshot().numberOfItems else {
+                continue
+            }
+            
+            // now check which section we are in
+            let snapshot = dataSource.snapshot()
+            var sectionIndex: Int? = nil
+            var sectionItemIndex: Int? = nil
+            var currentCount = 0
+            for (index, section) in snapshot.sectionIdentifiers.enumerated() {
+                let count = snapshot.numberOfItems(inSection: section)
+                if currentCount + count > digit {
+                    sectionIndex = index
+                    sectionItemIndex = digit - currentCount
+                    break
+                }
+                currentCount += count
+            }
+            guard let sectionIndex, let sectionItemIndex else {
+                assertionFailure()
+                continue
+            }
+            let indexPath = IndexPath(item: sectionItemIndex, section: sectionIndex)
+            let identifier = dataSource.itemIdentifier(for: indexPath)
+            selection.send(identifier)
+            resolved = true
+        }
+        if !resolved {
+            super.pressesBegan(presses, with: event)
         }
     }
 }

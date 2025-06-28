@@ -102,7 +102,7 @@ class ChatTemplateListController: UIViewController {
 }
 
 extension ChatTemplateListController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath) else {
             return nil
         }
