@@ -111,10 +111,12 @@ extension ChatTemplateListController: UITableViewDelegate {
             title: String(localized: "Delete")
         ) { _, _, completion in
             guard let template = ChatTemplateManager.shared.template(for: itemIdentifier) else {
+                assertionFailure()
                 completion(false)
                 return
             }
-            ChatTemplateManager.shared.remove(for: itemIdentifier)
+            assert(template.id == itemIdentifier)
+            ChatTemplateManager.shared.remove(for: template.id)
             completion(true)
         }
         delete.image = UIImage(systemName: "trash")
