@@ -56,7 +56,6 @@ class CodeEditorController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .background
-
         navigationController?.navigationBar.backgroundColor = .background
 
         let sep = SeparatorView()

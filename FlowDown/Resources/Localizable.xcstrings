@@ -400,7 +400,14 @@
       }
     },
     "Back" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回"
+          }
+        }
+      }
     },
     "Balanced" : {
       "comment" : "Search Strategy",
@@ -3402,6 +3409,16 @@
         }
       }
     },
+    "Preview" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预览"
+          }
+        }
+      }
+    },
     "Privacy Policy" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3463,12 +3480,12 @@
         }
       }
     },
-    "Raw Message" : {
+    "Raw Content" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "原始消息"
+            "value" : "原始数据"
           }
         }
       }

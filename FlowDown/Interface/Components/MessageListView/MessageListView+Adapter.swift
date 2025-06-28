@@ -160,8 +160,7 @@ extension MessageListView: ListViewAdapter {
                     self?.handleLinkTapped(link, in: range, at: aiMessageView.convert(touchLocation, to: self))
                 }
                 aiMessageView.codePreviewHandler = { [weak self] lang, code in
-                    let viewer = self?.handleCodePreview(code: code, language: lang)
-                    viewer?.title = String(localized: "Code Viewer")
+                    self?.detailDetailController(code: code, language: lang, title: String(localized: "Code Viewer"))
                 }
             } else { assertionFailure() }
         } else if let hintMessageView = rowView as? HintMessageView {
@@ -367,11 +366,11 @@ extension MessageListView: ListViewAdapter {
                     )
                 },
                 UIAction(title: String(localized: "View Raw"), image: .init(systemName: "eye")) { [weak self] _ in
-                    let viewer = self?.handleCodePreview(
+                    self?.detailDetailController(
                         code: .init(string: representation.content),
-                        language: "markdown"
+                        language: "markdown",
+                        title: String(localized: "Raw Content")
                     )
-                    viewer?.title = String(localized: "Raw Message")
                 },
             ].compactMap(\.self)),
             UIMenu(title: String(localized: "More"), image: .init(systemName: "ellipsis.circle"), children: [
@@ -392,12 +391,16 @@ extension MessageListView: ListViewAdapter {
                 ]),
                 UIMenu(options: [.displayInline], children: [
                     UIAction(title: String(localized: "Edit"), image: .init(systemName: "pencil")) { [weak self] _ in
-                        let viewer = self?.handleCodePreview(
+                        let viewer = self?.detailDetailController(
                             code: .init(string: representation.content),
-                            language: "markdown"
+                            language: "markdown",
+                            title: String(localized: "Edit")
                         )
-                        viewer?.title = String(localized: "Edit")
-                        viewer?.collectEditedContent { [weak self] text in
+                        guard let viewer = viewer as? CodeEditorController else {
+                            assertionFailure()
+                            return
+                        }
+                        viewer.collectEditedContent { [weak self] text in
                             guard let self else { return }
                             print("[*] edited \(messageIdentifier) content: \(text)")
                             if isReasoningContent {
@@ -435,10 +438,18 @@ extension MessageListView: ListViewAdapter {
     }
 
     @discardableResult
-    func handleCodePreview(code: NSAttributedString, language: String?) -> CodeEditorController {
-        let viewer = CodeEditorController(language: language, text: code.string)
+    func detailDetailController(code: NSAttributedString, language: String?, title: String) -> UIViewController {
+        let controller: UIViewController
+
+        if language?.lowercased() == "html" {
+            controller = HTMLPreviewController(content: code.string)
+        } else {
+            controller = CodeEditorController(language: language, text: code.string)
+            controller.title = title
+        }
+
         #if targetEnvironment(macCatalyst)
-            let nav = UINavigationController(rootViewController: viewer)
+            let nav = UINavigationController(rootViewController: controller)
             nav.view.backgroundColor = .background
             let holder = AlertBaseController(
                 rootViewController: nav,
@@ -455,6 +466,6 @@ extension MessageListView: ListViewAdapter {
             holder.view.backgroundColor = .background
         #endif
         parentViewController?.present(holder, animated: true)
-        return viewer
+        return controller
     }
 }
