@@ -64,10 +64,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_: UIApplication) {
         MLX.GPU.onApplicationResignActivate()
-        NSObject.cancelPreviousPerformRequests(
-            withTarget: ModelManager.shared,
-            selector: #selector(ModelManager.shared.disposeMLX),
-            object: nil
-        )
     }
 }

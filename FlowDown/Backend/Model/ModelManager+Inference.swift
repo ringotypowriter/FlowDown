@@ -60,7 +60,6 @@ extension ModelManager {
                     parameters: GenerateParameters(temperature: 0),
                     context: context
                 ) { _ in .stop }
-                MLX.GPU.clearCache()
                 return result.output
             }
         }
@@ -254,23 +253,6 @@ extension ModelManager {
         }
     }
 
-    @objc func disposeMLX() {
-        guard MLX.GPU.isSupported else { return }
-        print("[*] dispose mlx cache at \(Date())")
-        MLX.GPU.clearCache()
-    }
-
-    private func scheduleDissposeCachedModels() {
-        DispatchQueue.main.async {
-            NSObject.cancelPreviousPerformRequests(
-                withTarget: ModelManager.shared,
-                selector: #selector(self.disposeMLX),
-                object: nil
-            )
-            ModelManager.shared.perform(#selector(ModelManager.shared.disposeMLX), with: nil, afterDelay: 15)
-        }
-    }
-
     func prepareRequestBody(
         modelID: ModelIdentifier,
         messages: [ChatRequestBody.Message]
@@ -299,13 +281,6 @@ extension ModelManager {
         tools: [ChatRequestBody.Tool]? = nil,
         additionalField: [String: Any]
     ) async throws -> InferenceMessage {
-        NSObject.cancelPreviousPerformRequests(
-            withTarget: self,
-            selector: #selector(disposeMLX),
-            object: nil
-        )
-        defer { scheduleDissposeCachedModels() }
-
         let client = try chatService(for: modelID, additionalField: additionalField)
         let response = try await client.chatCompletionRequest(
             body: .init(
@@ -331,13 +306,6 @@ extension ModelManager {
         tools: [ChatRequestBody.Tool]? = nil,
         additionalField: [String: Any]
     ) async throws -> AsyncThrowingStream<InferenceMessage, any Error> {
-        NSObject.cancelPreviousPerformRequests(
-            withTarget: self,
-            selector: #selector(disposeMLX),
-            object: nil
-        )
-        defer { scheduleDissposeCachedModels() }
-
         let client = try chatService(for: modelID, additionalField: additionalField)
         client.collectedErrors = nil
 
@@ -370,12 +338,6 @@ extension ModelManager {
                     var collectedToolCalls: [ToolCallRequest] = []
 
                     for try await chunk in stream {
-                        NSObject.cancelPreviousPerformRequests(
-                            withTarget: self,
-                            selector: #selector(disposeMLX),
-                            object: nil
-                        )
-
                         //
                         // we assuming server sent us delta content with 0.5s each time
                         // so make sure all of our content is shown before that
