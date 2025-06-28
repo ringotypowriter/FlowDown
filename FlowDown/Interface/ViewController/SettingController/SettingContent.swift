@@ -134,6 +134,8 @@ extension SettingController.EntryPage {
             return SettingController.SettingContent.GeneralController()
         case .inference:
             return SettingController.SettingContent.InferenceController()
+        case let .chatTemplateEditor(templateIdentifier):
+            return ChatTemplateEditorController(templateIdentifier: templateIdentifier)
         case .modelManagement:
             return SettingController.SettingContent.ModelController()
         case .tools:

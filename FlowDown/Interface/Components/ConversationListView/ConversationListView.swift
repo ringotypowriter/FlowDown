@@ -53,9 +53,9 @@ class ConversationListView: UIView {
         dataSource.defaultRowAnimation = .fade
 
         super.init(frame: .zero)
-        
+
         isUserInteractionEnabled = true
-        
+
         addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -170,14 +170,14 @@ class ConversationListView: UIView {
             guard let key = press.key else { continue }
             let keyCode = key.charactersIgnoringModifiers
             guard keyCode.count == 1,
-                key.modifierFlags.contains(.command),
-                var digit = Int(keyCode)
+                  key.modifierFlags.contains(.command),
+                  var digit = Int(keyCode)
             else { continue }
             digit -= 1
             guard digit >= 0, digit < dataSource.snapshot().numberOfItems else {
                 continue
             }
-            
+
             // now check which section we are in
             let snapshot = dataSource.snapshot()
             var sectionIndex: Int? = nil

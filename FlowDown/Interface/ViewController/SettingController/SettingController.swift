@@ -81,6 +81,7 @@ extension SettingController {
     enum EntryPage {
         case general
         case inference
+        case chatTemplateEditor(templateIdentifier: ChatTemplate.ID)
         case modelManagement
         case modelEditor(model: ModelManager.ModelIdentifier)
         case tools

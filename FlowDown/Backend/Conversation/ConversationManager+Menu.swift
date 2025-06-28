@@ -210,18 +210,95 @@ extension ConversationManager {
                     return nil
                 }
             }(),
-            { () -> UIAction? in
+            { () -> UIMenu? in
                 if convHasEmptyContent {
                     return nil
                 } else {
-                    return UIAction(
-                        title: String(localized: "Duplicate"),
-                        image: UIImage(systemName: "doc.on.doc")
-                    ) { _ in
-                        if let id = ConversationManager.shared.duplicateConversation(identifier: conv.id) {
-                            suggestNewSelection(id)
-                        }
-                    }
+                    return UIMenu(options: [.displayInline], children: [
+                        UIAction(
+                            title: String(localized: "Generate Chat Template"),
+                            image: UIImage(systemName: "wind")
+                        ) { _ in
+                            let model = session.models.chat
+                            let name = ModelManager.shared.modelName(identifier: model)
+                            guard let model, !name.isEmpty else {
+                                let alert = AlertViewController(
+                                    title: String(localized: "Model Not Available"),
+                                    message: String(localized: "Please select a model to generate chat template.")
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
+                                    }
+                                }
+                                controller.present(alert, animated: true)
+                                return
+                            }
+                            let alert = AlertViewController(
+                                title: String(localized: "Generate Chat Template"),
+                                message: String(localized: "This will extract your requests from the current conversation using \(name) and save it as a template for later use. This may take some time.")
+                            ) { context in
+                                context.addAction(title: String(localized: "Cancel")) {
+                                    context.dispose()
+                                }
+                                context.addAction(title: String(localized: "Generate"), attribute: .dangerous) {
+                                    context.dispose {
+                                        Indicator.progress(
+                                            title: String(localized: "Generating Template"),
+                                            controller: controller
+                                        ) { completionHandler in
+                                            ChatTemplateManager.shared.createTemplateFromConversation(
+                                                conv,
+                                                model: model,
+                                                controller: controller
+                                            ) { result in
+                                                completionHandler {
+                                                    switch result {
+                                                    case let .success(success):
+                                                        ChatTemplateManager.shared.addTemplate(success)
+                                                        let alert = AlertViewController(
+                                                            title: String(localized: "Template Generated"),
+                                                            message: String(localized: "Template \(success.name) has been successfully generated and saved.")
+                                                        ) { context in
+                                                            context.addAction(title: String(localized: "OK")) {
+                                                                context.dispose()
+                                                            }
+                                                            context.addAction(title: String(localized: "Edit"), attribute: .dangerous) {
+                                                                context.dispose {
+                                                                    let setting = SettingController()
+                                                                    SettingController.setNextEntryPage(.chatTemplateEditor(templateIdentifier: success.id))
+                                                                    controller.present(setting, animated: true)
+                                                                }
+                                                            }
+                                                        }
+                                                        controller.present(alert, animated: true)
+                                                    case let .failure(failure):
+                                                        let alert = AlertViewController(
+                                                            title: String(localized: "Failed to Generate Template"),
+                                                            message: failure.localizedDescription
+                                                        ) { context in
+                                                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                                                context.dispose()
+                                                            }
+                                                        }
+                                                        controller.present(alert, animated: true)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            controller.present(alert, animated: true)
+                        },
+                        UIAction(
+                            title: String(localized: "Duplicate"),
+                            image: UIImage(systemName: "doc.on.doc")
+                        ) { _ in
+                            if let id = ConversationManager.shared.duplicateConversation(identifier: conv.id) {
+                                suggestNewSelection(id)
+                            }
+                        },
+                    ])
                 }
             }(),
             { () -> UIMenuElement? in

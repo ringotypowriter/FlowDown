@@ -288,6 +288,9 @@
         }
       }
     },
+    "Analyze the conversation and generate a reusable chat template. Extract the core purpose, create a concise name, suggest an appropriate emoji, and write a system prompt that captures the essence of the conversation pattern." : {
+
+    },
     "Animals & Nature" : {
       "comment" : "Emoji Category",
       "localizations" : {
@@ -899,6 +902,9 @@
           }
         }
       }
+    },
+    "Conversation does not have enough messages to create a template." : {
+
     },
     "Coordinates: %@, %@" : {
       "localizations" : {
@@ -1880,6 +1886,9 @@
         }
       }
     },
+    "Failed to extract required information from model response." : {
+
+    },
     "Failed to fetch model profile" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1896,6 +1905,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法获取网页内容。"
+          }
+        }
+      }
+    },
+    "Failed to Generate Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法生成模版"
           }
         }
       }
@@ -2113,6 +2132,26 @@
         }
       }
     },
+    "Generate" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成"
+          }
+        }
+      }
+    },
+    "Generate Chat Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成对话模版"
+          }
+        }
+      }
+    },
     "Generate New Icon" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2149,6 +2188,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在生成新标题"
+          }
+        }
+      }
+    },
+    "Generating Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成模版"
           }
         }
       }
@@ -2967,6 +3016,16 @@
         }
       }
     },
+    "Model Not Available" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型不可用"
+          }
+        }
+      }
+    },
     "Model not found." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3526,6 +3585,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请对以下图像进行详细描述。描述应包含图像中的主要元素、场景、颜色、物体、人物及任何重要细节。旨在提供全面信息以帮助理解图像的含义或背景。\n\n1.  图像的整体主题或场景是什么？\n2.  图像中是否有特定的物体、建筑或自然景观？如果有，请描述它们。\n3.  图像中是否有人物？如果有，请描述他们的外貌、表情、动作以及与其他元素的关系。\n4.  图像中的颜色和光线如何呈现？是否有突出的颜色或对比？\n5.  图像的前景和背景分别是什么？是否有需要注意的重要细节？\n6.  图像是否传达了特定的情感或氛围？如果是，请描述这种情绪或感觉。\n7.  其他您认为重要或有趣的细节，请一并包含。\n\n如果您无法描述该图像，可以输出 [无法识别图像]。"
+          }
+        }
+      }
+    },
+    "Please select a model to generate chat template." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先选择一个模型，然后再次尝试生成对话模版。"
           }
         }
       }
@@ -4241,12 +4310,32 @@
         }
       }
     },
+    "Template %@ has been successfully generated and saved." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模版 %@ 已生成，并成功保存。"
+          }
+        }
+      }
+    },
     "Template %lld" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "模版 %lld"
+          }
+        }
+      }
+    },
+    "Template Generated" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模版已生成"
           }
         }
       }
@@ -4623,6 +4712,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这将删除所有编辑内容，包括未发送的对话文本和附件。"
+          }
+        }
+      }
+    },
+    "This will extract your requests from the current conversation using %@ and save it as a template for later use. This may take some time." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将使用 %@ 从当前对话提取你的请求并保存为模版以便后续使用。这会花费一些时间。"
           }
         }
       }
