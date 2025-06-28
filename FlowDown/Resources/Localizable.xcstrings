@@ -289,7 +289,14 @@
       }
     },
     "Analyze the conversation and generate a reusable chat template. Extract the core purpose, create a concise name, suggest an appropriate emoji, and write a system prompt that captures the essence of the conversation pattern." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分析对话并生成可复用的聊天模板。提取核心目的，创建一个简洁的名称，建议一个合适的表情符号，并撰写一个系统提示，以捕捉对话模式的精髓。\n"
+          }
+        }
+      }
     },
     "Animals & Nature" : {
       "comment" : "Emoji Category",
@@ -904,7 +911,14 @@
       }
     },
     "Conversation does not have enough messages to create a template." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话消息不足，无法创建模板。"
+          }
+        }
+      }
     },
     "Coordinates: %@, %@" : {
       "localizations" : {
@@ -1887,7 +1901,14 @@
       }
     },
     "Failed to extract required information from model response." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法从模型的响应提取所需信息。"
+          }
+        }
+      }
     },
     "Failed to fetch model profile" : {
       "localizations" : {
