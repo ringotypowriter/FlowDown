@@ -77,7 +77,7 @@ class ChatTemplateManager {
         ConversationManager.shared.editConversation(identifier: conversation.id) { conv in
             conv.icon = template.avatar
             conv.title = template.name
-            conv.shouldAutoRename = template.name.isEmpty // Only auto-rename if template name is empty
+            conv.shouldAutoRename = true
         }
 
         if !template.prompt.isEmpty {

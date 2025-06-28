@@ -26,7 +26,12 @@ import UIKit
 
         override convenience init() {
             let nav = NavigationController()
-            self.init(rootViewController: nav)
+            self.init(
+                rootViewController: nav,
+                preferredWidth: 600,
+                preferredHeight: 600
+            )
+
             content = nav
             shouldDismissWhenTappedAround = false
             shouldDismissWhenEscapeKeyPressed = true
