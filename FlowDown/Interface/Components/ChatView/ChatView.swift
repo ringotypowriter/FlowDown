@@ -346,7 +346,7 @@ extension ChatView {
                 suggestNewSelection: onSuggestSelection ?? { _ in }
             ) else { return }
 
-            #if targetEnvironment(macCatalyst) && false
+            #if targetEnvironment(macCatalyst)
                 // On Catalyst, only show conversation menu (new chat button is handled by sidebar)
                 menuButton.present(menu: convMenu)
             #else
