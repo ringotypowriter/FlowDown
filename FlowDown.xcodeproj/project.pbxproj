@@ -845,7 +845,7 @@
 			repositoryURL = "https://github.com/Lakr233/AlertController";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
+				minimumVersion = 1.1.1;
 			};
 		};
 		50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */ = {
