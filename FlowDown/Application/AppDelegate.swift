@@ -7,6 +7,7 @@
 
 import AlertController
 import ChidoriMenu
+import Combine
 import ConfigurableKit
 import MarkdownView
 import MLX
@@ -17,9 +18,10 @@ import UIKit
 
 @objc(AppDelegate)
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    private var templateMenuCancellable: AnyCancellable?
     func application(
-        _: UIApplication,
-        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         UITableView.appearance().backgroundColor = .clear
         UIButton.appearance().tintColor = .accent
@@ -41,16 +43,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         ChidoriMenuConfiguration.accentColor = UIColor.accent
         ChidoriMenuConfiguration.backgroundColor = UIColor.background
-
+        
+        templateMenuCancellable = ChatTemplateManager.shared.$templates
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                UIMenuSystem.main.setNeedsRebuild()
+            }
         return true
-    }
-
-    func application(
-        _: UIApplication,
-        configurationForConnecting connectingSceneSession: UISceneSession,
-        options _: UIScene.ConnectionOptions
-    ) -> UISceneConfiguration {
-        UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
     func application(

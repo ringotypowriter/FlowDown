@@ -27,6 +27,11 @@ extension AppDelegate {
                         input: "n",
                         modifierFlags: .command
                     ),
+                    UIMenu(
+                        title: String(localized: "New Chat with Template"),
+                        options: .displayInline,
+                        children: Self.buildTemplateMenuItems(target: self)
+                    )
                 ]
             ),
             atStartOfMenu: .file
@@ -41,7 +46,7 @@ extension AppDelegate {
                         action: #selector(deleteConversationFromMenu(_:)),
                         input: "\u{8}",
                         modifierFlags: [.command, .shift]
-                    ),
+                    )
                 ]
             ),
             atEndOfMenu: .file
@@ -56,11 +61,45 @@ extension AppDelegate {
                         action: #selector(openSettingsFromMenu(_:)),
                         input: ",",
                         modifierFlags: .command
-                    ),
+                    )
                 ]
             ),
             afterMenu: .preferences
         )
+    }
+
+    // MARK: - Template Menu
+
+    private static func buildTemplateMenuItems(target: AppDelegate) -> [UIMenuElement] {
+        let templates = Array(ChatTemplateManager.shared.templates.values)
+        var items: [UIMenuElement] = []
+        for (idx, template) in templates.enumerated() {
+            let title = "\(template.name)"
+            let action = #selector(AppDelegate.requestNewChatWithTemplateFromMenu(_:))
+            let propertyList = template.id.uuidString
+            if idx < 9 {
+                let keyInput = String(idx + 1)
+                items.append(
+                    UIKeyCommand(
+                        title: title,
+                        action: action,
+                        input: keyInput,
+                        modifierFlags: [.command, .alternate],
+                        propertyList: propertyList
+                    )
+                )
+            } else {
+                items.append(
+                    UIAction(
+                        title: title,
+                        handler: { _ in
+                            target.requestNewChatWithTemplateFromMenuWithID(propertyList)
+                        }
+                    )
+                )
+            }
+        }
+        return items
     }
 
     // MARK: - Menu Actions
@@ -80,14 +119,43 @@ extension AppDelegate {
         (mainWindow?.rootViewController as? MainController)?.openSettings()
     }
 
+    // new chat with template
+
+    @objc func requestNewChatWithTemplateFromMenu(_ sender: UICommand) {
+        guard let templateIDString = sender.propertyList as? String,
+              let templateID = UUID(uuidString: templateIDString),
+              let template = ChatTemplateManager.shared.template(for: templateID)
+        else { return }
+        let conversationID = ChatTemplateManager.shared.createConversationFromTemplate(template)
+        if let mainVC = mainWindow?.rootViewController as? MainController {
+            mainVC.chatView.use(conversation: conversationID) {
+                mainVC.chatView.focusEditor()
+            }
+        }
+    }
+
+    func requestNewChatWithTemplateFromMenuWithID(_ templateID: String) {
+        guard let id = UUID(uuidString: templateID),
+              let template = ChatTemplateManager.shared.template(for: id)
+        else { return }
+        let conversationID = ChatTemplateManager.shared.createConversationFromTemplate(template)
+        if let mainVC = mainWindow?.rootViewController as? MainController {
+            mainVC.chatView.use(conversation: conversationID) {
+                mainVC.chatView.focusEditor()
+            }
+        }
+    }
+
     // conversation related
-    private func withCurrentConversation(_ block: (MainController, Conversation.ID, Conversation) -> Void) {
+    private func withCurrentConversation(
+        _ block: (MainController, Conversation.ID, Conversation) -> Void
+    ) {
         guard let mainVC = mainWindow?.rootViewController as? MainController,
-              let conversationID = mainVC.chatView.conversationIdentifier,
-              let conversation = ConversationManager.shared.conversation(identifier: conversationID)
+            let conversationID = mainVC.chatView.conversationIdentifier,
+            let conversation = ConversationManager.shared.conversation(identifier: conversationID)
         else {
             return
-        }
+}
         block(mainVC, conversationID, conversation)
     }
 
