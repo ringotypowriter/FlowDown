@@ -156,15 +156,16 @@ class ConversationListView: UIView {
 
         dataSource.apply(snapshot, animatingDifferences: true)
 
-        let visibleRows = tableView.indexPathsForVisibleRows ?? []
-        let visibleItemIdentifiers = visibleRows
-            .map { dataSource.itemIdentifier(for: $0) }
-            .compactMap(\.self)
-        snapshot.reconfigureItems(visibleItemIdentifiers)
-
-        dataSource.apply(snapshot, animatingDifferences: false)
-
-        keepAtLeastOncFocus()
+        DispatchQueue.main.async { [self] in
+            var snapshot = dataSource.snapshot()
+            let visibleRows = tableView.indexPathsForVisibleRows ?? []
+            let visibleItemIdentifiers = visibleRows
+                .map { dataSource.itemIdentifier(for: $0) }
+                .compactMap(\.self)
+            snapshot.reconfigureItems(visibleItemIdentifiers)
+            dataSource.apply(snapshot, animatingDifferences: true)
+            keepAtLeastOncFocus()
+        }
     }
 
     func select(identifier: Conversation.ID) {
