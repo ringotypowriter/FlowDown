@@ -4211,6 +4211,16 @@
         }
       }
     },
+    "Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模版"
+          }
+        }
+      }
+    },
     "Template %lld" : {
       "localizations" : {
         "zh-Hans" : {

@@ -21,6 +21,7 @@ class HTMLPreviewController: UIViewController, WKNavigationDelegate {
         fatalError()
     }
 
+    let indicator = UIActivityIndicatorView(style: .medium)
     var webView: WKWebView?
 
     override func viewDidLoad() {
@@ -28,6 +29,12 @@ class HTMLPreviewController: UIViewController, WKNavigationDelegate {
 
         view.backgroundColor = .background
         navigationController?.navigationBar.backgroundColor = .background
+
+        view.addSubview(indicator)
+        indicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        indicator.startAnimating()
 
         let sep = SeparatorView()
         view.addSubview(sep)
@@ -56,6 +63,16 @@ class HTMLPreviewController: UIViewController, WKNavigationDelegate {
                 action: #selector(done)
             ),
         ]
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIView.animate(withDuration: 0.3) {
+            self.webView?.alpha = 1
+            self.indicator.alpha = 0
+        } completion: { _ in
+            self.indicator.removeFromSuperview()
+        }
     }
 
     @objc func done() {

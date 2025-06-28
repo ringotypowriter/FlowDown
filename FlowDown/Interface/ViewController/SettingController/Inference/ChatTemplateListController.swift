@@ -90,7 +90,8 @@ class ChatTemplateListController: UIViewController {
     }
 
     @objc func addTemplate() {
-        let template = ChatTemplate()
+        var template = ChatTemplate()
+        template.name = String(localized: "Template \(ChatTemplateManager.shared.templates.count + 1)")
         ChatTemplateManager.shared.addTemplate(template)
 
         DispatchQueue.main.async {
@@ -121,11 +122,13 @@ extension ChatTemplateListController {
         }
 
         func commonInit() {
+            selectionStyle = .none
             contentView.addSubview(view)
             view.snp.makeConstraints { make in
                 make.edges.equalToSuperview().inset(20)
             }
             view.descriptionLabel.numberOfLines = 1
+            view.descriptionLabel.lineBreakMode = .byTruncatingTail
             contentView.addInteraction(UIContextMenuInteraction(delegate: self))
         }
 

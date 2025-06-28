@@ -10,15 +10,16 @@ import Combine
 import ConfigurableKit
 import UIKit
 
-private let dateFormatter: DateFormatter = .init().with {
-    $0.dateStyle = .short
-    $0.timeStyle = .short
-}
-
 class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
     let templateIdentifier: ChatTemplate.ID
+    private var template: ChatTemplate
+
     init(templateIdentifier: ChatTemplate.ID) {
         self.templateIdentifier = templateIdentifier
+        guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else {
+            fatalError("template not found")
+        }
+        self.template = template
         super.init(nibName: nil, bundle: nil)
         title = String(localized: "Edit Template")
     }
@@ -61,7 +62,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
     }
 
     @objc func checkTapped() {
-        navigationController?.popViewController()
+        ChatTemplateManager.shared.update(template)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc func deleteTapped() {
@@ -85,8 +87,6 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
     override func setupContentViews() {
         super.setupContentViews()
 
-        guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else { return }
-
         // MARK: - AVATAR
 
         let avatarContainer = UIView()
@@ -100,7 +100,6 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         avatarView.layer.cornerRadius = 4
         avatarView.contentMode = .scaleAspectFill
         avatarView.image = UIImage(data: template.avatar) ?? .init()
-        avatarView.backgroundColor = .accent.withAlphaComponent(0.1)
         avatarContainer.addSubview(avatarView)
         avatarView.isUserInteractionEnabled = true
         avatarView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickAvatarTapped(_:))))
@@ -113,14 +112,13 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         // MARK: - NAME
 
         let nameView = ConfigurableInfoView().setTapBlock { view in
-            guard let template = ChatTemplateManager.shared.template(for: self.templateIdentifier) else { return }
             let input = AlertInputViewController(
                 title: String(localized: "Edit Name"),
                 message: String(localized: "The display name of this chat template."),
                 placeholder: String(localized: "Enter template name"),
-                text: template.name
+                text: self.template.name
             ) { output in
-                ChatTemplateManager.shared.update(template.with { $0.name = output })
+                self.template = self.template.with { $0.name = output }
                 view.configure(value: output)
             }
             view.parentViewController?.present(input, animated: true)
@@ -181,14 +179,14 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
                     title: String(localized: "Inherit"),
                     image: UIImage(systemName: "arrow.down.circle")
                 ) { _ in
-                    ChatTemplateManager.shared.update(template.with { $0.inheritApplicationPrompt = true })
+                    self.template = self.template.with { $0.inheritApplicationPrompt = true }
                     view.configure(value: String(localized: "Inherit"))
                 },
                 UIAction(
                     title: String(localized: "Ignore"),
                     image: UIImage(systemName: "xmark.circle")
                 ) { _ in
-                    ChatTemplateManager.shared.update(template.with { $0.inheritApplicationPrompt = false })
+                    self.template = self.template.with { $0.inheritApplicationPrompt = false }
                     view.configure(value: String(localized: "Ignore"))
                 },
             ]
@@ -247,8 +245,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
     }
 
     func textViewDidChange(_ textView: UITextView) {
-        guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else { return }
-        ChatTemplateManager.shared.update(template.with { $0.prompt = textView.text })
+        template = template.with { $0.prompt = textView.text }
     }
 
     @objc func pickAvatarTapped(_ sender: Any?) {
@@ -257,10 +254,9 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             assertionFailure()
             return
         }
-        guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else { return }
         let picker = EmojiPickerViewController(sourceView: view) { emoji in
             let data = emoji.emoji.textToImage(size: 64)?.pngData()
-            ChatTemplateManager.shared.update(template.with { $0.avatar = data ?? .init() })
+            self.template = self.template.with { $0.avatar = data ?? .init() }
             view.image = UIImage(data: data ?? .init()) ?? .init()
         }
         view.parentViewController?.present(picker, animated: true)

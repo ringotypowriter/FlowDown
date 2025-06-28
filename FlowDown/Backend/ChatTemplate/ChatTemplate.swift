@@ -11,7 +11,7 @@ import UIKit
 struct ChatTemplate: Identifiable, Codable, Equatable {
     var id: UUID = .init()
 
-    var name: String = .init(localized: "Template \(ChatTemplateManager.shared.templates.count + 1)")
+    var name: String = .init(localized: "Template")
     var avatar: Data = "😶".textToImage(size: 64)?.pngData() ?? .init()
     var prompt: String = .init(localized: "Please help me to...")
     var inheritApplicationPrompt: Bool = false
