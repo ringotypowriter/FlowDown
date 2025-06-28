@@ -77,9 +77,6 @@
         }
       }
     },
-    "A brief description of what this template does." : {
-
-    },
     "A tool model is required for browsing." : {
       "localizations" : {
         "zh-Hans" : {
@@ -313,7 +310,14 @@
       }
     },
     "Application Prompt Behavior" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用程序提示词"
+          }
+        }
+      }
     },
     "Are you sure you want to clean the cache? This will also delete partial downloads." : {
       "localizations" : {
@@ -346,7 +350,14 @@
       }
     },
     "Are you sure you want to delete this template? This action cannot be undone." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要删除这个模版吗？此操作不可取消。"
+          }
+        }
+      }
     },
     "Are you sure you want to remove all content and reset the entire database? App will close after reset." : {
       "localizations" : {
@@ -428,9 +439,6 @@
           }
         }
       }
-    },
-    "Basic Information" : {
-
     },
     "Bing Search" : {
       "localizations" : {
@@ -753,7 +761,14 @@
       }
     },
     "Configuration" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
+        }
+      }
     },
     "Configure" : {
       "localizations" : {
@@ -1172,7 +1187,14 @@
       }
     },
     "Delete Template" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除模版"
+          }
+        }
+      }
     },
     "Delete this model from your device." : {
       "localizations" : {
@@ -1195,7 +1217,14 @@
       }
     },
     "Delete this template permanently." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "永久删除这个模版。"
+          }
+        }
+      }
     },
     "Delete w/ After" : {
       "localizations" : {
@@ -1226,9 +1255,6 @@
           }
         }
       }
-    },
-    "Description" : {
-
     },
     "Determining search keywords" : {
       "localizations" : {
@@ -1421,9 +1447,6 @@
         }
       }
     },
-    "Edit Description" : {
-
-    },
     "Edit Endpoint" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1455,7 +1478,14 @@
       }
     },
     "Edit Name" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑名称"
+          }
+        }
+      }
     },
     "Edit Template" : {
       "comment" : "Chat Template Editor Title",
@@ -1579,11 +1609,15 @@
         }
       }
     },
-    "Enter template description" : {
-
-    },
     "Enter template name" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑模版名称"
+          }
+        }
+      }
     },
     "Erase All" : {
       "localizations" : {
@@ -1916,9 +1950,6 @@
         }
       }
     },
-    "Feature Coming Soon" : {
-
-    },
     "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2152,9 +2183,6 @@
         }
       }
     },
-    "How this template interacts with application prompts." : {
-
-    },
     "Huge" : {
       "comment" : "Font Size\nModel Context",
       "localizations" : {
@@ -2263,7 +2291,14 @@
       }
     },
     "Ignore" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忽略"
+          }
+        }
+      }
     },
     "Imagination" : {
       "localizations" : {
@@ -2387,7 +2422,14 @@
       }
     },
     "Inherit" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继承"
+          }
+        }
+      }
     },
     "Introduction to FlowDown" : {
       "localizations" : {
@@ -2806,7 +2848,14 @@
       }
     },
     "Model" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型"
+          }
+        }
+      }
     },
     "Model Added" : {
       "localizations" : {
@@ -2979,21 +3028,18 @@
         }
       }
     },
-    "My awesome chat template description." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "对话模版的描述。"
-          }
-        }
-      }
-    },
     "N/A" : {
       "shouldTranslate" : false
     },
     "Name" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称"
+          }
+        }
+      }
     },
     "Name: %@" : {
       "localizations" : {
@@ -3021,16 +3067,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新建对话"
-          }
-        }
-      }
-    },
-    "New Template" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新建模版"
           }
         }
       }
@@ -3566,10 +3602,24 @@
       }
     },
     "Prompt" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示词"
+          }
+        }
+      }
     },
     "Prompt Behavior" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示词行为"
+          }
+        }
+      }
     },
     "Query Calendar" : {
       "localizations" : {
@@ -3627,6 +3677,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已刷新"
+          }
+        }
+      }
+    },
+    "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于在从此模板创建新会话时，是否应继承或忽略来自应用程序配置的提示词。"
           }
         }
       }
@@ -4151,8 +4211,15 @@
         }
       }
     },
-    "Template Prompt" : {
-
+    "Template %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模版 %lld"
+          }
+        }
+      }
     },
     "Terminate" : {
       "localizations" : {
@@ -4270,9 +4337,6 @@
         }
       }
     },
-    "The default model to use with this template." : {
-
-    },
     "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4284,7 +4348,14 @@
       }
     },
     "The display name of this chat template." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此对话模版显示的名称。"
+          }
+        }
+      }
     },
     "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions." : {
       "localizations" : {
@@ -4346,11 +4417,15 @@
         }
       }
     },
-    "The prompt serves as the initial instruction for the AI model. It defines the character, behavior, and context for the conversation." : {
-
-    },
-    "The prompt text that will be used as the foundation for conversations with this template." : {
-
+    "The prompt serves as the initial instruction for the language model. It defines the character, behavior, and context for the conversation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示作为语言模型的初始指令，定义了对话的角色、行为和上下文。"
+          }
+        }
+      }
     },
     "The system provides several tools for your convenience. Please use them wisely and according to the user’s query. Avoid requesting information that is already provided or easily inferred." : {
       "localizations" : {

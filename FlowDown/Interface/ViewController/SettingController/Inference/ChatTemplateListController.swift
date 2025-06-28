@@ -65,20 +65,38 @@ class ChatTemplateListController: UIViewController {
         )
 
         ChatTemplateManager.shared.$templates
+            .dropFirst()
             .ensureMainThread()
             .sink { [weak self] templates in
                 guard let self else { return }
-                var snapshot = NSDiffableDataSourceSnapshot<Section, ChatTemplate.ID>()
-                snapshot.appendSections([.main])
-                snapshot.appendItems(.init(templates.keys))
-                dataSource.apply(snapshot, animatingDifferences: true)
+                reload(items: .init(templates.keys), animated: true)
             }
             .store(in: &cancellables)
+        reload(items: .init(ChatTemplateManager.shared.templates.keys), animated: false)
+    }
+
+    func reload(items: [ChatTemplate.ID], animated: Bool) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, ChatTemplate.ID>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items)
+        dataSource.apply(snapshot, animatingDifferences: animated)
+        DispatchQueue.main.async { [self] in
+            var snapshot = dataSource.snapshot()
+            snapshot.reconfigureItems(tableView.indexPathsForVisibleRows?.compactMap {
+                dataSource.itemIdentifier(for: $0)
+            } ?? [])
+            dataSource.apply(snapshot, animatingDifferences: animated)
+        }
     }
 
     @objc func addTemplate() {
         let template = ChatTemplate()
         ChatTemplateManager.shared.addTemplate(template)
+
+        DispatchQueue.main.async {
+            let controller = ChatTemplateEditorController(templateIdentifier: template.id)
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
     }
 }
 
@@ -107,6 +125,7 @@ extension ChatTemplateListController {
             view.snp.makeConstraints { make in
                 make.edges.equalToSuperview().inset(20)
             }
+            view.descriptionLabel.numberOfLines = 1
             contentView.addInteraction(UIContextMenuInteraction(delegate: self))
         }
 
@@ -122,7 +141,7 @@ extension ChatTemplateListController {
                 view.configure(icon: UIImage(systemName: "person.crop.circle.fill"))
             }
             view.configure(title: template.name)
-            view.configure(description: template.templateDescription)
+            view.configure(description: template.prompt)
         }
 
         func load(_ itemIdentifier: ChatTemplate.ID) {

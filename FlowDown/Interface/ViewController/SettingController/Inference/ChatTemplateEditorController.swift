@@ -87,11 +87,30 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else { return }
 
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Basic Information"))
-        ) { $0.bottom /= 2 }
+        // MARK: - AVATAR
+
+        let avatarContainer = UIView()
+        avatarContainer.snp.makeConstraints { make in
+            make.height.equalTo(64)
+        }
+        stackView.addArrangedSubviewWithMargin(avatarContainer)
         stackView.addArrangedSubview(SeparatorView())
+
+        let avatarView = UIImageView()
+        avatarView.layer.cornerRadius = 4
+        avatarView.contentMode = .scaleAspectFill
+        avatarView.image = UIImage(data: template.avatar) ?? .init()
+        avatarView.backgroundColor = .accent.withAlphaComponent(0.1)
+        avatarContainer.addSubview(avatarView)
+        avatarView.isUserInteractionEnabled = true
+        avatarView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pickAvatarTapped(_:))))
+
+        avatarView.snp.makeConstraints { make in
+            make.width.height.equalTo(64)
+            make.center.equalToSuperview()
+        }
+
+        // MARK: - NAME
 
         let nameView = ConfigurableInfoView().setTapBlock { view in
             guard let template = ChatTemplateManager.shared.template(for: self.templateIdentifier) else { return }
@@ -106,37 +125,42 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             }
             view.parentViewController?.present(input, animated: true)
         }
-        nameView.configure(icon: .init(systemName: "textformat"))
+        nameView.configure(icon: .init(systemName: "rosette"))
         nameView.configure(title: String(localized: "Name"))
         nameView.configure(description: String(localized: "The display name of this chat template."))
         nameView.configure(value: template.name)
         stackView.addArrangedSubviewWithMargin(nameView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let avatarView = CircleImageView()
-        avatarView.contentMode = .scaleAspectFill
-        avatarView.image = UIImage(data: template.avatar) ?? UIImage(systemName: "person.crop.circle.fill")!
-        stackView.addArrangedSubviewWithMargin(avatarView)
+        // MARK: PROMPT
+
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView()
+                .with(header: String(localized: "Prompt"))
+        ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let descriptionView = ConfigurableInfoView().setTapBlock { view in
-            guard let template = ChatTemplateManager.shared.template(for: self.templateIdentifier) else { return }
-            let input = AlertInputViewController(
-                title: String(localized: "Edit Description"),
-                message: String(localized: "A brief description of what this template does."),
-                placeholder: String(localized: "Enter template description"),
-                text: template.templateDescription
-            ) { output in
-                ChatTemplateManager.shared.update(template.with { $0.templateDescription = output })
-                view.configure(value: output)
+        let textEditor = UITextView().with {
+            $0.isSelectable = true
+            $0.isEditable = true
+            $0.isScrollEnabled = true
+            $0.textContainerInset = .init(inset: 12)
+            $0.font = .preferredFont(forTextStyle: .body)
+            $0.backgroundColor = .secondarySystemBackground
+            $0.layer.cornerRadius = 8
+            $0.snp.makeConstraints { make in
+                make.height.equalTo(200)
             }
-            view.parentViewController?.present(input, animated: true)
         }
-        descriptionView.configure(icon: .init(systemName: "text.quote"))
-        descriptionView.configure(title: String(localized: "Description"))
-        descriptionView.configure(description: String(localized: "A brief description of what this template does."))
-        descriptionView.configure(value: template.templateDescription)
-        stackView.addArrangedSubviewWithMargin(descriptionView)
+        textEditor.text = template.prompt
+        textEditor.delegate = self
+        stackView.addArrangedSubviewWithMargin(textEditor)
+        stackView.addArrangedSubview(SeparatorView())
+
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionFooterView()
+                .with(footer: String(localized: "The prompt serves as the initial instruction for the language model. It defines the character, behavior, and context for the conversation."))
+        ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
@@ -148,9 +172,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         let promptBehaviorView = ConfigurableInfoView()
         promptBehaviorView.configure(icon: .init(systemName: "gear"))
         promptBehaviorView.configure(title: String(localized: "Application Prompt Behavior"))
-        promptBehaviorView.configure(description: String(localized: "How this template interacts with application prompts."))
-        let behaviorTitle = template.applicationPromptBehavior == .inherit ?
-            String(localized: "Inherit") : String(localized: "Ignore")
+        promptBehaviorView.configure(description: String(localized: "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template."))
+        let behaviorTitle = template.inheritApplicationPrompt ? String(localized: "Inherit") : String(localized: "Ignore")
         promptBehaviorView.configure(value: behaviorTitle)
         promptBehaviorView.setTapBlock { view in
             let children = [
@@ -158,14 +181,14 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
                     title: String(localized: "Inherit"),
                     image: UIImage(systemName: "arrow.down.circle")
                 ) { _ in
-                    ChatTemplateManager.shared.update(template.with { $0.applicationPromptBehavior = .inherit })
+                    ChatTemplateManager.shared.update(template.with { $0.inheritApplicationPrompt = true })
                     view.configure(value: String(localized: "Inherit"))
                 },
                 UIAction(
                     title: String(localized: "Ignore"),
                     image: UIImage(systemName: "xmark.circle")
                 ) { _ in
-                    ChatTemplateManager.shared.update(template.with { $0.applicationPromptBehavior = .ignore })
+                    ChatTemplateManager.shared.update(template.with { $0.inheritApplicationPrompt = false })
                     view.configure(value: String(localized: "Ignore"))
                 },
             ]
@@ -175,55 +198,6 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             )
         }
         stackView.addArrangedSubviewWithMargin(promptBehaviorView)
-        stackView.addArrangedSubview(SeparatorView())
-
-        let modelView = ConfigurableInfoView()
-        modelView.configure(icon: .init(systemName: "cpu"))
-        modelView.configure(title: String(localized: "Model"))
-        modelView.configure(description: String(localized: "The default model to use with this template."))
-        modelView.configure(value: "TODO")
-        modelView.setTapBlock { view in
-            // TODO: Implement model selection
-            Indicator.present(
-                title: String(localized: "Feature Coming Soon"),
-                referencingView: view
-            )
-        }
-        stackView.addArrangedSubviewWithMargin(modelView)
-        stackView.addArrangedSubview(SeparatorView())
-
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Prompt"))
-        ) { $0.bottom /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
-        let promptHeaderView = ConfigurableInfoView()
-        promptHeaderView.configure(icon: .init(systemName: "text.bubble"))
-        promptHeaderView.configure(title: String(localized: "Template Prompt"))
-        promptHeaderView.configure(description: String(localized: "The prompt text that will be used as the foundation for conversations with this template."))
-        promptHeaderView.configure(value: "")
-        stackView.addArrangedSubviewWithMargin(promptHeaderView)
-
-        let promptTextView = UITextView().with {
-            $0.font = .systemFont(ofSize: 16)
-            $0.backgroundColor = .secondarySystemGroupedBackground
-            $0.layer.cornerRadius = 8
-            $0.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-            $0.isScrollEnabled = true
-            $0.text = template.prompt
-            $0.delegate = self
-        }
-        promptTextView.snp.makeConstraints { make in
-            make.height.greaterThanOrEqualTo(120)
-        }
-        stackView.addArrangedSubviewWithMargin(promptTextView)
-        stackView.addArrangedSubview(SeparatorView())
-
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionFooterView()
-                .with(footer: String(localized: "The prompt serves as the initial instruction for the AI model. It defines the character, behavior, and context for the conversation."))
-        ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
@@ -272,10 +246,40 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         stackView.addArrangedSubviewWithMargin(UIView())
     }
 
-    // MARK: - UITextViewDelegate
-
     func textViewDidChange(_ textView: UITextView) {
         guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else { return }
         ChatTemplateManager.shared.update(template.with { $0.prompt = textView.text })
     }
+
+    @objc func pickAvatarTapped(_ sender: Any?) {
+        let gesture = sender as? UITapGestureRecognizer
+        guard let view = gesture?.view as? UIImageView else {
+            assertionFailure()
+            return
+        }
+        guard let template = ChatTemplateManager.shared.template(for: templateIdentifier) else { return }
+        let picker = EmojiPickerViewController(sourceView: view) { emoji in
+            let data = emoji.emoji.textToImage(size: 64)?.pngData()
+            ChatTemplateManager.shared.update(template.with { $0.avatar = data ?? .init() })
+            view.image = UIImage(data: data ?? .init()) ?? .init()
+        }
+        view.parentViewController?.present(picker, animated: true)
+    }
 }
+
+#if DEBUG && canImport(SwiftUI)
+    import SwiftUI
+
+    struct ChatTemplateEditorControllerPreview: PreviewProvider {
+        static var previews: some View {
+            UIViewControllerPreview {
+                let id = UUID(uuidString: "152e61da-d457-43fe-b0df-fd58e53b14ec")!
+                var template = ChatTemplate()
+                template.id = id
+                ChatTemplateManager.shared.templates[id] = template
+                return ChatTemplateEditorController(templateIdentifier: id)
+            }
+            .previewLayout(.fixed(width: 555, height: 555))
+        }
+    }
+#endif
