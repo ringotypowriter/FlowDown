@@ -26,8 +26,55 @@ class NewChatButton: UIButton {
 
     @objc func didTap() {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        let conv = ConversationManager.shared.createNewConversation()
-        delegate?.newChatDidCreated(conv.id)
+
+        let templates = ChatTemplateManager.shared.templates
+
+        if templates.isEmpty {
+            // No templates, create empty conversation directly
+            let conv = ConversationManager.shared.createNewConversation()
+            delegate?.newChatDidCreated(conv.id)
+        } else {
+            // Show menu with template options
+            presentTemplateMenu()
+        }
+    }
+
+    private func presentTemplateMenu() {
+        let templates = ChatTemplateManager.shared.templates
+
+        let newEmpty = UIAction(
+            title: String(localized: "New Conversation"),
+            image: "💬".textToImage(size: 64) ?? .init()
+        ) { [weak self] _ in
+            let conv = ConversationManager.shared.createNewConversation()
+            self?.delegate?.newChatDidCreated(conv.id)
+        }
+
+        var actions: [UIAction] = []
+        for template in templates.values {
+            let action = UIAction(
+                title: template.name,
+                image: UIImage(data: template.avatar)
+            ) { [weak self] _ in
+                let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
+                self?.delegate?.newChatDidCreated(convId)
+            }
+            actions.append(action)
+        }
+
+        let templateMenu = UIMenu(
+            title: String(localized: "Choose Template"),
+            image: "📁".textToImage(size: 64) ?? .init(),
+            options: actions.count < 6 ? [.displayInline] : [],
+            children: actions
+        )
+        let menu = UIMenu(
+            title: String(localized: "New Chat"),
+            options: [.displayInline],
+            children: [newEmpty, templateMenu]
+        )
+
+        present(menu: menu)
     }
 }
 

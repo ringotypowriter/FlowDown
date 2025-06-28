@@ -620,6 +620,16 @@
         }
       }
     },
+    "Choose Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择模版"
+          }
+        }
+      }
+    },
     "City: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3062,6 +3072,16 @@
       }
     },
     "New Chat" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建对话"
+          }
+        }
+      }
+    },
+    "New Conversation" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

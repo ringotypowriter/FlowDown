@@ -9,6 +9,7 @@ import ConfigurableKit
 import Foundation
 import OrderedCollections
 import UIKit
+import Storage
 
 class ChatTemplateManager {
     static let shared = ChatTemplateManager()
@@ -65,5 +66,32 @@ class ChatTemplateManager {
         assert(Thread.isMainThread)
         assert(templates[itemIdentifier] != nil)
         templates.removeValue(forKey: itemIdentifier)
+    }
+
+    func createConversationFromTemplate(_ template: ChatTemplate) -> Conversation.ID {
+        assert(Thread.isMainThread)
+        let conversation = ConversationManager.shared.createNewConversation()
+
+        ConversationManager.shared.editConversation(identifier: conversation.id) { conv in
+            conv.icon = template.avatar
+            conv.title = template.name
+            conv.shouldAutoRename = template.name.isEmpty // Only auto-rename if template name is empty
+        }
+
+        if !template.prompt.isEmpty {
+            let session = ConversationSessionManager.shared.session(for: conversation.id)
+
+            if !template.inheritApplicationPrompt {
+                let systemMessages = session.messages.filter { $0.role == .system }
+                for message in systemMessages {
+                    session.delete(messageIdentifier: message.id)
+                }
+            }
+            let templateMessage = session.appendNewMessage(role: .system)
+            templateMessage.document = template.prompt
+            session.save()
+        }
+
+        return conversation.id
     }
 }

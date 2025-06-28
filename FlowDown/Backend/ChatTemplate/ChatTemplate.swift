@@ -14,7 +14,7 @@ struct ChatTemplate: Identifiable, Codable, Equatable {
     var name: String = .init(localized: "Template")
     var avatar: Data = "😶".textToImage(size: 64)?.pngData() ?? .init()
     var prompt: String = .init(localized: "Please help me to...")
-    var inheritApplicationPrompt: Bool = false
+    var inheritApplicationPrompt: Bool = true
 
     func with(_ modification: (inout ChatTemplate) -> Void) -> ChatTemplate {
         var template = self
