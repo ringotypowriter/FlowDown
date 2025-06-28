@@ -146,13 +146,20 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             $0.font = .preferredFont(forTextStyle: .body)
             $0.backgroundColor = .secondarySystemBackground
             $0.layer.cornerRadius = 8
+            $0.textContainerInset = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
+            $0.contentInset = .zero
             $0.snp.makeConstraints { make in
                 make.height.equalTo(200)
             }
         }
         textEditor.text = template.prompt
         textEditor.delegate = self
-        stackView.addArrangedSubviewWithMargin(textEditor)
+        stackView.addArrangedSubviewWithMargin(textEditor) {
+            $0.left -= 8
+            $0.right -= 8
+            $0.top -= 8
+            $0.bottom -= 8
+        }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(

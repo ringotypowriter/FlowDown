@@ -11,14 +11,6 @@ import Foundation
 import Storage
 import UIKit
 
-private let dateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .none
-    formatter.locale = .current
-    return formatter
-}()
-
 private class GroundedTableView: UITableView {
     @objc var allowsHeaderViewsToFloat: Bool { false }
     @objc var allowsFooterViewsToFloat: Bool { false }
@@ -31,7 +23,7 @@ class ConversationListView: UIView {
     var cancellables: Set<AnyCancellable> = []
 
     typealias DataIdentifier = Conversation.ID
-    typealias SectionIdentifier = String
+    typealias SectionIdentifier = Date
 
     typealias DataSource = UITableViewDiffableDataSource<SectionIdentifier, DataIdentifier>
     typealias Snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, DataIdentifier>
@@ -76,6 +68,8 @@ class ConversationListView: UIView {
         tableView.backgroundColor = .clear
         tableView.showsVerticalScrollIndicator = false
         tableView.showsHorizontalScrollIndicator = false
+        tableView.sectionHeaderTopPadding = 0
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
 
         selection
             .ensureMainThread()
@@ -136,13 +130,26 @@ class ConversationListView: UIView {
         }
 
         var snapshot = Snapshot()
+        let calendar = Calendar.current
+
+        var conversationsByDate: [Date: [Conversation.ID]] = [:]
         for item in list {
-            let section = dateFormatter.string(from: item.creation)
-            if !snapshot.sectionIdentifiers.contains(section) {
-                snapshot.appendSections([section])
+            let dateOnly = calendar.startOfDay(for: item.creation)
+            if conversationsByDate[dateOnly] == nil {
+                conversationsByDate[dateOnly] = []
             }
-            snapshot.appendItems([item.id], toSection: section)
+            conversationsByDate[dateOnly]?.append(item.id)
         }
+
+        let sortedDates = conversationsByDate.keys.sorted(by: >)
+
+        for date in sortedDates {
+            snapshot.appendSections([date])
+            if let conversations = conversationsByDate[date] {
+                snapshot.appendItems(conversations, toSection: date)
+            }
+        }
+
         dataSource.apply(snapshot, animatingDifferences: true)
 
         let visibleRows = tableView.indexPathsForVisibleRows ?? []
