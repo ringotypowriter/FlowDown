@@ -20,8 +20,8 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private var templateMenuCancellable: AnyCancellable?
     func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         UITableView.appearance().backgroundColor = .clear
         UIButton.appearance().tintColor = .accent
@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         ChidoriMenuConfiguration.accentColor = UIColor.accent
         ChidoriMenuConfiguration.backgroundColor = UIColor.background
-        
+
         templateMenuCancellable = ChatTemplateManager.shared.$templates
             .receive(on: DispatchQueue.main)
             .sink { _ in

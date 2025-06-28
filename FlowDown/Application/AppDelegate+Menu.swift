@@ -31,7 +31,7 @@ extension AppDelegate {
                         title: String(localized: "New Chat with Template"),
                         options: .displayInline,
                         children: Self.buildTemplateMenuItems(target: self)
-                    )
+                    ),
                 ]
             ),
             atStartOfMenu: .file
@@ -46,7 +46,7 @@ extension AppDelegate {
                         action: #selector(deleteConversationFromMenu(_:)),
                         input: "\u{8}",
                         modifierFlags: [.command, .shift]
-                    )
+                    ),
                 ]
             ),
             atEndOfMenu: .file
@@ -61,7 +61,7 @@ extension AppDelegate {
                         action: #selector(openSettingsFromMenu(_:)),
                         input: ",",
                         modifierFlags: .command
-                    )
+                    ),
                 ]
             ),
             afterMenu: .preferences
@@ -172,11 +172,11 @@ extension AppDelegate {
         _ block: (MainController, Conversation.ID, Conversation) -> Void
     ) {
         guard let mainVC = mainWindow?.rootViewController as? MainController,
-            let conversationID = mainVC.chatView.conversationIdentifier,
-            let conversation = ConversationManager.shared.conversation(identifier: conversationID)
+              let conversationID = mainVC.chatView.conversationIdentifier,
+              let conversation = ConversationManager.shared.conversation(identifier: conversationID)
         else {
             return
-}
+        }
         block(mainVC, conversationID, conversation)
     }
 

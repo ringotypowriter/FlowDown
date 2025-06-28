@@ -116,7 +116,7 @@ extension RichEditorView {
             }
             context.addAction(title: String(localized: "Import Text", bundle: .module), attribute: .dangerous) {
                 context.dispose {
-                    guard let self = self else { return }
+                    guard let self else { return }
                     let attachment = Object.Attachment(
                         type: .text,
                         name: file.lastPathComponent,
