@@ -45,6 +45,11 @@ class ChatTemplateListController: UIViewController {
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = dataSource
+        tableView.separatorStyle = .singleLine
+        tableView.separatorInset = .zero
+        tableView.backgroundColor = .clear
+        tableView.allowsMultipleSelection = false
+        dataSource.defaultRowAnimation = .fade
         tableView.register(
             Cell.self,
             forCellReuseIdentifier: "Cell"
@@ -58,6 +63,17 @@ class ChatTemplateListController: UIViewController {
             target: self,
             action: #selector(addTemplate)
         )
+
+        ChatTemplateManager.shared.$templates
+            .ensureMainThread()
+            .sink { [weak self] templates in
+                guard let self else { return }
+                var snapshot = NSDiffableDataSourceSnapshot<Section, ChatTemplate.ID>()
+                snapshot.appendSections([.main])
+                snapshot.appendItems(.init(templates.keys))
+                dataSource.apply(snapshot, animatingDifferences: true)
+            }
+            .store(in: &cancellables)
     }
 
     @objc func addTemplate() {
@@ -69,7 +85,7 @@ class ChatTemplateListController: UIViewController {
 extension ChatTemplateListController: UITableViewDelegate {}
 
 extension ChatTemplateListController {
-    class Cell: UITableViewCell {
+    class Cell: UITableViewCell, UIContextMenuInteractionDelegate {
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             commonInit()
@@ -91,6 +107,7 @@ extension ChatTemplateListController {
             view.snp.makeConstraints { make in
                 make.edges.equalToSuperview().inset(20)
             }
+            contentView.addInteraction(UIContextMenuInteraction(delegate: self))
         }
 
         override func prepareForReuse() {
@@ -115,6 +132,20 @@ extension ChatTemplateListController {
             } else {
                 prepareForReuse()
             }
+        }
+
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            configurationForMenuAtLocation location: CGPoint
+        ) -> UIContextMenuConfiguration? {
+            guard let identifier else { return nil }
+            let menu = UIMenu(options: [.displayInline], children: [
+                UIAction(title: String(localized: "Delete"), attributes: .destructive) { _ in
+                    ChatTemplateManager.shared.remove(for: identifier)
+                },
+            ])
+            present(menu: menu, anchorPoint: location)
+            return nil
         }
     }
 }

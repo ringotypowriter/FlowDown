@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct ChatTemplate: Identifiable, Codable {
+struct ChatTemplate: Identifiable, Codable, Equatable {
     var id: UUID = .init()
 
     var name: String = .init(localized: "New Template")
@@ -24,4 +24,10 @@ struct ChatTemplate: Identifiable, Codable {
 
     var prompt: String = .init(localized: "Please help me to...")
     var model: ModelManager.ModelIdentifier = .init()
+
+    func with(_ modification: (inout ChatTemplate) -> Void) -> ChatTemplate {
+        var template = self
+        modification(&template)
+        return template
+    }
 }

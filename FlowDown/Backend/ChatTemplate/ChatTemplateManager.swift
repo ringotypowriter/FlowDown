@@ -7,6 +7,7 @@
 
 import ConfigurableKit
 import Foundation
+import OrderedCollections
 import UIKit
 
 class ChatTemplateManager {
@@ -14,7 +15,7 @@ class ChatTemplateManager {
 
     let templateSaveQueue = DispatchQueue(label: "ChatTemplateManager.SaveQueue")
 
-    @Published var templates: [ChatTemplate] = [] {
+    @Published var templates: OrderedDictionary<ChatTemplate.ID, ChatTemplate> = [:] {
         didSet {
             templateSaveQueue.async {
                 guard let data = try? PropertyListEncoder().encode(self.templates) else {
@@ -28,7 +29,10 @@ class ChatTemplateManager {
 
     private init() {
         let data = UserDefaults.standard.data(forKey: "ChatTemplates") ?? Data()
-        if let decoded = try? PropertyListDecoder().decode([ChatTemplate].self, from: data) {
+        if let decoded = try? PropertyListDecoder().decode(
+            OrderedDictionary<ChatTemplate.ID, ChatTemplate>.self,
+            from: data
+        ) {
             print("[*] loaded \(decoded.count) chat templates")
             templates = decoded
         }
@@ -36,30 +40,30 @@ class ChatTemplateManager {
 
     func addTemplate(_ template: ChatTemplate) {
         assert(Thread.isMainThread)
-        templates.append(template)
+        assert(templates[template.id] == nil)
+        templates[template.id] = template
     }
 
     func template(for itemIdentifier: ChatTemplate.ID) -> ChatTemplate? {
         assert(Thread.isMainThread)
-        return templates.first(where: { $0.id == itemIdentifier })
+        return templates[itemIdentifier]
     }
 
     func update(_ template: ChatTemplate) {
         assert(Thread.isMainThread)
-        guard let index = templates.firstIndex(where: { $0.id == template.id }) else {
-            assertionFailure()
-            return
-        }
-        templates[index] = template
+        assert(templates[template.id] != nil)
+        templates[template.id] = template
     }
 
     func remove(_ template: ChatTemplate) {
         assert(Thread.isMainThread)
-        templates.removeAll(where: { $0.id == template.id })
+        assert(templates[template.id] != nil)
+        templates.removeValue(forKey: template.id)
     }
 
     func remove(for itemIdentifier: ChatTemplate.ID) {
         assert(Thread.isMainThread)
-        templates.removeAll(where: { $0.id == itemIdentifier })
+        assert(templates[itemIdentifier] != nil)
+        templates.removeValue(forKey: itemIdentifier)
     }
 }

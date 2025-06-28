@@ -77,6 +77,9 @@
         }
       }
     },
+    "A brief description of what this template does." : {
+
+    },
     "A tool model is required for browsing." : {
       "localizations" : {
         "zh-Hans" : {
@@ -309,6 +312,9 @@
         }
       }
     },
+    "Application Prompt Behavior" : {
+
+    },
     "Are you sure you want to clean the cache? This will also delete partial downloads." : {
       "localizations" : {
         "zh-Hans" : {
@@ -338,6 +344,9 @@
           }
         }
       }
+    },
+    "Are you sure you want to delete this template? This action cannot be undone." : {
+
     },
     "Are you sure you want to remove all content and reset the entire database? App will close after reset." : {
       "localizations" : {
@@ -419,6 +428,9 @@
           }
         }
       }
+    },
+    "Basic Information" : {
+
     },
     "Bing Search" : {
       "localizations" : {
@@ -739,6 +751,9 @@
           }
         }
       }
+    },
+    "Configuration" : {
+
     },
     "Configure" : {
       "localizations" : {
@@ -1156,6 +1171,9 @@
         }
       }
     },
+    "Delete Template" : {
+
+    },
     "Delete this model from your device." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1175,6 +1193,9 @@
           }
         }
       }
+    },
+    "Delete this template permanently." : {
+
     },
     "Delete w/ After" : {
       "localizations" : {
@@ -1205,6 +1226,9 @@
           }
         }
       }
+    },
+    "Description" : {
+
     },
     "Determining search keywords" : {
       "localizations" : {
@@ -1397,6 +1421,9 @@
         }
       }
     },
+    "Edit Description" : {
+
+    },
     "Edit Endpoint" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1427,8 +1454,19 @@
         }
       }
     },
+    "Edit Name" : {
+
+    },
     "Edit Template" : {
-      "comment" : "Chat Template Editor Title"
+      "comment" : "Chat Template Editor Title",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑模版"
+          }
+        }
+      }
     },
     "Edit Token" : {
       "extractionState" : "manual",
@@ -1540,6 +1578,12 @@
           }
         }
       }
+    },
+    "Enter template description" : {
+
+    },
+    "Enter template name" : {
+
     },
     "Erase All" : {
       "localizations" : {
@@ -1872,6 +1916,9 @@
         }
       }
     },
+    "Feature Coming Soon" : {
+
+    },
     "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2105,6 +2152,9 @@
         }
       }
     },
+    "How this template interacts with application prompts." : {
+
+    },
     "Huge" : {
       "comment" : "Font Size\nModel Context",
       "localizations" : {
@@ -2211,6 +2261,9 @@
           }
         }
       }
+    },
+    "Ignore" : {
+
     },
     "Imagination" : {
       "localizations" : {
@@ -2332,6 +2385,9 @@
           }
         }
       }
+    },
+    "Inherit" : {
+
     },
     "Introduction to FlowDown" : {
       "localizations" : {
@@ -2749,6 +2805,9 @@
         }
       }
     },
+    "Model" : {
+
+    },
     "Model Added" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2921,10 +2980,20 @@
       }
     },
     "My awesome chat template description." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话模版的描述。"
+          }
+        }
+      }
     },
     "N/A" : {
       "shouldTranslate" : false
+    },
+    "Name" : {
+
     },
     "Name: %@" : {
       "localizations" : {
@@ -2957,7 +3026,14 @@
       }
     },
     "New Template" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建模版"
+          }
+        }
+      }
     },
     "No events found between %@ and %@." : {
       "localizations" : {
@@ -3369,7 +3445,14 @@
       }
     },
     "Please help me to..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请帮助我…"
+          }
+        }
+      }
     },
     "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider." : {
       "localizations" : {
@@ -3481,6 +3564,12 @@
           }
         }
       }
+    },
+    "Prompt" : {
+
+    },
+    "Prompt Behavior" : {
+
     },
     "Query Calendar" : {
       "localizations" : {
@@ -4062,6 +4151,9 @@
         }
       }
     },
+    "Template Prompt" : {
+
+    },
     "Terminate" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4178,6 +4270,9 @@
         }
       }
     },
+    "The default model to use with this template." : {
+
+    },
     "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4187,6 +4282,9 @@
           }
         }
       }
+    },
+    "The display name of this chat template." : {
+
     },
     "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions." : {
       "localizations" : {
@@ -4247,6 +4345,12 @@
           }
         }
       }
+    },
+    "The prompt serves as the initial instruction for the AI model. It defines the character, behavior, and context for the conversation." : {
+
+    },
+    "The prompt text that will be used as the foundation for conversations with this template." : {
+
     },
     "The system provides several tools for your convenience. Please use them wisely and according to the user’s query. Avoid requesting information that is already provided or easily inferred." : {
       "localizations" : {
