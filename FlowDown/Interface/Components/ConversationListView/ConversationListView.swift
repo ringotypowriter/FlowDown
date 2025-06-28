@@ -149,6 +149,10 @@ class ConversationListView: UIView {
                 snapshot.appendItems(conversations, toSection: date)
             }
         }
+        let previousSections = dataSource.snapshot().sectionIdentifiers
+        if (previousSections.count == 1 && sortedDates.count > 1) || previousSections != sortedDates {
+            snapshot.reloadSections(sortedDates)
+        }
 
         dataSource.apply(snapshot, animatingDifferences: true)
 
@@ -157,6 +161,7 @@ class ConversationListView: UIView {
             .map { dataSource.itemIdentifier(for: $0) }
             .compactMap(\.self)
         snapshot.reconfigureItems(visibleItemIdentifiers)
+
         dataSource.apply(snapshot, animatingDifferences: false)
 
         keepAtLeastOncFocus()
