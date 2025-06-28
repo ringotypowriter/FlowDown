@@ -150,7 +150,8 @@ class ConversationListView: UIView {
             }
         }
         let previousSections = dataSource.snapshot().sectionIdentifiers
-        if (previousSections.count == 1 && sortedDates.count > 1) || previousSections != sortedDates {
+        if (previousSections.count == 1 && sortedDates.count > 1) {
+            // reload all!
             snapshot.reloadSections(sortedDates)
         }
 
