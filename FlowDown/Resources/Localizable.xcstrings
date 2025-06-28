@@ -3181,6 +3181,16 @@
         }
       }
     },
+    "Next Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换至下个对话"
+          }
+        }
+      }
+    },
     "No events found between %@ and %@." : {
       "localizations" : {
         "en" : {
@@ -3666,6 +3676,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "预览"
+          }
+        }
+      }
+    },
+    "Previous Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换至上个对话"
           }
         }
       }
