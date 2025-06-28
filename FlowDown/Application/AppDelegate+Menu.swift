@@ -61,6 +61,27 @@ extension AppDelegate {
             ),
             afterMenu: .preferences
         )
+        builder.insertChild(
+            UIMenu(
+                title: "",
+                options: .displayInline,
+                children: [
+                    UIKeyCommand(
+                        title: String(localized: "Previous Conversation"),
+                        action: #selector(selectPreviousConversationFromMenu(_:)),
+                        input: UIKeyCommand.inputUpArrow,
+                        modifierFlags: [.command, .alternate]
+                    ),
+                    UIKeyCommand(
+                        title: String(localized: "Next Conversation"),
+                        action: #selector(selectNextConversationFromMenu(_:)),
+                        input: UIKeyCommand.inputDownArrow,
+                        modifierFlags: [.command, .alternate]
+                    ),
+                ]
+            ),
+            atStartOfMenu: .view
+        )
     }
 
     // MARK: - Menu Actions
@@ -94,6 +115,31 @@ extension AppDelegate {
     @objc func deleteConversationFromMenu(_: Any?) {
         withCurrentConversation { _, conversationID, _ in
             ConversationManager.shared.deleteConversation(identifier: conversationID)
+        }
+    }
+
+    // conversation navigation
+    @objc func selectPreviousConversationFromMenu(_: Any?) {
+        withCurrentConversation { mainVC, conversationID, _ in
+            let list = ConversationManager.shared.conversations.value
+            guard let currentIndex = list.firstIndex(where: { $0.id == conversationID }), currentIndex > 0 else { return }
+            let previousID = list[currentIndex - 1].id
+            mainVC.sidebar.chatSelection = previousID
+            mainVC.chatView.use(conversation: previousID) {
+                mainVC.chatView.focusEditor()
+            }
+        }
+    }
+
+    @objc func selectNextConversationFromMenu(_: Any?) {
+        withCurrentConversation { mainVC, conversationID, _ in
+            let list = ConversationManager.shared.conversations.value
+            guard let currentIndex = list.firstIndex(where: { $0.id == conversationID }), currentIndex < list.count - 1 else { return }
+            let nextID = list[currentIndex + 1].id
+            mainVC.sidebar.chatSelection = nextID
+            mainVC.chatView.use(conversation: nextID) {
+                mainVC.chatView.focusEditor()
+            }
         }
     }
 }
