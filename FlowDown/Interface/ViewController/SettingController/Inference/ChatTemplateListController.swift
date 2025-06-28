@@ -101,7 +101,26 @@ class ChatTemplateListController: UIViewController {
     }
 }
 
-extension ChatTemplateListController: UITableViewDelegate {}
+extension ChatTemplateListController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath) else {
+            return nil
+        }
+        let delete = UIContextualAction(
+            style: .destructive,
+            title: String(localized: "Delete")
+        ) { _, _, completion in
+            guard let template = ChatTemplateManager.shared.template(for: itemIdentifier) else {
+                completion(false)
+                return
+            }
+            ChatTemplateManager.shared.remove(for: itemIdentifier)
+            completion(true)
+        }
+        delete.image = UIImage(systemName: "trash")
+        return UISwipeActionsConfiguration(actions: [delete])
+    }
+}
 
 extension ChatTemplateListController {
     class Cell: UITableViewCell, UIContextMenuInteractionDelegate {
