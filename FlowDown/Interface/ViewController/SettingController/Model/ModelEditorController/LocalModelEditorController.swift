@@ -14,7 +14,7 @@ import UIKit
 
 extension ModelCapabilities {
     static var localModelEditable: [ModelCapabilities] = [
-        //        .visual, // currently broken due to mlx-swift-libraries broken
+        .visual, // probably fixed
     ]
 }
 

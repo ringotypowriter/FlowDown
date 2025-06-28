@@ -54,7 +54,7 @@ extension ModelManager {
     static let defaultPromptConfigurableObject: ConfigurableObject = .init(
         icon: "text.quote",
         title: String(localized: "Default Prompt"),
-        explain: String(localized: "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs."),
+        explain: String(localized: "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards."),
         key: "CONFKIT.Model.Inference.Prompt.Default",
         defaultValue: PromptType.complete.rawValue,
         annotation: ChidoriListAnnotation {

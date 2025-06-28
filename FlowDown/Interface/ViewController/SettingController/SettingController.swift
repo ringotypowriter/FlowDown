@@ -10,8 +10,24 @@ import UIKit
 
 #if targetEnvironment(macCatalyst)
     class SettingController: AlertBaseController {
+        override open var keyCommands: [UIKeyCommand]? {
+            [
+                UIKeyCommand(
+                    title: NSLocalizedString("Back", comment: ""),
+                    action: #selector(escapePressed), // escape
+                    input: "\u{1b}",
+                    modifierFlags: [],
+                    propertyList: nil
+                ),
+            ]
+        }
+
+        var content: NavigationController! = .init()
+
         override convenience init() {
-            self.init(rootViewController: NavigationController())
+            let nav = NavigationController()
+            self.init(rootViewController: nav)
+            content = nav
             shouldDismissWhenTappedAround = false
             shouldDismissWhenEscapeKeyPressed = true
         }
@@ -19,6 +35,14 @@ import UIKit
         override func contentViewDidLoad() {
             super.contentViewDidLoad()
             contentView.backgroundColor = .background
+        }
+
+        @objc override func escapePressed() {
+            if content.viewControllers.count > 1 {
+                content.popViewController(animated: true)
+            } else {
+                dismiss(animated: true)
+            }
         }
 
         class NavigationController: UINavigationController {

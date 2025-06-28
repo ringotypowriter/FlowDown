@@ -23,7 +23,7 @@ public class MLXChatClientQueue {
         runningItems.insert(token)
         lock.unlock()
 
-        print(#function, token)
+        print("[+]", #function, token)
         sem.wait()
         return token
     }
@@ -35,7 +35,7 @@ public class MLXChatClientQueue {
             return
         }
         runningItems.remove(token)
-        print(#function, token)
+        print("[+]", #function, token)
         sem.signal()
     }
 
@@ -73,6 +73,11 @@ open class MLXChatClient: ChatService {
                 if let content = delta.content { partialResult.content?.append(content) }
                 if let reasoningContent = delta.reasoningContent {
                     partialResult.reasoningContent?.append(reasoningContent)
+                }
+                for terminator in ChatClientConstants.additionalTerminatingTokens {
+                    while partialResult.content?.hasSuffix(terminator) == true {
+                        partialResult.content?.removeLast(terminator.count)
+                    }
                 }
             }
         let timestamp = Int(Date.now.timeIntervalSince1970)
@@ -200,6 +205,18 @@ open class MLXChatClient: ChatService {
                             // this is mainly because title generation requires that
                             if regularContentOutputLength >= body.maxCompletionTokens ?? 4096 {
                                 return .stop
+                            }
+
+                            for terminator in ChatClientConstants.additionalTerminatingTokens {
+                                var shouldTerminate = false
+                                while text.hasSuffix(terminator) {
+                                    text.removeLast(terminator.count)
+                                    shouldTerminate = true
+                                }
+                                if shouldTerminate {
+                                    print("[*] terminating due to additional terminator: \(terminator)")
+                                    return .stop
+                                }
                             }
 
                             if Task.isCancelled {

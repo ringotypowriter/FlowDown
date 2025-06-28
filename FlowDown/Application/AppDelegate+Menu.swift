@@ -40,7 +40,7 @@ extension AppDelegate {
                         title: String(localized: "Delete Chat"),
                         action: #selector(deleteConversationFromMenu(_:)),
                         input: "\u{8}",
-                        modifierFlags: [.command]
+                        modifierFlags: [.command, .shift]
                     ),
                 ]
             ),
@@ -80,7 +80,7 @@ extension AppDelegate {
         (mainWindow?.rootViewController as? MainController)?.openSettings()
     }
 
-    // Conversation related
+    // conversation related
     private func withCurrentConversation(_ block: (MainController, Conversation.ID, Conversation) -> Void) {
         guard let mainVC = mainWindow?.rootViewController as? MainController,
               let conversationID = mainVC.chatView.conversationIdentifier,

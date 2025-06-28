@@ -399,6 +399,9 @@
         }
       }
     },
+    "Back" : {
+
+    },
     "Balanced" : {
       "comment" : "Search Strategy",
       "localizations" : {
@@ -556,6 +559,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "对话"
+          }
+        }
+      }
+    },
+    "Chat Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话模版"
           }
         }
       }
@@ -4136,12 +4149,12 @@
         }
       }
     },
-    "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs." : {
+    "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "默认提示会影响模型的回应。我们提供常用的预设指令和信息，以提升模型表现。更详细的提示可以获得更好的结果，但可能会增加费用。"
+            "value" : "默认提示会影响模型的回应。我们提供常用的预设指令和信息，以提升模型表现。更详细的提示可以获得更好的结果，但可能会增加费用。请注意：系统提示词在对话创建以后不会更新。"
           }
         }
       }
@@ -4212,6 +4225,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系统提供多种工具以便您使用，请根据用户查询内容明智调用，避免请求已提供或易推断的信息。\n"
+          }
+        }
+      }
+    },
+    "The template used for new conversations. You can customize the system prompt and other parameters here. Also known as assistant." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用于新对话的模板。您可以在此自定义系统提示和其他参数。此功能也被称为助手。\n"
           }
         }
       }

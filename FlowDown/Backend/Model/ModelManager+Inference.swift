@@ -432,9 +432,20 @@ extension ModelManager {
                         collectedToolCalls.append(contentsOf: chunk.toolCallRequests)
                     }
 
+                    let _reasoningContent = responseContent.reasoningContent
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                    var _responseContent = responseContent.content
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+
+                    for terminator in ChatClientConstants.additionalTerminatingTokens {
+                        while _responseContent.hasSuffix(terminator) {
+                            _responseContent.removeLast(terminator.count)
+                        }
+                    }
+
                     let final = InferenceMessage(
-                        reasoningContent: responseContent.reasoningContent.trimmingCharacters(in: .whitespacesAndNewlines),
-                        content: responseContent.content.trimmingCharacters(in: .whitespacesAndNewlines),
+                        reasoningContent: _reasoningContent,
+                        content: _responseContent,
                         tool: collectedToolCalls
                     )
                     continuation.yield(final)

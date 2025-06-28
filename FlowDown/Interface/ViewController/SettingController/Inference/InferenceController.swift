@@ -79,6 +79,18 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
+                ConfigurableObject(
+                    icon: "quote.bubble",
+                    title: String(localized: "Chat Template"),
+                    explain: String(localized: "The template used for new conversations. You can customize the system prompt and other parameters here. Also known as assistant."),
+                    ephemeralAnnotation: .page {
+                        ChatTemplateController()
+                    }
+                ).createView()
+            )
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
                     header: String(localized: "Task Model")
                 )
