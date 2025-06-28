@@ -18,7 +18,7 @@ class SectionDateHeaderView: UIView {
         formatter.locale = .current
         return formatter
     }()
-    
+
     var timer: Timer?
 
     init() {

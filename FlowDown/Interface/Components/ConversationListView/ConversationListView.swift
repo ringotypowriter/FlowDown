@@ -164,7 +164,7 @@ class ConversationListView: UIView {
 
     func select(identifier: Conversation.ID) {
         selection.send(identifier)
-        
+
         DispatchQueue.main.async {
             var snapshot = self.dataSource.snapshot()
             snapshot.reconfigureItems([identifier])
