@@ -1427,6 +1427,9 @@
         }
       }
     },
+    "Edit Template" : {
+      "comment" : "Chat Template Editor Title"
+    },
     "Edit Token" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2917,6 +2920,9 @@
         }
       }
     },
+    "My awesome chat template description." : {
+
+    },
     "N/A" : {
       "shouldTranslate" : false
     },
@@ -2949,6 +2955,9 @@
           }
         }
       }
+    },
+    "New Template" : {
+
     },
     "No events found between %@ and %@." : {
       "localizations" : {
@@ -3358,6 +3367,9 @@
           }
         }
       }
+    },
+    "Please help me to..." : {
+
     },
     "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider." : {
       "localizations" : {
@@ -4251,7 +4263,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用于新对话的模板。您可以在此自定义系统提示和其他参数。此功能也被称为助手。\n"
+            "value" : "用于新对话的模板。您可以在此自定义系统提示和其他参数。此功能也被称为助手。"
           }
         }
       }
