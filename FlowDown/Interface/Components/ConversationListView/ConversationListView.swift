@@ -19,6 +19,11 @@ private let dateFormatter: DateFormatter = {
     return formatter
 }()
 
+private class GroundedTableView: UITableView {
+    @objc var allowsHeaderViewsToFloat: Bool { false }
+    @objc var allowsFooterViewsToFloat: Bool { false }
+}
+
 class ConversationListView: UIView {
     let tableView: UITableView
     let dataSource: DataSource
@@ -40,7 +45,7 @@ class ConversationListView: UIView {
     var keepMyFocusTimer: Timer? = nil
 
     init() {
-        tableView = UITableView(frame: .zero, style: .plain)
+        tableView = GroundedTableView(frame: .zero, style: .plain)
         tableView.register(Cell.self, forCellReuseIdentifier: "Cell")
 
         dataSource = .init(tableView: tableView) { tableView, indexPath, itemIdentifier in
@@ -65,6 +70,7 @@ class ConversationListView: UIView {
         tableView.separatorStyle = .none
         tableView.separatorInset = .zero
         tableView.separatorColor = .clear
+        tableView.contentInset = .zero
         tableView.allowsMultipleSelection = false
         tableView.selectionFollowsFocus = true
         tableView.backgroundColor = .clear

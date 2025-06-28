@@ -51,7 +51,7 @@ open class StackScrollController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
             stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: 0),
         ])
-        
+
         view.hideKeyboardWhenTappedAround()
 
         setupContentViews()

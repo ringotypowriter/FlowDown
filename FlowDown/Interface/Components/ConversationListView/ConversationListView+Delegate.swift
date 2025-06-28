@@ -20,6 +20,35 @@ extension ConversationListView: UITableViewDelegate {
         selection.send(identifier)
     }
 
+    private func createHeaderView(title: String) -> UIView {
+        let headerView = UIView()
+        headerView.backgroundColor = .clear
+
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .caption1)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .left
+        label.numberOfLines = 1
+
+        label.text = title
+        headerView.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(4)
+        }
+        return headerView
+    }
+
+    func tableView(_: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard section > 0 else { return nil } // skip the first section header
+        let sectionIdentifier = dataSource.snapshot().sectionIdentifiers[section]
+        return createHeaderView(title: sectionIdentifier)
+    }
+
+    func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {
+        UIFont.preferredFont(forTextStyle: .caption1).lineHeight + 8
+    }
+
     func tableView(
         _ tableView: UITableView,
         contextMenuConfigurationForRowAt indexPath: IndexPath,
