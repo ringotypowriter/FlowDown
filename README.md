@@ -28,6 +28,7 @@ To generate enterprise model configuration, aka call over custom api, there is a
 - [x] **Universal Compatibility** Works with all OpenAI compatible service providers
 - [x] **Blazing Fast Text Rendering** Delivers a seamless user experience
 - [x] **Automated Chat Titles** Streamlines conversations and boosts productivity
+- [x] **Automated Chat Templates** Use LLM to conclude your request within conversation to chat template for later use
 - [x] **Privacy by Design** We don't collect your data
 - [x] **Open Sourced** You can verify our promise in person
 
