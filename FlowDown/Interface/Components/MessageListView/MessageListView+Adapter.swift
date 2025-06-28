@@ -459,7 +459,7 @@ extension MessageListView: ListViewAdapter {
             holder.shouldDismissWhenTappedAround = true
             holder.shouldDismissWhenEscapeKeyPressed = true
         #else
-            let holder = UINavigationController(rootViewController: viewer)
+            let holder = UINavigationController(rootViewController: controller)
             holder.preferredContentSize = .init(width: 555, height: 555 - holder.navigationBar.frame.height)
             holder.modalTransitionStyle = .coverVertical
             holder.modalPresentationStyle = .formSheet
