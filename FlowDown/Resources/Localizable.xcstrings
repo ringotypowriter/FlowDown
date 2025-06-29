@@ -3191,6 +3191,16 @@
         }
       }
     },
+    "No Chat Templates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无对话模板"
+          }
+        }
+      }
+    },
     "No events found between %@ and %@." : {
       "localizations" : {
         "en" : {

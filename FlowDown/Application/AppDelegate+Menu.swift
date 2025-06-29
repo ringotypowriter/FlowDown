@@ -93,6 +93,9 @@ extension AppDelegate {
 
     private static func buildTemplateMenuItems(target: AppDelegate) -> [UIMenuElement] {
         let templates = Array(ChatTemplateManager.shared.templates.values)
+        guard !templates.isEmpty else {
+            return [UIAction(title: String(localized: "No Chat Templates"), attributes: .disabled, handler: { _ in })]
+        }
         var items: [UIMenuElement] = []
         for (idx, template) in templates.enumerated() {
             let title = "\(template.name)"
