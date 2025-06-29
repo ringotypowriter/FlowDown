@@ -186,6 +186,13 @@ class ChatView: UIView {
             listView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
+            listView.isHidden = false
+        }
+
+        for key in messageListViews.keys {
+            if key != conversation {
+                messageListViews[key]?.isHidden = true
+            }
         }
 
         editor.use(identifier: conversation)

@@ -80,9 +80,13 @@ class ChatTemplateManager {
             conv.shouldAutoRename = true
         }
 
-        if !template.prompt.isEmpty {
-            let session = ConversationSessionManager.shared.session(for: conversation.id)
+        let session = ConversationSessionManager.shared.session(for: conversation.id)
+        defer {
+            session.save()
+            session.notifyMessagesDidChange()
+        }
 
+        if !template.prompt.isEmpty {
             if !template.inheritApplicationPrompt {
                 let systemMessages = session.messages.filter { $0.role == .system }
                 for message in systemMessages {
@@ -91,8 +95,10 @@ class ChatTemplateManager {
             }
             let templateMessage = session.appendNewMessage(role: .system)
             templateMessage.document = template.prompt
-            session.save()
         }
+
+        let hint = session.appendNewMessage(role: .hint)
+        hint.document = String(localized: "This conversation is based on the template: \(template.name).")
 
         return conversation.id
     }

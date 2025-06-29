@@ -4677,6 +4677,16 @@
         }
       }
     },
+    "This conversation is based on the template: %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此对话基于模版 %@ 创建。"
+          }
+        }
+      }
+    },
     "This document is provided by system or tool call, please cite the id with [^%lld] format if used." : {
       "localizations" : {
         "zh-Hans" : {
