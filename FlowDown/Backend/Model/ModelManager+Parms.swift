@@ -57,7 +57,7 @@ extension ModelManager {
         explain: String(localized: "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards."),
         key: "CONFKIT.Model.Inference.Prompt.Default",
         defaultValue: PromptType.complete.rawValue,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             PromptType.allCases.map { .init(
                 icon: $0.icon,
                 title: $0.title,
@@ -88,7 +88,7 @@ extension ModelManager {
         explain: String(localized: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature."),
         key: "CONFKIT.Model.Inference.Temperature",
         defaultValue: 0.75,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             [
                 .init(
                     icon: "snowflake",
@@ -214,7 +214,7 @@ extension ModelManager {
         explain: String(localized: "Adjust how aggressively web searches are triggered."),
         key: "Model.Inference.SearchSensitivity",
         defaultValue: SearchSensitivity.balanced.rawValue,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             SearchSensitivity.allCases.map {
                 .init(icon: $0.icon, title: $0.title, rawValue: $0.rawValue)
             }

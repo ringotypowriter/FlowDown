@@ -37,7 +37,7 @@ extension ChatView {
         explain: String(localized: "Show full model name and information in the quick setting bar under the input box or not."),
         key: "app.chat.model.picker.style",
         defaultValue: EditorModelNameStyle.trimmed.rawValue,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             EditorModelNameStyle.allCases.map {
                 .init(
                     icon: $0.icon,

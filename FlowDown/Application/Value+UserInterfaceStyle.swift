@@ -60,7 +60,7 @@ extension UIUserInterfaceStyle {
         explain: String(localized: "Override system appearance, either light or dark."),
         key: storageKey,
         defaultValue: UIUserInterfaceStyle.unspecified.rawValue,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             UIUserInterfaceStyle.cases.map { item -> ListAnnotation.ValueItem in
                 .init(
                     icon: item.icon,

@@ -61,7 +61,7 @@ extension ScrubberConfiguration {
         explain: String(localized: "The maximum number of search results to fetch."),
         key: limitKey,
         defaultValue: 20,
-        annotation: ChidoriListAnnotation { [
+        annotation: .list { [
             .init(title: String(localized: "5 Pages"), rawValue: 5),
             .init(title: String(localized: "10 Pages"), rawValue: 10),
             .init(title: String(localized: "15 Pages"), rawValue: 15),
