@@ -166,6 +166,8 @@ extension RichEditorView {
                         UIColor.white.set()
                         context.fill(CGRect(origin: .zero, size: targetSize))
 
+                        context.cgContext.translateBy(x: 0, y: targetSize.height)
+                        context.cgContext.scaleBy(x: 1, y: -1)
                         context.cgContext.scaleBy(x: scaleFactor, y: scaleFactor)
                         context.cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
                         page.draw(with: .mediaBox, to: context.cgContext)
