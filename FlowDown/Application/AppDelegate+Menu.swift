@@ -152,6 +152,7 @@ extension AppDelegate {
         else { return }
         let conversationID = ChatTemplateManager.shared.createConversationFromTemplate(template)
         if let mainVC = mainWindow?.rootViewController as? MainController {
+            mainVC.sidebar.chatSelection = conversationID
             mainVC.chatView.use(conversation: conversationID) {
                 mainVC.chatView.focusEditor()
             }
@@ -164,6 +165,7 @@ extension AppDelegate {
         else { return }
         let conversationID = ChatTemplateManager.shared.createConversationFromTemplate(template)
         if let mainVC = mainWindow?.rootViewController as? MainController {
+            mainVC.sidebar.chatSelection = conversationID
             mainVC.chatView.use(conversation: conversationID) {
                 mainVC.chatView.focusEditor()
             }
