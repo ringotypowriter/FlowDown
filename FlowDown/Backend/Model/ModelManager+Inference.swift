@@ -226,7 +226,10 @@ extension ModelManager {
                 model: model.model_identifier,
                 baseURL: model.endpoint,
                 apiKey: model.token,
-                additionalHeaders: model.headers,
+                additionalHeaders: model.headers + [
+                    "HTTP-Referer": "https://flowdown.ai/",
+                    "X-Title": "FlowDown",
+                ],
                 additionalBodyField: additionalBodyField
             )
         } else if let model = localModel(identifier: identifier) {
