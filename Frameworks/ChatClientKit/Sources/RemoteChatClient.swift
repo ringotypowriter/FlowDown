@@ -82,7 +82,7 @@ open class RemoteChatClient: ChatService {
                 do {
                     let (byteStream, response) = try await session.bytes(for: request)
                     guard let httpResponse = response as? HTTPURLResponse,
-                        httpResponse.statusCode == 200
+                          httpResponse.statusCode == 200
                     else {
                         throw Error.invalidData
                     }
@@ -105,7 +105,8 @@ open class RemoteChatClient: ChatService {
                             }
                             do {
                                 var response = try JSONDecoder().decode(
-                                    ChatCompletionChunk.self, from: data)
+                                    ChatCompletionChunk.self, from: data
+                                )
                                 let reasoningContent = [
                                     response.choices.map(\.delta).compactMap(\.reasoning),
                                     response.choices.map(\.delta).compactMap(\.reasoningContent),
@@ -119,7 +120,7 @@ open class RemoteChatClient: ChatService {
                                 if canDecodeReasoningContent {
                                     // now we can decode <think> and </think> tag for that purpose
                                     // transfer all content to buffer, and begin our process
-                                    let bufferContent = content.joined()  // 将内容数组合并为单个字符串
+                                    let bufferContent = content.joined() // 将内容数组合并为单个字符串
                                     assert(reasoningContent.isEmpty)
 
                                     if !isInsideReasoningContent {
@@ -186,8 +187,7 @@ open class RemoteChatClient: ChatService {
                                         }
                                     } else {
                                         // 我们已经在推理内容中，检查是否有结束标记
-                                        if let range = bufferContent.range(of: REASONING_END_TOKEN)
-                                        {
+                                        if let range = bufferContent.range(of: REASONING_END_TOKEN) {
                                             // 找到结束标记 - 退出推理模式
                                             isInsideReasoningContent = false
 
@@ -213,7 +213,7 @@ open class RemoteChatClient: ChatService {
                                                 .init(
                                                     delta: .init(
                                                         reasoningContent: bufferContent
-                                                    ))
+                                                    )),
                                             ])
                                         }
                                     }
@@ -252,16 +252,19 @@ open class RemoteChatClient: ChatService {
     private func collect(error: Swift.Error) {
         if let error = error as? EventSourceError {
             switch error {
-            case .invalidHTTPStatus(let statusCode):
+            case let .invalidHTTPStatus(statusCode):
                 collectedErrors = String(
-                    localized: "Invalid HTTP response status code: \(statusCode)", bundle: .module)
-            case .invalidContentType(let contentType):
-                if let contentType = contentType {
+                    localized: "Invalid HTTP response status code: \(statusCode)", bundle: .module
+                )
+            case let .invalidContentType(contentType):
+                if let contentType {
                     collectedErrors = String(
-                        localized: "Invalid Content-Type for SSE: \(contentType)", bundle: .module)
+                        localized: "Invalid Content-Type for SSE: \(contentType)", bundle: .module
+                    )
                 } else {
                     collectedErrors = String(
-                        localized: "Missing Content-Type header in SSE response", bundle: .module)
+                        localized: "Missing Content-Type header in SSE response", bundle: .module
+                    )
                 }
             }
             return
@@ -283,7 +286,7 @@ open class RemoteChatClient: ChatService {
 
         // check for metadata property, read there if find
         if let metadata = errorDic["metadata"] as? [String: Any],
-            let metadataMessage = metadata["message"] as? String
+           let metadataMessage = metadata["message"] as? String
         {
             message += " \(metadataMessage)"
         }
@@ -292,8 +295,10 @@ open class RemoteChatClient: ChatService {
             domain: String(localized: "Server Error"), code: code,
             userInfo: [
                 NSLocalizedDescriptionKey: String(
-                    localized: "Server returns an error: \(code) \(message)", bundle: .module)
-            ])
+                    localized: "Server returns an error: \(code) \(message)", bundle: .module
+                ),
+            ]
+        )
     }
 
     private func request(for body: ChatRequestBody, additionalField: [String: Any] = [:]) throws
@@ -312,7 +317,7 @@ open class RemoteChatClient: ChatService {
         }
 
         guard var urlComponents = URLComponents(string: baseURL),
-            let pathComponents = URLComponents(string: path)
+              let pathComponents = URLComponents(string: path)
         else {
             throw Error.invalidURL
         }
@@ -333,7 +338,7 @@ open class RemoteChatClient: ChatService {
         if !additionalField.isEmpty {
             var originalDictionary: [String: Any] = [:]
             if let data = request.httpBody,
-                let dic = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+               let dic = try JSONSerialization.jsonObject(with: data) as? [String: Any]
             {
                 originalDictionary = dic
             }

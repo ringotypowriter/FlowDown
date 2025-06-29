@@ -398,7 +398,6 @@ extension ChatView {
                             children: templatesMenuActions
                         ))
                     }
-                    
                 }
 
                 menuButton.present(menu: .init(
