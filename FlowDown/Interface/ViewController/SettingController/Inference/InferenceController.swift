@@ -80,7 +80,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableObject(
-                    icon: "quote.bubble",
+                    icon: "character.bubble",
                     title: String(localized: "Chat Template"),
                     explain: String(localized: "The template used for new conversations. You can customize the system prompt and other parameters here. Also known as assistant."),
                     ephemeralAnnotation: .page {
