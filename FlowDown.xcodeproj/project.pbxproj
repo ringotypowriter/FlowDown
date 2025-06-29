@@ -67,6 +67,8 @@
 		50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50E3FA082D6D7FB8000405BD /* GPTEncoder */; };
 		50FBFC6C2DEA2E5400098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6B2DEA2E5400098EC4 /* XMLCoder */; };
 		50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */; };
+		86B4FDC02E1190AD00C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDBF2E1190AD00C6DC8F /* MCP */; };
+		86B4FDC22E1190C000C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDC12E1190C000C6DC8F /* MCP */; };
 		ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED16359B2D5C5BDA0081BD0B /* ChatClientKit */; };
 		ED74633E2D5A706C0009E83F /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = ED74633D2D5A706C0009E83F /* Litext */; };
 		EDF9A13E2D67788A001D183C /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = EDF9A13D2D67788A001D183C /* Respring */; };
@@ -165,6 +167,7 @@
 				50343FDD2DA2515C00CC6820 /* ChidoriMenu in Frameworks */,
 				50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */,
 				50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */,
+				86B4FDC02E1190AD00C6DC8F /* MCP in Frameworks */,
 				50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */,
 				50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */,
 				50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */,
@@ -192,6 +195,7 @@
 				5050EACF2D46D41400634B81 /* MLX in Frameworks */,
 				ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */,
 				50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */,
+				86B4FDC22E1190C000C6DC8F /* MCP in Frameworks */,
 				50014D7F2D8A9B3C00C10932 /* GlyphixTextFx in Frameworks */,
 				50B492942D4F609E00F4D2B3 /* ZIPFoundation in Frameworks */,
 				50CB4E752DE30A57009C58E1 /* Digger in Frameworks */,
@@ -319,6 +323,7 @@
 				50343FC62DA2515C00CC6820 /* GlyphixTextFx */,
 				50DDB1722DDF170000351E46 /* ListViewKit */,
 				50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */,
+				86B4FDBF2E1190AD00C6DC8F /* MCP */,
 			);
 			productName = FlowDown;
 			productReference = 50343FF02DA2515C00CC6820 /* FlowDown.app */;
@@ -374,6 +379,7 @@
 				50DDB1702DDF16F200351E46 /* ListViewKit */,
 				50CB4E742DE30A57009C58E1 /* Digger */,
 				50FBFC6B2DEA2E5400098EC4 /* XMLCoder */,
+				86B4FDC12E1190C000C6DC8F /* MCP */,
 			);
 			productName = FlowDown;
 			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
@@ -424,6 +430,7 @@
 				50CB4E732DE30A57009C58E1 /* XCRemoteSwiftPackageReference "Digger" */,
 				50A350B92DE4B5C3008F094E /* XCRemoteSwiftPackageReference "MarkdownView" */,
 				50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */,
+				86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1072,6 +1079,14 @@
 				minimumVersion = 0.17.1;
 			};
 		};
+		86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/modelcontextprotocol/swift-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
 		EDF9A13C2D67788A001D183C /* XCRemoteSwiftPackageReference "Respring" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ktiays/Respring";
@@ -1322,6 +1337,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
+		};
+		86B4FDBF2E1190AD00C6DC8F /* MCP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = MCP;
+		};
+		86B4FDC12E1190C000C6DC8F /* MCP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = MCP;
 		};
 		ED16359B2D5C5BDA0081BD0B /* ChatClientKit */ = {
 			isa = XCSwiftPackageProductDependency;
