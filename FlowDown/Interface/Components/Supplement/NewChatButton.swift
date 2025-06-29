@@ -65,7 +65,7 @@ class NewChatButton: UIButton {
         let templateMenu = UIMenu(
             title: String(localized: "Choose Template"),
             image: "📁".textToImage(size: 64) ?? .init(),
-            options: actions.count < 6 ? [.displayInline] : [],
+            options: [.displayInline],
             children: actions
         )
         let menu = UIMenu(

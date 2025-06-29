@@ -370,34 +370,22 @@ extension ChatView {
                     ) { [weak self] _ in
                         self?.onCreateNewChat?()
                     })
-
-                    if templates.values.count < 6 {
-                        for template in templates.values {
-                            newChatOptions.append(UIAction(
-                                title: template.name,
-                                image: UIImage(data: template.avatar)
-                            ) { [weak self] _ in
-                                let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
-                                self?.onSuggestSelection?(convId)
-                            })
-                        }
-                    } else {
-                        var templatesMenuActions: [UIAction] = []
-                        for template in templates.values {
-                            templatesMenuActions.append(UIAction(
-                                title: template.name,
-                                image: UIImage(data: template.avatar)
-                            ) { [weak self] _ in
-                                let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
-                                self?.onSuggestSelection?(convId)
-                            })
-                        }
-                        newChatOptions.append(UIMenu(
-                            title: String(localized: "Choose Template"),
-                            image: UIImage(systemName: "folder"),
-                            children: templatesMenuActions
-                        ))
+                    
+                    var templatesMenuActions: [UIAction] = []
+                    for template in templates.values {
+                        templatesMenuActions.append(UIAction(
+                            title: template.name,
+                            image: UIImage(data: template.avatar)
+                        ) { [weak self] _ in
+                            let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
+                            self?.onSuggestSelection?(convId)
+                        })
                     }
+                    newChatOptions.append(UIMenu(
+                        title: String(localized: "Choose Template"),
+                        image: UIImage(systemName: "folder"),
+                        children: templatesMenuActions
+                    ))
                 }
 
                 menuButton.present(menu: .init(
