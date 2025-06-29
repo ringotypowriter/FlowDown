@@ -79,25 +79,23 @@ open class RemoteChatClient: ChatService {
                 var isInsideReasoningContent = false
                 let toolCallCollector: ToolCallCollector = .init()
 
-                let eventSource = EventSource()
-                let dataTask = await eventSource.dataTask(for: request)
-
-                continuation.onTermination = { _ in
-                    Task {
-                        print("[-] cancelling dataTask due to task termination")
-                        await dataTask.cancel()
+                do {
+                    let (byteStream, response) = try await session.bytes(for: request)
+                    guard let httpResponse = response as? HTTPURLResponse,
+                          httpResponse.statusCode == 200
+                    else {
+                        throw Error.invalidData
                     }
-                }
 
-                for await event in await dataTask.events() {
-                    switch event {
-                    case .open:
-                        logger.info("connection was opened.")
-                    case let .error(error):
-                        logger.error("received an error: \(error)")
-                        self.collect(error: error)
-                    case let .event(event):
-                        guard let data = event.data?.data(using: .utf8) else {
+                    continuation.onTermination = { _ in
+                        Task {
+                            print("[-] cancelling byteStream due to task termination")
+                            //                            await byteStream.cancel()
+                        }
+                    }
+
+                    for try await event in byteStream.events {
+                        guard let data = event.data.data(using: .utf8) else {
                             continue
                         }
                         if let text = String(data: data, encoding: .utf8) {
@@ -105,108 +103,139 @@ open class RemoteChatClient: ChatService {
                                 print("[*] received done from upstream")
                                 continue
                             }
-                        }
-                        do {
-                            var response = try JSONDecoder().decode(ChatCompletionChunk.self, from: data)
-                            let reasoningContent = [
-                                response.choices.map(\.delta).compactMap(\.reasoning),
-                                response.choices.map(\.delta).compactMap(\.reasoningContent),
-                            ].flatMap(\.self)
-                            let content = response.choices.map(\.delta).compactMap(\.content)
+                            do {
+                                var response = try JSONDecoder().decode(
+                                    ChatCompletionChunk.self, from: data
+                                )
+                                let reasoningContent = [
+                                    response.choices.map(\.delta).compactMap(\.reasoning),
+                                    response.choices.map(\.delta).compactMap(\.reasoningContent),
+                                ].flatMap(\.self)
+                                let content = response.choices.map(\.delta).compactMap(\.content)
 
-                            if canDecodeReasoningContent { canDecodeReasoningContent = reasoningContent.isEmpty }
+                                if canDecodeReasoningContent {
+                                    canDecodeReasoningContent = reasoningContent.isEmpty
+                                }
 
-                            if canDecodeReasoningContent {
-                                // now we can decode <think> and </think> tag for that purpose
-                                // transfer all content to buffer, and begin our process
-                                let bufferContent = content.joined() // 将内容数组合并为单个字符串
-                                assert(reasoningContent.isEmpty)
+                                if canDecodeReasoningContent {
+                                    // now we can decode <think> and </think> tag for that purpose
+                                    // transfer all content to buffer, and begin our process
+                                    let bufferContent = content.joined() // 将内容数组合并为单个字符串
+                                    assert(reasoningContent.isEmpty)
 
-                                if !isInsideReasoningContent {
-                                    if let range = bufferContent.range(of: REASONING_START_TOKEN) {
-                                        let beforeReasoning = String(bufferContent[..<range.lowerBound])
+                                    if !isInsideReasoningContent {
+                                        if let range = bufferContent.range(
+                                            of: REASONING_START_TOKEN)
+                                        {
+                                            let beforeReasoning = String(
+                                                bufferContent[..<range.lowerBound]
+                                            )
                                             .trimmingCharactersFromEnd(in: .whitespacesAndNewlines)
-                                        let afterReasoningBegin = String(bufferContent[range.upperBound...])
-                                            .trimmingCharactersFromStart(in: .whitespacesAndNewlines)
+                                            let afterReasoningBegin = String(
+                                                bufferContent[range.upperBound...]
+                                            )
+                                            .trimmingCharactersFromStart(
+                                                in: .whitespacesAndNewlines)
 
-                                        // 检查同一块内容中是否有结束标记
-                                        if let endRange = afterReasoningBegin.range(of: REASONING_END_TOKEN) {
-                                            // 有开始也有结束标记 - 完整的推理块
-                                            let reasoningText = String(afterReasoningBegin[..<endRange.lowerBound])
-                                                .trimmingCharactersFromEnd(in: .whitespacesAndNewlines)
-                                            let remainingText = String(afterReasoningBegin[endRange.upperBound...])
-                                                .trimmingCharactersFromStart(in: .whitespacesAndNewlines)
+                                            // 检查同一块内容中是否有结束标记
+                                            if let endRange = afterReasoningBegin.range(
+                                                of: REASONING_END_TOKEN)
+                                            {
+                                                // 有开始也有结束标记 - 完整的推理块
+                                                let reasoningText = String(
+                                                    afterReasoningBegin[..<endRange.lowerBound]
+                                                )
+                                                .trimmingCharactersFromEnd(
+                                                    in: .whitespacesAndNewlines)
+                                                let remainingText = String(
+                                                    afterReasoningBegin[endRange.upperBound...]
+                                                )
+                                                .trimmingCharactersFromStart(
+                                                    in: .whitespacesAndNewlines)
+
+                                                // 更新响应数据
+                                                var delta = [ChatCompletionChunk.Choice.Delta]()
+                                                if !beforeReasoning.isEmpty {
+                                                    delta.append(.init(content: beforeReasoning))
+                                                }
+                                                if !reasoningText.isEmpty {
+                                                    delta.append(
+                                                        .init(reasoningContent: reasoningText))
+                                                }
+                                                if !remainingText.isEmpty {
+                                                    delta.append(.init(content: remainingText))
+                                                }
+                                                response = .init(
+                                                    choices: delta.map { .init(delta: $0) })
+                                            } else {
+                                                // 有开始标记但没有结束标记 - 进入推理内容
+                                                isInsideReasoningContent = true
+                                                var delta = [ChatCompletionChunk.Choice.Delta]()
+                                                if !beforeReasoning.isEmpty {
+                                                    delta.append(.init(content: beforeReasoning))
+                                                }
+                                                if !afterReasoningBegin.isEmpty {
+                                                    delta.append(
+                                                        .init(reasoningContent: afterReasoningBegin)
+                                                    )
+                                                }
+                                                response = .init(
+                                                    choices: delta.map { .init(delta: $0) })
+                                                // 如果刚好在 </think> 前面截断了 那就只有服务器知道要不要 cut 了
+                                                // UI 上面可以处理一下
+                                            }
+                                        }
+                                    } else {
+                                        // 我们已经在推理内容中，检查是否有结束标记
+                                        if let range = bufferContent.range(of: REASONING_END_TOKEN) {
+                                            // 找到结束标记 - 退出推理模式
+                                            isInsideReasoningContent = false
+
+                                            let reasoningText = String(
+                                                bufferContent[..<range.lowerBound]
+                                            )
+                                            .trimmingCharactersFromEnd(in: .whitespacesAndNewlines)
+                                            let remainingText = String(
+                                                bufferContent[range.upperBound...]
+                                            )
+                                            .trimmingCharactersFromStart(
+                                                in: .whitespacesAndNewlines)
 
                                             // 更新响应数据
-                                            var delta = [ChatCompletionChunk.Choice.Delta]()
-                                            if !beforeReasoning.isEmpty {
-                                                delta.append(.init(content: beforeReasoning))
-                                            }
-                                            if !reasoningText.isEmpty {
-                                                delta.append(.init(reasoningContent: reasoningText))
-                                            }
-                                            if !remainingText.isEmpty {
-                                                delta.append(.init(content: remainingText))
-                                            }
-                                            response = .init(choices: delta.map { .init(delta: $0) })
+                                            response = .init(choices: [
+                                                .init(
+                                                    delta: .init(reasoningContent: reasoningText)),
+                                                .init(delta: .init(content: remainingText)),
+                                            ])
                                         } else {
-                                            // 有开始标记但没有结束标记 - 进入推理内容
-                                            isInsideReasoningContent = true
-                                            var delta = [ChatCompletionChunk.Choice.Delta]()
-                                            if !beforeReasoning.isEmpty {
-                                                delta.append(.init(content: beforeReasoning))
-                                            }
-                                            if !afterReasoningBegin.isEmpty {
-                                                delta.append(.init(reasoningContent: afterReasoningBegin))
-                                            }
-                                            response = .init(choices: delta.map { .init(delta: $0) })
-                                            // 如果刚好在 </think> 前面截断了 那就只有服务器知道要不要 cut 了
-                                            // UI 上面可以处理一下
+                                            // 仍在推理内容中
+                                            response = .init(choices: [
+                                                .init(
+                                                    delta: .init(
+                                                        reasoningContent: bufferContent
+                                                    )),
+                                            ])
                                         }
                                     }
-                                } else {
-                                    // 我们已经在推理内容中，检查是否有结束标记
-                                    if let range = bufferContent.range(of: REASONING_END_TOKEN) {
-                                        // 找到结束标记 - 退出推理模式
-                                        isInsideReasoningContent = false
+                                }
 
-                                        let reasoningText = String(bufferContent[..<range.lowerBound])
-                                            .trimmingCharactersFromEnd(in: .whitespacesAndNewlines)
-                                        let remainingText = String(bufferContent[range.upperBound...])
-                                            .trimmingCharactersFromStart(in: .whitespacesAndNewlines)
-
-                                        // 更新响应数据
-                                        response = .init(choices: [
-                                            .init(delta: .init(reasoningContent: reasoningText)),
-                                            .init(delta: .init(content: remainingText)),
-                                        ])
-                                    } else {
-                                        // 仍在推理内容中
-                                        response = .init(choices: [.init(delta: .init(
-                                            reasoningContent: bufferContent
-                                        ))])
+                                for delta in response.choices {
+                                    for toolDelta in delta.delta.toolCalls ?? [] {
+                                        toolCallCollector.submit(delta: toolDelta)
                                     }
                                 }
-                            }
 
-                            for delta in response.choices {
-                                for toolDelta in delta.delta.toolCalls ?? [] {
-                                    toolCallCollector.submit(delta: toolDelta)
+                                continuation.yield(.chatCompletionChunk(chunk: response))
+                            } catch {
+                                if let text = String(data: data, encoding: .utf8) {
+                                    logger.log("text content associated with this error \(text)")
                                 }
+                                self.collect(error: error)
                             }
-
-                            continuation.yield(.chatCompletionChunk(chunk: response))
-                        } catch {
-                            if let text = String(data: data, encoding: .utf8) {
-                                logger.log("text content associated with this error \(text)")
+                            if let decodeError = extractError(fromInput: data) {
+                                self.collect(error: decodeError)
                             }
-                            self.collect(error: error)
                         }
-                        if let decodeError = extractError(fromInput: data) {
-                            self.collect(error: decodeError)
-                        }
-                    case .closed:
-                        logger.info("connection was closed.")
                     }
                 }
 
@@ -223,16 +252,20 @@ open class RemoteChatClient: ChatService {
     private func collect(error: Swift.Error) {
         if let error = error as? EventSourceError {
             switch error {
-            case .undefinedConnectionError:
-                collectedErrors = String(localized: "Unable to connect to the server.", bundle: .module)
-            case let .connectionError(statusCode, response):
-                if let decodedError = extractError(fromInput: response) {
-                    collectedErrors = decodedError.localizedDescription
+            case let .invalidHTTPStatus(statusCode):
+                collectedErrors = String(
+                    localized: "Invalid HTTP response status code: \(statusCode)", bundle: .module
+                )
+            case let .invalidContentType(contentType):
+                if let contentType {
+                    collectedErrors = String(
+                        localized: "Invalid Content-Type for SSE: \(contentType)", bundle: .module
+                    )
                 } else {
-                    collectedErrors = String(localized: "Connection error: \(statusCode)", bundle: .module)
+                    collectedErrors = String(
+                        localized: "Missing Content-Type header in SSE response", bundle: .module
+                    )
                 }
-            case .alreadyConsumed:
-                assertionFailure()
             }
             return
         }
@@ -247,7 +280,8 @@ open class RemoteChatClient: ChatService {
         let errorDic = dic["error"] as? [String: Any]
         guard let errorDic else { return nil }
 
-        var message = errorDic["message"] as? String ?? String(localized: "Unknown Error", bundle: .module)
+        var message =
+            errorDic["message"] as? String ?? String(localized: "Unknown Error", bundle: .module)
         let code = errorDic["code"] as? Int ?? 403
 
         // check for metadata property, read there if find
@@ -257,12 +291,19 @@ open class RemoteChatClient: ChatService {
             message += " \(metadataMessage)"
         }
 
-        return NSError(domain: String(localized: "Server Error"), code: code, userInfo: [
-            NSLocalizedDescriptionKey: String(localized: "Server returns an error: \(code) \(message)", bundle: .module),
-        ])
+        return NSError(
+            domain: String(localized: "Server Error"), code: code,
+            userInfo: [
+                NSLocalizedDescriptionKey: String(
+                    localized: "Server returns an error: \(code) \(message)", bundle: .module
+                ),
+            ]
+        )
     }
 
-    private func request(for body: ChatRequestBody, additionalField: [String: Any] = [:]) throws -> URLRequest {
+    private func request(for body: ChatRequestBody, additionalField: [String: Any] = [:]) throws
+        -> URLRequest
+    {
         guard let baseURL else {
             throw Error.invalidURL
         }
@@ -293,14 +334,14 @@ open class RemoteChatClient: ChatService {
         request.httpBody = try JSONEncoder().encode(body)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.addValue("https://flowdown.ai/", forHTTPHeaderField: "HTTP-Referer")
-        request.addValue("FlowDown", forHTTPHeaderField: "X-Title")
 
         if !additionalField.isEmpty {
             var originalDictionary: [String: Any] = [:]
             if let data = request.httpBody,
                let dic = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-            { originalDictionary = dic }
+            {
+                originalDictionary = dic
+            }
             for (key, value) in additionalField {
                 originalDictionary[key] = value
             }

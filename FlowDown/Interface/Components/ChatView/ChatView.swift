@@ -370,7 +370,7 @@ extension ChatView {
                     ) { [weak self] _ in
                         self?.onCreateNewChat?()
                     })
-                    
+
                     var templatesMenuActions: [UIAction] = []
                     for template in templates.values {
                         templatesMenuActions.append(UIAction(

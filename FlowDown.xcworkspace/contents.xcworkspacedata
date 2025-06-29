@@ -14,9 +14,6 @@
       location = "group:Frameworks/ChatClientKit">
    </FileRef>
    <FileRef
-      location = "group:Frameworks/EventSource">
-   </FileRef>
-   <FileRef
       location = "group:Frameworks/RunestoneEditor">
    </FileRef>
 </Workspace>
