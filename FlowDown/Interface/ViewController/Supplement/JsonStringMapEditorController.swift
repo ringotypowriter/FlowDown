@@ -19,6 +19,11 @@ class JsonStringMapEditorController: CodeEditorController {
     }
 
     override func done() {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = "{}"
+            super.done()
+            return
+        }
         let requiredDecodableType = [String: String].self
         guard let data = textView.text.data(using: .utf8) else {
             let alert = AlertViewController(

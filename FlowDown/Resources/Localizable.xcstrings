@@ -3002,7 +3002,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模型标识符"
+            "value" : "模型标识"
           }
         }
       }
@@ -5746,7 +5746,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "工作组（可选）"
+            "value" : "工作空间（可选）"
           }
         }
       }
