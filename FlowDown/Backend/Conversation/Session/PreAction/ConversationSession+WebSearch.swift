@@ -272,7 +272,7 @@ extension ConversationSessionManager.Session {
                 with: model,
                 maxCompletionTokens: 128,
                 input: messages,
-                additionalField: [:]
+                additionalBodyField: [:]
             )
 
             let content = ans.content.trimmingCharacters(in: .whitespacesAndNewlines)

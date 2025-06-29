@@ -158,6 +158,31 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(tokenView)
         stackView.addArrangedSubview(SeparatorView())
 
+        // additional header
+        let headerEditorView = ConfigurableInfoView().setTapBlock { view in
+            guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
+            let jsonData = try? JSONSerialization.data(withJSONObject: model.headers, options: .prettyPrinted)
+            var text = String(data: jsonData ?? Data(), encoding: .utf8) ?? ""
+            if text.isEmpty { text = "{}" }
+            let textEditor = JsonStringMapEditorController(text: text)
+            textEditor.title = String(localized: "Edit Additional Header")
+            textEditor.collectEditedContent { result in
+                guard let object = try? JSONDecoder().decode([String: String].self, from: result.data(using: .utf8) ?? .init()) else {
+                    return
+                }
+                ModelManager.shared.editCloudModel(identifier: model.id) { $0.headers = object }
+                view.configure(value: object.isEmpty ? String(localized: "N/A") : String(localized: "Configured"))
+            }
+            view.parentViewController?.navigationController?.pushViewController(textEditor, animated: true)
+        }
+        headerEditorView.configure(icon: .init(systemName: "pencil"))
+        headerEditorView.configure(title: String(localized: "Additional Header (Optional)"))
+        headerEditorView.configure(description: String(localized: "This value will be added to the request as additional header."))
+        headerEditorView.configure(value: model?.headers.isEmpty ?? true ? String(localized: "N/A") : String(localized: "Configured"))
+
+        stackView.addArrangedSubviewWithMargin(headerEditorView)
+        stackView.addArrangedSubview(SeparatorView())
+
         let modelCanFetchList = !(model?.model_list_endpoint.isEmpty ?? true)
         let modelIdentifierView = ConfigurableInfoView().setTapBlock { [weak self] view in
             guard let self else { return }

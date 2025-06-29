@@ -27,6 +27,7 @@ open class RemoteChatClient: ChatService {
 
     public var collectedErrors: String? = nil
 
+    public var additionalHeaders: [String : String] = [:]
     public var additionalField: [String: Any] = [:]
 
     public init(
@@ -34,13 +35,15 @@ open class RemoteChatClient: ChatService {
         baseURL: String? = nil,
         path: String? = nil,
         apiKey: String? = nil,
-        additionalField: [String: Any] = [:]
+        additionalHeaders: [String : String] = [:],
+        additionalBodyField: [String: Any] = [:]
     ) {
         self.model = model
         self.baseURL = baseURL
         self.path = path
         self.apiKey = apiKey
-        self.additionalField = additionalField
+        self.additionalHeaders = additionalHeaders
+        self.additionalField = additionalBodyField
     }
 
     public func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
@@ -301,9 +304,7 @@ open class RemoteChatClient: ChatService {
         )
     }
 
-    private func request(for body: ChatRequestBody, additionalField: [String: Any] = [:]) throws
-        -> URLRequest
-    {
+    private func request(for body: ChatRequestBody, additionalField: [String: Any] = [:]) throws -> URLRequest {
         guard let baseURL else {
             throw Error.invalidURL
         }
@@ -334,6 +335,10 @@ open class RemoteChatClient: ChatService {
         request.httpBody = try JSONEncoder().encode(body)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        
+        for (key, value) in additionalHeaders {
+            request.addValue(value, forHTTPHeaderField: key)
+        }
 
         if !additionalField.isEmpty {
             var originalDictionary: [String: Any] = [:]

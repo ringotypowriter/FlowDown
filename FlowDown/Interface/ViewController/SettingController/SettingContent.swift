@@ -123,7 +123,7 @@ extension SettingController {
             {
                 navigationController?.pushViewController(controller, animated: true)
             }
-            
+
             view.window?.firstResponder()?.resignFirstResponder()
         }
     }

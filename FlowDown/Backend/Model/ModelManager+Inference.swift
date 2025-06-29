@@ -220,13 +220,14 @@ extension ModelManager {
 extension ModelManager {
     static let indicatorText = " ●"
 
-    private func chatService(for identifier: ModelIdentifier, additionalField: [String: Any]) throws -> any ChatService {
+    private func chatService(for identifier: ModelIdentifier, additionalBodyField: [String: Any]) throws -> any ChatService {
         if let model = cloudModel(identifier: identifier) {
             return RemoteChatClient(
                 model: model.model_identifier,
                 baseURL: model.endpoint,
                 apiKey: model.token,
-                additionalField: additionalField
+                additionalHeaders: model.headers,
+                additionalBodyField: additionalBodyField
             )
         } else if let model = localModel(identifier: identifier) {
             return MLXChatClient(url: modelContent(for: model))
@@ -279,9 +280,9 @@ extension ModelManager {
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
         tools: [ChatRequestBody.Tool]? = nil,
-        additionalField: [String: Any]
+        additionalBodyField: [String: Any]
     ) async throws -> InferenceMessage {
-        let client = try chatService(for: modelID, additionalField: additionalField)
+        let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
         let response = try await client.chatCompletionRequest(
             body: .init(
                 messages: prepareRequestBody(modelID: modelID, messages: input),
@@ -304,9 +305,9 @@ extension ModelManager {
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
         tools: [ChatRequestBody.Tool]? = nil,
-        additionalField: [String: Any]
+        additionalBodyField: [String: Any]
     ) async throws -> AsyncThrowingStream<InferenceMessage, any Error> {
-        let client = try chatService(for: modelID, additionalField: additionalField)
+        let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
         client.collectedErrors = nil
 
         let stream = try await client.streamingChatCompletionRequest(

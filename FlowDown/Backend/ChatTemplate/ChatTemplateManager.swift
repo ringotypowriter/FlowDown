@@ -171,7 +171,7 @@ class ChatTemplateManager {
             with: model,
             maxCompletionTokens: 512,
             input: messages,
-            additionalField: [:]
+            additionalBodyField: [:]
         )
 
         return try parseTemplateResponse(response.content)
