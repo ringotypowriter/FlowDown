@@ -9,6 +9,9 @@ import ChatClientKit
 import Foundation
 import Storage
 import XMLCoder
+#if canImport(FoundationModels)
+    import FoundationModels
+#endif
 
 // MARK: - XML Models
 
@@ -34,6 +37,16 @@ private struct ConversationXML: Codable {
     }
 }
 
+// MARK: - FoundationModels Generable
+#if canImport(FoundationModels)
+@available(iOS 26.0, macCatalyst 26.0, *)
+@Generable(description: "A concise, 3-5 word title summarizing a conversation.")
+struct ConversationTitle: Sendable, Equatable {
+    @Guide(description: "A plain, concise, 3-5 word title with no prefix or markdown.")
+    var title: String
+}
+#endif
+
 extension ConversationSessionManager.Session {
     func generateConversationTitle() async -> String? {
         guard let userMessage = messages.last(where: { $0.role == .user })?.document else {
@@ -43,7 +56,29 @@ extension ConversationSessionManager.Session {
             return nil
         }
 
-        let task = "Generate a concise, 3-5 word only title in pure text summarizing the chat history. Write in the user's primary language."
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, macCatalyst 26.0, *),
+           let model = models.auxiliary,
+           model == AppleIntelligenceModel.shared.modelIdentifier {
+            let prompt = "Generate a concise, 3-5 word only title in pure text summarizing the chat history. Write in the user's primary language. Do not include any prefix, label, or markdown."
+            let context = "User: \(userMessage)\nAssistant: \(assistantMessage)"
+            let session = LanguageModelSession(model: .default)
+            do {
+                let result = try await session.respond(
+                    to: "\(prompt)\n\(context)",
+                    generating: ConversationTitle.self
+                )
+                let title = result.content.title.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                if title.isEmpty { return nil }
+                return title.count > 32 ? String(title.prefix(32)) : title
+            } catch {
+                print("[-] failed to generate title (Apple Intelligence): \(error)")
+                // Fallback to legacy path
+            }
+        }
+        #endif
+
+        let task = "Generate a concise, 3-5 word only title in pure text summarizing the chat history. Write in the user's primary language. Do not include any prefix, label, or markdown."
 
         let conversationData = ConversationXML(
             task: task,
