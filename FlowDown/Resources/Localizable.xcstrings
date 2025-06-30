@@ -18,7 +18,15 @@
       }
     },
     "%@ - Compressed" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "- 已压缩"
+          }
+        }
+      }
     },
     "%@ Copy" : {
       "localizations" : {
@@ -310,6 +318,9 @@
           }
         }
       }
+    },
+    "An error occurred while rewriting the message: %@" : {
+
     },
     "Analyze the conversation and generate a reusable chat template. Extract the core purpose, create a concise name, suggest an appropriate emoji, and write a system prompt that captures the essence of the conversation pattern." : {
       "localizations" : {
@@ -4163,6 +4174,12 @@
           }
         }
       }
+    },
+    "Rewrite Failed" : {
+
+    },
+    "Rewriting Message..." : {
+
     },
     "Save Image" : {
       "localizations" : {

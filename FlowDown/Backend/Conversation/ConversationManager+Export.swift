@@ -39,12 +39,13 @@ extension ConversationManager {
                     message.document,
                 ]
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter(\.isEmpty)
+                .filter { !$0.isEmpty }
                 .joined(separator: "\n")
                 content.append(messageText)
             }
             let markdownContent = content
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
                 .joined(separator: "\n\n")
             completion(.success(markdownContent))
 
@@ -57,11 +58,14 @@ extension ConversationManager {
                     message.document,
                 ]
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter(\.isEmpty)
+                .filter { !$0.isEmpty }
                 .joined(separator: "\n\n")
                 content.append(messageText)
             }
-            let markdownContent = content.joined(separator: "\n\n---\n\n")
+            let markdownContent = content
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+                .joined(separator: "\n\n---\n\n")
             completion(.success(markdownContent))
 
         case .json:

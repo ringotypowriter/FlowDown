@@ -377,7 +377,7 @@ extension MessageListView: ListViewAdapter {
                 RewriteAction.allCases.map { action in
                     UIAction(title: action.title, image: action.icon) { [weak self] _ in
                         guard let self else { return }
-                        action.send(to: session, bindView: self)
+                        action.send(to: session, message: messageIdentifier, bindView: self)
                     }
                 },
             ].flatMap(\.self).compactMap(\.self)),

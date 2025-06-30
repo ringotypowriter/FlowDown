@@ -6,7 +6,9 @@
 //
 
 import AlertController
+import ChatClientKit
 import Foundation
+import Storage
 import UIKit
 
 enum RewriteAction: String, CaseIterable, Hashable {
@@ -60,7 +62,7 @@ extension RewriteAction {
 }
 
 extension RewriteAction {
-    func send(to session: ConversationSession, bindView: MessageListView) {
+    func send(to session: ConversationSession, message: Message.ID, bindView: MessageListView) {
         guard let model = session.models.chat else {
             let alert = AlertViewController(
                 title: String(localized: "Model Not Available"),
@@ -73,13 +75,59 @@ extension RewriteAction {
             bindView.parentViewController?.present(alert, animated: true)
             return
         }
-        session.doInfere(
-            modelID: model,
-            currentMessageListView: bindView,
-            inputObject: .init(text: prompt, attachments: [], options: [
-                .browsing: .bool(false),
-                .tools: .bool(false),
-            ])
-        ) {}
+        guard let controller = bindView.parentViewController,
+              let message = session.message(for: message)
+        else {
+            assertionFailure()
+            return
+        }
+
+        let messageBody: [ChatRequestBody.Message] = [
+            .system(content: .text(prompt + [
+                "- Do not output any additional text, such as 'Okay' or 'Continue', before the Markdown content.",
+                "- Please ensure the output is in Markdown format, including appropriate headings and bullet points.",
+                "- Do not output any code blocks or unnecessary formatting.",
+                "- Please ensure the output is concise and focused on the key points of the conversation.",
+                "**DO NOT START THE OUTPUT WITH ``` NOR ENDING WITH IT**",
+            ].joined(separator: "\n")
+            )),
+            .user(content: .text(String(localized: "Please summarize the following conversation:"))),
+            .user(content: .text(message.document), name: String(localized: "Previous Conversation")),
+        ]
+
+        Indicator.progress(
+            title: String(localized: "Rewriting Message..."),
+            controller: controller
+        ) { completionHandler in
+            Task.detached {
+                do {
+                    let stream = try await ModelManager.shared.streamingInfer(
+                        with: model,
+                        input: messageBody
+                    )
+                    for try await resp in stream {
+                        message.document = resp.content
+                        session.notifyMessagesDidChange()
+                        session.save()
+                    }
+                    session.save()
+                    await MainActor.run { completionHandler {} }
+                } catch {
+                    await MainActor.run {
+                        completionHandler {
+                            let alert = AlertViewController(
+                                title: String(localized: "Rewrite Failed"),
+                                message: String(localized: "An error occurred while rewriting the message: \(error.localizedDescription)")
+                            ) { context in
+                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.dispose()
+                                }
+                            }
+                            controller.present(alert, animated: true)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
