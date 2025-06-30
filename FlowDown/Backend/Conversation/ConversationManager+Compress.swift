@@ -93,12 +93,14 @@ extension ConversationManager {
             do {
                 let stream = try await ModelManager.shared.streamingInfer(with: model, input: messageBody)
                 let mess = sess.appendNewMessage(role: .assistant)
-                for try await resp in stream {
+                for try await resp in stream where !resp.content.isEmpty {
                     disposeOnce(.success(conv.id))
                     mess.document = resp.content
                     sess.notifyMessagesDidChange()
                     sess.save()
                 }
+                disposeOnce(.success(conv.id))
+                sess.notifyMessagesDidChange()
                 sess.save()
             } catch {
                 await MainActor.run {
