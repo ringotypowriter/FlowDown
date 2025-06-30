@@ -971,7 +971,14 @@
       }
     },
     "Conversation Compressed" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话已压缩"
+          }
+        }
+      }
     },
     "Conversation does not have enough messages to create a template." : {
       "localizations" : {
@@ -4986,6 +4993,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "此对话基于模版 %@ 创建。"
+          }
+        }
+      }
+    },
+    "This conversation is created by compressing %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此对话提取自 %@ 。"
           }
         }
       }

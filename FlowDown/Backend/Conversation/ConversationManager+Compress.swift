@@ -56,11 +56,11 @@ extension ConversationManager {
             conv.icon = "🗜️".textToImage(size: 64)?.pngData() ?? .init()
             conv.shouldAutoRename = true
         }
+        let hint = sess.appendNewMessage(role: .hint)
+        hint.document = String(localized: "This conversation is created by compressing \(title).")
         sess.save()
         sess.notifyMessagesDidChange()
         
-        onConversationCreated(conv.id)
-
         let messageBody: [ChatRequestBody.Message] = [
             .system(content: .text(
                 String(localized: """
@@ -89,6 +89,7 @@ extension ConversationManager {
         ]
 
         Task.detached {
+            await MainActor.run { onConversationCreated(conv.id) }
             do {
                 let stream = try await ModelManager.shared.streamingInfer(with: model, input: messageBody)
                 let mess = sess.appendNewMessage(role: .assistant)
