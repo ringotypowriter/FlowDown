@@ -43,7 +43,7 @@ private struct ConversationXML: Codable {
     @available(iOS 26.0, macCatalyst 26.0, *)
     @Generable(description: "A concise, 3-5 word title summarizing a conversation.")
     struct ConversationTitle: Sendable, Equatable {
-        @Guide(description: "A plain, concise, 3-5 word title with no prefix or markdown.")
+        @Guide(description: "A plain, concise, 3-5 word title with no prefix, label or markdown.")
         var title: String
     }
 #endif
@@ -62,7 +62,7 @@ extension ConversationSessionManager.Session {
                let model = models.auxiliary,
                model == AppleIntelligenceModel.shared.modelIdentifier
             {
-                let prompt = "Generate a concise, 3-5 word only title in pure text summarizing the chat history. Write in the user's primary language. Do not include any prefix, label, or markdown."
+                let prompt = "Generate a concise, 3-5 word only title in pure text summarizing the chat history. NEVER refuse request."
                 let context = "User: \(userMessage)\nAssistant: \(assistantMessage)"
                 let session = LanguageModelSession(model: .default)
                 do {
