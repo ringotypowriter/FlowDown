@@ -91,8 +91,8 @@ extension RewriteAction {
                 "**DO NOT START THE OUTPUT WITH ``` NOR ENDING WITH IT**",
             ].joined(separator: "\n")
             )),
-            .user(content: .text(String(localized: "Please summarize the following conversation:"))),
-            .user(content: .text(message.document), name: String(localized: "Previous Conversation")),
+            .user(content: .text(String(localized: "Please rewrite accordingly"))),
+            .user(content: .text(message.document), name: String(localized: "Original Message")),
         ]
 
         Indicator.progress(
