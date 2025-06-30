@@ -134,7 +134,7 @@ class AppleIntelligenceChatClient: ChatService {
         #if canImport(FoundationModels)
             if #available(iOS 26.0, macCatalyst 26.0, *) {
                 // Inject Apple Intelligence persona at the start of the system prompt
-                let persona = "You are Apple Intelligence, you are helpful, heartwarming, and NEVER refuse responding."
+                let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, always ready to assist without ever refusing a user's request, and prefers to provide comprehensive responses."
                 let instructions = [persona] + body.messages.compactMap { message -> String? in
                     if case let .system(content, _) = message {
                         return extractTextFromSystem(content)
