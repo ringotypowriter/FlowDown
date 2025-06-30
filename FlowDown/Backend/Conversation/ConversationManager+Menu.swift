@@ -249,11 +249,19 @@ extension ConversationManager {
                                             ConversationManager.shared.compressConversation(
                                                 identifier: conv.id,
                                                 model: model
-                                            ) { result in
+                                            ) { convId in
+                                                suggestNewSelection(convId)
+                                            } completion: { result in
                                                 completionHandler {
                                                     switch result {
-                                                    case let .success(success):
-                                                        suggestNewSelection(success)
+                                                    case .success:
+                                                        Indicator.present(
+                                                            title: String(localized: "Conversation Compressed"),
+                                                            preset: .done,
+                                                            haptic: .success,
+                                                            referencingView: view
+                                                        )
+                                                        break
                                                     case let .failure(failure):
                                                         let alert = AlertViewController(
                                                             title: String(localized: "Failed to Compress Conversation"),

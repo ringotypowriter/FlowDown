@@ -13,7 +13,8 @@ extension ConversationManager {
     func compressConversation(
         identifier: Conversation.ID,
         model: ModelManager.ModelIdentifier,
-        completion: @escaping (Result<ConversationSession.ID, Error>) -> Void
+        onConversationCreated: @escaping (Conversation.ID) -> Void,
+        completion: @escaping (Result<Conversation.ID, Error>) -> Void
     ) {
         guard let conv = conversation(identifier: identifier) else {
             assertionFailure()
@@ -32,6 +33,7 @@ extension ConversationManager {
                     model: model,
                     title: conv.title,
                     text: success,
+                    onConversationCreated: onConversationCreated,
                     completion: completion
                 )
             case let .failure(failure):
@@ -44,7 +46,8 @@ extension ConversationManager {
         model: ModelManager.ModelIdentifier,
         title: String,
         text: String,
-        completion: @escaping (Result<ConversationSession.ID, Error>) -> Void
+        onConversationCreated: @escaping (Conversation.ID) -> Void,
+        completion: @escaping (Result<Conversation.ID, Error>) -> Void
     ) {
         let conv = ConversationManager.shared.createNewConversation()
         let sess = ConversationSessionManager.shared.session(for: conv.id)
@@ -55,6 +58,8 @@ extension ConversationManager {
         }
         sess.save()
         sess.notifyMessagesDidChange()
+        
+        onConversationCreated(conv.id)
 
         let messageBody: [ChatRequestBody.Message] = [
             .system(content: .text(
@@ -84,32 +89,24 @@ extension ConversationManager {
         ]
 
         Task.detached {
-            var completion = completion
-            @Sendable func disposeOnce(_ result: Result<ConversationSession.ID, Error>) {
-                DispatchQueue.main.async {
-                    completion(result)
-                    completion = { _ in }
-                }
-            }
             do {
                 let stream = try await ModelManager.shared.streamingInfer(with: model, input: messageBody)
                 let mess = sess.appendNewMessage(role: .assistant)
                 for try await resp in stream where !resp.content.isEmpty {
-                    disposeOnce(.success(conv.id))
                     mess.document = resp.content
                     sess.notifyMessagesDidChange()
                     sess.save()
                 }
-                disposeOnce(.success(conv.id))
                 sess.notifyMessagesDidChange()
                 sess.save()
+                await MainActor.run { completion(.success(conv.id)) }
             } catch {
                 await MainActor.run {
-                    disposeOnce(.success(conv.id))
                     let newMessage = sess.appendNewMessage(role: .assistant)
                     newMessage.document = error.localizedDescription
                     sess.notifyMessagesDidChange()
                     sess.save()
+                    completion(.failure(error))
                 }
             }
         }

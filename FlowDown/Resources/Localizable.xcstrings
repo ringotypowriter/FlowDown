@@ -970,6 +970,9 @@
         }
       }
     },
+    "Conversation Compressed" : {
+
+    },
     "Conversation does not have enough messages to create a template." : {
       "localizations" : {
         "zh-Hans" : {
