@@ -50,6 +50,7 @@ extension ConversationManager {
         let sess = ConversationSessionManager.shared.session(for: conv.id)
         ConversationManager.shared.editConversation(identifier: conv.id) { conv in
             conv.title = title
+            conv.icon = "🗜️".textToImage(size: 64)?.pngData() ?? .init()
             conv.shouldAutoRename = true
         }
         sess.save()
