@@ -42,15 +42,14 @@ extension ModelManager {
         let cloudModels = ModelManager.shared.cloudModels.value.filter {
             !$0.model_identifier.isEmpty
         }.filter { requiresCapabilities.isSubset(of: $0.capabilities) }
-        
 
         var appleIntelligenceAvailable = false
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macCatalyst 26.0, *) {
-            appleIntelligenceAvailable = AppleIntelligenceModel.shared.isAvailable
-        }
+            if #available(iOS 26.0, macCatalyst 26.0, *) {
+                appleIntelligenceAvailable = AppleIntelligenceModel.shared.isAvailable
+            }
         #endif
-        
+
         if localModels.isEmpty, cloudModels.isEmpty, !appleIntelligenceAvailable {
             let alert = AlertViewController(
                 title: String(localized: "No Model Available"),
@@ -150,15 +149,15 @@ extension ModelManager {
         }
 
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macCatalyst 26.0, *), appleIntelligenceAvailable {
-            finalChildren.append(UIAction(
-                title: AppleIntelligenceModel.shared.modelDisplayName,
-                image: UIImage(systemName: "apple.intelligence"),
-                state: currentSelection == AppleIntelligenceModel.shared.modelIdentifier ? .on : .off
-            ) { _ in
-                onCompletion(AppleIntelligenceModel.shared.modelIdentifier)
-            })
-        }
+            if #available(iOS 26.0, macCatalyst 26.0, *), appleIntelligenceAvailable {
+                finalChildren.append(UIAction(
+                    title: AppleIntelligenceModel.shared.modelDisplayName,
+                    image: UIImage(systemName: "apple.intelligence"),
+                    state: currentSelection == AppleIntelligenceModel.shared.modelIdentifier ? .on : .off
+                ) { _ in
+                    onCompletion(AppleIntelligenceModel.shared.modelIdentifier)
+                })
+            }
         #endif
 
         if !localMenuChildren.isEmpty {

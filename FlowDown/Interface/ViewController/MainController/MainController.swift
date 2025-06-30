@@ -317,7 +317,7 @@ class MainController: UIViewController {
         DispatchQueue.main.async {
             // create new conversation
             let conversation = ConversationManager.shared.createNewConversation()
-            print("[+] Created new conversation with ID: \(conversation.id)")
+            print("[+] created new conversation with ID: \(conversation.id)")
 
             self.load(conversation.id)
 
@@ -336,21 +336,21 @@ class MainController: UIViewController {
     }
 
     private func sendMessageToCurrentConversation(_ message: String) {
-        print("[*] Attempting to send message: \(message)")
+        print("[*] attempting to send message: \(message)")
 
         guard let currentConversationID = chatView.conversationIdentifier else {
             // showErrorAlert(title: "Error", message: "No conversation available to send message.")
             return
         }
-        print("[*] Current conversation ID: \(currentConversationID)")
+        print("[*] current conversation ID: \(currentConversationID)")
 
         // retrieve session
         let session = ConversationSessionManager.shared.session(for: currentConversationID)
-        print("[*] Session created/retrieved for conversation")
+        print("[*] session created/retrieved for conversation")
 
         let modelID = ModelManager.ModelIdentifier.defaultModelForConversation
         guard !modelID.isEmpty else {
-            print("[!] No default model configured")
+            print("[!] no default model configured")
             showErrorAlert(
                 title: String(localized: "No Model Available"),
                 message: String(
@@ -360,7 +360,7 @@ class MainController: UIViewController {
             )
             return
         }
-        print("[*] Using model: \(modelID)")
+        print("[*] using model: \(modelID)")
 
         // check if ui was loaded
         guard let currentMessageListView = chatView.currentMessageListView else {
@@ -375,7 +375,7 @@ class MainController: UIViewController {
             )
             return
         }
-        print("[*] Message content: '\(trimmedMessage)'")
+        print("[*] message content: '\(trimmedMessage)'")
 
         let editorObject = RichEditorView.Object(text: trimmedMessage)
         session.doInfere(
@@ -383,7 +383,7 @@ class MainController: UIViewController {
             currentMessageListView: currentMessageListView,
             inputObject: editorObject
         ) {
-            print("[+] Message sent and AI response triggered successfully via URL scheme")
+            print("[+] message sent and AI response triggered successfully via URL scheme")
         }
     }
 

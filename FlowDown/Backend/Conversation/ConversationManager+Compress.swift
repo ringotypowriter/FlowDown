@@ -1,0 +1,114 @@
+//
+//  ConversationManager+Compress.swift
+//  FlowDown
+//
+//  Created by 秋星桥 on 6/30/25.
+//
+
+import ChatClientKit
+import Foundation
+import Storage
+
+extension ConversationManager {
+    func compressConversation(
+        identifier: Conversation.ID,
+        model: ModelManager.ModelIdentifier,
+        completion: @escaping (Result<ConversationSession.ID, Error>) -> Void
+    ) {
+        guard let conv = conversation(identifier: identifier) else {
+            assertionFailure()
+            completion(.failure(NSError(domain: "ConversationManager", code: 404, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "Unknown Error"),
+            ])))
+            return
+        }
+        exportConversation(
+            identifier: identifier,
+            exportFormat: .markdown
+        ) { result in
+            switch result {
+            case let .success(success):
+                self.compressConversation(
+                    model: model,
+                    title: conv.title,
+                    text: success,
+                    completion: completion
+                )
+            case let .failure(failure):
+                completion(.failure(failure))
+            }
+        }
+    }
+
+    private func compressConversation(
+        model: ModelManager.ModelIdentifier,
+        title: String,
+        text: String,
+        completion: @escaping (Result<ConversationSession.ID, Error>) -> Void
+    ) {
+        let conv = ConversationManager.shared.createNewConversation()
+        let sess = ConversationSessionManager.shared.session(for: conv.id)
+        ConversationManager.shared.editConversation(identifier: conv.id) { conv in
+            conv.title = title
+            conv.shouldAutoRename = true
+        }
+        sess.save()
+        sess.notifyMessagesDidChange()
+
+        let messageBody: [ChatRequestBody.Message] = [
+            .system(content: .text(
+                String(localized: """
+                You are a professional conversation summarization assistant. Please compress and summarize the previous conversation according to the following requirements:
+
+                1. Retain the core information and important conclusions of the conversation; remove irrelevant, repetitive, or redundant content.
+                2. Maintain the original logical order and context to ensure the compressed content is easy to understand.
+                3. Clearly list any to-do items, decisions, conclusions, or key issues mentioned in the conversation.
+                4. Preserve necessary contextual information to avoid loss or misunderstanding due to compression.
+                5. Use concise and accurate language; do not add information that was not mentioned or make subjective assumptions.
+                6. If the conversation covers multiple topics, organize them into separate sections or bullet points.
+                7. Output the summary in structured Markdown format, including titles and bullet points for easy reference.
+
+                Please compress and summarize the content of the "Previous Conversation" according to the above requirements.
+                """)
+                    + [
+                        "- Do not output any additional text, such as 'Okay' or 'Continue', before the Markdown content.",
+                        "- Please ensure the output is in Markdown format, including appropriate headings and bullet points.",
+                        "- Do not output any code blocks or unnecessary formatting.",
+                        "- Please ensure the output is concise and focused on the key points of the conversation.",
+                        "**DO NOT START THE OUTPUT WITH ``` NOR ENDING WITH IT**",
+                    ].joined(separator: "\n")
+            )),
+            .user(content: .text(String(localized: "Please summarize the following conversation:"))),
+            .user(content: .text(text), name: String(localized: "Previous Conversation")),
+        ]
+
+        Task.detached {
+            var completion = completion
+            @Sendable func disposeOnce(_ result: Result<ConversationSession.ID, Error>) {
+                DispatchQueue.main.async {
+                    completion(result)
+                    completion = { _ in }
+                }
+            }
+            do {
+                let stream = try await ModelManager.shared.streamingInfer(with: model, input: messageBody)
+                let mess = sess.appendNewMessage(role: .assistant)
+                for try await resp in stream {
+                    disposeOnce(.success(conv.id))
+                    mess.document = resp.content
+                    sess.notifyMessagesDidChange()
+                    sess.save()
+                }
+                sess.save()
+            } catch {
+                await MainActor.run {
+                    disposeOnce(.success(conv.id))
+                    let newMessage = sess.appendNewMessage(role: .assistant)
+                    newMessage.document = error.localizedDescription
+                    sess.notifyMessagesDidChange()
+                    sess.save()
+                }
+            }
+        }
+    }
+}
