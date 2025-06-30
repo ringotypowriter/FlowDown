@@ -15,6 +15,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public var creation: Date = .init()
     public var endpoint: String = ""
     public var token: String = ""
+    public var headers: [String: String] = [:] // additional headers
     public var capabilities: Set<ModelCapabilities> = []
     public var context: ModelContextLength = .short_8k
 
@@ -31,6 +32,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(creation, isNotNull: true, defaultTo: Date(timeIntervalSince1970: 0))
             BindColumnConstraint(endpoint, isNotNull: true, defaultTo: "")
             BindColumnConstraint(token, isNotNull: true, defaultTo: "")
+            BindColumnConstraint(headers, isNotNull: true, defaultTo: [String: String]())
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: Set<ModelCapabilities>())
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
@@ -42,6 +44,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case creation
         case endpoint
         case token
+        case headers
         case capabilities
         case context
         case comment
@@ -54,6 +57,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         creation: Date = .init(),
         endpoint: String = "",
         token: String = "",
+        headers: [String: String] = [:],
         context _: ModelContextLength = .medium_64k,
         capabilities: Set<ModelCapabilities> = [],
         comment: String = ""
@@ -64,6 +68,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.creation = creation
         self.endpoint = endpoint
         self.token = token
+        self.headers = headers
         self.capabilities = capabilities
         self.comment = comment
     }
@@ -79,6 +84,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(creation)
         hasher.combine(endpoint)
         hasher.combine(token)
+        hasher.combine(headers)
         hasher.combine(capabilities)
         hasher.combine(context)
         hasher.combine(comment)

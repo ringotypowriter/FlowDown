@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/AlertController",
       "state" : {
-        "revision" : "f1254efda86405bfce9978bba0782e3daeb58fd0",
-        "version" : "1.1.1"
+        "revision" : "819fba938c48fbf50026bc1eae10177b501658e5",
+        "version" : "1.1.4"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ChidoriMenu",
       "state" : {
-        "revision" : "ab4a6ba5cfd4a74b3207d6288ad45626cfc3d742",
-        "version" : "3.0.2"
+        "revision" : "d52b4ffde7f3af94491edb4ae825fb36a056ed80",
+        "version" : "3.0.3"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/Litext",
       "state" : {
-        "revision" : "824552d41d3f6663cc4222bbf6172f8a4f995bb3",
-        "version" : "0.4.8"
+        "revision" : "fb02814ad729b8a0b1db19db31e4c75535d58f8b",
+        "version" : "0.4.9"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "78e39837daf9df83332d92fc002c121a47107c4b",
-        "version" : "2.3.1"
+        "revision" : "efa3e3bd0ae82200d4534fac9e637adc5454582b",
+        "version" : "2.3.2"
       }
     },
     {

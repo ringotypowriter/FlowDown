@@ -43,6 +43,7 @@ import UIKit
         }
 
         @objc override func escapePressed() {
+            guard presentedViewController == nil else { return }
             if content.viewControllers.count > 1 {
                 content.popViewController(animated: true)
             } else {

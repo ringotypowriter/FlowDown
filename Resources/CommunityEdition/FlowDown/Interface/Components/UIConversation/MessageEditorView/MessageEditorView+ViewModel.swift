@@ -26,7 +26,7 @@ extension UIConversation.MessageEditorView.ViewModel {
     var isSendable: Bool {
         ![
             message.isEmpty,
-            attachments.isEmpty
+            attachments.isEmpty,
         ].allSatisfy(\.self)
     }
 }

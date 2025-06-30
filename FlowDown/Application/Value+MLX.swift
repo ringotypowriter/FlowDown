@@ -41,7 +41,7 @@ extension MLX.GPU {
         explain: String(localized: "Set the strategy for handling runtime resource cache. Allowing the use of cache can speed up inference and save energy, but may cause the software to close unexpectedly."),
         key: storageKey,
         defaultValue: CacheSizeLimit.notAllowed.rawValue,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             CacheSizeLimit.allCases.map { item in
                 ListAnnotation.ValueItem(title: item.title, rawValue: item.rawValue)
             }

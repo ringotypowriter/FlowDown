@@ -504,7 +504,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 223;
+				CURRENT_PROJECT_VERSION = 231;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-Catalyst.plist";
@@ -528,7 +528,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.22;
+				MARKETING_VERSION = 1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.fdp;
 				PRODUCT_NAME = FlowDown;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -549,7 +549,7 @@
 				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 223;
+				CURRENT_PROJECT_VERSION = 231;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-Catalyst.plist";
@@ -573,7 +573,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.22;
+				MARKETING_VERSION = 1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.flow;
 				PRODUCT_NAME = FlowDown;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -594,7 +594,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 223;
+				CURRENT_PROJECT_VERSION = 231;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
@@ -620,7 +620,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.22;
+				MARKETING_VERSION = 1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.fdp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -641,7 +641,7 @@
 				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-iOS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 223;
+				CURRENT_PROJECT_VERSION = 231;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
@@ -667,7 +667,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.22;
+				MARKETING_VERSION = 1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = wiki.qaq.flow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -852,7 +852,7 @@
 			repositoryURL = "https://github.com/Lakr233/AlertController";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.1;
+				minimumVersion = 1.1.4;
 			};
 		};
 		50014D7D2D8A9B0000C10932 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */ = {
@@ -980,7 +980,7 @@
 			repositoryURL = "https://github.com/Lakr233/ChidoriMenu";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.1;
+				minimumVersion = 3.0.3;
 			};
 		};
 		5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
@@ -1020,7 +1020,7 @@
 			repositoryURL = "https://github.com/Lakr233/MarkdownView";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.1;
+				minimumVersion = 2.3.2;
 			};
 		};
 		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {

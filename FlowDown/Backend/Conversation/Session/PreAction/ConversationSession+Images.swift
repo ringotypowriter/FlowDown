@@ -78,7 +78,7 @@ extension ConversationSession {
             with: decision,
             maxCompletionTokens: 2048,
             input: messages,
-            additionalField: [:]
+            additionalBodyField: [:]
         ) {
             await requestUpdate(view: currentMessageListView)
             startThinking(for: message.id)

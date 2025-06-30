@@ -148,6 +148,16 @@
         }
       }
     },
+    "Additional Header (Optional)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外报头（可选）"
+          }
+        }
+      }
+    },
     "Additional Prompt" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1452,6 +1462,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑"
+          }
+        }
+      }
+    },
+    "Edit Additional Header" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑额外报头"
           }
         }
       }
@@ -2982,7 +3002,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模型标识符"
+            "value" : "模型标识"
           }
         }
       }
@@ -4757,6 +4777,16 @@
         }
       }
     },
+    "This value will be added to the request as additional header." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此处的数据将会在请求时添加到报头中，并覆盖已有的任何报头数据。"
+          }
+        }
+      }
+    },
     "This value will be added to the request to distinguish the workgroup on the remote." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4945,6 +4975,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法打开这张图片。"
+          }
+        }
+      }
+    },
+    "Unable to decode string key value map from text: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解析字符串键值对：%@"
+          }
+        }
+      }
+    },
+    "Unable to decode text into data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解码输入的文本。"
           }
         }
       }
@@ -5696,7 +5746,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "工作组（可选）"
+            "value" : "工作空间（可选）"
           }
         }
       }

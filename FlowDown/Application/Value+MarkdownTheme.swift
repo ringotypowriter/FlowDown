@@ -34,7 +34,7 @@ extension MarkdownTheme {
         explain: String(localized: "Adjust the font size of the markdown content."),
         key: storageKey,
         defaultValue: MarkdownTheme.FontScale.middle.rawValue,
-        annotation: ChidoriListAnnotation {
+        annotation: .list {
             MarkdownTheme.FontScale.allCases.map { input in
                 ListAnnotation.ValueItem(
                     icon: "circle",

@@ -68,7 +68,7 @@ extension ConversationSessionManager.Session {
                 with: model,
                 maxCompletionTokens: 8,
                 input: messages,
-                additionalField: [:]
+                additionalBodyField: [:]
             )
 
             if let icon = extractIconFromXML(ans.content) {

@@ -13,7 +13,7 @@ FlowDown is a blazing fast and smooth client app for using AI/LLM with full prot
 
 [![App Store Icon](./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/us/app/flowdown-open-fast-ai/id6740553198)
 
-Or `brew install --cask flowdown`. (maintained by 3rd part developer)
+Or `brew install --cask flowdown` (maintained by 3rd party)
 
 By downloading FlowDown from App Store, free models are included. To use our product, have a look at: [https://apps.qaq.wiki/docs/flowdown/](https://apps.qaq.wiki/docs/flowdown/)
 
@@ -30,7 +30,7 @@ To generate enterprise model configuration, aka call over custom api, there is a
 - [x] **Automated Chat Titles** Streamlines conversations and boosts productivity
 - [x] **Automated Chat Templates** Use LLM to conclude your request within conversation to chat template for later use
 - [x] **Privacy by Design** We don't collect your data
-- [x] **Open Sourced** You can verify our promise in person
+- [x] **Fully Open Sourced** You can verify our promise in person
 
 ## Editions
 
