@@ -283,7 +283,7 @@ extension ModelManager {
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
         tools: [ChatRequestBody.Tool]? = nil,
-        additionalBodyField: [String: Any]
+        additionalBodyField: [String: Any] = [:]
     ) async throws -> InferenceMessage {
         let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
         let response = try await client.chatCompletionRequest(

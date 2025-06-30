@@ -17,6 +17,9 @@
         }
       }
     },
+    "%@ - Compressed" : {
+
+    },
     "%@ Copy" : {
       "localizations" : {
         "zh-Hans" : {
@@ -790,12 +793,42 @@
         }
       }
     },
+    "Compress" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩"
+          }
+        }
+      }
+    },
     "Compress Image" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "压缩图片"
+          }
+        }
+      }
+    },
+    "Compress to New Chat" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩到新对话"
+          }
+        }
+      }
+    },
+    "Compressing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在压缩"
           }
         }
       }
@@ -1830,6 +1863,16 @@
         }
       }
     },
+    "Exported Conversation - %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出的对话 - %@"
+          }
+        }
+      }
+    },
     "Exported Database %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1896,6 +1939,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法添加事件：%@"
+          }
+        }
+      }
+    },
+    "Failed to Compress Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法压缩对话"
+          }
+        }
+      }
+    },
+    "Failed to decode data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解码数据。"
           }
         }
       }
@@ -3771,7 +3834,14 @@
       }
     },
     "Please select a model to rewrite this message." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择一个模型来改写消息。"
+          }
+        }
+      }
     },
     "Please summarize the following content in a concise and clear manner." : {
       "localizations" : {
@@ -3779,6 +3849,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请用简洁明了的方式总结以下内容。"
+          }
+        }
+      }
+    },
+    "Please summarize the following conversation:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请总结下面的对话："
           }
         }
       }
@@ -4970,6 +5050,16 @@
         }
       }
     },
+    "This will use %@ compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将会使用 %@ 压缩当前对话到简短的总结并创建新的对话。原始对话不会被修改。"
+          }
+        }
+      }
+    },
     "Thought for %lld seconds" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5910,6 +6000,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "雅虎搜索"
+          }
+        }
+      }
+    },
+    "You are a professional conversation summarization assistant. Please compress and summarize the previous conversation according to the following requirements:\n\n1. Retain the core information and important conclusions of the conversation; remove irrelevant, repetitive, or redundant content.\n2. Maintain the original logical order and context to ensure the compressed content is easy to understand.\n3. Clearly list any to-do items, decisions, conclusions, or key issues mentioned in the conversation.\n4. Preserve necessary contextual information to avoid loss or misunderstanding due to compression.\n5. Use concise and accurate language; do not add information that was not mentioned or make subjective assumptions.\n6. If the conversation covers multiple topics, organize them into separate sections or bullet points.\n7. Output the summary in structured Markdown format, including titles and bullet points for easy reference.\n\nPlease compress and summarize the content of the \"Previous Conversation\" according to the above requirements." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你是一名专业的对话摘要助理。请根据以下要求对先前的对话内容进行压缩和总结：\n\n1. 保留对话的核心信息和重要结论；删除无关、重复或冗余的内容  \n2. 保持原有的逻辑顺序和上下文，确保压缩后的内容易于理解  \n3. 清晰列出对话中提到的待办事项、决定、结论或关键问题  \n4. 保留必要的背景信息，避免因压缩导致信息丢失或误解  \n5. 使用简洁准确的语言，不添加未提及的信息或主观推测  \n6. 若对话涉及多个主题，请分章节或分条目整理  \n7. 输出结构化Markdown格式的摘要，包含标题和条目以便查阅  \n\n请根据上述要求对\"先前对话\"的内容进行压缩和总结。"
           }
         }
       }
