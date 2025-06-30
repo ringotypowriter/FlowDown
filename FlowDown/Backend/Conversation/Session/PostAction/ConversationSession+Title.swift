@@ -9,6 +9,9 @@ import ChatClientKit
 import Foundation
 import Storage
 import XMLCoder
+#if canImport(FoundationModels)
+    import FoundationModels
+#endif
 
 // MARK: - XML Models
 
@@ -65,7 +68,7 @@ extension ConversationSessionManager.Session {
                     to: "\(prompt)\n\(context)",
                     generating: ConversationTitle.self
                 )
-                let title = result.value.title.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                let title = result.content.title.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 if title.isEmpty { return nil }
                 return title.count > 32 ? String(title.prefix(32)) : title
             } catch {
