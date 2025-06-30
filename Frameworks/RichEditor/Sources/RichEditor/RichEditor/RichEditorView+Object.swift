@@ -136,4 +136,12 @@ extension RichEditorView {
             quickSettingBar.toolsToggle.isOn = value
         }
     }
+
+    public func refill(withText text: String, attachments: [Object.Attachment]) {
+        inputEditor.set(text: text)
+        attachmentsBar.attachmetns.removeAll()
+        for attachment in attachments {
+            attachmentsBar.insert(item: attachment)
+        }
+    }
 }
