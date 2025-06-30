@@ -261,7 +261,6 @@ extension ConversationManager {
                                                             haptic: .success,
                                                             referencingView: view
                                                         )
-                                                        break
                                                     case let .failure(failure):
                                                         let alert = AlertViewController(
                                                             title: String(localized: "Failed to Compress Conversation"),

@@ -80,8 +80,8 @@ final class AppleIntelligenceModel {
 }
 
 // MARK: - Chat Client
-class AppleIntelligenceChatClient: ChatService {
 
+class AppleIntelligenceChatClient: ChatService {
     var collectedErrors: String?
 
     func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
@@ -166,18 +166,18 @@ class AppleIntelligenceChatClient: ChatService {
 private func extractTextFromSystem(_ content: ChatRequestBody.Message.MessageContent<String, [String]>) -> String {
     switch content {
     case let .text(text):
-        return text
+        text
     case let .parts(parts):
-        return parts.joined(separator: " ")
+        parts.joined(separator: " ")
     }
 }
 
 private func extractTextFromUser(_ content: ChatRequestBody.Message.MessageContent<String, [ChatRequestBody.Message.ContentPart]>) -> String {
     switch content {
     case let .text(text):
-        return text
+        text
     case let .parts(parts):
-        return parts.compactMap { part in
+        parts.compactMap { part in
             if case let .text(text) = part { text } else { nil }
         }.joined(separator: " ")
     }

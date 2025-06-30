@@ -60,7 +60,7 @@ extension ConversationManager {
         hint.document = String(localized: "This conversation is created by compressing \(title).")
         sess.save()
         sess.notifyMessagesDidChange()
-        
+
         let messageBody: [ChatRequestBody.Message] = [
             .system(content: .text(
                 String(localized: """
