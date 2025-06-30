@@ -23,6 +23,7 @@ final class AppleIntelligenceModel {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
             #if canImport(FoundationModels)
                 let model = SystemLanguageModel.default
+                print("[Apple Intelligence] availability: \(model.availability)")
                 switch model.availability {
                 case .available:
                     return true
@@ -79,9 +80,7 @@ final class AppleIntelligenceModel {
 }
 
 // MARK: - Chat Client
-
 class AppleIntelligenceChatClient: ChatService {
-    // MARK: - ChatService Protocol
 
     var collectedErrors: String?
 
@@ -167,18 +166,18 @@ class AppleIntelligenceChatClient: ChatService {
 private func extractTextFromSystem(_ content: ChatRequestBody.Message.MessageContent<String, [String]>) -> String {
     switch content {
     case let .text(text):
-        text
+        return text
     case let .parts(parts):
-        parts.joined(separator: " ")
+        return parts.joined(separator: " ")
     }
 }
 
 private func extractTextFromUser(_ content: ChatRequestBody.Message.MessageContent<String, [ChatRequestBody.Message.ContentPart]>) -> String {
     switch content {
     case let .text(text):
-        text
+        return text
     case let .parts(parts):
-        parts.compactMap { part in
+        return parts.compactMap { part in
             if case let .text(text) = part { text } else { nil }
         }.joined(separator: " ")
     }
