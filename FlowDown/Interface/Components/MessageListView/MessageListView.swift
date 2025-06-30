@@ -18,7 +18,6 @@ final class MessageListView: UIView {
     var contentSize: CGSize { listView.contentSize }
 
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
-    fileprivate let dataSourceLock: NSLock = .init()
 
     private var entryCount = 0
 
@@ -27,11 +26,10 @@ final class MessageListView: UIView {
             isFirstLoad = true
             sessionScopedCancellables.forEach { $0.cancel() }
             sessionScopedCancellables.removeAll()
-            session.messagesDidChange
-                .sink { [unowned self] messages, scrolling in
-                    updateFromUpstreamPublisher(messages, scrolling)
-                }
-                .store(in: &sessionScopedCancellables)
+            session.messagesDidChange.sink { [unowned self] messages, scrolling in
+                updateFromUpstreamPublisher(messages, scrolling)
+            }
+            .store(in: &sessionScopedCancellables)
             session.userDidSendMessage.sink { [unowned self] _ in
                 isAutoScrollingToBottom = true
             }
@@ -287,15 +285,13 @@ final class MessageListView: UIView {
         if Thread.isMainThread {
             sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
         } else {
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAndWait {
                 self.sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
             }
         }
     }
 
     func sendViewModelToUpdate(_ entries: [MessageListView.Entry], _ someEntiresBeingRemoved: Bool, _ shouldScrolling: Bool) {
-        dataSourceLock.lock()
-        defer { dataSourceLock.unlock() }
         assert(Thread.isMainThread)
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
         if shouldScrolling {

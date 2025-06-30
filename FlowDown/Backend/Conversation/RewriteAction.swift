@@ -111,7 +111,10 @@ extension RewriteAction {
                         session.save()
                     }
                     session.save()
-                    await MainActor.run { completionHandler {} }
+                    await MainActor.run {
+                        session.notifyMessagesDidChange(scrolling: false)
+                        completionHandler {}
+                    }
                 } catch {
                     await MainActor.run {
                         completionHandler {
