@@ -180,35 +180,65 @@ extension SettingController.SettingContent {
             ModelManager.shared.checkDefaultModels()
 
             let defConvId = ModelManager.ModelIdentifier.defaultModelForConversation
-            if let localModel = ModelManager.shared.localModel(identifier: defConvId) {
-                defaultConversationModel.configure(value: localModel.model_identifier)
-            } else if let cloudModel = ModelManager.shared.cloudModel(identifier: defConvId) {
-                defaultConversationModel.configure(value: cloudModel.modelFullName)
-            } else {
-                defaultConversationModel.configure(value: String(localized: "Not Configured"))
+            var handledConvModel = false
+            #if canImport(FoundationModels)
+            if #available(iOS 26.0, macCatalyst 26.0, *), defConvId == AppleIntelligenceModel.shared.modelIdentifier {
+                defaultConversationModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
+                defaultConversationModel.setTapBlock { [weak self] view in
+                    ModelManager.shared.presentModelSelectionMenu(
+                        anchoringView: view.valueLabel,
+                        currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
+                        allowSelectionWithNone: true
+                    ) { [weak self] identifier in
+                        ModelManager.ModelIdentifier.defaultModelForConversation = identifier
+                        self?.updateDefaultModelInfo()
+                    }
+                }
+                handledConvModel = true
             }
-
-            defaultConversationModel.setTapBlock { [weak self] view in
-                ModelManager.shared.presentModelSelectionMenu(
-                    anchoringView: view.valueLabel,
-                    currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
-                    allowSelectionWithNone: true
-                ) { [weak self] identifier in
-                    ModelManager.ModelIdentifier.defaultModelForConversation = identifier
-                    self?.updateDefaultModelInfo()
+            #endif
+            if !handledConvModel {
+                if let localModel = ModelManager.shared.localModel(identifier: defConvId) {
+                    defaultConversationModel.configure(value: localModel.model_identifier)
+                } else if let cloudModel = ModelManager.shared.cloudModel(identifier: defConvId) {
+                    defaultConversationModel.configure(value: cloudModel.modelFullName)
+                } else {
+                    defaultConversationModel.configure(value: String(localized: "Not Configured"))
+                }
+                defaultConversationModel.setTapBlock { [weak self] view in
+                    ModelManager.shared.presentModelSelectionMenu(
+                        anchoringView: view.valueLabel,
+                        currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
+                        allowSelectionWithNone: true
+                    ) { [weak self] identifier in
+                        ModelManager.ModelIdentifier.defaultModelForConversation = identifier
+                        self?.updateDefaultModelInfo()
+                    }
                 }
             }
 
             let devAuxId = ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask
-            if let localModel = ModelManager.shared.localModel(identifier: devAuxId) {
-                defaultAuxiliaryModel.configure(value: localModel.model_identifier)
-            } else if let cloudModel = ModelManager.shared.cloudModel(identifier: devAuxId) {
-                defaultAuxiliaryModel.configure(value: cloudModel.modelFullName)
-            } else {
-                defaultAuxiliaryModel.configure(value: String(localized: "Not Configured"))
+            var handledAuxModel = false
+            #if canImport(FoundationModels)
+            if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
+                defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
+                handledAuxModel = true
+            }
+            #endif
+            if !handledAuxModel {
+                if let localModel = ModelManager.shared.localModel(identifier: devAuxId) {
+                    defaultAuxiliaryModel.configure(value: localModel.model_identifier)
+                } else if let cloudModel = ModelManager.shared.cloudModel(identifier: devAuxId) {
+                    defaultAuxiliaryModel.configure(value: cloudModel.modelFullName)
+                } else {
+                    defaultAuxiliaryModel.configure(value: String(localized: "Not Configured"))
+                }
             }
 
             defaultAuxiliaryModel.setTapBlock { [weak self] view in
+                if self?.defaultAuxiliaryModelAlignWithChatModel.boolValue == true {
+                    return
+                }
                 ModelManager.shared.presentModelSelectionMenu(
                     anchoringView: view.valueLabel,
                     currentSelection: ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask,

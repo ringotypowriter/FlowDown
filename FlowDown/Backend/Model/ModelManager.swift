@@ -125,9 +125,21 @@ class ModelManager: NSObject {
     }
 
     func checkDefaultModels() {
+        #if canImport(FoundationModels)
+        let appleIntelligenceId: String? = {
+            if #available(iOS 26.0, macCatalyst 26.0, *) {
+                return AppleIntelligenceModel.shared.modelIdentifier
+            } else {
+                return nil
+            }
+        }()
+        #else
+        let appleIntelligenceId: String? = nil
+        #endif
         if !defaultModelForConversation.isEmpty,
            localModel(identifier: defaultModelForConversation) == nil,
-           cloudModel(identifier: defaultModelForConversation) == nil
+           cloudModel(identifier: defaultModelForConversation) == nil,
+           !(appleIntelligenceId != nil && defaultModelForConversation == appleIntelligenceId)
         {
             print("[*] reset defaultModelForConversation due to not found")
             defaultModelForConversation = ""
@@ -135,7 +147,8 @@ class ModelManager: NSObject {
 
         if !defaultModelForAuxiliaryTask.isEmpty,
            localModel(identifier: defaultModelForAuxiliaryTask) == nil,
-           cloudModel(identifier: defaultModelForAuxiliaryTask) == nil
+           cloudModel(identifier: defaultModelForAuxiliaryTask) == nil,
+           !(appleIntelligenceId != nil && defaultModelForAuxiliaryTask == appleIntelligenceId)
         {
             print("[*] reset defaultModelForAuxiliaryTask due to not found")
             defaultModelForAuxiliaryTask = ""
@@ -144,7 +157,8 @@ class ModelManager: NSObject {
         if !defaultModelForAuxiliaryVisualTask.isEmpty {
             let localModelSatisfied = localModel(identifier: defaultModelForAuxiliaryVisualTask)?.capabilities.contains(.visual) ?? false
             let cloudModelSatisfied = cloudModel(identifier: defaultModelForAuxiliaryVisualTask)?.capabilities.contains(.visual) ?? false
-            if !localModelSatisfied, !cloudModelSatisfied {
+            let appleIntelligenceSatisfied = (appleIntelligenceId != nil && defaultModelForAuxiliaryVisualTask == appleIntelligenceId)
+            if !localModelSatisfied, !cloudModelSatisfied, !appleIntelligenceSatisfied {
                 print("[*] reset defaultModelForAuxiliaryVisualTask due to not found")
                 defaultModelForAuxiliaryVisualTask = ""
             }
@@ -153,6 +167,11 @@ class ModelManager: NSObject {
 
     func modelName(identifier: ModelIdentifier?) -> String {
         guard let identifier else { return "-" }
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+            return AppleIntelligenceModel.shared.modelDisplayName
+        }
+        #endif
         return nil
             ?? cloudModel(identifier: identifier)?.modelFullName
             ?? localModel(identifier: identifier)?.model_identifier
@@ -160,6 +179,12 @@ class ModelManager: NSObject {
     }
 
     func modelCapabilities(identifier: ModelIdentifier) -> Set<ModelCapabilities> {
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+            // no endpoint
+            return [.tool]
+        }
+        #endif
         if let cloudModel = cloudModel(identifier: identifier) {
             return cloudModel.capabilities
         }
@@ -170,6 +195,13 @@ class ModelManager: NSObject {
     }
 
     func modelContextLength(identifier: ModelIdentifier) -> Int {
+
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+            // Apple Intelligence: context length is not public, use a safe default
+            return 8192
+        }
+        #endif
         if let cloudModel = cloudModel(identifier: identifier) {
             return cloudModel.context.rawValue
         }
