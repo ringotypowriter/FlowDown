@@ -96,7 +96,7 @@ extension RewriteAction {
         ]
 
         Indicator.progress(
-            title: String(localized: "Rewriting Message..."),
+            title: String(localized: "Rewriting Message"),
             controller: controller
         ) { completionHandler in
             Task.detached {
