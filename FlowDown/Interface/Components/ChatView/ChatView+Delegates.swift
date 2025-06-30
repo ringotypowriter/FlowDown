@@ -159,9 +159,9 @@ extension ChatView: RichEditorView.Delegate {
     func onRichEditorRequestCurrentModelName() -> String? {
         guard let modelIdentifier = modelIdentifier() else { return nil }
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macCatalyst 26.0, *), modelIdentifier == AppleIntelligenceModel.shared.modelIdentifier {
-            return AppleIntelligenceModel.shared.modelDisplayName
-        }
+            if #available(iOS 26.0, macCatalyst 26.0, *), modelIdentifier == AppleIntelligenceModel.shared.modelIdentifier {
+                return AppleIntelligenceModel.shared.modelDisplayName
+            }
         #endif
         if let localModel = ModelManager.shared.localModel(identifier: modelIdentifier) {
             switch editorModelNameStyle {
@@ -206,9 +206,9 @@ extension ChatView: RichEditorView.Delegate {
         let isAppleIntelligence: Bool = {
             guard let id = modelIdentifier(), !id.isEmpty else { return false }
             #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *) {
-                return id == AppleIntelligenceModel.shared.modelIdentifier
-            }
+                if #available(iOS 26.0, macCatalyst 26.0, *) {
+                    return id == AppleIntelligenceModel.shared.modelIdentifier
+                }
             #endif
             return false
         }()

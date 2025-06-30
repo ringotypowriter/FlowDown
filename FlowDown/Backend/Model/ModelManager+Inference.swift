@@ -14,7 +14,7 @@ import MLXLMCommon
 import MLXVLM
 import Storage
 #if canImport(FoundationModels)
-import FoundationModels
+    import FoundationModels
 #endif
 
 extension ModelManager {
@@ -221,30 +221,30 @@ extension ModelManager {
 
     func testAppleIntelligenceModel(completion: @escaping (Result<Void, Error>) -> Void) {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macCatalyst 26.0, *) {
-            guard AppleIntelligenceModel.shared.isAvailable else {
-                completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence not available on this device."])));
-                return
-            }
-            Task {
-                do {
-                    let session = LanguageModelSession()
-                    let prompt = "Reply YES to every query. YES or NO"
-                    let response = try await session.respond(to: prompt)
-                    if !response.content.isEmpty {
-                        completion(.success(()))
-                    } else {
-                        completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "No response from Apple Intelligence."])));
-                    }
-                } catch {
-                    completion(.failure(error))
+            if #available(iOS 26.0, macCatalyst 26.0, *) {
+                guard AppleIntelligenceModel.shared.isAvailable else {
+                    completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence not available on this device."])))
+                    return
                 }
+                Task {
+                    do {
+                        let session = LanguageModelSession()
+                        let prompt = "Reply YES to every query. YES or NO"
+                        let response = try await session.respond(to: prompt)
+                        if !response.content.isEmpty {
+                            completion(.success(()))
+                        } else {
+                            completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "No response from Apple Intelligence."])))
+                        }
+                    } catch {
+                        completion(.failure(error))
+                    }
+                }
+            } else {
+                completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])))
             }
-        } else {
-            completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])));
-        }
         #else
-        completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "FoundationModels not available"])));
+            completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "FoundationModels not available"])))
         #endif
     }
 }
@@ -253,11 +253,10 @@ extension ModelManager {
     static let indicatorText = " ●"
 
     private func chatService(for identifier: ModelIdentifier, additionalBodyField: [String: Any]) throws -> any ChatService {
-
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
-            return AppleIntelligenceChatClient()
-        }
+            if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+                return AppleIntelligenceChatClient()
+            }
         #endif
         if let model = cloudModel(identifier: identifier) {
             return RemoteChatClient(
