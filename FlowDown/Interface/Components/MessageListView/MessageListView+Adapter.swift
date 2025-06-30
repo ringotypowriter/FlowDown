@@ -373,6 +373,14 @@ extension MessageListView: ListViewAdapter {
                     )
                 },
             ].compactMap(\.self)),
+            UIMenu(title: String(localized: "Rewrite"), image: .init(systemName: "arrow.uturn.left"), options: [], children: [
+                RewriteAction.allCases.map { action in
+                    UIAction(title: action.title, image: action.icon) { [weak self] _ in
+                        guard let self else { return }
+                        action.send(to: session, bindView: self)
+                    }
+                },
+            ].flatMap(\.self).compactMap(\.self)),
             UIMenu(title: String(localized: "More"), image: .init(systemName: "ellipsis.circle"), children: [
                 UIMenu(title: String(localized: "More"), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Copy as Image"), image: .init(systemName: "text.below.photo")) { _ in

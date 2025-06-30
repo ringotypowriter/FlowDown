@@ -128,6 +128,16 @@
         }
       }
     },
+    "Add More Details" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加细节"
+          }
+        }
+      }
+    },
     "Add to Calendar" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1436,6 +1446,16 @@
         }
       }
     },
+    "Draw Table" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绘制表格"
+          }
+        }
+      }
+    },
     "Duck Duck Go Search" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2692,6 +2712,16 @@
         }
       }
     },
+    "List Key Points" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列举要点"
+          }
+        }
+      }
+    },
     "Local Area Network" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2820,6 +2850,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "魔幻 @ 2.0"
+          }
+        }
+      }
+    },
+    "Make Friendly" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更加友好"
+          }
+        }
+      }
+    },
+    "Make Professional" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更加专业"
           }
         }
       }
@@ -3610,6 +3660,16 @@
         }
       }
     },
+    "Please add more details and expand on the following content to provide additional information and context." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请添加更多细节并扩展以下内容，提供额外的信息和上下文。"
+          }
+        }
+      }
+    },
     "Please add some models to use. You can choose to download models, or use cloud model from well known service providers." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3640,12 +3700,32 @@
         }
       }
     },
+    "Please list the key points from the following content in bullet points or a numbered list for clarity." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用项目符号或编号列表清晰列出以下内容的关键点。"
+          }
+        }
+      }
+    },
     "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请注意，如果你使用云端的模型来处理你的请求，这些数据会被上传。"
+          }
+        }
+      }
+    },
+    "Please organize the following content into a table, clearly labeling each column and row for easy reference." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请将以下内容整理成表格，明确每列和每行的内容以便参考。"
           }
         }
       }
@@ -3660,12 +3740,45 @@
         }
       }
     },
+    "Please rewrite the following content in a more friendly and approachable tone, making it easy to understand and engaging." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用更友好和亲切的语气重写以下内容，使其易于理解且引人入胜。"
+          }
+        }
+      }
+    },
+    "Please rewrite the following content in a more professional tone, using formal language and appropriate terminology." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用更专业的语气重写以下内容，使用正式语言和适当的术语。"
+          }
+        }
+      }
+    },
     "Please select a model to generate chat template." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请先选择一个模型，然后再次尝试生成对话模版。"
+          }
+        }
+      }
+    },
+    "Please select a model to rewrite this message." : {
+
+    },
+    "Please summarize the following content in a concise and clear manner." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用简洁明了的方式总结以下内容。"
           }
         }
       }
@@ -3957,6 +4070,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重试"
+          }
+        }
+      }
+    },
+    "Rewrite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "改写"
           }
         }
       }
@@ -4310,6 +4433,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "街道：%@"
+          }
+        }
+      }
+    },
+    "Summarize" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "总结"
           }
         }
       }
