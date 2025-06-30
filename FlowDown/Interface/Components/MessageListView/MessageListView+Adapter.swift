@@ -379,6 +379,7 @@ extension MessageListView: ListViewAdapter {
                                         }
                                     editor.refill(withText: message.document, attachments: attachments)
                                     self.session.deleteCurrentAndAfter(messageIdentifier: messageIdentifier)
+                                    DispatchQueue.main.async { editor.focus() }
                                 }
                             }
                         }
