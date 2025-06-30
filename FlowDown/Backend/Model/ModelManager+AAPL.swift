@@ -5,11 +5,11 @@
 //  Created by Alan Ye on 6/30/25.
 //
 
-import ChatClientKit
 import Foundation
 import UIKit
+import ChatClientKit
 #if canImport(FoundationModels)
-    import FoundationModels
+import FoundationModels
 #endif
 
 // MARK: - Apple Intelligence Model
@@ -22,58 +22,54 @@ final class AppleIntelligenceModel {
     var isAvailable: Bool {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
             #if canImport(FoundationModels)
-                let model = SystemLanguageModel.default
-                switch model.availability {
-                case .available:
-                    return true
-                default:
-                    return false
-                }
-            #else
+            let model = SystemLanguageModel.default
+            switch model.availability {
+            case .available:
+                return true
+            default:
                 return false
+            }
+            #else
+            return false
             #endif
         } else {
             return false
         }
     }
-
     var availabilityStatus: String {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
             #if canImport(FoundationModels)
-                let model = SystemLanguageModel.default
-                switch model.availability {
-                case .available:
-                    return "Available"
-                case .unavailable(.deviceNotEligible):
-                    return "Device Not Eligible"
-                case .unavailable(.appleIntelligenceNotEnabled):
-                    return "Apple Intelligence Not Enabled"
-                case .unavailable(.modelNotReady):
-                    return "Model Not Ready"
-                case let .unavailable(other):
-                    return "Unavailable: \(other)"
-                }
+            let model = SystemLanguageModel.default
+            switch model.availability {
+            case .available:
+                return "Available"
+            case .unavailable(.deviceNotEligible):
+                return "Device Not Eligible"
+            case .unavailable(.appleIntelligenceNotEnabled):
+                return "Apple Intelligence Not Enabled"
+            case .unavailable(.modelNotReady):
+                return "Model Not Ready"
+            case .unavailable(let other):
+                return "Unavailable: \(other)"
+            }
             #else
-                return "Not Supported"
+            return "Not Supported"
             #endif
         } else {
             return "Requires iOS 26+"
         }
     }
-
     var modelDisplayName: String {
-        "Apple Intelligence (On-Device)"
+        return "Apple Intelligence"
     }
-
     var modelIdentifier: String {
-        "apple.intelligence.ondevice"
+        return "apple.intelligence.ondevice"
     }
-
     var modelInfo: [String: String] {
-        [
+        return [
             "identifier": modelIdentifier,
             "displayName": modelDisplayName,
-            "status": availabilityStatus,
+            "status": availabilityStatus
         ]
     }
 }
@@ -82,50 +78,49 @@ final class AppleIntelligenceModel {
 
 class AppleIntelligenceChatClient: ChatService {
     // MARK: - ChatService Protocol
-
     var collectedErrors: String?
 
     func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
         #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *) {
-                // instructions (first .system message)
-                let instructions = body.messages.compactMap { message -> String? in
-                    if case let .system(content, _) = message {
-                        return extractText(content)
-                    }
-                    return nil
-                }.first ?? ""
-                // prompt (last .user message)
-                let prompt = body.messages.reversed().compactMap { message -> String? in
-                    if case let .user(content, _) = message {
-                        return extractText(content)
-                    }
-                    return nil
-                }.first ?? ""
-                let session = LanguageModelSession(instructions: instructions)
-                let response = try await session.respond(to: prompt)
-                let message = ChatChoice(
-                    finishReason: "stop",
-                    message: ChoiceMessage(
-                        content: response.content,
-                        reasoning: nil,
-                        reasoningContent: nil,
-                        role: "assistant",
-                        toolCalls: nil
-                    )
+        if #available(iOS 26.0, macCatalyst 26.0, *) {
+            // instructions (first .system message)
+            let instructions = body.messages.compactMap { message -> String? in
+                if case let .system(content, _) = message {
+                    return extractTextFromSystem(content)
+                }
+                return nil
+            }.first ?? ""
+            // prompt (last .user message)
+            let prompt = body.messages.reversed().compactMap { message -> String? in
+                if case let .user(content, _) = message {
+                    return extractTextFromUser(content)
+                }
+                return nil
+            }.first ?? ""
+            let session = LanguageModelSession(instructions: instructions)
+            let response = try await session.respond(to: prompt)
+            let message = ChatChoice(
+                finishReason: "stop",
+                message: ChoiceMessage(
+                    content: response.content,
+                    reasoning: nil,
+                    reasoningContent: nil,
+                    role: "assistant",
+                    toolCalls: nil
                 )
-                return ChatResponseBody(
-                    choices: [message],
-                    created: Int(Date().timeIntervalSince1970),
-                    model: "apple-intelligence",
-                    usage: nil,
-                    systemFingerprint: nil
-                )
-            } else {
-                throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])
-            }
+            )
+            return ChatResponseBody(
+                choices: [message],
+                created: Int(Date().timeIntervalSince1970),
+                model: "apple-intelligence",
+                usage: nil,
+                systemFingerprint: nil
+            )
+        } else {
+            throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])
+        }
         #else
-            throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "FoundationModels not available"])
+        throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "FoundationModels not available"])
         #endif
     }
 
@@ -146,7 +141,7 @@ class AppleIntelligenceChatClient: ChatService {
                             ),
                             finishReason: choice.finishReason,
                             index: nil
-                        ),
+                        )
                     ],
                     created: response.created,
                     id: nil,
@@ -164,18 +159,21 @@ class AppleIntelligenceChatClient: ChatService {
 
 // MARK: - Helpers
 
-private func extractText(_ content: some Any) -> String {
+private func extractTextFromSystem(_ content: ChatRequestBody.Message.MessageContent<String, [String]>) -> String {
     switch content {
-    case let text as String:
+    case let .text(text):
         return text
-    case let parts as [String]:
+    case let .parts(parts):
         return parts.joined(separator: " ")
-    case let parts as [Any]:
-        return parts.compactMap { ($0 as? String) }.joined(separator: " ")
-    default:
-        if let value = content as? CustomStringConvertible {
-            return value.description
-        }
-        return ""
+    }
+}
+private func extractTextFromUser(_ content: ChatRequestBody.Message.MessageContent<String, [ChatRequestBody.Message.ContentPart]>) -> String {
+    switch content {
+    case let .text(text):
+        return text
+    case let .parts(parts):
+        return parts.compactMap { part in
+            if case let .text(text) = part { return text } else { return nil }
+        }.joined(separator: " ")
     }
 }
