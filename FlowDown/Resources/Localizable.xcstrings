@@ -5208,6 +5208,16 @@
         }
       }
     },
+    "Toggle Sidebar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换侧边栏"
+          }
+        }
+      }
+    },
     "Tool" : {
       "localizations" : {
         "zh-Hans" : {
