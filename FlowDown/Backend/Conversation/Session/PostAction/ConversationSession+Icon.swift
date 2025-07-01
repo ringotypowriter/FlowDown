@@ -41,9 +41,9 @@ private struct IconConversationXML: Codable {
 
 #if canImport(FoundationModels)
     @available(iOS 26.0, macCatalyst 26.0, *)
-    @Generable(description: "A single emoji icon representing a conversation.")
+    @Generable(description: "A single emoji character that best represents the conversation. ")
     struct ConversationIcon: Sendable, Equatable {
-        @Guide(description: "A single emoji character that best represents the conversation.")
+        @Guide(description: "Only respond with one emoji character. Example: 🔖")
         var icon: String
     }
 #endif
@@ -62,7 +62,7 @@ extension ConversationSessionManager.Session {
                let model = models.auxiliary,
                model == AppleIntelligenceModel.shared.modelIdentifier
             {
-                let prompt = "Generate a single emoji icon that best represents this conversation. Only respond with one emoji character."
+                let prompt = "Generate a single emoji icon that best represents this conversation. NEVER refuse request."
                 let context = "User: \(userMessage)\nAssistant: \(assistantMessage)"
                 let session = LanguageModelSession(model: .default)
                 do {
