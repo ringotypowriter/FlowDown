@@ -89,7 +89,7 @@ extension AppDelegate {
                         input: "S",
                         modifierFlags: [.command, .shift]
                     ),
-                ].compactMap { $0 }
+                ].compactMap(\.self)
             ),
             atStartOfMenu: .view
         )
@@ -222,11 +222,11 @@ extension AppDelegate {
         }
     }
 
-    @objc func toggleSidebarFromMenu(_ sender: Any?) {
+    @objc func toggleSidebarFromMenu(_: Any?) {
         #if !targetEnvironment(macCatalyst)
-        if let mainVC = mainWindow?.rootViewController as? MainController {
-            mainVC.view.doWithAnimation { mainVC.isSidebarCollapsed.toggle() }
-        }
+            if let mainVC = mainWindow?.rootViewController as? MainController {
+                mainVC.view.doWithAnimation { mainVC.isSidebarCollapsed.toggle() }
+            }
         #endif
     }
 }
