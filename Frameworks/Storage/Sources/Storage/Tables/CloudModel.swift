@@ -73,6 +73,20 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.comment = comment
     }
 
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(String.self, forKey: .id) ?? UUID().uuidString
+        model_identifier = try container.decodeIfPresent(String.self, forKey: .model_identifier) ?? ""
+        model_list_endpoint = try container.decodeIfPresent(String.self, forKey: .model_list_endpoint) ?? ""
+        creation = try container.decodeIfPresent(Date.self, forKey: .creation) ?? Date()
+        endpoint = try container.decodeIfPresent(String.self, forKey: .endpoint) ?? ""
+        token = try container.decodeIfPresent(String.self, forKey: .token) ?? ""
+        headers = try container.decodeIfPresent([String: String].self, forKey: .headers) ?? [:]
+        capabilities = try container.decodeIfPresent(Set<ModelCapabilities>.self, forKey: .capabilities) ?? []
+        context = try container.decodeIfPresent(ModelContextLength.self, forKey: .context) ?? .short_8k
+        comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
+    }
+
     public static func == (lhs: CloudModel, rhs: CloudModel) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
