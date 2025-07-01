@@ -83,7 +83,13 @@ extension AppDelegate {
                         input: UIKeyCommand.inputDownArrow,
                         modifierFlags: [.command, .alternate]
                     ),
-                ]
+                    UIKeyCommand(
+                        title: String(localized: "Toggle Sidebar"),
+                        action: #selector(toggleSidebarFromMenu(_:)),
+                        input: "S",
+                        modifierFlags: [.command, .shift]
+                    ),
+                ].compactMap { $0 }
             ),
             atStartOfMenu: .view
         )
@@ -214,5 +220,13 @@ extension AppDelegate {
                 mainVC.chatView.focusEditor()
             }
         }
+    }
+
+    @objc func toggleSidebarFromMenu(_ sender: Any?) {
+        #if !targetEnvironment(macCatalyst)
+        if let mainVC = mainWindow?.rootViewController as? MainController {
+            mainVC.view.doWithAnimation { mainVC.isSidebarCollapsed.toggle() }
+        }
+        #endif
     }
 }
