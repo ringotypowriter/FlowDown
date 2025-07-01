@@ -36,10 +36,10 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
             BindColumnConstraint(header, isNotNull: true, defaultTo: "")
             BindColumnConstraint(timeout, isNotNull: true, defaultTo: 60)
             BindColumnConstraint(isEnabled, isNotNull: true, defaultTo: true)
-            BindColumnConstraint(toolsEnabled, isNotNull: true, defaultTo: MCPClient.EnableCodable())
-            BindColumnConstraint(resourcesEnabled, isNotNull: true, defaultTo: MCPClient.EnableCodable())
+            BindColumnConstraint(toolsEnabled, isNotNull: true, defaultTo: EnableCodable())
+            BindColumnConstraint(resourcesEnabled, isNotNull: true, defaultTo: EnableCodable())
             BindColumnConstraint(templateEnabled, isNotNull: true, defaultTo:
-                MCPClient.EnableCodable())
+                EnableCodable())
         }
 
         case id
@@ -82,32 +82,12 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(name)
-        hasher.combine(description)
-        hasher.combine(type)
-        hasher.combine(endpoint)
-        hasher.combine(header)
-        hasher.combine(timeout)
-        hasher.combine(isEnabled)
-        hasher.combine(toolsEnabled)
-        hasher.combine(resourcesEnabled)
-        hasher.combine(templateEnabled)
     }
 }
 
 extension MCPClient: Equatable {
     public static func == (lhs: MCPClient, rhs: MCPClient) -> Bool {
-        lhs.id == rhs.id &&
-        lhs.name == rhs.name &&
-        lhs.description == rhs.description &&
-        lhs.type == rhs.type &&
-        lhs.endpoint == rhs.endpoint &&
-        lhs.header == rhs.header &&
-        lhs.timeout == rhs.timeout &&
-        lhs.isEnabled == rhs.isEnabled &&
-        lhs.toolsEnabled == rhs.toolsEnabled &&
-        lhs.resourcesEnabled == rhs.resourcesEnabled &&
-        lhs.templateEnabled == rhs.templateEnabled
+        lhs.id == rhs.id
     }
 }
 
@@ -115,15 +95,28 @@ extension MCPClient: Hashable {}
 
 // ClientType
 public extension MCPClient {
-    enum ClientType: String, Codable {
+    enum ClientType: String, Codable, ColumnCodable {
         case http
         case sse
+        
+        public init?(with value: WCDBSwift.Value) {
+            let rawValue = value.stringValue
+            self.init(rawValue: rawValue)
+        }
+        
+        public func archivedValue() -> WCDBSwift.Value {
+            return .init(self.rawValue)
+        }
+        
+        public static var columnType: WCDBSwift.ColumnType {
+            .text
+        }
     }
 }
 
 // Tools Enable
 public extension MCPClient {
-    struct EnableCodable: Codable, ColumnCodable, Hashable {
+    struct EnableCodable: Codable, ColumnCodable {
         public init?(with value: WCDBSwift.Value) {
             let data = value.dataValue
             guard let object = try? JSONDecoder().decode(EnableCodable.self, from: data) else {
@@ -143,7 +136,9 @@ public extension MCPClient {
 
         public var value: [String: Bool] = [:]
 
-        public init() {}
+        public init() {
+            self.value = [:]
+        }
 
         public init(value: [String: Bool]) {
             self.value = value
