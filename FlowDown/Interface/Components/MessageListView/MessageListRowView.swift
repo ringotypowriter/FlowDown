@@ -23,27 +23,22 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
         super.init(frame: frame)
         clipsToBounds = false // tool tip will extend out
         addSubview(contentView)
-
         contentView.isUserInteractionEnabled = true
 
-        #if targetEnvironment(macCatalyst)
-            contentView.addInteraction(UIContextMenuInteraction(delegate: self))
-        #endif
-
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-        contentView.addGestureRecognizer(longPress)
+        contentView.addInteraction(UIContextMenuInteraction(delegate: self))
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
-        fatalError()
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func layoutSubviews() {
         themeDidUpdate()
         super.layoutSubviews()
+
         let insets = MessageListView.listRowInsets
-        contentView.frame = .init(
+        contentView.frame = CGRect(
             x: insets.left,
             y: 0,
             width: bounds.width - insets.horizontal,
@@ -55,18 +50,18 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
         handleContextMenu = nil
 
-        var bfs: [UIView] = subviews
-        while let firstView = bfs.first {
-            bfs.removeFirst()
-            bfs.append(contentsOf: firstView.subviews)
-            if let ltxLabel = firstView as? LTXLabel {
-                ltxLabel.clearSelection()
-            }
+        // clear any LTXLabel selection
+        var queue = subviews
+        while let v = queue.first {
+            queue.removeFirst()
+            queue.append(contentsOf: v.subviews)
+            (v as? LTXLabel)?.clearSelection()
         }
     }
+
+    // MARK: - UIContextMenuInteractionDelegate
 
     func contextMenuInteraction(
         _: UIContextMenuInteraction,
@@ -74,10 +69,5 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
     ) -> UIContextMenuConfiguration? {
         handleContextMenu?(location)
         return nil
-    }
-
-    @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        guard gesture.state == .began else { return }
-        handleContextMenu?(gesture.location(in: contentView))
     }
 }
