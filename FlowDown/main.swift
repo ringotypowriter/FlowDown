@@ -51,6 +51,7 @@ let logger = Logger(subsystem: "FlowDown", category: "general")
 _ = ModelManager.shared
 _ = ModelToolsManager.shared
 _ = ConversationManager.shared
+_ = MCPService.shared
 
 DispatchQueue.global().async {
     let clean = FileManager.default
