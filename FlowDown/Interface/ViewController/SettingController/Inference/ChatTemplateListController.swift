@@ -218,8 +218,14 @@ extension ChatTemplateListController {
                     ChatTemplateManager.shared.remove(for: identifier)
                 },
             ])
-            present(menu: menu, anchorPoint: location)
-            return nil
+            #if targetEnvironment(macCatalyst)
+                present(menu: menu, anchorPoint: location)
+                return nil
+            #else
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                    menu
+                }
+            #endif
         }
     }
 }

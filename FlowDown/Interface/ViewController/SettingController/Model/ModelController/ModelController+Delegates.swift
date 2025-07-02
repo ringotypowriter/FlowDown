@@ -80,9 +80,15 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
                 ModelManager.shared.removeCloudModel(identifier: itemIdentifier.identifier)
             }
         })
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.present(menu: .init(children: actions))
-        return nil
+        #if targetEnvironment(macCatalyst)
+            let cell = tableView.cellForRow(at: indexPath)
+            cell?.present(menu: .init(children: actions))
+            return nil
+        #else
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                menu
+            }
+        #endif
     }
 }
 
