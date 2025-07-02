@@ -44,7 +44,9 @@ class MainController: UIViewController {
     var sidebarWidth: CGFloat = 256 {
         didSet {
             guard oldValue != sidebarWidth else { return }
-            view.doWithAnimation { self.updateViewConstraints() }
+            view.doWithAnimation(duration: 0.2) {
+                self.updateViewConstraints()
+            }
         }
     }
 
