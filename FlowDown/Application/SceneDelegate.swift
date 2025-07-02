@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 titlebar.toolbar = nil
             }
         #endif
-        windowScene.sizeRestrictions?.minimumSize = CGSize(width: 1100, height: 650)
+        windowScene.sizeRestrictions?.minimumSize = CGSize(width: 650, height: 650)
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = mainController
         self.window = window
