@@ -86,7 +86,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
             return nil
         #else
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                menu
+                .init(children: actions)
             }
         #endif
     }
