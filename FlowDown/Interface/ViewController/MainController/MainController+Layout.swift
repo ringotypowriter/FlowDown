@@ -27,16 +27,32 @@ extension MainController {
     }
 
     func setupLayoutAsCatalyst() {
-        sidebarLayoutView.snp.remakeConstraints { make in
-            make.left.bottom.top.equalTo(view.safeAreaLayoutGuide).inset(16)
-            make.width.equalTo(sidebarWidth)
+        if isSidebarCollapsed {
+            sidebar.alpha = 0
+            chatView.title.icon.alpha = 0
+            sidebarLayoutView.snp.remakeConstraints { make in
+                make.left.bottom.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+                make.width.equalTo(sidebarWidth)
+            }
+            contentView.layer.cornerRadius = 8
+            contentView.snp.remakeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            createVisibleShadow()
+        } else {
+            sidebar.alpha = 1
+            chatView.title.icon.alpha = 1
+            sidebarLayoutView.snp.remakeConstraints { make in
+                make.left.bottom.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+                make.width.equalTo(sidebarWidth)
+            }
+            contentView.layer.cornerRadius = 8
+            contentView.snp.remakeConstraints { make in
+                make.left.equalTo(sidebarLayoutView.snp.right).offset(16)
+                make.top.bottom.right.equalToSuperview().inset(16)
+            }
+            createVisibleShadow()
         }
-        contentView.layer.cornerRadius = 8
-        contentView.snp.remakeConstraints { make in
-            make.left.equalTo(sidebarLayoutView.snp.right).offset(16)
-            make.top.bottom.right.equalToSuperview().inset(16)
-        }
-        createVisibleShadow()
     }
 
     func setupLayoutAsCompactStyle() {

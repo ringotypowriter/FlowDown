@@ -31,6 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = mainController
         self.window = window
         window.makeKeyAndVisible()
+
         for urlContext in connectionOptions.urlContexts {
             handleIncomingURL(urlContext.url)
         }

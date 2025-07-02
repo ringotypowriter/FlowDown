@@ -84,23 +84,7 @@ final class MessageListView: UIView {
         listView.showsVerticalScrollIndicator = false
         listView.showsHorizontalScrollIndicator = false
         listView.layoutSubviewsCallback = { [unowned self] in
-            if isFirstLoad {
-                let snapshot = dataSource.snapshot()
-                if snapshot.isEmpty {
-                    // No messages are retrieved from the database, it means the list is empty,
-                    // and no further action is required.
-                    isFirstLoad = false
-                    return
-                }
-                if listView.contentSize.height > 0 {
-                    listView.setContentOffset(
-                        .init(x: 0, y: listView.maximumContentOffset.y),
-                        animated: false
-                    )
-                    listView.setNeedsLayout()
-                    isFirstLoad = false
-                }
-            }
+            moveToEndIfPossibleOnLoad()
         }
         addSubview(listView)
         listView.snp.makeConstraints { make in
@@ -138,6 +122,26 @@ final class MessageListView: UIView {
         if listView.contentOffset.y == listView.maximumContentOffset.y {
             isAutoScrollingToBottom = true
         }
+    }
+
+    private func moveToEndIfPossibleOnLoad() {
+        guard isFirstLoad else { return }
+        let snapshot = dataSource.snapshot()
+        guard !snapshot.isEmpty else {
+            // No messages are retrieved from the database, it means the list is empty,
+            // and no further action is required.
+            isFirstLoad = false
+            return
+        }
+        guard listView.contentSize.height > 0 else {
+            return
+        }
+        listView.setContentOffset(
+            .init(x: 0, y: listView.maximumContentOffset.y),
+            animated: false
+        )
+        listView.setNeedsLayout()
+        isFirstLoad = false
     }
 
     func loading(with message: String = .init()) {
@@ -248,7 +252,12 @@ final class MessageListView: UIView {
         dataSource.applySnapshot(using: entries, animatingDifferences: animated)
     }
 
+    private let updateLock = NSLock()
+
     func updateFromUpstreamPublisher(_ messages: [Message], _ scrolling: Bool) {
+        updateLock.lock()
+        defer { updateLock.unlock() }
+
         let entries = entries(from: messages)
 
         if !Thread.isMainThread {

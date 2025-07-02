@@ -10,7 +10,7 @@ import SnapKit
 import UIKit
 
 class SidebarDraggerView: UIView {
-    let allowedMinimalValue = 128
+    let allowedMinimalValue = 200
     let initialValue = 256
     let allowedMaximalValue = 512
 

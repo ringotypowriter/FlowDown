@@ -11,6 +11,12 @@ import RichEditor
 import Storage
 import UIKit
 
+#if targetEnvironment(macCatalyst)
+    private let defaultSidebarCollapseValue: Bool = false
+#else
+    private let defaultSidebarCollapseValue: Bool = true
+#endif
+
 class MainController: UIViewController {
     let textureBackground = UIImageView().with {
         $0.image = .backgroundTexture
@@ -50,12 +56,22 @@ class MainController: UIViewController {
         }
     }
 
-    var isSidebarCollapsed = true {
+    var isSidebarCollapsed = defaultSidebarCollapseValue {
         didSet {
             guard oldValue != isSidebarCollapsed else { return }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             updateViewConstraints()
             contentView.contentView.isUserInteractionEnabled = isSidebarCollapsed || allowSidebarPersistence
+            #if !targetEnvironment(macCatalyst)
+                if allowSidebarPersistence {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        self.sidebarDragger.showDragger()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            self.sidebarDragger.hideDragger()
+                        }
+                    }
+                }
+            #endif
         }
     }
 
@@ -117,6 +133,10 @@ class MainController: UIViewController {
         setupViews()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
@@ -128,7 +148,7 @@ class MainController: UIViewController {
         #if targetEnvironment(macCatalyst)
             setupLayoutAsCatalyst()
         #else
-            if view.frame.width < 500 /* || view.frame.height < 500 */ {
+            if UIDevice.current.userInterfaceIdiom == .phone || view.frame.width < 500 {
                 setupLayoutAsCompactStyle()
             } else {
                 setupLayoutAsRelaxedStyle()
@@ -167,10 +187,7 @@ class MainController: UIViewController {
         #if targetEnvironment(macCatalyst)
             var shouldZoomWindow = false
             defer {
-                if shouldZoomWindow {
-                    print("[*] zooming window...")
-                    performZoom()
-                }
+                if shouldZoomWindow { performZoom() }
             }
             if isTouchingHandlerBarArea(touches) {
                 if Date().timeIntervalSince(lastTouchBegin) < 0.25 {
@@ -235,24 +252,6 @@ class MainController: UIViewController {
         #endif
     }
 
-    #if targetEnvironment(macCatalyst)
-        func performZoom() {
-            guard let appClass = NSClassFromString("NSApplication") as? NSObject.Type,
-                  let sharedApp = appClass.value(forKey: "sharedApplication") as? NSObject,
-                  sharedApp.responds(to: NSSelectorFromString("windows")),
-                  let windowsArray = sharedApp.value(forKey: "windows") as? [NSObject]
-            else {
-                return
-            }
-
-            for window in windowsArray {
-                if window.responds(to: NSSelectorFromString("performZoom:")) {
-                    window.perform(NSSelectorFromString("performZoom:"), with: nil)
-                }
-            }
-        }
-    #endif
-
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
         defer { resetGestures() }
@@ -294,7 +293,7 @@ class MainController: UIViewController {
         sidebar.settingButton.buttonAction()
     }
 
-    private func sendMessageToCurrentConversation(_ message: String) {
+    func sendMessageToCurrentConversation(_ message: String) {
         print("[*] attempting to send message: \(message)")
 
         guard let currentConversationID = chatView.conversationIdentifier else {
@@ -368,66 +367,6 @@ extension MainController: NewChatButton.Delegate {
             #if targetEnvironment(macCatalyst)
                 self?.chatView.focusEditor()
             #endif
-        }
-    }
-}
-
-#if targetEnvironment(macCatalyst)
-    fileprivate extension UIResponder {
-        func dispatchTouchAsWindowMovement() {
-            guard let appType = NSClassFromString("NSApplication") as? NSObject.Type,
-                  let nsApp = appType.value(forKey: "sharedApplication") as? NSObject,
-                  let currentEvent = nsApp.value(forKey: "currentEvent") as? NSObject,
-                  let nsWindow = currentEvent.value(forKey: "window") as? NSObject
-            else { return }
-            nsWindow.perform(
-                NSSelectorFromString("performWindowDragWithEvent:"),
-                with: currentEvent
-            )
-        }
-    }
-#endif
-
-extension MainController {
-    func queueBootMessage(text: String) {
-        messages.append(text)
-        NSObject.cancelPreviousPerformRequests(
-            withTarget: self,
-            selector: #selector(presentNextBootMessage),
-            object: nil
-        )
-        perform(#selector(presentNextBootMessage), with: nil, afterDelay: 0.5)
-    }
-
-    @objc private func presentNextBootMessage() {
-        let text = messages.joined(separator: "\n")
-        messages.removeAll()
-
-        let alert = AlertViewController(
-            title: String(localized: "External Resources"),
-            message: text
-        ) { context in
-            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                context.dispose {}
-            }
-        }
-        var viewController: UIViewController = self
-        while let child = viewController.presentedViewController {
-            viewController = child
-        }
-        viewController.present(alert, animated: true)
-    }
-
-    func queueNewConversation(text: String) {
-        DispatchQueue.main.async {
-            let conversation = ConversationManager.shared.createNewConversation()
-            print("[+] created new conversation with ID: \(conversation.id)")
-            self.load(conversation.id)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                if self.chatView.conversationIdentifier == conversation.id {
-                    self.sendMessageToCurrentConversation(text)
-                }
-            }
         }
     }
 }
