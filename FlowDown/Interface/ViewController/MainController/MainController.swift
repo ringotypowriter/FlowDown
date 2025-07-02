@@ -35,17 +35,29 @@ class MainController: UIViewController {
     let contentShadowView = UIView()
     let gestureLayoutGuide = UILayoutGuide()
 
-    let chatView = ChatView()
-    let sidebar = Sidebar()
+    var allowSidebarPersistence: Bool {
+        guard UIDevice.current.userInterfaceIdiom == .pad else { return false }
+        return UIDevice.current.orientation.isLandscape || view.bounds.width > 800
+    }
+
+    var sidebarWidth: CGFloat = 256 {
+        didSet {
+            guard oldValue != sidebarWidth else { return }
+            updateViewConstraints()
+        }
+    }
 
     var isSidebarCollapsed = true {
         didSet {
             guard oldValue != isSidebarCollapsed else { return }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
             updateViewConstraints()
-            contentView.contentView.isUserInteractionEnabled = isSidebarCollapsed
+            contentView.contentView.isUserInteractionEnabled = isSidebarCollapsed || allowSidebarPersistence
         }
     }
+
+    let chatView = ChatView()
+    let sidebar = Sidebar()
 
     var messages: [String] = []
 
@@ -96,14 +108,6 @@ class MainController: UIViewController {
         contentView.backgroundColor = .background
         view.addSubview(contentView)
 
-        contentShadowView.layer.shadowColor = UIColor.black.cgColor
-        contentShadowView.layer.shadowOffset = .zero
-        contentShadowView.layer.shadowRadius = 8
-        #if targetEnvironment(macCatalyst)
-            contentShadowView.layer.shadowOpacity = 0.025
-        #else
-            contentShadowView.layer.shadowOpacity = 0.1
-        #endif
         contentShadowView.layer.cornerRadius = contentView.layer.cornerRadius
         contentShadowView.layer.cornerCurve = contentView.layer.cornerCurve
 
@@ -139,18 +143,15 @@ class MainController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
+        contentShadowView.layer.shadowPath = UIBezierPath(
+            roundedRect: contentShadowView.bounds,
+            cornerRadius: contentShadowView.layer.cornerRadius
+        ).cgPath
+
         if previousFrame != view.frame {
             previousFrame = view.frame
             updateViewConstraints()
-            view.setNeedsLayout()
-            return
         }
-
-        contentShadowView.layer.shadowPath =
-            UIBezierPath(
-                roundedRect: contentShadowView.bounds,
-                cornerRadius: contentShadowView.layer.cornerRadius
-            ).cgPath
     }
 
     var firstTouchLocation: CGPoint? = nil
@@ -259,9 +260,12 @@ class MainController: UIViewController {
         defer { resetGestures() }
         guard presentedViewController == nil else { return }
         guard let touch = touches.first else { return }
-        if !isSidebarCollapsed, !touchesMoved, contentView.frame.contains(touch.location(in: view)) {
+        if !isSidebarCollapsed,
+           !touchesMoved,
+           contentView.frame.contains(touch.location(in: view)),
+           !allowSidebarPersistence
+        {
             view.doWithAnimation { self.isSidebarCollapsed = true }
-            return
         }
     }
 
@@ -272,7 +276,12 @@ class MainController: UIViewController {
     }
 
     @objc private func contentViewButtonTapped() {
-        view.doWithAnimation { self.isSidebarCollapsed.toggle() }
+        #if targetEnvironment(macCatalyst)
+            return
+        #else
+            guard !allowSidebarPersistence else { return }
+            view.doWithAnimation { self.isSidebarCollapsed.toggle() }
+        #endif
     }
 
     @objc func requestNewChat() {
