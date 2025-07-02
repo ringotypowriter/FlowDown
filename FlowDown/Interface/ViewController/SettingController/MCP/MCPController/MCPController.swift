@@ -113,7 +113,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
             style: .destructive,
             title: String(localized: "Delete")
         ) { _, _, completion in
-            MCPService.shared.remove(identifier: clientId)
+            MCPService.shared.remove(clientId)
             completion(true)
         }
         return UISwipeActionsConfiguration(actions: [delete])

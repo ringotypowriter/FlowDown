@@ -67,7 +67,7 @@ class MCPEditorController: StackScrollController {
             context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
                 context.dispose { [weak self] in
                     guard let self else { return }
-                    MCPService.shared.remove(identifier: clientId)
+                    MCPService.shared.remove(clientId)
                     navigationController?.popViewController(animated: true)
                 }
             }

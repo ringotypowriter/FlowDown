@@ -27,7 +27,7 @@ class MCPService: NSObject {
         super.init()
 
         updateFromDatabase()
-        
+
         clients
             .map { $0.filter(\.isEnabled) }
             .removeDuplicates()
@@ -55,23 +55,21 @@ extension MCPService {
 
     func create() -> ModelContextClient {
         defer { updateFromDatabase() }
-        fatalError("not impl")
-    }
-
-    func insert(profile: ModelContextClient) {
-        defer { updateFromDatabase() }
-        fatalError("not impl")
+        return sdb.modelContextClientMake()
     }
 
     func client(with identifier: ModelContextClient.ID?) -> ModelContextClient? {
-        fatalError("not impl")
+        guard let identifier else { return nil }
+        return sdb.modelContextClientWith(identifier)
     }
 
-    func remove(identifier: ModelContextClient.ID) {
-        fatalError("not impl")
+    func remove(_ identifier: ModelContextClient.ID) {
+        defer { updateFromDatabase() }
+        sdb.modelContextClientRemove(identifier: identifier)
     }
 
-    func edit(identifier: ModelContextClient.ID?, block: @escaping (inout ModelContextClient) -> Void) {
-        fatalError("not impl")
+    func edit(identifier: ModelContextClient.ID, block: @escaping (inout ModelContextClient) -> Void) {
+        defer { updateFromDatabase() }
+        sdb.modelContextClientEdit(identifier: identifier, block)
     }
 }

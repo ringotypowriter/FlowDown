@@ -1,5 +1,5 @@
 //
-//  Storage+MCPClient.swift
+//  Storage+ModelContextClient.swift
 //  Storage
 //
 //  Created by LiBr on 6/29/25.
@@ -18,6 +18,15 @@ public extension Storage {
                 ]
             )
         ) ?? []
+    }
+
+    func modelContextClientMake() -> ModelContextClient {
+        let object = ModelContextClient()
+        object.isAutoIncrement = true
+        try? db.insert([object], intoTable: ModelContextClient.table)
+        object.isAutoIncrement = false
+        object.id = object.lastInsertedRowID
+        return object
     }
 
     func modelContextClientPut(object: ModelContextClient) {
