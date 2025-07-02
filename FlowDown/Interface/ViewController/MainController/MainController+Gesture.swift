@@ -29,18 +29,22 @@ extension MainController {
     }
 
     private func updateLayoutGuide(withOffset offset: CGFloat) {
-        var offset = offset
-        view.doWithAnimation { [self] in
-            if isSidebarCollapsed {
-                gestureLayoutGuide.snp.updateConstraints { make in
-                    make.width.equalTo(max(0, offset))
-                }
-            } else {
-                if offset > 0 { offset *= 0.1 }
-                gestureLayoutGuide.snp.updateConstraints { make in
-                    make.left.equalTo(sidebarLayoutView.snp.right).offset(offset)
+        #if targetEnvironment(macCatalyst)
+            return
+        #else
+            var offset = offset
+            view.doWithAnimation { [self] in
+                if isSidebarCollapsed {
+                    gestureLayoutGuide.snp.updateConstraints { make in
+                        make.width.equalTo(max(0, offset))
+                    }
+                } else {
+                    if offset > 0 { offset *= 0.1 }
+                    gestureLayoutGuide.snp.updateConstraints { make in
+                        make.left.equalTo(sidebarLayoutView.snp.right).offset(offset)
+                    }
                 }
             }
-        }
+        #endif
     }
 }

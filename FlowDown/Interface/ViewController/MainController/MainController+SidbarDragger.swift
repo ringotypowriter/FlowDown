@@ -22,6 +22,8 @@ class SidebarDraggerView: UIView {
         }
     }
 
+    var onSuggestCollapse: (() -> Bool) = { false }
+
     let handlerView = UIView().with {
         $0.backgroundColor = .label.withAlphaComponent(0.5)
         $0.clipsToBounds = true
@@ -94,6 +96,13 @@ class SidebarDraggerView: UIView {
             showDragger()
             var decisionValue = gestureBeginValue + Int(translation.x - frame.width)
             if decisionValue < allowedMinimalValue {
+                if decisionValue < allowedMinimalValue / 2 {
+                    if onSuggestCollapse() {
+                        gesture.isEnabled = false
+                        gesture.isEnabled = true
+                        return
+                    }
+                }
                 decisionValue = allowedMinimalValue
             }
             if decisionValue > allowedMaximalValue {

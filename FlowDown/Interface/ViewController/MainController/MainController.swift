@@ -101,6 +101,13 @@ class MainController: UIViewController {
             .ensureMainThread()
             .assign(to: \.sidebarWidth, on: self)
             .store(in: &chatView.cancellables)
+
+        sidebarDragger.onSuggestCollapse = { [weak self] in
+            guard let self else { return false }
+            if isSidebarCollapsed { return false }
+            view.doWithAnimation { self.isSidebarCollapsed = true }
+            return true
+        }
     }
 
     @available(*, unavailable)

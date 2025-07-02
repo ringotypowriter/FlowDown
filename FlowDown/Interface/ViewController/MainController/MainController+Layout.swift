@@ -36,6 +36,7 @@ extension MainController {
             }
             contentView.layer.cornerRadius = 8
             contentView.snp.remakeConstraints { make in
+                make.top.equalTo(self.view.safeAreaLayoutGuide)
                 make.edges.equalToSuperview()
             }
             createVisibleShadow()
