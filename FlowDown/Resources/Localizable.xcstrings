@@ -2137,7 +2137,14 @@
       }
     },
     "External Resources" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部资源"
+          }
+        }
+      }
     },
     "Failed" : {
       "localizations" : {
