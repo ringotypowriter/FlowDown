@@ -27,6 +27,7 @@ extension MainController {
     }
 
     func setupLayoutAsCatalyst() {
+        sidebarDragger.isHidden = false
         if isSidebarCollapsed {
             sidebar.alpha = 0
             chatView.title.icon.alpha = 0
@@ -58,6 +59,7 @@ extension MainController {
     }
 
     func setupLayoutAsCompactStyle() {
+        sidebarDragger.isHidden = true
         switch isSidebarCollapsed {
         case true:
             sidebarLayoutView.snp.remakeConstraints { make in
@@ -99,6 +101,7 @@ extension MainController {
     }
 
     func setupLayoutAsRelaxedStyle() {
+        sidebarDragger.isHidden = false
         switch isSidebarCollapsed {
         case true:
             sidebarLayoutView.snp.remakeConstraints { make in
