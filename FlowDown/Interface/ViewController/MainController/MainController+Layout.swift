@@ -36,10 +36,10 @@ extension MainController {
             }
             contentView.layer.cornerRadius = 8
             contentView.snp.remakeConstraints { make in
-                make.top.equalTo(self.view.safeAreaLayoutGuide)
+                make.top.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
                 make.edges.equalToSuperview()
             }
-            chatView.setupTitleLayout(36)
+            chatView.setupTitleLayout(64)
             createVisibleShadow()
         } else {
             sidebar.alpha = 1

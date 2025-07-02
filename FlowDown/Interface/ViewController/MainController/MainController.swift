@@ -169,11 +169,6 @@ class MainController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        contentShadowView.layer.shadowPath = UIBezierPath(
-            roundedRect: contentShadowView.bounds,
-            cornerRadius: contentShadowView.layer.cornerRadius
-        ).cgPath
-
         if previousFrame != view.frame {
             previousFrame = view.frame
             updateViewConstraints()
