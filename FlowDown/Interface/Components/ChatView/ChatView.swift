@@ -96,7 +96,7 @@ class ChatView: UIView {
 
         editorBackgroundView.snp.makeConstraints { make in
             make.bottom.left.right.equalToSuperview()
-            make.top.equalTo(editor.snp.top).offset(-10)
+            make.top.equalTo(editor.snp.top).offset(-4) // for visual
         }
 
         #if !targetEnvironment(macCatalyst)
@@ -111,9 +111,7 @@ class ChatView: UIView {
                 make.bottom.equalTo(escapeButton).offset(10)
             }
         #else
-            title.snp.makeConstraints { make in
-                make.left.top.right.equalToSuperview()
-            }
+            setupTitleLayout()
         #endif
 
         title.onCreateNewChat = { [weak self] in
@@ -175,6 +173,15 @@ class ChatView: UIView {
         editor.prepareForReuse()
     }
 
+    func setupTitleLayout(_ height: CGFloat? = nil) {
+        title.snp.remakeConstraints { make in
+            make.left.top.right.equalToSuperview()
+            if let height {
+                make.height.equalTo(height).priority(.high)
+            }
+        }
+    }
+
     func use(conversation: Conversation.ID, completion: (() -> Void)? = nil) {
         if conversationIdentifier == conversation {
             completion?()
@@ -229,14 +236,6 @@ class ChatView: UIView {
 
 extension ChatView {
     class TitleBar: UIView {
-        let stack = UIStackView().with {
-            $0.axis = .horizontal
-            $0.spacing = 16
-            $0.alignment = .center
-            $0.distribution = .fill
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
         let textLabel: GlyphixTextLabel = .init().with {
             $0.font = .preferredFont(forTextStyle: .body).bold
             $0.isBlurEffectEnabled = false
@@ -246,24 +245,16 @@ extension ChatView {
             $0.clipsToBounds = false
         }
 
-        let label: UIView = .init()
-
         let icon = UIImageView().with {
             $0.contentMode = .scaleAspectFit
             $0.tintColor = .accent
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.snp.makeConstraints { make in
-                make.width.height.equalTo(24)
-            }
         }
 
         let menuButton = EasyMenuButton().with {
             $0.image = UIImage(systemName: "chevron.down")
             $0.tintColor = .gray.withAlphaComponent(0.5)
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.snp.makeConstraints { make in
-                make.width.height.equalTo(18)
-            }
         }
 
         let bg = UIView().with { $0.backgroundColor = .background }
@@ -277,10 +268,10 @@ extension ChatView {
 
         init() {
             super.init(frame: .zero)
+            translatesAutoresizingMaskIntoConstraints = false
 
-            label.addSubview(textLabel)
-            textLabel.snp.makeConstraints { make in
-                make.center.equalToSuperview()
+            snp.makeConstraints { make in
+                make.height.equalTo(40).priority(.low)
             }
 
             addSubview(bg)
@@ -288,26 +279,35 @@ extension ChatView {
                 make.left.bottom.right.equalToSuperview()
                 make.top.equalToSuperview().offset(-128)
             }
-
-            addSubview(stack)
-            stack.snp.makeConstraints { make in
-                make.edges.equalToSuperview().inset(20)
-            }
-
-            stack.addArrangedSubview(icon)
-            stack.addArrangedSubview(label)
-            stack.addArrangedSubview(menuButton)
-
-            #if !targetEnvironment(macCatalyst)
-                icon.alpha = 0
-            #endif
-
             addSubview(sep)
             sep.snp.makeConstraints { make in
                 make.left.right.equalToSuperview()
                 make.bottom.equalToSuperview()
                 make.height.equalTo(1)
             }
+
+            addSubview(icon)
+            addSubview(textLabel)
+            addSubview(menuButton)
+
+            icon.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.left.equalToSuperview().inset(20)
+                make.width.height.equalTo(24)
+            }
+            textLabel.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+
+            menuButton.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.right.equalToSuperview().inset(20)
+                make.width.height.equalTo(18)
+            }
+
+            #if !targetEnvironment(macCatalyst)
+                icon.alpha = 0
+            #endif
 
             let gesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
             #if targetEnvironment(macCatalyst)

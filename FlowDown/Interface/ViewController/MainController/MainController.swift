@@ -83,7 +83,7 @@ class MainController: UIViewController {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    var messages: [String] = []
+    var bootMessages: [String] = []
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -134,6 +134,7 @@ class MainController: UIViewController {
         view.addSubview(contentShadowView)
         view.addSubview(contentView)
         view.addSubview(sidebarDragger)
+
         sidebarLayoutView.contentView.addSubview(sidebar)
         contentView.contentView.addSubview(chatView)
 
@@ -364,6 +365,10 @@ class MainController: UIViewController {
             }
             self.present(alert, animated: true)
         }
+    }
+
+    @objc func expendSidebar() {
+        view.doWithAnimation { self.isSidebarCollapsed = false }
     }
 }
 

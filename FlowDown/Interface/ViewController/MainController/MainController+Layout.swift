@@ -39,6 +39,7 @@ extension MainController {
                 make.top.equalTo(self.view.safeAreaLayoutGuide)
                 make.edges.equalToSuperview()
             }
+            chatView.setupTitleLayout(36)
             createVisibleShadow()
         } else {
             sidebar.alpha = 1
@@ -52,6 +53,7 @@ extension MainController {
                 make.left.equalTo(sidebarLayoutView.snp.right).offset(16)
                 make.top.bottom.right.equalToSuperview().inset(16)
             }
+            chatView.setupTitleLayout(64)
             createVisibleShadow()
         }
     }
