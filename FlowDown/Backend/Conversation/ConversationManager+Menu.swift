@@ -210,7 +210,7 @@ extension ConversationManager {
                         image: UIImage(systemName: "star.slash")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
-                            $0.isFavorite = true
+                            $0.isFavorite = false
                         }
                     }
                 } else {

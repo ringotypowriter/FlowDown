@@ -135,7 +135,7 @@ class ConversationListView: UIView {
         }
 
         var snapshot = Snapshot()
-        
+
         let favorited = list.filter(\.isFavorite)
         if !favorited.isEmpty {
             let favoriteSection = Date(timeIntervalSince1970: -1)
@@ -146,7 +146,7 @@ class ConversationListView: UIView {
         let calendar = Calendar.current
 
         var conversationsByDate: [Date: [Conversation.ID]] = [:]
-        for item in list {
+        for item in list where !item.isFavorite {
             let dateOnly = calendar.startOfDay(for: item.creation)
             if conversationsByDate[dateOnly] == nil {
                 conversationsByDate[dateOnly] = []
