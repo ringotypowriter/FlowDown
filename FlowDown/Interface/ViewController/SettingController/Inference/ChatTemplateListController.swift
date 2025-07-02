@@ -5,10 +5,13 @@
 //  Created by 秋星桥 on 6/28/25.
 //
 
+import AlertController
 import Combine
 import ConfigurableKit
 import Foundation
+import Storage
 import UIKit
+import UniformTypeIdentifiers
 
 class ChatTemplateListController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
@@ -90,14 +93,39 @@ class ChatTemplateListController: UIViewController {
     }
 
     @objc func addTemplate() {
-        var template = ChatTemplate()
-        template.name = String(localized: "Template \(ChatTemplateManager.shared.templates.count + 1)")
-        ChatTemplateManager.shared.addTemplate(template)
+        let menu = UIMenu(children: [
+            UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
+                UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
+                    UIAction(title: String(localized: "Create Template"), image: UIImage(systemName: "plus")) { [weak self] _ in
+                        var template = ChatTemplate()
+                        template.name = String(localized: "Template \(ChatTemplateManager.shared.templates.count + 1)")
+                        ChatTemplateManager.shared.addTemplate(template)
 
-        DispatchQueue.main.async {
-            let controller = ChatTemplateEditorController(templateIdentifier: template.id)
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+                        DispatchQueue.main.async {
+                            let controller = ChatTemplateEditorController(templateIdentifier: template.id)
+                            self?.navigationController?.pushViewController(controller, animated: true)
+                        }
+                    },
+                ]),
+                UIMenu(title: String(localized: "Import"), options: [.displayInline], children: [
+                    UIAction(title: String(localized: "Import from File"), image: UIImage(systemName: "doc")) { [weak self] _ in
+                        self?.presentDocumentPicker()
+                    },
+                ]),
+            ]),
+        ])
+        guard let bar = navigationController?.navigationBar else { return }
+        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
+        bar.present(menu: menu, anchorPoint: point)
+    }
+
+    func presentDocumentPicker() {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [
+            UTType(filenameExtension: "fdtemplate") ?? .data,
+        ])
+        picker.delegate = self
+        picker.allowsMultipleSelection = true
+        present(picker, animated: true)
     }
 }
 
@@ -189,6 +217,64 @@ extension ChatTemplateListController {
             ])
             present(menu: menu, anchorPoint: location)
             return nil
+        }
+    }
+}
+
+extension ChatTemplateListController: UIDocumentPickerDelegate {
+    func documentPicker(
+        _: UIDocumentPickerViewController,
+        didPickDocumentsAt urls: [URL]
+    ) {
+        guard !urls.isEmpty else { return }
+
+        Indicator.progress(
+            title: String(localized: "Importing Templates"),
+            controller: self
+        ) { completionHandler in
+            var success = 0
+            var failure: [Error] = .init()
+
+            for url in urls {
+                do {
+                    _ = url.startAccessingSecurityScopedResource()
+                    defer { url.stopAccessingSecurityScopedResource() }
+                    let data = try Data(contentsOf: url)
+                    let decoder = PropertyListDecoder()
+                    let template = try decoder.decode(ChatTemplate.self, from: data)
+                    DispatchQueue.main.asyncAndWait {
+                        ChatTemplateManager.shared.addTemplate(template)
+                    }
+                    success += 1
+                } catch {
+                    failure.append(error)
+                }
+            }
+
+            completionHandler {
+                if !failure.isEmpty {
+                    let alert = AlertViewController(
+                        title: String(localized: "Import Failed"),
+                        message: String(
+                            format: String(localized: "%d templates imported successfully, %d failed."),
+                            success,
+                            failure.count
+                        )
+                    ) { context in
+                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                            context.dispose()
+                        }
+                    }
+                    self.present(alert, animated: true)
+                } else {
+                    Indicator.present(
+                        title: String(localized: "Imported \(success) templates."),
+                        preset: .done,
+                        haptic: .success,
+                        referencingView: self.view
+                    )
+                }
+            }
         }
     }
 }
