@@ -2276,6 +2276,12 @@
         }
       }
     },
+    "Failed to import model: %@" : {
+
+    },
+    "Failed to import template: %@" : {
+
+    },
     "Failed to load model: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4929,6 +4935,12 @@
           }
         }
       }
+    },
+    "Successfully imported %@" : {
+
+    },
+    "Successfully imported model %@" : {
+
     },
     "Summarize" : {
       "localizations" : {

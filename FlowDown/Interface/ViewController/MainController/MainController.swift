@@ -47,34 +47,22 @@ class MainController: UIViewController {
         }
     }
 
+    var messages: [String] = []
+
     init() {
-        fatalError()
-    }
+        super.init(nibName: nil, bundle: nil)
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-
-    private func commonInit() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(resetGestures),
             name: UIApplication.willResignActiveNotification,
             object: nil
         )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(pickupModels),
-            name: .openModel,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleNewMessage),
-            name: .sendNewMessage,
-            object: nil
-        )
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
     }
 
     deinit {
@@ -299,42 +287,6 @@ class MainController: UIViewController {
         sidebar.settingButton.buttonAction()
     }
 
-    @objc func pickupModels() {
-        let models = SceneDelegate.supposeToOpenModel
-        SceneDelegate.supposeToOpenModel.removeAll()
-        guard !models.isEmpty else { return }
-        print("[*] opening models \(models)")
-        ModelManager.shared.importModels(at: models, controller: self)
-    }
-
-    @objc func handleNewMessage(_ notification: Notification) {
-        guard let message = notification.object as? String else {
-            print("[!] Invalid message object in notification")
-            return
-        }
-        print("[*] handling new message from URL scheme: \(message)")
-
-        DispatchQueue.main.async {
-            // create new conversation
-            let conversation = ConversationManager.shared.createNewConversation()
-            print("[+] created new conversation with ID: \(conversation.id)")
-
-            self.load(conversation.id)
-
-            // send after ensuring UI is fully ready
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                if self.chatView.conversationIdentifier == conversation.id {
-                    self.sendMessageToCurrentConversation(message)
-                } else {
-                    // retry
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        self.sendMessageToCurrentConversation(message)
-                    }
-                }
-            }
-        }
-    }
-
     private func sendMessageToCurrentConversation(_ message: String) {
         print("[*] attempting to send message: \(message)")
 
@@ -428,3 +380,42 @@ extension MainController: NewChatButton.Delegate {
         }
     }
 #endif
+
+extension MainController {
+    func queueBootMessage(text: String) {
+        messages.append(text)
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(presentNextBootMessage),
+            object: nil
+        )
+        perform(#selector(presentNextBootMessage), with: nil, afterDelay: 0.5)
+    }
+
+    @objc private func presentNextBootMessage() {
+        guard let text = messages.first else { return }
+        messages.removeFirst()
+
+        let alert = AlertViewController(
+            message: text
+        ) { context in
+            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.dispose()
+            }
+        }
+        present(alert, animated: true)
+    }
+
+    func queueNewConversation(text: String) {
+        DispatchQueue.main.async {
+            let conversation = ConversationManager.shared.createNewConversation()
+            print("[+] created new conversation with ID: \(conversation.id)")
+            self.load(conversation.id)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if self.chatView.conversationIdentifier == conversation.id {
+                    self.sendMessageToCurrentConversation(text)
+                }
+            }
+        }
+    }
+}

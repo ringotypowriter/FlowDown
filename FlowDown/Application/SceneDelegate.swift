@@ -13,24 +13,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var cancellables = Set<AnyCancellable>()
-
-    static var supposeToOpenModel: [URL] = [] {
-        didSet {
-            guard !supposeToOpenModel.isEmpty else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                NotificationCenter.default.post(name: .openModel, object: nil)
-            }
-        }
-    }
-
-    static var supposeToSendMessage: String? {
-        didSet {
-            guard let message = supposeToSendMessage, !message.isEmpty else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                NotificationCenter.default.post(name: .sendNewMessage, object: message)
-            }
-        }
-    }
+    lazy var mainController = MainController()
 
     func scene(
         _ scene: UIScene, willConnectTo _: UISceneSession,
@@ -44,10 +27,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         #endif
         windowScene.sizeRestrictions?.minimumSize = CGSize(width: 1100, height: 650)
-
-        UIView.setAnimationsEnabled(false)
-        DispatchQueue.main.async { UIView.setAnimationsEnabled(true) }
-
+        let window = UIWindow(windowScene: windowScene)
+        window.rootViewController = mainController
+        self.window = window
+        window.makeKeyAndVisible()
         for urlContext in connectionOptions.urlContexts {
             handleIncomingURL(urlContext.url)
         }
@@ -64,7 +47,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         case "file":
             switch url.pathExtension {
             case "fdmodel", "plist":
-                prepareModelImport(from: url)
+                importModel(from: url)
+            case "fdtemplate":
+                importTemplate(from: url)
             default: break // dont know how
             }
         case "flowdown":
@@ -74,51 +59,53 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
 
-    private func prepareModelImport(from url: URL) {
+    private func importModel(from url: URL) {
         _ = url.startAccessingSecurityScopedResource()
+        defer { url.stopAccessingSecurityScopedResource() }
         try? FileManager.default.startDownloadingUbiquitousItem(at: url)
-        Self.supposeToOpenModel.append(url)
+        do {
+            let model = try ModelManager.shared.importCloudModel(at: url)
+            mainController.queueBootMessage(text: String(localized: "Successfully imported model \(model.auxiliaryIdentifier)"))
+        } catch {
+            mainController.queueBootMessage(text: String(localized: "Failed to import model: \(error.localizedDescription)"))
+        }
+    }
+
+    private func importTemplate(from url: URL) {
+        _ = url.startAccessingSecurityScopedResource()
+        defer { url.stopAccessingSecurityScopedResource() }
+        try? FileManager.default.startDownloadingUbiquitousItem(at: url)
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = PropertyListDecoder()
+            let template = try decoder.decode(ChatTemplate.self, from: data)
+            DispatchQueue.main.async {
+                ChatTemplateManager.shared.addTemplate(template)
+            }
+            mainController.queueBootMessage(text: String(localized: "Successfully imported \(template.name)"))
+        } catch {
+            print("[*] failed to import template from URL: \(url), error: \(error)")
+            mainController.queueBootMessage(text: String(localized: "Failed to import template: \(error.localizedDescription)"))
+        }
     }
 
     private func handleFlowDownURL(_ url: URL) {
-        print("[*] Handling FlowDown URL: \(url)")
-        guard let host = url.host(), !host.isEmpty else {
-            print("[*] No host found, just opening app")
-            return
-        }
-
-        print("[*] URL host: \(host)")
+        print("[*] handling incoming message: \(url)")
+        guard let host = url.host(), !host.isEmpty else { return }
         switch host {
-        case "new":
-            handleNewMessageURL(url)
-        default:
-            print("[*] Unknown action: \(host), just opening app")
+        case "new": handleNewMessageURL(url)
+        default: break
         }
     }
 
     private func handleNewMessageURL(_ url: URL) {
-        print("[*] Handling new message URL: \(url)")
         let pathComponents = url.pathComponents
-        print("[*] Path components: \(pathComponents)")
-
-        guard pathComponents.count >= 2 else {
-            print("[*] Invalid format, should be /message")
-            return
-        }
-
-        // extract msg from path
+        guard pathComponents.count >= 2 else { return }
         let encodedMessage = pathComponents[1]
-        print("[*] Encoded message: \(encodedMessage)")
-
         guard let message = encodedMessage.removingPercentEncoding,
               !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        else {
-            print("[*] Failed to decode message or message is empty")
-            return
-        }
-
-        print("[*] Decoded message: \(message)")
-        Self.supposeToSendMessage = message
+        else { return }
+        mainController.queueNewConversation(text: message)
     }
 
     func sceneDidDisconnect(_: UIScene) {}
@@ -130,9 +117,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_: UIScene) {}
 
     func sceneDidEnterBackground(_: UIScene) {}
-}
-
-extension Notification.Name {
-    static let openModel = Notification.Name("openModel")
-    static let sendNewMessage = Notification.Name("sendNewMessage")
 }
