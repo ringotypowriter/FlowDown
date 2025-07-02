@@ -111,6 +111,8 @@ extension SettingController.SettingContent {
             tableView.backgroundColor = .clear
             tableView.delegate = self
             tableView.allowsMultipleSelection = false
+            tableView.dragDelegate = self
+            tableView.dragInteractionEnabled = true
             dataSource.defaultRowAnimation = .fade
             view.addSubview(tableView)
             tableView.snp.makeConstraints { make in

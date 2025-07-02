@@ -109,3 +109,27 @@ extension SettingController.SettingContent.ModelController: UIDocumentPickerDele
         ModelManager.shared.importModels(at: urls, controller: self)
     }
 }
+
+extension SettingController.SettingContent.ModelController: UITableViewDragDelegate {
+    func tableView(_: UITableView, itemsForBeginning _: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath),
+              itemIdentifier.type == .cloud,
+              let model = ModelManager.shared.cloudModel(identifier: itemIdentifier.identifier)
+        else { return [] }
+
+        do {
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .xml
+            let plistData = try encoder.encode(model)
+            let fileName = "Export-\(model.modelDisplayName.sanitizedFileName)\(model.auxiliaryIdentifier).fdmodel"
+            let itemProvider = NSItemProvider(item: plistData as NSSecureCoding, typeIdentifier: "wiki.qaq.fdmodel")
+            itemProvider.suggestedName = fileName
+            let dragItem = UIDragItem(itemProvider: itemProvider)
+            dragItem.localObject = model
+            return [dragItem]
+        } catch {
+            print("[-] failed to encode model: \(error)")
+            return []
+        }
+    }
+}
