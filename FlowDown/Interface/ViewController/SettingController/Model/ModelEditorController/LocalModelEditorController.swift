@@ -324,7 +324,7 @@ class LocalModelEditorController: StackScrollController {
                 controller: self
             ) { completionHandler in
                 ModelManager.shared.pack(model: model) { url, cleanup in
-                    completionHandler { [weak self] in
+                    completionHandler {
                         guard let url else {
                             Indicator.present(
                                 title: String(localized: "Failed to Export"),
@@ -334,22 +334,15 @@ class LocalModelEditorController: StackScrollController {
                             )
                             return
                         }
-                        #if targetEnvironment(macCatalyst)
-                            let documentPicker = UIDocumentPickerViewController(forExporting: [url])
-                            documentPicker.title = String(localized: "Export Model")
-                            documentPicker.delegate = self
-                            documentPicker.modalPresentationStyle = .formSheet
-                            exportOptionReader?.parentViewController?.present(documentPicker, animated: true)
-                            self?.documentPickerExportTempItems.append(url)
-                        #else
-                            let shareSheet = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                            shareSheet.popoverPresentationController?.sourceView = exportOptionReader
-                            shareSheet.popoverPresentationController?.sourceRect = exportOptionReader?.bounds ?? .zero
-                            exportOptionReader?.parentViewController?.present(shareSheet, animated: true)
-                            shareSheet.completionWithItemsHandler = { _, _, _, _ in
-                                cleanup()
-                            }
-                        #endif
+                        let exporter = FileExporterHelper()
+                        exporter.targetFileURL = url
+                        exporter.referencedView = exportOptionReader
+                        exporter.deleteAfterComplete = true
+                        exporter.exportTitle = String(localized: "Export Model")
+                        exporter.completion = {
+                            cleanup()
+                        }
+                        exporter.execute(presentingViewController: self)
                     }
                 }
             }

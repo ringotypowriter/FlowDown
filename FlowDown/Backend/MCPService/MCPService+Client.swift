@@ -8,7 +8,7 @@
 import MCP
 import Storage
 
-class McpClient {
+class MCPClient {
     private var client: Client?
     private var properties: ModelContextClient?
     public var id: ModelContextClient.ID {

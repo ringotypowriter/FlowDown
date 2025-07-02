@@ -10,7 +10,7 @@ import WCDBSwift
 public final class ModelContextClient: Identifiable, Codable, TableCodable {
     public var id: Int64 = .init()
     public var name: String = ""
-    public var description: String = ""
+    public var comment: String = ""
     public var type: ClientType = .http
     public var endpoint: String = ""
     public var header: String = ""
@@ -28,7 +28,7 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true, isUnique: true)
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
-            BindColumnConstraint(description, isNotNull: true, defaultTo: "")
+            BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
             BindColumnConstraint(type, isNotNull: true, defaultTo: ClientType.http.rawValue)
             BindColumnConstraint(endpoint, isNotNull: true, defaultTo: "")
             BindColumnConstraint(header, isNotNull: true, defaultTo: "")
@@ -42,7 +42,7 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
 
         case id
         case name
-        case description
+        case comment
         case type
         case endpoint
         case header
@@ -68,7 +68,7 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
     ) {
         self.id = id
         self.name = name
-        self.description = description
+        comment = description
         self.type = type
         self.endpoint = endpoint
         self.header = header

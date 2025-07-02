@@ -9,9 +9,6 @@ import Foundation
 import MCP
 import Storage
 
-// TODO: add resource & template management
-
-// base function:
 class MCPService: NSObject {
     static let shared = MCPService()
 
@@ -42,11 +39,7 @@ class MCPService: NSObject {
     private func detectUseableTools(enabledClients _: [ModelContextClient]) {
         // remove disabled, search enabled
     }
-
-    // MARK: - Tools Managemnt
 }
-
-// MARK: - MCPClient CRUD
 
 extension MCPService {
     private func updateFromDatabase() {

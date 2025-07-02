@@ -211,6 +211,52 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
+        let copyAction = ConfigurableActionView { [weak self] _ in
+            guard let self else { return }
+            var newTemplate = template
+            newTemplate.id = UUID()
+            newTemplate.name = template.name + " " + String(localized: "Copy")
+            ChatTemplateManager.shared.templates[newTemplate.id] = newTemplate
+            let editor = ChatTemplateEditorController(templateIdentifier: newTemplate.id)
+            navigationController?.pushViewController(editor, animated: true)
+        }
+        copyAction.configure(icon: UIImage(systemName: "doc.on.doc"))
+        copyAction.configure(title: String(localized: "Create Copy"))
+        copyAction.configure(description: String(localized: "Create a duplicate of this template for further editing."))
+        stackView.addArrangedSubviewWithMargin(copyAction)
+        stackView.addArrangedSubview(SeparatorView())
+
+        var exportOptionReader: UIView?
+        let exportOption = ConfigurableActionView { [weak self] _ in
+            guard let self else { return }
+            let tempFileDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent("DisposableResources")
+                .appendingPathComponent(UUID().uuidString)
+            let tempFile = tempFileDir
+                .appendingPathComponent("Export-\(template.name.sanitizedFileName)")
+                .appendingPathExtension("fdtemplate")
+            try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
+            FileManager.default.createFile(atPath: tempFile.path, contents: nil)
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .xml
+            try? encoder.encode(template).write(to: tempFile, options: .atomic)
+            let exporter = FileExporterHelper()
+            exporter.targetFileURL = tempFile
+            exporter.referencedView = exportOptionReader
+            exporter.deleteAfterComplete = true
+            exporter.exportTitle = String(localized: "Export Template")
+            exporter.completion = {
+                try? FileManager.default.removeItem(at: tempFileDir)
+            }
+            exporter.execute(presentingViewController: self)
+        }
+        exportOptionReader = exportOption
+        exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
+        exportOption.configure(title: String(localized: "Export Template"))
+        exportOption.configure(description: String(localized: "Export this chat template as a .fdtemplate file for sharing or backup."))
+        stackView.addArrangedSubviewWithMargin(exportOption)
+        stackView.addArrangedSubview(SeparatorView())
+
         let deleteAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
             deleteTapped()

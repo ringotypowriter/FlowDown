@@ -59,7 +59,7 @@ class MCPEditorController: StackScrollController {
     @objc func deleteTapped() {
         let alert = AlertViewController(
             title: String(localized: "Delete Client"),
-            message: String(localized: "Are you sure you want to delete this MCP client? This action cannot be undone.")
+            message: String(localized: "Are you sure you want to delete this model context protocol client? This action cannot be undone.")
         ) { context in
             context.addAction(title: String(localized: "Cancel")) {
                 context.dispose()
@@ -80,18 +80,40 @@ class MCPEditorController: StackScrollController {
 
         guard let client else { return }
 
-        // MARK: - Basic Information
+        // MARK: - Enabled
+
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView()
+                .with(header: String(localized: "Enabled"))
+        ) { $0.bottom /= 2 }
+        let enabledView = ConfigurableToggleActionView()
+        enabledView.boolValue = client.isEnabled
+        enabledView.actionBlock = { value in
+            MCPService.shared.edit(identifier: self.clientId) { client in
+                client.isEnabled = value
+            }
+        }
+        enabledView.configure(icon: .init(systemName: "power"))
+        enabledView.configure(title: String(localized: "Enabled"))
+        enabledView.configure(description: String(localized: "Whether this model context protocol server is enabled."))
+        stackView.addArrangedSubviewWithMargin(enabledView)
+        stackView.addArrangedSubview(SeparatorView())
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionFooterView()
+                .with(footer: String(localized: "When enabled, this client will participate in Model Context Protocol operations. When disabled, all related requests will be ignored."))
+        ) { $0.top /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
+
+        // MARK: - Metadata
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Metadata"))
         ) { $0.bottom /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
         let nameView = ConfigurableInfoView().setTapBlock { view in
             let input = AlertInputViewController(
                 title: String(localized: "Edit Name"),
-                message: String(localized: "The display name of this MCP client."),
+                message: String(localized: "The display name of this model context protocol client."),
                 placeholder: String(localized: "Unnamed MCP"),
                 text: client.name
             ) { output in
@@ -104,53 +126,17 @@ class MCPEditorController: StackScrollController {
         }
         nameView.configure(icon: .init(systemName: "tag"))
         nameView.configure(title: String(localized: "Name"))
-        nameView.configure(description: String(localized: "The display name of this MCP client."))
+        nameView.configure(description: String(localized: "The display name of this model context protocol client."))
         nameView.configure(value: client.name.isEmpty ? String(localized: "Unnamed Server") : client.name)
         stackView.addArrangedSubviewWithMargin(nameView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let descriptionView = ConfigurableInfoView().setTapBlock { view in
-            let input = AlertInputViewController(
-                title: String(localized: "Edit Description"),
-                message: String(localized: "Optional description for this MCP Server."),
-                placeholder: String(localized: "Enter description"),
-                text: client.description
-            ) { output in
-                MCPService.shared.edit(identifier: self.clientId) { client in
-                    client.description = output
-                }
-                view.configure(value: output.isEmpty ? String(localized: "No Description") : output)
-            }
-            view.parentViewController?.present(input, animated: true)
-        }
-        descriptionView.configure(icon: .init(systemName: "text.alignleft"))
-        descriptionView.configure(title: String(localized: "Description"))
-        descriptionView.configure(description: String(localized: "Optional description for this MCP Server."))
-        descriptionView.configure(value: client.description.isEmpty ? String(localized: "No Description") : client.description)
-        stackView.addArrangedSubviewWithMargin(descriptionView)
-        stackView.addArrangedSubview(SeparatorView())
-
-        let enabledView = ConfigurableToggleActionView()
-        enabledView.boolValue = client.isEnabled
-        enabledView.actionBlock = { value in
-            MCPService.shared.edit(identifier: self.clientId) { client in
-                client.isEnabled = value
-            }
-        }
-        enabledView.configure(icon: .init(systemName: "power"))
-        enabledView.configure(title: String(localized: "Enabled"))
-        enabledView.configure(description: String(localized: "Whether this MCP Server is enabled."))
-        stackView.addArrangedSubviewWithMargin(enabledView)
-        stackView.addArrangedSubview(SeparatorView())
-
-        // MARK: - Connection Settings
+        // MARK: - Connection
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Connection"))
         ) { $0.bottom /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
         let typeView = ConfigurableInfoView()
         typeView.configure(icon: .init(systemName: "gear"))
         typeView.configure(title: String(localized: "Connection Type"))
@@ -188,7 +174,7 @@ class MCPEditorController: StackScrollController {
         let endpointView = ConfigurableInfoView().setTapBlock { view in
             let input = AlertInputViewController(
                 title: String(localized: "Edit Endpoint"),
-                message: String(localized: "The URL endpoint for this MCP client."),
+                message: String(localized: "The URL endpoint for this model context protocol client."),
                 placeholder: "https://",
                 text: client.endpoint.isEmpty ? "https://" : client.endpoint
             ) { output in
@@ -201,7 +187,7 @@ class MCPEditorController: StackScrollController {
         }
         endpointView.configure(icon: .init(systemName: "link"))
         endpointView.configure(title: String(localized: "Endpoint"))
-        endpointView.configure(description: String(localized: "The URL endpoint for this MCP client."))
+        endpointView.configure(description: String(localized: "The URL endpoint for this model context protocol client."))
         endpointView.configure(value: client.endpoint.isEmpty ? String(localized: "Not Configured") : client.endpoint)
         stackView.addArrangedSubviewWithMargin(endpointView)
         stackView.addArrangedSubview(SeparatorView())
@@ -253,30 +239,32 @@ class MCPEditorController: StackScrollController {
         timeoutView.configure(value: "\(client.timeout)s")
         stackView.addArrangedSubviewWithMargin(timeoutView)
         stackView.addArrangedSubview(SeparatorView())
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionFooterView()
+                .with(footer: String(localized: "Please fill in the connection parameters according to your server configuration to ensure the client can communicate with the server properly."))
+        ) { $0.top /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
 
-        // MARK: - Test / fetch tools
+        // MARK: - Test
 
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView()
+                .with(header: String(localized: "Test"))
+        ) { $0.bottom /= 2 }
         let testAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
-            // deleteTapped()
             // TODO: Testing method.
         }
         testAction.configure(icon: UIImage(systemName: "wand.and.stars"))
         testAction.configure(title: String(localized: "Test Configuration"))
-        testAction.configure(description: String(localized: "Test the configuration of the MCP server."))
-
+        testAction.configure(description: String(localized: "Test the configuration of the model context protocol server."))
         stackView.addArrangedSubviewWithMargin(testAction)
         stackView.addArrangedSubview(SeparatorView())
-
-        // MARK: - Tool management.
-
-        /*
-             only visible when MCPClient is is enabled.
-         */
-
-        // MARK: - Resource Management
-
-        // MARK: - Template mangement
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionFooterView()
+                .with(footer: String(localized: "Use this to verify if the current configuration is valid. It is recommended to test after making changes."))
+        ) { $0.top /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
 
         // MARK: - Management
 
@@ -284,20 +272,23 @@ class MCPEditorController: StackScrollController {
             ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Management"))
         ) { $0.bottom /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
         let deleteAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
             deleteTapped()
         }
         deleteAction.configure(icon: UIImage(systemName: "trash"))
         deleteAction.configure(title: String(localized: "Delete Server"))
-        deleteAction.configure(description: String(localized: "Delete this MCP server permanently."))
+        deleteAction.configure(description: String(localized: "Delete this model context protocol server permanently."))
         deleteAction.titleLabel.textColor = .systemRed
         deleteAction.iconView.tintColor = .systemRed
         deleteAction.descriptionLabel.textColor = .systemRed
         deleteAction.imageView.tintColor = .systemRed
         stackView.addArrangedSubviewWithMargin(deleteAction)
+        stackView.addArrangedSubview(SeparatorView())
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionFooterView()
+                .with(footer: String(localized: "This action cannot be undone. Please proceed with caution."))
+        ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
     }
 }

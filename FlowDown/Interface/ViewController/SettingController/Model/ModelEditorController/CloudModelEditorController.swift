@@ -466,23 +466,15 @@ class CloudModelEditorController: StackScrollController {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(model).write(to: tempFile, options: .atomic)
-
-            #if targetEnvironment(macCatalyst)
-                let documentPicker = UIDocumentPickerViewController(forExporting: [tempFile])
-                documentPicker.title = String(localized: "Export Model")
-                documentPicker.delegate = self
-                documentPicker.modalPresentationStyle = .formSheet
-                exportOptionReader?.parentViewController?.present(documentPicker, animated: true)
-                documentPickerExportTempItems.append(tempFile)
-            #else
-                let share = UIActivityViewController(activityItems: [tempFile], applicationActivities: nil)
-                share.popoverPresentationController?.sourceView = exportOptionReader
-                share.popoverPresentationController?.sourceRect = exportOptionReader?.bounds ?? .zero
-                share.completionWithItemsHandler = { _, _, _, _ in
-                    try? FileManager.default.removeItem(at: tempFileDir)
-                }
-                present(share, animated: true)
-            #endif
+            let exporter = FileExporterHelper()
+            exporter.targetFileURL = tempFile
+            exporter.referencedView = exportOptionReader
+            exporter.deleteAfterComplete = true
+            exporter.exportTitle = String(localized: "Export Model")
+            exporter.completion = {
+                try? FileManager.default.removeItem(at: tempFileDir)
+            }
+            exporter.execute(presentingViewController: self)
         }
         exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))

@@ -382,7 +382,7 @@
         }
       }
     },
-    "Are you sure you want to delete this MCP client? This action cannot be undone." : {
+    "Are you sure you want to delete this model context protocol client? This action cannot be undone." : {
 
     },
     "Are you sure you want to delete this model? This action cannot be undone." : {
@@ -1108,6 +1108,9 @@
         }
       }
     },
+    "Create a duplicate of this template for further editing." : {
+
+    },
     "Create a new model by copying the current configuration." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1117,6 +1120,9 @@
           }
         }
       }
+    },
+    "Create Copy" : {
+
     },
     "Creative @ 1.0" : {
       "localizations" : {
@@ -1314,7 +1320,7 @@
         }
       }
     },
-    "Delete this MCP server permanently." : {
+    "Delete this model context protocol server permanently." : {
 
     },
     "Delete this model from your device." : {
@@ -1376,9 +1382,6 @@
           }
         }
       }
-    },
-    "Description" : {
-
     },
     "Determining search keywords" : {
       "localizations" : {
@@ -1594,9 +1597,6 @@
         }
       }
     },
-    "Edit Description" : {
-
-    },
     "Edit Endpoint" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1774,9 +1774,6 @@
     "Endpoint" : {
 
     },
-    "Enter description" : {
-
-    },
     "Enter template name" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1908,6 +1905,9 @@
         }
       }
     },
+    "Export Template" : {
+
+    },
     "Export the database file." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1917,6 +1917,9 @@
           }
         }
       }
+    },
+    "Export this chat template as a .fdtemplate file for sharing or backup." : {
+
     },
     "Export this model to share with others." : {
       "localizations" : {
@@ -3408,9 +3411,6 @@
         }
       }
     },
-    "No Description" : {
-
-    },
     "No events found between %@ and %@." : {
       "localizations" : {
         "en" : {
@@ -3711,9 +3711,6 @@
         }
       }
     },
-    "Optional description for this MCP Server." : {
-
-    },
     "Original Message" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3845,6 +3842,9 @@
           }
         }
       }
+    },
+    "Please fill in the connection parameters according to your server configuration to ensure the client can communicate with the server properly." : {
+
     },
     "Please help me to..." : {
       "localizations" : {
@@ -4790,10 +4790,13 @@
         }
       }
     },
+    "Test" : {
+
+    },
     "Test Configuration" : {
 
     },
-    "Test the configuration of the MCP server." : {
+    "Test the configuration of the model context protocol server." : {
 
     },
     "Text Content" : {
@@ -4922,7 +4925,7 @@
         }
       }
     },
-    "The display name of this MCP client." : {
+    "The display name of this model context protocol client." : {
 
     },
     "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions." : {
@@ -5018,7 +5021,7 @@
     "The transport protocol to use for this client." : {
 
     },
-    "The URL endpoint for this MCP client." : {
+    "The URL endpoint for this model context protocol client." : {
 
     },
     "These are the open-source licenses for the frameworks used in this app." : {
@@ -5070,6 +5073,9 @@
           }
         }
       }
+    },
+    "This action cannot be undone. Please proceed with caution." : {
+
     },
     "This conversation is based on the template: %@." : {
       "localizations" : {
@@ -5685,6 +5691,9 @@
         }
       }
     },
+    "Use this to verify if the current configuration is valid. It is recommended to test after making changes." : {
+
+    },
     "Use Tool" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6147,6 +6156,9 @@
         }
       }
     },
+    "When enabled, this client will participate in Model Context Protocol operations. When disabled, all related requests will be ignored." : {
+
+    },
     "When selecting a new chat model, also set it as the default model." : {
       "localizations" : {
         "zh-Hans" : {
@@ -6157,7 +6169,7 @@
         }
       }
     },
-    "Whether this MCP Server is enabled." : {
+    "Whether this model context protocol server is enabled." : {
 
     },
     "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible." : {
