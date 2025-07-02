@@ -356,7 +356,18 @@ extension ChatView {
 
             #if targetEnvironment(macCatalyst)
                 // On Catalyst, only show conversation menu (new chat button is handled by sidebar)
-                menuButton.present(menu: convMenu)
+                if let mainController = parentViewController as? MainController,
+                   mainController.isSidebarCollapsed
+                {
+                    menuButton.present(menu: .init(children: [
+                        convMenu,
+                        UIAction(title: String(localized: "Show Sidebar"), image: UIImage(systemName: "sidebar.left")) { _ in
+                            mainController.expendSidebar()
+                        },
+                    ]))
+                } else {
+                    menuButton.present(menu: convMenu)
+                }
             #else
                 // On iOS, show both new chat options and conversation menu
                 let templates = ChatTemplateManager.shared.templates
