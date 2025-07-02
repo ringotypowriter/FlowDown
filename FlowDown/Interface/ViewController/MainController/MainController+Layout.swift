@@ -34,9 +34,8 @@ extension MainController {
                 make.left.bottom.top.equalTo(view.safeAreaLayoutGuide).inset(16)
                 make.width.equalTo(sidebarWidth)
             }
-            contentView.layer.cornerRadius = 8
+            contentView.layer.cornerRadius = 0
             contentView.snp.remakeConstraints { make in
-                make.top.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
                 make.edges.equalToSuperview()
             }
             chatView.setupTitleLayout(64)
