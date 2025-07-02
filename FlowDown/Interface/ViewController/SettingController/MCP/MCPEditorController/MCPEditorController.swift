@@ -7,37 +7,37 @@ import UIKit
 class MCPEditorController: StackScrollController {
     let clientId: MCPClient.ID
     private var client: MCPClient?
-    
+
     var cancellables: Set<AnyCancellable> = .init()
-    
+
     init(clientId: MCPClient.ID) {
         self.clientId = clientId
         super.init(nibName: nil, bundle: nil)
         title = String(localized: "Edit MCP Client")
-        self.client = MCPService.shared.McpClient(identifier: clientId)
+        client = MCPService.shared.McpClient(identifier: clientId)
     }
-    
+
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError()
     }
-    
+
     deinit {
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
-        
+
         navigationItem.rightBarButtonItem = .init(
             image: UIImage(systemName: "checkmark"),
             style: .done,
             target: self,
             action: #selector(checkTapped)
         )
-        
+
         MCPService.shared.clientConfigs
             .removeDuplicates()
             .ensureMainThread()
@@ -50,11 +50,11 @@ class MCPEditorController: StackScrollController {
             }
             .store(in: &cancellables)
     }
-    
+
     @objc func checkTapped() {
         navigationController?.popViewController(animated: true)
     }
-    
+
     @objc func deleteTapped() {
         let alert = AlertViewController(
             title: String(localized: "Delete Client"),
@@ -73,20 +73,20 @@ class MCPEditorController: StackScrollController {
         }
         present(alert, animated: true)
     }
-    
+
     override func setupContentViews() {
         super.setupContentViews()
-        
-        guard let client = client else { return }
-        
+
+        guard let client else { return }
+
         // MARK: - Basic Information
-        
+
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Metadata"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let nameView = ConfigurableInfoView().setTapBlock { view in
             let input = AlertInputViewController(
                 title: String(localized: "Edit Name"),
@@ -107,7 +107,7 @@ class MCPEditorController: StackScrollController {
         nameView.configure(value: client.name.isEmpty ? String(localized: "Unnamed Server") : client.name)
         stackView.addArrangedSubviewWithMargin(nameView)
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let descriptionView = ConfigurableInfoView().setTapBlock { view in
             let input = AlertInputViewController(
                 title: String(localized: "Edit Description"),
@@ -128,7 +128,7 @@ class MCPEditorController: StackScrollController {
         descriptionView.configure(value: client.description.isEmpty ? String(localized: "No Description") : client.description)
         stackView.addArrangedSubviewWithMargin(descriptionView)
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let enabledView = ConfigurableToggleActionView()
         enabledView.boolValue = client.isEnabled
         enabledView.actionBlock = { value in
@@ -141,15 +141,15 @@ class MCPEditorController: StackScrollController {
         enabledView.configure(description: String(localized: "Whether this MCP Server is enabled."))
         stackView.addArrangedSubviewWithMargin(enabledView)
         stackView.addArrangedSubview(SeparatorView())
-        
+
         // MARK: - Connection Settings
-        
+
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Connection"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let typeView = ConfigurableInfoView()
         typeView.configure(icon: .init(systemName: "gear"))
         typeView.configure(title: String(localized: "Connection Type"))
@@ -174,7 +174,7 @@ class MCPEditorController: StackScrollController {
                         client.type = .sse
                     }
                     view.configure(value: "SSE")
-                }
+                },
             ]
             view.present(
                 menu: .init(title: String(localized: "Connection Type"), children: children),
@@ -183,7 +183,7 @@ class MCPEditorController: StackScrollController {
         }
         stackView.addArrangedSubviewWithMargin(typeView)
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let endpointView = ConfigurableInfoView().setTapBlock { view in
             let input = AlertInputViewController(
                 title: String(localized: "Edit Endpoint"),
@@ -204,7 +204,7 @@ class MCPEditorController: StackScrollController {
         endpointView.configure(value: client.endpoint.isEmpty ? String(localized: "Not Configured") : client.endpoint)
         stackView.addArrangedSubviewWithMargin(endpointView)
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let headerView = ConfigurableInfoView().setTapBlock { view in
             guard let client = MCPService.shared.McpClient(identifier: self.clientId) else { return }
             var text = client.header
@@ -230,7 +230,7 @@ class MCPEditorController: StackScrollController {
         headerView.configure(value: client.header.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
         stackView.addArrangedSubviewWithMargin(headerView)
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let timeoutView = ConfigurableInfoView().setTapBlock { view in
             let input = AlertInputViewController(
                 title: String(localized: "Edit Timeout"),
@@ -252,39 +252,39 @@ class MCPEditorController: StackScrollController {
         timeoutView.configure(value: "\(client.timeout)s")
         stackView.addArrangedSubviewWithMargin(timeoutView)
         stackView.addArrangedSubview(SeparatorView())
-        
-
 
         // MARK: - Test / fetch tools
+
         let testAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
-            // deleteTapped() 
+            // deleteTapped()
             // TODO: Testing method.
         }
         testAction.configure(icon: UIImage(systemName: "wand.and.stars"))
         testAction.configure(title: String(localized: "Test Configuration"))
         testAction.configure(description: String(localized: "Test the configuration of the MCP server."))
 
-
         stackView.addArrangedSubviewWithMargin(testAction)
         stackView.addArrangedSubview(SeparatorView())
+
         // MARK: - Tool management.
+
         /*
-            only visible when MCPClient is is enabled.
-        */
+             only visible when MCPClient is is enabled.
+         */
 
         // MARK: - Resource Management
 
         // MARK: - Template mangement
-        
+
         // MARK: - Management
-        
+
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Management"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
-        
+
         let deleteAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
             deleteTapped()
@@ -298,6 +298,5 @@ class MCPEditorController: StackScrollController {
         deleteAction.imageView.tintColor = .systemRed
         stackView.addArrangedSubviewWithMargin(deleteAction)
         stackView.addArrangedSubview(SeparatorView())
-    
     }
 }

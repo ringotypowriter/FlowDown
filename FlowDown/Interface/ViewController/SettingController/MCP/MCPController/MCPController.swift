@@ -4,59 +4,58 @@
 //
 //  Created by LiBr on 6/30/25.
 //
-import ConfigurableKit
-import UIKit
-import Storage
 import Combine
-
+import ConfigurableKit
+import Storage
+import UIKit
 
 extension SettingController.SettingContent {
     class MCPController: UIViewController {
         let tableView: UITableView
         let dataSource: DataSource
-        
+
         enum TableViewSection: String {
             case main
         }
-        
+
         typealias DataSource = UITableViewDiffableDataSource<TableViewSection, MCPClient.ID>
         typealias Snapshot = NSDiffableDataSourceSnapshot<TableViewSection, MCPClient.ID>
-        
+
         var cancellable: Set<AnyCancellable> = []
-        
+
         init() {
             tableView = UITableView(frame: .zero, style: .plain)
             dataSource = .init(tableView: tableView, cellProvider: Self.cellProvider)
-            
+
             super.init(nibName: nil, bundle: nil)
             title = String(localized: "Model Context Protocol")
-            
+
             tableView.register(
                 MCPClientCell.self,
                 forCellReuseIdentifier: NSStringFromClass(MCPClientCell.self)
             )
         }
-        
+
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         deinit {
             cancellable.forEach { $0.cancel() }
             cancellable.removeAll()
         }
-        
+
         override func viewDidLoad() {
             super.viewDidLoad()
             view.backgroundColor = .background
-            
+
             navigationItem.rightBarButtonItem = UIBarButtonItem(
                 barButtonSystemItem: .add,
                 target: self,
                 action: #selector(addClientTapped)
             )
-            
+
             dataSource.defaultRowAnimation = .fade
             tableView.delegate = self
             tableView.separatorStyle = .singleLine
@@ -70,7 +69,7 @@ extension SettingController.SettingContent {
             tableView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
-            
+
             MCPService.shared.clientConfigs
                 .ensureMainThread()
                 .sink { [weak self] clients in
@@ -78,14 +77,14 @@ extension SettingController.SettingContent {
                 }
                 .store(in: &cancellable)
         }
-        
+
         func updateSnapshot(_ clients: [MCPClient]) {
             var snapshot = Snapshot()
             snapshot.appendSections([.main])
             snapshot.appendItems(clients.map(\.id), toSection: .main)
             dataSource.apply(snapshot, animatingDifferences: true)
         }
-        
+
         static let cellProvider: DataSource.CellProvider = { tableView, indexPath, clientId in
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: NSStringFromClass(MCPClientCell.self),
@@ -107,7 +106,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         let controller = MCPEditorController(clientId: clientId)
         navigationController?.pushViewController(controller, animated: true)
     }
-    
+
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
         let delete = UIContextualAction(

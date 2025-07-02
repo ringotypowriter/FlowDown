@@ -7,9 +7,9 @@
 
 // File from https://raw.githubusercontent.com/modelcontextprotocol/swift-sdk/5978c719d99fb85b1c65c31e47c82c1331c24830/Sources/MCP/Base/Transports/SSEClientTransport.swift
 
-import MCP
 import Foundation
 import Logging
+import MCP
 
 #if !os(Linux)
     import EventSource
@@ -86,19 +86,19 @@ import Logging
         ) {
             self.endpoint = endpoint
             self.token = token
-            self.session = URLSession(configuration: configuration)
+            session = URLSession(configuration: configuration)
 
             // Create message stream
             var continuation: AsyncThrowingStream<Data, Swift.Error>.Continuation!
-            self.messageStream = AsyncThrowingStream<Data, Swift.Error> { continuation = $0 }
-            self.messageContinuation = continuation
+            messageStream = AsyncThrowingStream<Data, Swift.Error> { continuation = $0 }
+            messageContinuation = continuation
 
             self.logger =
                 logger
-                ?? Logger(
-                    label: "mcp.transport.sse",
-                    factory: { _ in SwiftLogNoOpLogHandler() }
-                )
+                    ?? Logger(
+                        label: "mcp.transport.sse",
+                        factory: { _ in SwiftLogNoOpLogHandler() }
+                    )
         }
 
         /// Establishes connection with the transport
@@ -122,7 +122,7 @@ import Logging
 
                 // Add the timeout task
                 group.addTask {
-                    try await Task.sleep(for: .seconds(5))  // 5 second timeout
+                    try await Task.sleep(for: .seconds(5)) // 5 second timeout
                     throw MCPError.internalError("Connection timeout waiting for endpoint URL")
                 }
 
@@ -180,7 +180,7 @@ import Logging
                 throw MCPError.internalError("Transport not connected")
             }
 
-            guard let messageURL = messageURL else {
+            guard let messageURL else {
                 throw MCPError.internalError("No message URL provided by server")
             }
 
@@ -192,7 +192,7 @@ import Logging
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
             // Add authorization if token is provided
-            if let token = token {
+            if let token {
                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
 
@@ -202,7 +202,7 @@ import Logging
                 throw MCPError.internalError("Invalid HTTP response")
             }
 
-            guard (200..<300).contains(httpResponse.statusCode) else {
+            guard (200 ..< 300).contains(httpResponse.statusCode) else {
                 throw MCPError.internalError("HTTP error: \(httpResponse.statusCode)")
             }
         }
@@ -214,7 +214,7 @@ import Logging
         ///
         /// - Returns: An AsyncThrowingStream of Data objects
         public func receive() -> AsyncThrowingStream<Data, Swift.Error> {
-            return messageStream
+            messageStream
         }
 
         // MARK: - Private Methods
@@ -225,7 +225,7 @@ import Logging
             var currentAttempt = 0
             var lastErrorEncountered: Swift.Error?
 
-            while !Task.isCancelled && currentAttempt < maxAttempts {
+            while !Task.isCancelled, currentAttempt < maxAttempts {
                 currentAttempt += 1
                 do {
                     logger.info(
@@ -234,14 +234,14 @@ import Logging
                     try await connectToSSEStream()
                     // If connectToSSEStream() returns without throwing, it means the stream of events finished.
                     // If connectionContinuation is still set at this point, it means we never got the 'endpoint' event.
-                    if let continuation = self.connectionContinuation {
+                    if let continuation = connectionContinuation {
                         logger.error(
                             "SSE stream ended before 'endpoint' event was received during initial connection phase."
                         )
                         let streamEndedError = MCPError.internalError(
                             "SSE stream ended before 'endpoint' event was received.")
                         continuation.resume(throwing: streamEndedError)
-                        self.connectionContinuation = nil  // Mark as handled
+                        connectionContinuation = nil // Mark as handled
                     }
                     // If stream ended (either successfully resolving continuation or not), exit listenForServerEvents.
                     logger.debug(
@@ -254,41 +254,40 @@ import Logging
                         logger.info(
                             "SSE connection task cancelled after an error during attempt \(currentAttempt)."
                         )
-                        lastErrorEncountered = error  // Store error that occurred before cancellation
-                        break  // Exit the retry loop; cancellation will be handled after the loop.
+                        lastErrorEncountered = error // Store error that occurred before cancellation
+                        break // Exit the retry loop; cancellation will be handled after the loop.
                     }
 
-                    lastErrorEncountered = error  // Store the error from this attempt.
+                    lastErrorEncountered = error // Store the error from this attempt.
                     logger.warning(
                         "SSE connection attempt \(currentAttempt)/\(maxAttempts) failed: \(error.localizedDescription)"
                     )
 
-                    if currentAttempt < maxAttempts && !Task.isCancelled {  // If there are more attempts left
+                    if currentAttempt < maxAttempts, !Task.isCancelled { // If there are more attempts left
                         do {
-                            let delay: TimeInterval
-                            if currentAttempt == 1 {
-                                delay = 0.5
-                            }  // After 1st attempt fails
+                            let delay: TimeInterval = if currentAttempt == 1 {
+                                0.5
+                            } // After 1st attempt fails
                             else {
-                                delay = 1.0
-                            }  // After 2nd attempt fails
+                                1.0
+                            } // After 2nd attempt fails
 
                             logger.info(
                                 "Waiting \(delay) seconds before next SSE connection attempt (attempt \(currentAttempt + 1))."
                             )
                             try await Task.sleep(for: .seconds(delay))
-                        } catch {  // Catch cancellation of sleep
+                        } catch { // Catch cancellation of sleep
                             logger.info("SSE connection retry sleep was cancelled.")
                             // lastErrorEncountered is already set from the connection attempt.
                             // Task.isCancelled will be true, so the loop condition or post-loop check will handle it.
-                            break  // Exit the retry loop.
+                            break // Exit the retry loop.
                         }
                     }
                 }
-            }  // End of while loop
+            } // End of while loop
 
             // After the loop (due to Task.isCancelled or currentAttempt >= maxAttempts)
-            if let continuation = self.connectionContinuation {
+            if let continuation = connectionContinuation {
                 // This continuation is still pending; means connection never established successfully.
                 if Task.isCancelled {
                     logger.info(
@@ -297,22 +296,22 @@ import Logging
                     // Use lastErrorEncountered if cancellation happened after an error, otherwise a generic cancellation error.
                     let cancelError =
                         lastErrorEncountered
-                        ?? MCPError.internalError("Connection attempt cancelled.")
+                            ?? MCPError.internalError("Connection attempt cancelled.")
                     continuation.resume(throwing: cancelError)
-                } else if currentAttempt >= maxAttempts {  // This implies !Task.isCancelled
+                } else if currentAttempt >= maxAttempts { // This implies !Task.isCancelled
                     logger.error(
                         "All \(maxAttempts) SSE connection attempts failed. Failing pending connection continuation with last error: \(lastErrorEncountered?.localizedDescription ?? "N/A")"
                     )
                     let finalError =
                         lastErrorEncountered
-                        ?? MCPError.internalError(
-                            "All SSE connection attempts failed after unknown error.")
+                            ?? MCPError.internalError(
+                                "All SSE connection attempts failed after unknown error.")
                     continuation.resume(throwing: finalError)
                 }
-                self.connectionContinuation = nil  // Ensure it's nilled after use.
+                connectionContinuation = nil // Ensure it's nilled after use.
             }
             logger.debug(
-                "listenForServerEvents task finished. Final connection state: \(isConnected). Message URL: \(String(describing: self.messageURL))"
+                "listenForServerEvents task finished. Final connection state: \(isConnected). Message URL: \(String(describing: messageURL))"
             )
         }
 
@@ -326,7 +325,7 @@ import Logging
             request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
 
             // Add authorization if token is provided
-            if let token = token {
+            if let token {
                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
 
@@ -342,7 +341,7 @@ import Logging
             }
 
             guard let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type"),
-                contentType.contains("text/event-stream")
+                  contentType.contains("text/event-stream")
             else {
                 throw MCPError.internalError("Invalid content type for SSE stream")
             }
@@ -369,9 +368,9 @@ import Logging
                     logger.error("Received empty endpoint data")
                 }
 
-            case "message", nil:  // Default event type is "message" per SSE spec
+            case "message", nil: // Default event type is "message" per SSE spec
                 if !event.data.isEmpty,
-                    let messageData = event.data.data(using: .utf8)
+                   let messageData = event.data.data(using: .utf8)
                 {
                     messageContinuation.yield(messageData)
                 } else {

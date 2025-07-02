@@ -8,16 +8,16 @@
 import MCP
 import Storage
 
-
 class McpClient {
     private var client: Client?
     private var properties: MCPClient?
     public var id: MCPClient.ID {
         properties?.id ?? .init()
     }
+
     init(properties: MCPClient) {
         self.properties = properties
-        self.client = Client(
+        client = Client(
             name: properties.name,
             version: "1.0.0",
         )

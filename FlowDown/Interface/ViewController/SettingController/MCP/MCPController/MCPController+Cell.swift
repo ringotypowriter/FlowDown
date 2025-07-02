@@ -6,8 +6,8 @@
 //
 
 import ConfigurableKit
-import UIKit
 import Storage
+import UIKit
 
 extension SettingController.SettingContent.MCPController {
     class MCPClientCell: UITableViewCell {
@@ -21,37 +21,36 @@ extension SettingController.SettingContent.MCPController {
             separatorInset = .zero
             selectionStyle = .none
         }
-        
+
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError()
         }
-        
+
         let configurableView = ConfigurableActionView(
             responseEverywhere: true,
             actionBlock: { _ in }
         )
-        
+
         override func prepareForReuse() {
             super.prepareForReuse()
         }
-        
+
         func configure(with clientId: MCPClient.ID) {
             guard let client = MCPService.shared.McpClient(identifier: clientId) else {
                 return
             }
-            
-            let icon: UIImage
-            switch client.type {
+
+            let icon = switch client.type {
             case .http:
-                icon = UIImage(systemName: "network") ?? UIImage()
+                UIImage(systemName: "network") ?? UIImage()
             case .sse:
-                icon = UIImage(systemName: "antenna.radiowaves.left.and.right") ?? UIImage()
+                UIImage(systemName: "antenna.radiowaves.left.and.right") ?? UIImage()
             }
-            
+
             configurableView.configure(icon: icon)
             configurableView.configure(title: client.name.isEmpty ? String(localized: "Unnamed Client") : client.name)
-            
+
             var descriptions: [String] = []
             descriptions.append(client.type.rawValue.uppercased())
             if !client.endpoint.isEmpty {
@@ -60,9 +59,8 @@ extension SettingController.SettingContent.MCPController {
             if !client.isEnabled {
                 descriptions.append(String(localized: "Disabled"))
             }
-            
+
             configurableView.configure(description: descriptions.joined(separator: " • "))
         }
     }
 }
-

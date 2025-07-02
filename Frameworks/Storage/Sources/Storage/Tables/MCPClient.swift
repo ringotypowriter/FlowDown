@@ -20,7 +20,7 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
     public var toolsEnabled: EnableCodable = .init()
     public var resourcesEnabled: EnableCodable = .init()
     public var templateEnabled: EnableCodable = .init()
-    
+
     // increment
     public var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
     public var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
@@ -54,6 +54,7 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
         case templateEnabled
         case resourcesEnabled
     }
+
     public init(
         id: Int64 = .init(),
         name: String = "",
@@ -79,7 +80,7 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
         self.resourcesEnabled = resourcesEnabled
         self.templateEnabled = templateEnabled
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -98,16 +99,16 @@ public extension MCPClient {
     enum ClientType: String, Codable, ColumnCodable {
         case http
         case sse
-        
+
         public init?(with value: WCDBSwift.Value) {
             let rawValue = value.stringValue
             self.init(rawValue: rawValue)
         }
-        
+
         public func archivedValue() -> WCDBSwift.Value {
-            return .init(self.rawValue)
+            .init(rawValue)
         }
-        
+
         public static var columnType: WCDBSwift.ColumnType {
             .text
         }
@@ -137,7 +138,7 @@ public extension MCPClient {
         public var value: [String: Bool] = [:]
 
         public init() {
-            self.value = [:]
+            value = [:]
         }
 
         public init(value: [String: Bool]) {
