@@ -43,7 +43,6 @@ class ChatTemplateManager {
 
     func addTemplate(_ template: ChatTemplate) {
         assert(Thread.isMainThread)
-        assert(templates[template.id] == nil)
         templates[template.id] = template
     }
 
@@ -68,6 +67,17 @@ class ChatTemplateManager {
         assert(Thread.isMainThread)
         assert(templates[itemIdentifier] != nil)
         templates.removeValue(forKey: itemIdentifier)
+    }
+
+    func reorderTemplates(_ orderedIDs: [ChatTemplate.ID]) {
+        assert(Thread.isMainThread)
+        var newTemplates: OrderedDictionary<ChatTemplate.ID, ChatTemplate> = [:]
+        for id in orderedIDs {
+            if let template = templates[id] {
+                newTemplates[id] = template
+            }
+        }
+        templates = newTemplates
     }
 
     func createConversationFromTemplate(_ template: ChatTemplate) -> Conversation.ID {

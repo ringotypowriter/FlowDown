@@ -48,6 +48,9 @@ class ChatTemplateListController: UIViewController {
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = dataSource
+        tableView.dragDelegate = self
+        tableView.dropDelegate = self
+        tableView.dragInteractionEnabled = true
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = .zero
         tableView.backgroundColor = .clear
@@ -273,6 +276,108 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
                         haptic: .success,
                         referencingView: self.view
                     )
+                }
+            }
+        }
+    }
+}
+
+extension ChatTemplateListController: UITableViewDragDelegate, UITableViewDropDelegate {
+    func tableView(_: UITableView, itemsForBeginning _: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath),
+              let template = ChatTemplateManager.shared.template(for: itemIdentifier)
+        else {
+            return []
+        }
+
+        let itemProvider = NSItemProvider()
+
+        do {
+            let encoder = PropertyListEncoder()
+            let data = try encoder.encode(template)
+            let typeIdentifier = UTType(filenameExtension: "fdtemplate")?.identifier ?? "com.flowdown.template"
+            itemProvider.registerDataRepresentation(
+                forTypeIdentifier: typeIdentifier,
+                visibility: .all
+            ) { completion in
+                completion(data, nil)
+                return nil
+            }
+            itemProvider.suggestedName = "\(template.name).fdtemplate"
+        } catch {
+            print("[-] failed to encode template for drag: \(error)")
+        }
+
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = itemIdentifier
+        return [dragItem]
+    }
+
+    func tableView(_: UITableView, canMoveRowAt _: IndexPath) -> Bool {
+        true
+    }
+
+    func tableView(_: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if sourceIndexPath == destinationIndexPath { return }
+        guard let sourceItem = dataSource.itemIdentifier(for: sourceIndexPath) else { return }
+
+        var snapshot = dataSource.snapshot()
+        if sourceIndexPath.row < destinationIndexPath.row {
+            if let destinationItem = dataSource.itemIdentifier(
+                for: IndexPath(row: destinationIndexPath.row, section: 0)
+            ) {
+                guard sourceItem != destinationItem else { return }
+                snapshot.moveItem(sourceItem, afterItem: destinationItem)
+            }
+        } else {
+            if let destinationItem = dataSource.itemIdentifier(for: destinationIndexPath) {
+                guard sourceItem != destinationItem else { return }
+                snapshot.moveItem(sourceItem, beforeItem: destinationItem)
+            }
+        }
+
+        dataSource.apply(snapshot, animatingDifferences: false)
+
+        // 更新 ChatTemplateManager 中的顺序
+        let newOrder = dataSource.snapshot().itemIdentifiers(inSection: .main)
+        ChatTemplateManager.shared.reorderTemplates(newOrder)
+    }
+
+    func tableView(_: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath _: IndexPath?) -> UITableViewDropProposal {
+        if session.localDragSession != nil {
+            return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        } else if session.hasItemsConforming(toTypeIdentifiers: [UTType(filenameExtension: "fdtemplate")?.identifier ?? "wiki.qaq.fdtemplate"]) {
+            return UITableViewDropProposal(operation: .copy, intent: .insertAtDestinationIndexPath)
+        }
+        return UITableViewDropProposal(operation: .cancel)
+    }
+
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
+
+        for item in coordinator.items {
+            if let sourceIndexPath = item.sourceIndexPath {
+                tableView.performBatchUpdates({
+                    self.tableView(tableView, moveRowAt: sourceIndexPath, to: destinationIndexPath)
+                }, completion: nil)
+                coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
+            } else {
+                let itemProvider = item.dragItem.itemProvider
+                if itemProvider.hasItemConformingToTypeIdentifier(UTType(filenameExtension: "fdtemplate")?.identifier ?? "wiki.qaq.fdtemplate") {
+                    itemProvider.loadDataRepresentation(forTypeIdentifier: UTType(filenameExtension: "fdtemplate")?.identifier ?? "wiki.qaq.fdtemplate") { data, error in
+                        guard let data, error == nil else { return }
+
+                        do {
+                            let decoder = PropertyListDecoder()
+                            let template = try decoder.decode(ChatTemplate.self, from: data)
+                            DispatchQueue.main.async {
+                                ChatTemplateManager.shared.addTemplate(template)
+                            }
+                        } catch {
+                            print("[-] failed to decode dropped template: \(error)")
+                        }
+                    }
+                    coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
                 }
             }
         }
