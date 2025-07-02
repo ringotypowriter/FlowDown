@@ -175,6 +175,27 @@ class MainController: UIViewController {
         }
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateShadowPath()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        DispatchQueue.main.async {
+            // update isUserInteractionEnabled when rotate
+            self.isSidebarCollapsed = self.isSidebarCollapsed
+        }
+    }
+
+    func updateShadowPath() {
+        contentShadowView.layer.shadowPath = UIBezierPath(
+            roundedRect: view.convert(contentView.frame, to: contentShadowView),
+            cornerRadius: contentView.layer.cornerRadius
+        ).cgPath
+    }
+
     var firstTouchLocation: CGPoint? = nil
     var lastTouchBegin: Date = .init(timeIntervalSince1970: 0)
     var touchesMoved = false
