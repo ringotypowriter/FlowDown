@@ -10,12 +10,12 @@ import Storage
 
 class McpClient {
     private var client: Client?
-    private var properties: MCPClient?
-    public var id: MCPClient.ID {
+    private var properties: ModelContextClient?
+    public var id: ModelContextClient.ID {
         properties?.id ?? .init()
     }
 
-    init(properties: MCPClient) {
+    init(properties: ModelContextClient) {
         self.properties = properties
         client = Client(
             name: properties.name,

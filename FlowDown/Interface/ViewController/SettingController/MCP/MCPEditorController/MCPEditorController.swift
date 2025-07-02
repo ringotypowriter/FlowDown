@@ -5,16 +5,17 @@ import Storage
 import UIKit
 
 class MCPEditorController: StackScrollController {
-    let clientId: MCPClient.ID
-    private var client: MCPClient?
+    let clientId: ModelContextClient.ID
+    private var client: ModelContextClient?
 
     var cancellables: Set<AnyCancellable> = .init()
 
-    init(clientId: MCPClient.ID) {
+    init(clientId: ModelContextClient.ID) {
         self.clientId = clientId
         super.init(nibName: nil, bundle: nil)
         title = String(localized: "Edit MCP Client")
-        client = MCPService.shared.McpClient(identifier: clientId)
+        client = MCPService.shared.client(with: clientId)
+        assert(client != nil)
     }
 
     @available(*, unavailable)
@@ -38,7 +39,7 @@ class MCPEditorController: StackScrollController {
             action: #selector(checkTapped)
         )
 
-        MCPService.shared.clientConfigs
+        MCPService.shared.clients
             .removeDuplicates()
             .ensureMainThread()
             .delay(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -66,7 +67,7 @@ class MCPEditorController: StackScrollController {
             context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
                 context.dispose { [weak self] in
                     guard let self else { return }
-                    MCPService.shared.removeClient(identifier: clientId)
+                    MCPService.shared.remove(identifier: clientId)
                     navigationController?.popViewController(animated: true)
                 }
             }
@@ -94,7 +95,7 @@ class MCPEditorController: StackScrollController {
                 placeholder: String(localized: "Unnamed MCP"),
                 text: client.name
             ) { output in
-                MCPService.shared.editClient(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.clientId) { client in
                     client.name = output
                 }
                 view.configure(value: output.isEmpty ? String(localized: "Unnamed Server") : output)
@@ -115,7 +116,7 @@ class MCPEditorController: StackScrollController {
                 placeholder: String(localized: "Enter description"),
                 text: client.description
             ) { output in
-                MCPService.shared.editClient(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.clientId) { client in
                     client.description = output
                 }
                 view.configure(value: output.isEmpty ? String(localized: "No Description") : output)
@@ -132,7 +133,7 @@ class MCPEditorController: StackScrollController {
         let enabledView = ConfigurableToggleActionView()
         enabledView.boolValue = client.isEnabled
         enabledView.actionBlock = { value in
-            MCPService.shared.editClient(identifier: self.clientId) { client in
+            MCPService.shared.edit(identifier: self.clientId) { client in
                 client.isEnabled = value
             }
         }
@@ -161,7 +162,7 @@ class MCPEditorController: StackScrollController {
                     title: "HTTP",
                     image: UIImage(systemName: "network")
                 ) { _ in
-                    MCPService.shared.editClient(identifier: self.clientId) { client in
+                    MCPService.shared.edit(identifier: self.clientId) { client in
                         client.type = .http
                     }
                     view.configure(value: "HTTP")
@@ -170,7 +171,7 @@ class MCPEditorController: StackScrollController {
                     title: "SSE",
                     image: UIImage(systemName: "antenna.radiowaves.left.and.right")
                 ) { _ in
-                    MCPService.shared.editClient(identifier: self.clientId) { client in
+                    MCPService.shared.edit(identifier: self.clientId) { client in
                         client.type = .sse
                     }
                     view.configure(value: "SSE")
@@ -191,7 +192,7 @@ class MCPEditorController: StackScrollController {
                 placeholder: "https://",
                 text: client.endpoint.isEmpty ? "https://" : client.endpoint
             ) { output in
-                MCPService.shared.editClient(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.clientId) { client in
                     client.endpoint = output
                 }
                 view.configure(value: output.isEmpty ? String(localized: "Not Configured") : output)
@@ -206,7 +207,7 @@ class MCPEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         let headerView = ConfigurableInfoView().setTapBlock { view in
-            guard let client = MCPService.shared.McpClient(identifier: self.clientId) else { return }
+            guard let client = MCPService.shared.client(with: self.clientId) else { return }
             var text = client.header
             if text.isEmpty { text = "{}" }
             let textEditor = JsonStringMapEditorController(text: text)
@@ -217,7 +218,7 @@ class MCPEditorController: StackScrollController {
                 }
                 let jsonData = try? JSONSerialization.data(withJSONObject: object, options: .prettyPrinted)
                 let jsonString = String(data: jsonData ?? Data(), encoding: .utf8) ?? ""
-                MCPService.shared.editClient(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.clientId) { client in
                     client.header = jsonString == "{}" ? "" : jsonString
                 }
                 view.configure(value: object.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
@@ -239,7 +240,7 @@ class MCPEditorController: StackScrollController {
                 text: "\(client.timeout)"
             ) { output in
                 let timeout = Int(output) ?? 60
-                MCPService.shared.editClient(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.clientId) { client in
                     client.timeout = timeout
                 }
                 view.configure(value: "\(timeout)s")

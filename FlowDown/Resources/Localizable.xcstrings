@@ -3015,7 +3015,7 @@
         }
       }
     },
-    "Manage Model Context Protocol (MCP) Servers." : {
+    "Manage Model Context Protocol Servers." : {
 
     },
     "Manage permissions for the application. Your privacy is important to us." : {
@@ -3712,6 +3712,7 @@
       }
     },
     "Optional description for this MCP Server." : {
+
     },
     "Original Message" : {
       "localizations" : {

@@ -40,7 +40,7 @@ extension SettingController {
             .init(
                 icon: "cpu.fill",
                 title: String(localized: "Model Context Protocol"),
-                explain: String(localized: "Manage Model Context Protocol (MCP) Servers."),
+                explain: String(localized: "Manage Model Context Protocol Servers."),
                 ephemeralAnnotation: .page { MCPController() }
             ),
             .init(

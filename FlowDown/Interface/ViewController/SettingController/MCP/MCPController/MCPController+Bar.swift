@@ -10,7 +10,7 @@ import UIKit
 
 extension SettingController.SettingContent.MCPController {
     @objc func addClientTapped() {
-        let client = MCPService.shared.newMCPClient()
+        let client = MCPService.shared.create()
         let controller = MCPEditorController(clientId: client.id)
         navigationController?.pushViewController(controller, animated: true)
     }

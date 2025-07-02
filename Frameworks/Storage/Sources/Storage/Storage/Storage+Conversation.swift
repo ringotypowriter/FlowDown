@@ -9,7 +9,7 @@ import Foundation
 import WCDBSwift
 
 public extension Storage {
-    func listConversations() -> [Conversation] {
+    func conversationList() -> [Conversation] {
         (
             try? db.getObjects(
                 fromTable: Conversation.table,
@@ -21,7 +21,7 @@ public extension Storage {
         ) ?? []
     }
 
-    func createNewConversation() -> Conversation {
+    func conversationMake() -> Conversation {
         let object = Conversation()
         object.isAutoIncrement = true
         try? db.insert([object], intoTable: Conversation.table)
@@ -30,21 +30,21 @@ public extension Storage {
         return object
     }
 
-    func insertOrReplace(object: Conversation) {
+    func conversationUpdate(object: Conversation) {
         try? db.insertOrReplace(
             [object],
             intoTable: Conversation.table
         )
     }
 
-    func conversation(identifier: Conversation.ID) -> Conversation? {
+    func conversationWith(identifier: Conversation.ID) -> Conversation? {
         try? db.getObject(
             fromTable: Conversation.table,
             where: Conversation.Properties.id == identifier
         )
     }
 
-    func insertOrReplace(identifier: Conversation.ID, _ block: @escaping (inout Conversation) -> Void) {
+    func conversationEdit(identifier: Conversation.ID, _ block: @escaping (inout Conversation) -> Void) {
         let read: Conversation? = try? db.getObject(
             fromTable: Conversation.table,
             where: Conversation.Properties.id == identifier
@@ -57,7 +57,7 @@ public extension Storage {
         )
     }
 
-    func remove(identifier: Conversation.ID) {
+    func conversationRemove(conversationWith identifier: Conversation.ID) {
         let messages = listMessages(within: identifier)
         for message in messages {
             try? db.delete(
@@ -76,7 +76,7 @@ public extension Storage {
     }
 
     @discardableResult
-    func duplicate(identifier: Conversation.ID, customize: @escaping (Conversation) -> Void) -> Conversation.ID? {
+    func conversationDuplicate(identifier: Conversation.ID, customize: @escaping (Conversation) -> Void) -> Conversation.ID? {
         var ans: Conversation.ID?
         try? db.run { handler -> Bool in
             do {
@@ -173,7 +173,7 @@ public extension Storage {
         return newIdentifier
     }
 
-    func eraseAllConversations() {
+    func conversationsDrop() {
         try? db.run { db -> Bool in
             do {
                 try self.executeEraseAllConversations(db: db)

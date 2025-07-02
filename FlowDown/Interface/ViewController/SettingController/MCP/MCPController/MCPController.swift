@@ -18,8 +18,8 @@ extension SettingController.SettingContent {
             case main
         }
 
-        typealias DataSource = UITableViewDiffableDataSource<TableViewSection, MCPClient.ID>
-        typealias Snapshot = NSDiffableDataSourceSnapshot<TableViewSection, MCPClient.ID>
+        typealias DataSource = UITableViewDiffableDataSource<TableViewSection, ModelContextClient.ID>
+        typealias Snapshot = NSDiffableDataSourceSnapshot<TableViewSection, ModelContextClient.ID>
 
         var cancellable: Set<AnyCancellable> = []
 
@@ -70,7 +70,7 @@ extension SettingController.SettingContent {
                 make.edges.equalToSuperview()
             }
 
-            MCPService.shared.clientConfigs
+            MCPService.shared.clients
                 .ensureMainThread()
                 .sink { [weak self] clients in
                     self?.updateSnapshot(clients)
@@ -78,7 +78,7 @@ extension SettingController.SettingContent {
                 .store(in: &cancellable)
         }
 
-        func updateSnapshot(_ clients: [MCPClient]) {
+        func updateSnapshot(_ clients: [ModelContextClient]) {
             var snapshot = Snapshot()
             snapshot.appendSections([.main])
             snapshot.appendItems(clients.map(\.id), toSection: .main)
@@ -113,7 +113,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
             style: .destructive,
             title: String(localized: "Delete")
         ) { _, _, completion in
-            MCPService.shared.removeClient(identifier: clientId)
+            MCPService.shared.remove(identifier: clientId)
             completion(true)
         }
         return UISwipeActionsConfiguration(actions: [delete])

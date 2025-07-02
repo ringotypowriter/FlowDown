@@ -9,7 +9,7 @@ import Foundation
 import WCDBSwift
 
 public extension Storage {
-    func listCloudModels() -> [CloudModel] {
+    func cloudModelList() -> [CloudModel] {
         (
             try? db.getObjects(
                 fromTable: CloudModel.table,
@@ -21,21 +21,21 @@ public extension Storage {
         ) ?? []
     }
 
-    func insertOrReplace(object: CloudModel) {
+    func cloudModelPut(_ object: CloudModel) {
         try? db.insertOrReplace(
             [object],
             intoTable: CloudModel.table
         )
     }
 
-    func cloudModel(identifier: CloudModel.ID) -> CloudModel? {
+    func cloudModel(with identifier: CloudModel.ID) -> CloudModel? {
         try? db.getObject(
             fromTable: CloudModel.table,
             where: CloudModel.Properties.id == identifier
         )
     }
 
-    func insertOrReplace(identifier: CloudModel.ID, _ block: @escaping (inout CloudModel) -> Void) {
+    func cloudModelEdit(identifier: CloudModel.ID, _ block: @escaping (inout CloudModel) -> Void) {
         let read: CloudModel? = try? db.getObject(
             fromTable: CloudModel.table,
             where: CloudModel.Properties.id == identifier
@@ -48,7 +48,7 @@ public extension Storage {
         )
     }
 
-    func remove(identifier: CloudModel.ID) {
+    func cluodModelRemove(identifier: CloudModel.ID) {
         try? db.delete(
             fromTable: CloudModel.table,
             where: CloudModel.Properties.id == identifier

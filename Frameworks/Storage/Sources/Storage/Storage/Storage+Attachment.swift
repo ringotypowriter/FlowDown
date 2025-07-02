@@ -7,7 +7,7 @@ import Foundation
 import WCDBSwift
 
 public extension Storage {
-    func listAttachments(for messageID: Message.ID) -> [Attachment] {
+    func attachment(for messageID: Message.ID) -> [Attachment] {
         (
             try? db.getObjects(
                 fromTable: Attachment.table,
@@ -20,7 +20,7 @@ public extension Storage {
         ) ?? []
     }
 
-    func makeAttachment(with messageID: Message.ID) -> Attachment {
+    func attachmentMake(with messageID: Message.ID) -> Attachment {
         let attachment = Attachment()
         attachment.messageId = messageID
         attachment.isAutoIncrement = true
@@ -30,7 +30,7 @@ public extension Storage {
         return attachment
     }
 
-    func insertOrReplace(attachments: [Attachment]) {
+    func attachmentsUpdate(_ attachments: [Attachment]) {
         try? db.insertOrReplace(attachments, intoTable: Attachment.table)
     }
 }

@@ -12,7 +12,7 @@ import Storage
 
 extension ConversationManager {
     func scanAll() {
-        let items = sdb.listConversations()
+        let items: [Conversation] = sdb.conversationList()
         print("[+] scanned \(items.count) conversations")
         conversations.send(items)
     }
@@ -29,15 +29,15 @@ extension ConversationManager {
     }
 
     func createNewConversation() -> Conversation {
-        let tempObject = sdb.createNewConversation()
-        sdb.insertOrReplace(identifier: tempObject.id) { conv in
+        let tempObject = sdb.conversationMake()
+        sdb.conversationEdit(identifier: tempObject.id) { conv in
             conv.title = String(localized: "Conversation")
             if conv.modelId?.isEmpty ?? true {
                 conv.modelId = ModelManager.ModelIdentifier.defaultModelForConversation
             }
         }
         scanAll()
-        guard let object = sdb.conversation(identifier: tempObject.id) else {
+        guard let object = sdb.conversationWith(identifier: tempObject.id) else {
             preconditionFailure()
         }
         print("[+] created a new conversation with id: \(object.id)")
@@ -85,7 +85,7 @@ extension ConversationManager {
 
     func conversation(identifier: Conversation.ID?) -> Conversation? {
         if let identifier {
-            sdb.conversation(identifier: identifier)
+            sdb.conversationWith(identifier: identifier)
         } else {
             nil
         }
@@ -95,12 +95,12 @@ extension ConversationManager {
         let conv = conversation(identifier: identifier)
         guard var conv else { return }
         block(&conv)
-        sdb.insertOrReplace(object: conv)
+        sdb.conversationUpdate(object: conv)
         scanAll()
     }
 
     func duplicateConversation(identifier: Conversation.ID) -> Conversation.ID? {
-        let ans = sdb.duplicate(identifier: identifier) { conv in
+        let ans = sdb.conversationDuplicate(identifier: identifier) { conv in
             conv.creation = .init()
             conv.title = String(
                 format: String(localized: "%@ Copy"),
@@ -114,13 +114,13 @@ extension ConversationManager {
     func deleteConversation(identifier: Conversation.ID) {
         let session = ConversationSessionManager.shared.session(for: identifier)
         session.cancelCurrentTask {}
-        sdb.remove(identifier: identifier)
+        sdb.conversationRemove(conversationWith: identifier)
         setRichEditorObject(identifier: identifier, nil)
         scanAll()
     }
 
     func eraseAll() {
-        sdb.eraseAllConversations()
+        sdb.conversationsDrop()
         clearRichEditorObject()
         ConversationManager.shouldShowGuideMessage = true
         scanAll()

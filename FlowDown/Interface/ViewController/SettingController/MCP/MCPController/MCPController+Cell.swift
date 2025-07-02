@@ -36,8 +36,8 @@ extension SettingController.SettingContent.MCPController {
             super.prepareForReuse()
         }
 
-        func configure(with clientId: MCPClient.ID) {
-            guard let client = MCPService.shared.McpClient(identifier: clientId) else {
+        func configure(with clientId: ModelContextClient.ID) {
+            guard let client = MCPService.shared.client(with: clientId) else {
                 return
             }
 

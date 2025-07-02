@@ -58,12 +58,12 @@ extension CloudModel {
 
 extension ModelManager {
     func scanCloudModels() -> [CloudModel] {
-        let models = sdb.listCloudModels()
+        let models: [CloudModel] = sdb.cloudModelList()
         for model in models where model.id.isEmpty {
             // Ensure all models have a valid ID
             model.id = UUID().uuidString
-            sdb.remove(identifier: "")
-            sdb.insertOrReplace(object: model)
+            sdb.cluodModelRemove(identifier: "")
+            sdb.cloudModelEdit(identifier: model.id) { $0.id = model.id }
             return scanCloudModels()
         }
         return models
@@ -71,36 +71,36 @@ extension ModelManager {
 
     func newCloudModel() -> CloudModel {
         let object = CloudModel()
-        sdb.insertOrReplace(object: object)
+        sdb.cloudModelPut(object)
         defer { cloudModels.send(scanCloudModels()) }
         return object
     }
 
     func newCloudModel(profile: CloudModel) -> CloudModel {
         profile.id = UUID().uuidString
-        sdb.insertOrReplace(object: profile)
+        sdb.cloudModelPut(profile)
         defer { cloudModels.send(scanCloudModels()) }
         return profile
     }
 
     func insertCloudModel(_ model: CloudModel) {
-        sdb.insertOrReplace(object: model)
+        sdb.cloudModelPut(model)
         cloudModels.send(scanCloudModels())
     }
 
     func cloudModel(identifier: CloudModelIdentifier?) -> CloudModel? {
         guard let identifier else { return nil }
-        return sdb.cloudModel(identifier: identifier)
+        return sdb.cloudModel(with: identifier)
     }
 
     func removeCloudModel(identifier: CloudModelIdentifier) {
-        sdb.remove(identifier: identifier)
+        sdb.cluodModelRemove(identifier: identifier)
         cloudModels.send(scanCloudModels())
     }
 
     func editCloudModel(identifier: CloudModelIdentifier?, block: @escaping (inout CloudModel) -> Void) {
         guard let identifier else { return }
-        sdb.insertOrReplace(identifier: identifier, block)
+        sdb.cloudModelEdit(identifier: identifier, block)
         cloudModels.send(scanCloudModels())
     }
 

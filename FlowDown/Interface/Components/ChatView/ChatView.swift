@@ -217,7 +217,8 @@ class ChatView: UIView {
     }
 
     private func removeUnusedListViews() {
-        let conversationIDs = sdb.listConversations().map(\.id)
+        let conversations: [Conversation] = sdb.conversationList()
+        let conversationIDs: [Conversation.ID] = conversations.map(\.id)
         let unusedKeys = messageListViews.keys.filter { !conversationIDs.contains($0) }
 
         for key in unusedKeys {

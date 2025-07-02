@@ -113,11 +113,11 @@ final class ConversationSession: Identifiable {
     func addAttachments(_ attachments: [RichEditorView.Object.Attachment], to message: Message) {
         let messageID = message.id
         let mapped = attachments.map { attachment in
-            let newAttachment = sdb.makeAttachment(with: messageID)
+            let newAttachment = sdb.attachmentMake(with: messageID)
             updateAttachment(newAttachment, using: attachment)
             return newAttachment
         }
-        sdb.insertOrReplace(attachments: mapped)
+        sdb.attachmentsUpdate(mapped)
 
         var current = self.attachments[messageID] ?? []
         current.append(contentsOf: mapped)
@@ -137,7 +137,7 @@ final class ConversationSession: Identifiable {
             }
             updateAttachment(current, using: attachment)
         }
-        sdb.insertOrReplace(attachments: currentAttachments)
+        sdb.attachmentsUpdate(currentAttachments)
     }
 
     func notifyMessagesDidChange(scrolling: Bool = true) {
@@ -152,7 +152,7 @@ final class ConversationSession: Identifiable {
         linkedContents.removeAll()
         for message in messages {
             let id = message.id
-            let attachments = sdb.listAttachments(for: id)
+            let attachments = sdb.attachment(for: id)
             if !attachments.isEmpty { self.attachments[id] = attachments }
             if !message.reasoningContent.isEmpty,
                message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

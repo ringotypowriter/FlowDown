@@ -7,8 +7,7 @@
 import Foundation
 import WCDBSwift
 
-public final class MCPClient: Identifiable, Codable, TableCodable {
-    // 字段
+public final class ModelContextClient: Identifiable, Codable, TableCodable {
     public var id: Int64 = .init()
     public var name: String = ""
     public var description: String = ""
@@ -21,12 +20,11 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
     public var resourcesEnabled: EnableCodable = .init()
     public var templateEnabled: EnableCodable = .init()
 
-    // increment
     public var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
     public var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
 
     public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = MCPClient
+        public typealias Root = ModelContextClient
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true, isUnique: true)
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
@@ -86,16 +84,15 @@ public final class MCPClient: Identifiable, Codable, TableCodable {
     }
 }
 
-extension MCPClient: Equatable {
-    public static func == (lhs: MCPClient, rhs: MCPClient) -> Bool {
+extension ModelContextClient: Equatable {
+    public static func == (lhs: ModelContextClient, rhs: ModelContextClient) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension MCPClient: Hashable {}
+extension ModelContextClient: Hashable {}
 
-// ClientType
-public extension MCPClient {
+public extension ModelContextClient {
     enum ClientType: String, Codable, ColumnCodable {
         case http
         case sse
@@ -115,8 +112,7 @@ public extension MCPClient {
     }
 }
 
-// Tools Enable
-public extension MCPClient {
+public extension ModelContextClient {
     struct EnableCodable: Codable, ColumnCodable {
         public init?(with value: WCDBSwift.Value) {
             let data = value.dataValue
