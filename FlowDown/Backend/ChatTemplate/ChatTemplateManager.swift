@@ -122,6 +122,74 @@ class ChatTemplateManager {
         }
     }
 
+    func rewriteTemplate(
+        template: ChatTemplate,
+        request: String,
+        model: ModelManager.ModelIdentifier,
+        completion: @escaping (Result<ChatTemplate, Error>) -> Void
+    ) {
+        Task {
+            do {
+                let template = try await rewriteTemplate(
+                    template: template,
+                    request: request,
+                    model: model
+                )
+                await MainActor.run {
+                    completion(.success(template))
+                }
+            } catch {
+                await MainActor.run {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    private func rewriteTemplate(
+        template: ChatTemplate,
+        request: String,
+        model: ModelManager.ModelIdentifier
+    ) async throws -> ChatTemplate {
+        let prompt = """
+        You are a chat template expert. Please modify the following chat template according to the user's request. 
+
+        IMPORTANT RULES:
+        - Only change what the user specifically requests
+        - If the user doesn't mention name or prompt, keep them unchanged
+        - Respond ONLY with valid XML following the exact format provided
+        - Do not include any text outside the XML structure
+        - Use the user's preferred language for content
+
+        Current template:
+        <template>
+        <name>\(template.name)</name>
+        <prompt>\(template.prompt)</prompt>
+        </template>
+
+        User request: \(request)
+
+        Please return the modified template in the same XML format, keeping unchanged fields exactly as they are.
+        """
+
+        let messages: [ChatRequestBody.Message] = [
+            .system(content: .text("You are a chat template editor. Modify only what the user requests, keeping everything else unchanged. Respond ONLY with valid XML in the exact format provided.")),
+            .user(content: .text(prompt)),
+        ]
+
+        let response = try await ModelManager.shared.infer(
+            with: model,
+            maxCompletionTokens: 2048,
+            input: messages
+        )
+
+        let parsedResponse = try parseTemplateResponse(response.content)
+        return template.with {
+            $0.name = parsedResponse.name
+            $0.prompt = parsedResponse.prompt
+        }
+    }
+
     private func generateChatTemplate(from conversation: Conversation, using model: ModelManager.ModelIdentifier) async throws -> ChatTemplate {
         let session = ConversationSessionManager.shared.session(for: conversation.id)
 
@@ -168,7 +236,7 @@ class ChatTemplateManager {
 
         let response = try await ModelManager.shared.infer(
             with: model,
-            maxCompletionTokens: 512,
+            maxCompletionTokens: 2048,
             input: messages,
             additionalBodyField: [:]
         )
@@ -179,7 +247,6 @@ class ChatTemplateManager {
     private func parseTemplateResponse(_ xmlString: String) throws -> ChatTemplate {
         let decoder = XMLDecoder()
 
-        // Try to decode the response as TemplateResponse
         if let data = xmlString.data(using: .utf8),
            let templateResponse = try? decoder.decode(TemplateResponse.self, from: data)
         {
@@ -193,7 +260,6 @@ class ChatTemplateManager {
             )
         }
 
-        // Fallback to regex parsing if XML parsing fails
         return try parseTemplateUsingRegex(xmlString)
     }
 
@@ -208,12 +274,15 @@ class ChatTemplateManager {
               let promptRegex = try? NSRegularExpression(pattern: promptPattern, options: [.caseInsensitive, .dotMatchesLineSeparators]),
               let inheritRegex = try? NSRegularExpression(pattern: inheritPattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
         else {
-            throw NSError(domain: "ChatTemplateGenerator", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to create regex patterns"])
+            throw NSError(
+                domain: "ChatTemplateGenerator",
+                code: 2,
+                userInfo: [NSLocalizedDescriptionKey: String(localized: "Failed to create regex patterns")]
+            )
         }
 
         let range = NSRange(xmlString.startIndex ..< xmlString.endIndex, in: xmlString)
 
-        // Extract name
         let name = if let nameMatch = nameRegex.firstMatch(in: xmlString, options: [], range: range),
                       let nameRange = Range(nameMatch.range(at: 1), in: xmlString)
         {
@@ -224,7 +293,6 @@ class ChatTemplateManager {
             ])
         }
 
-        // Extract emoji
         let emoji = if let emojiMatch = emojiRegex.firstMatch(in: xmlString, options: [], range: range),
                        let emojiRange = Range(emojiMatch.range(at: 1), in: xmlString)
         {
@@ -233,7 +301,6 @@ class ChatTemplateManager {
             "🤖"
         }
 
-        // Extract prompt
         let prompt = if let promptMatch = promptRegex.firstMatch(in: xmlString, options: [], range: range),
                         let promptRange = Range(promptMatch.range(at: 1), in: xmlString)
         {
@@ -244,7 +311,6 @@ class ChatTemplateManager {
             ])
         }
 
-        // Extract inherit_app_prompt
         let inheritAppPrompt: Bool
         if let inheritMatch = inheritRegex.firstMatch(in: xmlString, options: [], range: range),
            let inheritRange = Range(inheritMatch.range(at: 1), in: xmlString)

@@ -213,7 +213,7 @@ class MCPEditorController: StackScrollController {
         }
         headerView.configure(icon: .init(systemName: "list.bullet"))
         headerView.configure(title: String(localized: "Headers"))
-        headerView.configure(description: String(localized: "Additional HTTP headers for requests."))
+        headerView.configure(description: String(localized: "This value will be added to the request as additional header."))
         headerView.configure(value: client.header.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
         stackView.addArrangedSubviewWithMargin(headerView)
         stackView.addArrangedSubview(SeparatorView())
@@ -287,7 +287,7 @@ class MCPEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "This action cannot be undone. Please proceed with caution."))
+                .with(footer: String(localized: "Are you sure you want to delete this model context protocol client? This action cannot be undone."))
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
     }

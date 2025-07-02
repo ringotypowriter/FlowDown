@@ -31,6 +31,35 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
     var cancellables: Set<AnyCancellable> = .init()
 
+    lazy var nameView = ConfigurableInfoView().setTapBlock { view in
+        let input = AlertInputViewController(
+            title: String(localized: "Edit Name"),
+            message: String(localized: "The display name of this chat template."),
+            placeholder: String(localized: "Enter template name"),
+            text: self.template.name
+        ) { output in
+            self.template = self.template.with { $0.name = output }
+            self.title = self.template.name
+            view.configure(value: output)
+        }
+        view.parentViewController?.present(input, animated: true)
+    }
+
+    lazy var textEditor = UITextView().with {
+        $0.isSelectable = true
+        $0.isEditable = true
+        $0.isScrollEnabled = true
+        $0.textContainerInset = .init(inset: 12)
+        $0.font = .preferredFont(forTextStyle: .body)
+        $0.backgroundColor = .secondarySystemBackground
+        $0.layer.cornerRadius = 8
+        $0.textContainerInset = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
+        $0.contentInset = .zero
+        $0.snp.makeConstraints { make in
+            make.height.equalTo(200)
+        }
+    }
+
     deinit {
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
@@ -45,6 +74,13 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             style: .done,
             target: self,
             action: #selector(checkTapped)
+        )
+
+        navigationItem.leftBarButtonItem = .init(
+            image: UIImage(systemName: "sparkles"),
+            style: .plain,
+            target: self,
+            action: #selector(sparklesTapped)
         )
 
         ChatTemplateManager.shared.$templates
@@ -64,6 +100,65 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
     @objc func checkTapped() {
         ChatTemplateManager.shared.update(template)
         navigationController?.popViewController(animated: true)
+    }
+
+    @objc func sparklesTapped() {
+        let defaultModel = ModelManager.ModelIdentifier.defaultModelForConversation
+
+        guard !defaultModel.isEmpty else {
+            let alert = AlertViewController(
+                title: String(localized: "No Model Selected"),
+                message: String(localized: "Please select a default chat model in settings before using rewrite features.")
+            ) { context in
+                context.addAction(title: String(localized: "OK")) {
+                    context.dispose()
+                }
+            }
+            present(alert, animated: true)
+            return
+        }
+
+        let modelName = ModelManager.shared.modelName(identifier: defaultModel)
+
+        let input = AlertInputViewController(
+            title: String(localized: "Rewrite"),
+            message: String(localized: "You can use \(modelName) to rewrite this template, e.g., 'Add more instructions to the template.', or 'Make it more concise.'..."),
+            placeholder: String(localized: "Enter instructions..."),
+            text: ""
+        ) { [self] instructions in
+            guard !instructions.isEmpty else { return }
+            Indicator.progress(
+                title: String(localized: "Rewriting Template") + "...",
+                controller: self
+            ) { completionHandler in
+                ChatTemplateManager.shared.rewriteTemplate(
+                    template: self.template,
+                    request: instructions,
+                    model: defaultModel
+                ) { result in
+                    completionHandler {
+                        switch result {
+                        case let .success(success):
+                            self.template = success
+                            self.title = success.name
+                            self.nameView.configure(value: success.name)
+                            self.textEditor.text = success.prompt
+                        case let .failure(failure):
+                            let alert = AlertViewController(
+                                title: String(localized: "Rewrite Failed"),
+                                message: failure.localizedDescription
+                            ) { context in
+                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.dispose()
+                                }
+                            }
+                            self.present(alert, animated: true)
+                        }
+                    }
+                }
+            }
+        }
+        present(input, animated: true)
     }
 
     @objc func deleteTapped() {
@@ -111,18 +206,6 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         // MARK: - NAME
 
-        let nameView = ConfigurableInfoView().setTapBlock { view in
-            let input = AlertInputViewController(
-                title: String(localized: "Edit Name"),
-                message: String(localized: "The display name of this chat template."),
-                placeholder: String(localized: "Enter template name"),
-                text: self.template.name
-            ) { output in
-                self.template = self.template.with { $0.name = output }
-                view.configure(value: output)
-            }
-            view.parentViewController?.present(input, animated: true)
-        }
         nameView.configure(icon: .init(systemName: "rosette"))
         nameView.configure(title: String(localized: "Name"))
         nameView.configure(description: String(localized: "The display name of this chat template."))
@@ -138,20 +221,6 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let textEditor = UITextView().with {
-            $0.isSelectable = true
-            $0.isEditable = true
-            $0.isScrollEnabled = true
-            $0.textContainerInset = .init(inset: 12)
-            $0.font = .preferredFont(forTextStyle: .body)
-            $0.backgroundColor = .secondarySystemBackground
-            $0.layer.cornerRadius = 8
-            $0.textContainerInset = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
-            $0.contentInset = .zero
-            $0.snp.makeConstraints { make in
-                make.height.equalTo(200)
-            }
-        }
         textEditor.text = template.prompt
         textEditor.delegate = self
         stackView.addArrangedSubviewWithMargin(textEditor) {

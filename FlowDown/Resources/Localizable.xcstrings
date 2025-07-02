@@ -168,9 +168,6 @@
         }
       }
     },
-    "Additional HTTP headers for requests." : {
-
-    },
     "Additional Prompt" : {
       "localizations" : {
         "zh-Hans" : {
@@ -383,7 +380,14 @@
       }
     },
     "Are you sure you want to delete this model context protocol client? This action cannot be undone." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你确定要删除这个上下文客户端吗？这项操作不可撤销。"
+          }
+        }
+      }
     },
     "Are you sure you want to delete this model? This action cannot be undone." : {
       "localizations" : {
@@ -927,10 +931,24 @@
       }
     },
     "Connection" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
+        }
+      }
     },
     "Connection Type" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接类型"
+          }
+        }
+      }
     },
     "Contact Us" : {
       "localizations" : {
@@ -1109,7 +1127,14 @@
       }
     },
     "Create a duplicate of this template for further editing." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建一个副本来继续编辑。"
+          }
+        }
+      }
     },
     "Create a new model by copying the current configuration." : {
       "localizations" : {
@@ -1122,7 +1147,14 @@
       }
     },
     "Create Copy" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建副本"
+          }
+        }
+      }
     },
     "Creative @ 1.0" : {
       "localizations" : {
@@ -1275,7 +1307,14 @@
       }
     },
     "Delete Client" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除客户端"
+          }
+        }
+      }
     },
     "Delete Conversation" : {
       "localizations" : {
@@ -1308,7 +1347,14 @@
       }
     },
     "Delete Server" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除服务端"
+          }
+        }
+      }
     },
     "Delete Template" : {
       "localizations" : {
@@ -1321,7 +1367,14 @@
       }
     },
     "Delete this model context protocol server permanently." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "永久删除这个模型上下文服务端。"
+          }
+        }
+      }
     },
     "Delete this model from your device." : {
       "localizations" : {
@@ -1414,7 +1467,14 @@
       }
     },
     "Disabled" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用"
+          }
+        }
+      }
     },
     "Discord" : {
       "localizations" : {
@@ -1608,10 +1668,24 @@
       }
     },
     "Edit Headers" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑报头"
+          }
+        }
+      }
     },
     "Edit MCP Client" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑上下文客户端"
+          }
+        }
+      }
     },
     "Edit Model" : {
       "localizations" : {
@@ -1655,7 +1729,14 @@
       }
     },
     "Edit Timeout" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设定超时"
+          }
+        }
+      }
     },
     "Edit Token" : {
       "extractionState" : "manual",
@@ -1759,7 +1840,14 @@
       }
     },
     "Enabled" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        }
+      }
     },
     "End: %@" : {
       "localizations" : {
@@ -1772,7 +1860,24 @@
       }
     },
     "Endpoint" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端点"
+          }
+        }
+      }
+    },
+    "Enter instructions..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入指令"
+          }
+        }
+      }
     },
     "Enter template name" : {
       "localizations" : {
@@ -1906,7 +2011,14 @@
       }
     },
     "Export Template" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出模版"
+          }
+        }
+      }
     },
     "Export the database file." : {
       "localizations" : {
@@ -1919,7 +2031,14 @@
       }
     },
     "Export this chat template as a .fdtemplate file for sharing or backup." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出对话模版到文件以便共享。"
+          }
+        }
+      }
     },
     "Export this model to share with others." : {
       "localizations" : {
@@ -2017,6 +2136,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法压缩对话"
+          }
+        }
+      }
+    },
+    "Failed to create regex patterns" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启动正则表达式匹配。"
           }
         }
       }
@@ -2435,7 +2564,14 @@
       }
     },
     "Headers" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报头"
+          }
+        }
+      }
     },
     "Huge" : {
       "comment" : "Font Size\nModel Context",
@@ -3019,7 +3155,14 @@
       }
     },
     "Manage Model Context Protocol Servers." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理模型上下文协议服务。"
+          }
+        }
+      }
     },
     "Manage permissions for the application. Your privacy is important to us." : {
       "localizations" : {
@@ -3165,7 +3308,14 @@
       }
     },
     "Model Context Protocol" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型上下文"
+          }
+        }
+      }
     },
     "Model Detail" : {
       "localizations" : {
@@ -3448,7 +3598,14 @@
       }
     },
     "No Headers" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无报头"
+          }
+        }
+      }
     },
     "No location details found." : {
       "localizations" : {
@@ -3476,6 +3633,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "没有模型能够提供此能力。"
+          }
+        }
+      }
+    },
+    "No Model Selected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择模型"
           }
         }
       }
@@ -3844,7 +4011,14 @@
       }
     },
     "Please fill in the connection parameters according to your server configuration to ensure the client can communicate with the server properly." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请填入连接到此服务所需的参数。"
+          }
+        }
+      }
     },
     "Please help me to..." : {
       "localizations" : {
@@ -3922,6 +4096,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请用更专业的语气重写以下内容，使用正式语言和适当的术语。"
+          }
+        }
+      }
+    },
+    "Please select a default chat model in settings before using rewrite features." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择一个对话模型来使用改写功能。"
           }
         }
       }
@@ -4198,7 +4382,14 @@
       }
     },
     "Request timeout in seconds." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求超时的秒钟数。"
+          }
+        }
+      }
     },
     "Request User Input" : {
       "localizations" : {
@@ -4306,6 +4497,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在改写"
+          }
+        }
+      }
+    },
+    "Rewriting Template" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重写模版"
           }
         }
       }
@@ -4791,13 +4992,34 @@
       }
     },
     "Test" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试"
+          }
+        }
+      }
     },
     "Test Configuration" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试配置"
+          }
+        }
+      }
     },
     "Test the configuration of the model context protocol server." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试这个模型上下文协议服务。"
+          }
+        }
+      }
     },
     "Text Content" : {
       "localizations" : {
@@ -4926,7 +5148,14 @@
       }
     },
     "The display name of this model context protocol client." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型上下文协议客户端所使用的名称。"
+          }
+        }
+      }
     },
     "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions." : {
       "localizations" : {
@@ -5019,10 +5248,24 @@
       }
     },
     "The transport protocol to use for this client." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型上下文协议客户端所使用的传输协议。"
+          }
+        }
+      }
     },
     "The URL endpoint for this model context protocol client." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型上下文协议客户端的 URL。"
+          }
+        }
+      }
     },
     "These are the open-source licenses for the frameworks used in this app." : {
       "localizations" : {
@@ -5073,9 +5316,6 @@
           }
         }
       }
-    },
-    "This action cannot be undone. Please proceed with caution." : {
-
     },
     "This conversation is based on the template: %@." : {
       "localizations" : {
@@ -5268,7 +5508,14 @@
       }
     },
     "Timeout" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "超时"
+          }
+        }
+      }
     },
     "Tiny" : {
       "comment" : "Font Size",
@@ -5563,13 +5810,34 @@
       }
     },
     "Unnamed Client" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名客户端"
+          }
+        }
+      }
     },
     "Unnamed MCP" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名 MCP"
+          }
+        }
+      }
     },
     "Unnamed Server" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名服务器"
+          }
+        }
+      }
     },
     "Unrestricted" : {
       "localizations" : {
@@ -5692,7 +5960,14 @@
       }
     },
     "Use this to verify if the current configuration is valid. It is recommended to test after making changes." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法验证此配置。请检查后重试。"
+          }
+        }
+      }
     },
     "Use Tool" : {
       "localizations" : {
@@ -6157,7 +6432,14 @@
       }
     },
     "When enabled, this client will participate in Model Context Protocol operations. When disabled, all related requests will be ignored." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当启用时，此协议所提供的资源将会被更新。"
+          }
+        }
+      }
     },
     "When selecting a new chat model, also set it as the default model." : {
       "localizations" : {
@@ -6170,7 +6452,14 @@
       }
     },
     "Whether this model context protocol server is enabled." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是否启用模型上下文服务。"
+          }
+        }
+      }
     },
     "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible." : {
       "localizations" : {
@@ -6238,6 +6527,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你可以在设置中授权不受限的剪贴板访问以提供便利。"
+          }
+        }
+      }
+    },
+    "You can use %@ to rewrite this template, e.g., 'Add more instructions to the template.', or 'Make it more concise.'..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你可以使用 %@ 去改写这个模版，例如添加更多指示等。"
           }
         }
       }
