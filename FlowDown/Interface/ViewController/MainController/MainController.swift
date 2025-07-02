@@ -393,17 +393,22 @@ extension MainController {
     }
 
     @objc private func presentNextBootMessage() {
-        guard let text = messages.first else { return }
-        messages.removeFirst()
+        let text = messages.joined(separator: "\n")
+        messages.removeAll()
 
         let alert = AlertViewController(
+            title: String(localized: "External Resources"),
             message: text
         ) { context in
             context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                context.dispose()
+                context.dispose {}
             }
         }
-        present(alert, animated: true)
+        var viewController: UIViewController = self
+        while let child = viewController.presentedViewController {
+            viewController = child
+        }
+        viewController.present(alert, animated: true)
     }
 
     func queueNewConversation(text: String) {

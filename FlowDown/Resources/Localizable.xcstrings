@@ -2136,6 +2136,9 @@
         }
       }
     },
+    "External Resources" : {
+
+    },
     "Failed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2277,10 +2280,24 @@
       }
     },
     "Failed to import model: %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导入模型：%@"
+          }
+        }
+      }
     },
     "Failed to import template: %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导入模版：%@"
+          }
+        }
+      }
     },
     "Failed to load model: %@" : {
       "localizations" : {
@@ -4937,10 +4954,24 @@
       }
     },
     "Successfully imported %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功导入 %@"
+          }
+        }
+      }
     },
     "Successfully imported model %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功导入模型 %@"
+          }
+        }
+      }
     },
     "Summarize" : {
       "localizations" : {
