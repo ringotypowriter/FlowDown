@@ -106,7 +106,6 @@ class ChatTemplateManager {
     func createTemplateFromConversation(
         _ conversation: Conversation,
         model: ModelManager.ModelIdentifier,
-        controller _: UIViewController,
         completion: @escaping (Result<ChatTemplate, Error>) -> Void
     ) {
         Task {

@@ -76,11 +76,16 @@ class ConversationListView: UIView {
             .sink { [weak self] identifier in
                 guard let self else { return }
                 var selectedIndexPath = Set(tableView.indexPathsForSelectedRows ?? [])
-                if let identifier {
-                    if let indexPath = dataSource.indexPath(for: identifier) {
-                        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-                        selectedIndexPath.remove(indexPath)
-                    }
+                if let identifier,
+                   let indexPath = dataSource.indexPath(for: identifier)
+                {
+                    let visible = tableView.indexPathsForVisibleRows?.contains(indexPath) ?? false
+                    tableView.selectRow(
+                        at: indexPath,
+                        animated: false,
+                        scrollPosition: visible ? .none : .middle
+                    )
+                    selectedIndexPath.remove(indexPath)
                 }
                 for index in selectedIndexPath {
                     tableView.deselectRow(at: index, animated: false)

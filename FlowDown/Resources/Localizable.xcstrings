@@ -128,6 +128,16 @@
         }
       }
     },
+    "Add More Details" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加细节"
+          }
+        }
+      }
+    },
     "Add to Calendar" : {
       "localizations" : {
         "zh-Hans" : {
@@ -297,6 +307,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "允许语言模型建议并打开 URL。"
+          }
+        }
+      }
+    },
+    "An error occurred while rewriting the message: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "改写对话遇到了问题：%@"
           }
         }
       }
@@ -786,12 +806,42 @@
         }
       }
     },
+    "Compress" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩"
+          }
+        }
+      }
+    },
     "Compress Image" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "压缩图片"
+          }
+        }
+      }
+    },
+    "Compress to New Chat" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩到新对话"
+          }
+        }
+      }
+    },
+    "Compressing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在压缩"
           }
         }
       }
@@ -928,6 +978,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "对话"
+          }
+        }
+      }
+    },
+    "Conversation Compressed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话已压缩"
           }
         }
       }
@@ -1463,6 +1523,16 @@
         }
       }
     },
+    "Draw Table" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绘制表格"
+          }
+        }
+      }
+    },
     "Duck Duck Go Search" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1858,6 +1928,16 @@
         }
       }
     },
+    "Exported Conversation - %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出的对话 - %@"
+          }
+        }
+      }
+    },
     "Exported Database %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1924,6 +2004,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法添加事件：%@"
+          }
+        }
+      }
+    },
+    "Failed to Compress Conversation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法压缩对话"
+          }
+        }
+      }
+    },
+    "Failed to decode data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解码数据。"
           }
         }
       }
@@ -2743,6 +2843,16 @@
         }
       }
     },
+    "List Key Points" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列举要点"
+          }
+        }
+      }
+    },
     "Local Area Network" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2871,6 +2981,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "魔幻 @ 2.0"
+          }
+        }
+      }
+    },
+    "Make Friendly" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更加友好"
+          }
+        }
+      }
+    },
+    "Make Professional" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更加专业"
           }
         }
       }
@@ -3582,7 +3712,16 @@
       }
     },
     "Optional description for this MCP Server." : {
-
+    },
+    "Original Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原始消息"
+          }
+        }
+      }
     },
     "Other" : {
       "localizations" : {
@@ -3676,6 +3815,16 @@
         }
       }
     },
+    "Please add more details and expand on the following content to provide additional information and context." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请添加更多细节并扩展以下内容，提供额外的信息和上下文。"
+          }
+        }
+      }
+    },
     "Please add some models to use. You can choose to download models, or use cloud model from well known service providers." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3706,12 +3855,32 @@
         }
       }
     },
+    "Please list the key points from the following content in bullet points or a numbered list for clarity." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用项目符号或编号列表清晰列出以下内容的关键点。"
+          }
+        }
+      }
+    },
     "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请注意，如果你使用云端的模型来处理你的请求，这些数据会被上传。"
+          }
+        }
+      }
+    },
+    "Please organize the following content into a table, clearly labeling each column and row for easy reference." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请将以下内容整理成表格，明确每列和每行的内容以便参考。"
           }
         }
       }
@@ -3726,12 +3895,72 @@
         }
       }
     },
+    "Please rewrite accordingly" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请按照要求改写内容"
+          }
+        }
+      }
+    },
+    "Please rewrite the following content in a more friendly and approachable tone, making it easy to understand and engaging." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用更友好和亲切的语气重写以下内容，使其易于理解且引人入胜。"
+          }
+        }
+      }
+    },
+    "Please rewrite the following content in a more professional tone, using formal language and appropriate terminology." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用更专业的语气重写以下内容，使用正式语言和适当的术语。"
+          }
+        }
+      }
+    },
     "Please select a model to generate chat template." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请先选择一个模型，然后再次尝试生成对话模版。"
+          }
+        }
+      }
+    },
+    "Please select a model to rewrite this message." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择一个模型来改写消息。"
+          }
+        }
+      }
+    },
+    "Please summarize the following content in a concise and clear manner." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用简洁明了的方式总结以下内容。"
+          }
+        }
+      }
+    },
+    "Please summarize the following conversation:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请总结下面的对话："
           }
         }
       }
@@ -3907,6 +4136,26 @@
         }
       }
     },
+    "Redo" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重做"
+          }
+        }
+      }
+    },
+    "Redo Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重做消息"
+          }
+        }
+      }
+    },
     "Refreshed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4026,6 +4275,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重试"
+          }
+        }
+      }
+    },
+    "Rewrite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "改写"
+          }
+        }
+      }
+    },
+    "Rewrite Failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "改写失败"
+          }
+        }
+      }
+    },
+    "Rewriting Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在改写"
           }
         }
       }
@@ -4379,6 +4658,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "街道：%@"
+          }
+        }
+      }
+    },
+    "Summarize" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "总结"
           }
         }
       }
@@ -4791,6 +5080,16 @@
         }
       }
     },
+    "This conversation is created by compressing %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此对话提取自 %@ 。"
+          }
+        }
+      }
+    },
     "This document is provided by system or tool call, please cite the id with [^%lld] format if used." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4901,6 +5200,16 @@
         }
       }
     },
+    "This will delete all messages after this one and fill the content into the editor." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将会删除当前及以后的全部消息，并将此消息填回编辑器。"
+          }
+        }
+      }
+    },
     "This will extract your requests from the current conversation using %@ and save it as a template for later use. This may take some time." : {
       "localizations" : {
         "zh-Hans" : {
@@ -4917,6 +5226,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这会删除临时文件夹内的全部内容。"
+          }
+        }
+      }
+    },
+    "This will use %@ compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将会使用 %@ 压缩当前对话到简短的总结并创建新的对话。原始对话不会被修改。"
           }
         }
       }
@@ -4971,6 +5290,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要更改软件使用的语言，请前往系统设置。"
+          }
+        }
+      }
+    },
+    "Toggle Sidebar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换侧边栏"
           }
         }
       }
@@ -5876,6 +6205,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "雅虎搜索"
+          }
+        }
+      }
+    },
+    "You are a professional conversation summarization assistant. Please compress and summarize the previous conversation according to the following requirements:\n\n1. Retain the core information and important conclusions of the conversation; remove irrelevant, repetitive, or redundant content.\n2. Maintain the original logical order and context to ensure the compressed content is easy to understand.\n3. Clearly list any to-do items, decisions, conclusions, or key issues mentioned in the conversation.\n4. Preserve necessary contextual information to avoid loss or misunderstanding due to compression.\n5. Use concise and accurate language; do not add information that was not mentioned or make subjective assumptions.\n6. If the conversation covers multiple topics, organize them into separate sections or bullet points.\n7. Output the summary in structured Markdown format, including titles and bullet points for easy reference.\n\nPlease compress and summarize the content of the \"Previous Conversation\" according to the above requirements." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你是一名专业的对话摘要助理。请根据以下要求对先前的对话内容进行压缩和总结：\n\n1. 保留对话的核心信息和重要结论；删除无关、重复或冗余的内容  \n2. 保持原有的逻辑顺序和上下文，确保压缩后的内容易于理解  \n3. 清晰列出对话中提到的待办事项、决定、结论或关键问题  \n4. 保留必要的背景信息，避免因压缩导致信息丢失或误解  \n5. 使用简洁准确的语言，不添加未提及的信息或主观推测  \n6. 若对话涉及多个主题，请分章节或分条目整理  \n7. 输出结构化Markdown格式的摘要，包含标题和条目以便查阅  \n\n请根据上述要求对\"先前对话\"的内容进行压缩和总结。"
           }
         }
       }

@@ -216,6 +216,71 @@ extension ConversationManager {
                 } else {
                     return UIMenu(options: [.displayInline], children: [
                         UIAction(
+                            title: String(localized: "Compress to New Chat"),
+                            image: UIImage(systemName: "arrow.down.doc")
+                        ) { _ in
+                            let model = session.models.chat
+                            let name = ModelManager.shared.modelName(identifier: model)
+                            guard let model, !name.isEmpty else {
+                                let alert = AlertViewController(
+                                    title: String(localized: "Model Not Available"),
+                                    message: String(localized: "Please select a model to generate chat template.")
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
+                                    }
+                                }
+                                controller.present(alert, animated: true)
+                                return
+                            }
+                            let alert = AlertViewController(
+                                title: String(localized: "Compress to New Chat"),
+                                message: String(localized: "This will use \(name) compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged.")
+                            ) { context in
+                                context.addAction(title: String(localized: "Cancel")) {
+                                    context.dispose()
+                                }
+                                context.addAction(title: String(localized: "Compress"), attribute: .dangerous) {
+                                    context.dispose {
+                                        Indicator.progress(
+                                            title: String(localized: "Compressing"),
+                                            controller: controller
+                                        ) { completionHandler in
+                                            ConversationManager.shared.compressConversation(
+                                                identifier: conv.id,
+                                                model: model
+                                            ) { convId in
+                                                suggestNewSelection(convId)
+                                            } completion: { result in
+                                                completionHandler {
+                                                    switch result {
+                                                    case .success:
+                                                        Indicator.present(
+                                                            title: String(localized: "Conversation Compressed"),
+                                                            preset: .done,
+                                                            haptic: .success,
+                                                            referencingView: view
+                                                        )
+                                                    case let .failure(failure):
+                                                        let alert = AlertViewController(
+                                                            title: String(localized: "Failed to Compress Conversation"),
+                                                            message: failure.localizedDescription
+                                                        ) { context in
+                                                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                                                context.dispose()
+                                                            }
+                                                        }
+                                                        controller.present(alert, animated: true)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            controller.present(alert, animated: true)
+                        },
+                        UIAction(
                             title: String(localized: "Generate Chat Template"),
                             image: UIImage(systemName: "wind")
                         ) { _ in
@@ -246,11 +311,7 @@ extension ConversationManager {
                                             title: String(localized: "Generating Template"),
                                             controller: controller
                                         ) { completionHandler in
-                                            ChatTemplateManager.shared.createTemplateFromConversation(
-                                                conv,
-                                                model: model,
-                                                controller: controller
-                                            ) { result in
+                                            ChatTemplateManager.shared.createTemplateFromConversation(conv, model: model) { result in
                                                 completionHandler {
                                                     switch result {
                                                     case let .success(success):

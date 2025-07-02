@@ -347,12 +347,54 @@ extension MessageListView: ListViewAdapter {
         UIMenu(title: String(localized: "Message"), children: [
             UIMenu(title: String(localized: "Operations"), options: [.displayInline], children: [
                 { () -> UIAction? in
-                    if session.nearestUserMessage(beforeOrEqual: messageIdentifier) != nil {
-                        UIAction(title: String(localized: "Retry"), image: .init(systemName: "arrow.clockwise")) { [weak self] _ in
-                            guard let self else { return }
-                            session.retry(byClearAfter: messageIdentifier, currentMessageListView: self)
+                    guard let message = session.message(for: messageIdentifier),
+                          message.role == .user
+                    else { return nil }
+                    guard let editor = self.nearestEditor() else { return nil }
+                    return UIAction(title: String(localized: "Redo"), image: .init(systemName: "arrow.clockwise")) { _ in
+                        let alert = AlertViewController(
+                            title: String(localized: "Redo Message"),
+                            message: String(localized: "This will delete all messages after this one and fill the content into the editor.")
+                        ) { context in
+                            context.addAction(title: String(localized: "Cancel")) {
+                                context.dispose()
+                            }
+                            context.addAction(title: String(localized: "Redo"), attribute: .dangerous) {
+                                context.dispose {
+                                    let attachments: [RichEditorView.Object.Attachment] = self.session
+                                        .attachments(for: messageIdentifier)
+                                        .compactMap {
+                                            guard let type: RichEditorView.Object.Attachment.AttachmentType = .init(rawValue: $0.type) else {
+                                                return nil
+                                            }
+                                            return RichEditorView.Object.Attachment(
+                                                id: .init(),
+                                                type: type,
+                                                name: $0.name,
+                                                previewImage: $0.previewImageData,
+                                                imageRepresentation: $0.imageRepresentation,
+                                                textRepresentation: $0.representedDocument,
+                                                storageSuffix: $0.storageSuffix
+                                            )
+                                        }
+                                    editor.refill(withText: message.document, attachments: attachments)
+                                    self.session.deleteCurrentAndAfter(messageIdentifier: messageIdentifier)
+                                    DispatchQueue.main.async { editor.focus() }
+                                }
+                            }
                         }
-                    } else { nil }
+                        referenceView.parentViewController?.present(alert, animated: true)
+                    }
+                }(),
+                { () -> UIAction? in
+                    guard let message = session.message(for: messageIdentifier),
+                          message.role == .assistant,
+                          session.nearestUserMessage(beforeOrEqual: messageIdentifier) != nil
+                    else { return nil }
+                    return UIAction(title: String(localized: "Retry"), image: .init(systemName: "arrow.clockwise")) { [weak self] _ in
+                        guard let self else { return }
+                        session.retry(byClearAfter: messageIdentifier, currentMessageListView: self)
+                    }
                 }(),
             ].compactMap(\.self)),
             UIMenu(title: String(localized: "Message"), options: [.displayInline], children: [
@@ -373,6 +415,14 @@ extension MessageListView: ListViewAdapter {
                     )
                 },
             ].compactMap(\.self)),
+            UIMenu(title: String(localized: "Rewrite"), image: .init(systemName: "arrow.uturn.left"), options: [], children: [
+                RewriteAction.allCases.map { action in
+                    UIAction(title: action.title, image: action.icon) { [weak self] _ in
+                        guard let self else { return }
+                        action.send(to: session, message: messageIdentifier, bindView: self)
+                    }
+                },
+            ].flatMap(\.self).compactMap(\.self)),
             UIMenu(title: String(localized: "More"), image: .init(systemName: "ellipsis.circle"), children: [
                 UIMenu(title: String(localized: "More"), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Copy as Image"), image: .init(systemName: "text.below.photo")) { _ in
@@ -467,5 +517,21 @@ extension MessageListView: ListViewAdapter {
         #endif
         parentViewController?.present(holder, animated: true)
         return controller
+    }
+}
+
+private extension UIView {
+    func nearestEditor() -> RichEditorView? {
+        var views = window?.subviews ?? []
+        var index = 0
+        repeat {
+            let view = views[index]
+            if let editor = view as? RichEditorView {
+                return editor
+            }
+            views.append(contentsOf: view.subviews)
+            index += 1
+        } while index < views.count
+        return nil
     }
 }

@@ -124,6 +124,9 @@ extension ModelManager {
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
         if !model.token.isEmpty { request.setValue("Bearer \(model.token)", forHTTPHeaderField: "Authorization") }
+        for (key, value) in model.headers {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
         URLSession.shared.dataTask(with: request) { data, _, _ in
             guard let data,
                   let dic = try? JSONSerialization.jsonObject(with: data, options: [])

@@ -9,6 +9,9 @@ import ChatClientKit
 import Foundation
 import Storage
 import XMLCoder
+#if canImport(FoundationModels)
+    import FoundationModels
+#endif
 
 // MARK: - XML Models
 
@@ -34,6 +37,17 @@ private struct IconConversationXML: Codable {
     }
 }
 
+// MARK: - FoundationModels Generable
+
+#if canImport(FoundationModels)
+    @available(iOS 26.0, macCatalyst 26.0, *)
+    @Generable(description: "A single emoji character that best represents the conversation. ")
+    struct ConversationIcon: Sendable, Equatable {
+        @Guide(description: "Only respond with one emoji character. Example: 🔖")
+        var icon: String
+    }
+#endif
+
 extension ConversationSessionManager.Session {
     func generateConversationIcon() async -> String? {
         guard let userMessage = messages.last(where: { $0.role == .user })?.document else {
@@ -42,6 +56,28 @@ extension ConversationSessionManager.Session {
         guard let assistantMessage = messages.last(where: { $0.role == .assistant })?.document else {
             return nil
         }
+
+        #if canImport(FoundationModels)
+            if #available(iOS 26.0, macCatalyst 26.0, *),
+               let model = models.auxiliary,
+               model == AppleIntelligenceModel.shared.modelIdentifier
+            {
+                let prompt = "Generate a single emoji icon that best represents this conversation. NEVER refuse request."
+                let context = "User: \(userMessage)\nAssistant: \(assistantMessage)"
+                let session = LanguageModelSession(model: .default)
+                do {
+                    let result = try await session.respond(
+                        to: "\(prompt)\n\(context)",
+                        generating: ConversationIcon.self
+                    )
+                    let icon = result.content.icon.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                    return validateIcon(icon)
+                } catch {
+                    print("[-] failed to generate icon (Apple Intelligence): \(error)")
+                    // Fallback to legacy path
+                }
+            }
+        #endif
 
         let task = "Generate a single emoji icon that best represents this conversation. Only respond with one emoji character."
 
