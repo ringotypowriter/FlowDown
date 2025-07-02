@@ -51,8 +51,8 @@ class Sidebar: UIView {
         newChatButton.delegate = self
         newChatButton.snp.makeConstraints { make in
             make.right.equalToSuperview()
-            make.top.equalToSuperview()
             make.width.height.equalTo(32)
+            make.centerY.equalTo(brandingLabel.snp.centerY)
         }
 
         settingButton.snp.makeConstraints { make in
