@@ -86,8 +86,8 @@ extension AppDelegate {
                     UIKeyCommand(
                         title: String(localized: "Toggle Sidebar"),
                         action: #selector(toggleSidebarFromMenu(_:)),
-                        input: "S",
-                        modifierFlags: [.command, .shift]
+                        input: "/",
+                        modifierFlags: [.control, .shift]
                     ),
                 ].compactMap(\.self)
             ),
