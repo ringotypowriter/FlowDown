@@ -178,15 +178,7 @@ class MainController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateShadowPath()
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        DispatchQueue.main.async {
-            // update isUserInteractionEnabled when rotate
-            self.isSidebarCollapsed = self.isSidebarCollapsed
-        }
+        contentView.contentView.isUserInteractionEnabled = isSidebarCollapsed || allowSidebarPersistence
     }
 
     func updateShadowPath() {
