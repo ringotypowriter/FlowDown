@@ -1,33 +1,42 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Connection error: %lld" : {
-      "extractionState" : "stale",
+    "Invalid Content-Type for SSE: %@" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接错误：%lld"
+            "value" : "无效的服务器事件：%@"
           }
         }
       }
     },
-    "Invalid Content-Type for SSE: %@" : {
-
-    },
     "Invalid HTTP response status code: %lld" : {
-
-    },
-    "Missing Content-Type header in SSE response" : {
-
-    },
-    "Receiving tool call" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在准备工具调用"
+            "value" : "无效的传输响应：%lld"
+          }
+        }
+      }
+    },
+    "Invalid response content" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的响应内容"
+          }
+        }
+      }
+    },
+    "Missing Content-Type header in SSE response" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器事件所返回的事件中缺失 Content-Type 报头"
           }
         }
       }
@@ -54,17 +63,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务器返回了错误：%1$lld %2$@"
-          }
-        }
-      }
-    },
-    "Unable to connect to the server." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法连接到服务器。"
           }
         }
       }
