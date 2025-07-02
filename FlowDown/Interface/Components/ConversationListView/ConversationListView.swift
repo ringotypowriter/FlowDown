@@ -135,6 +135,14 @@ class ConversationListView: UIView {
         }
 
         var snapshot = Snapshot()
+        
+        let favorited = list.filter(\.isFavorite)
+        if !favorited.isEmpty {
+            let favoriteSection = Date(timeIntervalSince1970: -1)
+            snapshot.appendSections([favoriteSection])
+            snapshot.appendItems(favorited.map(\.id), toSection: favoriteSection)
+        }
+
         let calendar = Calendar.current
 
         var conversationsByDate: [Date: [Conversation.ID]] = [:]

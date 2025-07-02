@@ -203,6 +203,34 @@ extension ConversationManager {
         )
 
         let managementGroup: [UIMenuElement] = [
+            { () -> UIMenuElement? in
+                if conv.isFavorite {
+                    return UIAction(
+                        title: String(localized: "Unfavorite"),
+                        image: UIImage(systemName: "star.slash")
+                    ) { _ in
+                        ConversationManager.shared.editConversation(identifier: conv.id) {
+                            $0.isFavorite = true
+                        }
+                    }
+                } else {
+                    return nil
+                }
+            }(),
+            { () -> UIMenuElement? in
+                if !conv.isFavorite {
+                    return UIAction(
+                        title: String(localized: "Favorite"),
+                        image: UIImage(systemName: "star")
+                    ) { _ in
+                        ConversationManager.shared.editConversation(identifier: conv.id) {
+                            $0.isFavorite = true
+                        }
+                    }
+                } else {
+                    return nil
+                }
+            }(),
             { () -> UIMenu? in
                 if !convHasEmptyContent {
                     return savePictureMenu

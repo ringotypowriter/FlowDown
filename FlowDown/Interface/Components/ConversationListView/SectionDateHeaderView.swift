@@ -42,6 +42,10 @@ class SectionDateHeaderView: UIView {
     }
 
     func updateTitle(date: Date) {
-        titleLabel.text = Self.dateFormatter.string(from: date)
+        if date.timeIntervalSince1970 < 0 {
+            titleLabel.text = String(localized: "Favorite")
+        } else {
+            titleLabel.text = Self.dateFormatter.string(from: date)
+        }
     }
 }

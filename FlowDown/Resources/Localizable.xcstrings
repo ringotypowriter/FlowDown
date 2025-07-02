@@ -2356,6 +2356,16 @@
         }
       }
     },
+    "Favorite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏"
+          }
+        }
+      }
+    },
     "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3246,16 +3256,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "管理语言模型提供商，或者下载本地模型。"
-          }
-        }
-      }
-    },
-    "Manage Model Context Protocol Servers." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "管理模型上下文协议服务。"
           }
         }
       }
@@ -5851,6 +5851,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法处理工具调用：%@"
+          }
+        }
+      }
+    },
+    "Unfavorite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消收藏"
           }
         }
       }
