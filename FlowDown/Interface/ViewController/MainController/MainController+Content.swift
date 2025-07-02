@@ -11,9 +11,31 @@ import UIKit
 
 extension MainController {
     func setupViews() {
+        textureBackground.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        sidebarLayoutView.clipsToBounds = true
+        contentView.layer.cornerRadius = 12
+        contentView.layer.cornerCurve = .continuous
+
+        contentView.layer.masksToBounds = true
+        contentView.backgroundColor = .background
+        contentShadowView.layer.cornerRadius = contentView.layer.cornerRadius
+        contentShadowView.layer.cornerCurve = contentView.layer.cornerCurve
+
+        contentShadowView.snp.makeConstraints { make in
+            make.edges.equalTo(contentView)
+        }
+
+        sidebarDragger.snp.makeConstraints { make in
+            make.right.equalTo(contentView.snp.left)
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(10)
+        }
+
         contentView.hideKeyboardWhenTappedAround()
 
-        contentView.contentView.addSubview(chatView)
         chatView.onCreateNewChat = { [weak self] in
             self?.requestNewChat()
         }
@@ -25,6 +47,16 @@ extension MainController {
             make.edges.equalToSuperview()
         }
 
+        sidebar.delegate = self
+        sidebar.newChatButton.delegate = self
+        sidebar.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        sidebar.conversationListView.tableView.gestureRecognizers?.forEach {
+            guard $0 is UIPanGestureRecognizer else { return }
+            $0.cancelsTouchesInView = false
+        }
+
         #if !targetEnvironment(macCatalyst)
             chatView.escapeButton.actionBlock = { [weak self] in
                 self?.view.doWithAnimation {
@@ -32,17 +64,6 @@ extension MainController {
                 }
             }
         #endif
-
-        sidebar.delegate = self
-        sidebarView.contentView.addSubview(sidebar)
-        sidebar.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-
-        sidebar.conversationListView.tableView.gestureRecognizers?.forEach {
-            guard $0 is UIPanGestureRecognizer else { return }
-            $0.cancelsTouchesInView = false
-        }
     }
 
     func load(_ conv: Conversation.ID?) {

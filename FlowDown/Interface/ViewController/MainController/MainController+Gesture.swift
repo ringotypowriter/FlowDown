@@ -38,7 +38,7 @@ extension MainController {
             } else {
                 if offset > 0 { offset *= 0.1 }
                 gestureLayoutGuide.snp.updateConstraints { make in
-                    make.left.equalTo(sidebarView.snp.right).offset(offset)
+                    make.left.equalTo(sidebarLayoutView.snp.right).offset(offset)
                 }
             }
         }

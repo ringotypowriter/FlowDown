@@ -30,7 +30,8 @@ class MainController: UIViewController {
         #endif
     }
 
-    let sidebarView = SafeInputView()
+    let sidebarLayoutView = SafeInputView()
+    let sidebarDragger = SidebarDraggerView()
     let contentView = SafeInputView()
     let contentShadowView = UIView()
     let gestureLayoutGuide = UILayoutGuide()
@@ -43,7 +44,7 @@ class MainController: UIViewController {
     var sidebarWidth: CGFloat = 256 {
         didSet {
             guard oldValue != sidebarWidth else { return }
-            updateViewConstraints()
+            view.doWithAnimation { self.updateViewConstraints() }
         }
     }
 
@@ -56,8 +57,13 @@ class MainController: UIViewController {
         }
     }
 
-    let chatView = ChatView()
-    let sidebar = Sidebar()
+    let chatView = ChatView().with {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+
+    let sidebar = Sidebar().with {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
 
     var messages: [String] = []
 
@@ -70,6 +76,13 @@ class MainController: UIViewController {
             name: UIApplication.willResignActiveNotification,
             object: nil
         )
+
+        sidebarDragger.$currentValue
+            .removeDuplicates()
+            .map { CGFloat($0) }
+            .ensureMainThread()
+            .assign(to: \.sidebarWidth, on: self)
+            .store(in: &chatView.cancellables)
     }
 
     @available(*, unavailable)
@@ -89,34 +102,17 @@ class MainController: UIViewController {
         #else
             view.backgroundColor = .background
         #endif
+
         view.addLayoutGuide(gestureLayoutGuide)
-
         view.addSubview(textureBackground)
-        textureBackground.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-
-        sidebarView.clipsToBounds = true
-        view.addSubview(sidebarView)
-
+        view.addSubview(sidebarLayoutView)
         view.addSubview(contentShadowView)
-
-        contentView.layer.cornerRadius = 12
-        contentView.layer.cornerCurve = .continuous
-
-        contentView.layer.masksToBounds = true
-        contentView.backgroundColor = .background
         view.addSubview(contentView)
-
-        contentShadowView.layer.cornerRadius = contentView.layer.cornerRadius
-        contentShadowView.layer.cornerCurve = contentView.layer.cornerCurve
-
-        contentShadowView.snp.makeConstraints { make in
-            make.edges.equalTo(contentView)
-        }
+        view.addSubview(sidebarDragger)
+        sidebarLayoutView.contentView.addSubview(sidebar)
+        contentView.contentView.addSubview(chatView)
 
         setupViews()
-        sidebar.newChatButton.delegate = self
     }
 
     override func viewDidAppear(_ animated: Bool) {

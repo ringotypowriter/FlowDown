@@ -27,13 +27,13 @@ extension MainController {
     }
 
     func setupLayoutAsCatalyst() {
-        sidebarView.snp.remakeConstraints { make in
+        sidebarLayoutView.snp.remakeConstraints { make in
             make.left.bottom.top.equalTo(view.safeAreaLayoutGuide).inset(16)
             make.width.equalTo(sidebarWidth)
         }
         contentView.layer.cornerRadius = 8
         contentView.snp.remakeConstraints { make in
-            make.left.equalTo(sidebarView.snp.right).offset(16)
+            make.left.equalTo(sidebarLayoutView.snp.right).offset(16)
             make.top.bottom.right.equalToSuperview().inset(16)
         }
         createVisibleShadow()
@@ -42,7 +42,7 @@ extension MainController {
     func setupLayoutAsCompactStyle() {
         switch isSidebarCollapsed {
         case true:
-            sidebarView.snp.remakeConstraints { make in
+            sidebarLayoutView.snp.remakeConstraints { make in
                 make.left.equalToSuperview().inset(-50)
                 make.top.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
                 make.width.equalTo(view.snp.width).offset(-40)
@@ -60,20 +60,20 @@ extension MainController {
             }
             removeShadow()
         case false:
-            sidebarView.snp.remakeConstraints { make in
+            sidebarLayoutView.snp.remakeConstraints { make in
                 make.top.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
                 make.left.equalTo(view.safeAreaLayoutGuide).inset(20)
                 make.right.equalTo(view.safeAreaLayoutGuide).inset(60)
             }
             gestureLayoutGuide.snp.remakeConstraints { make in
-                make.left.equalTo(sidebarView.snp.right)
+                make.left.equalTo(sidebarLayoutView.snp.right)
                 make.top.bottom.equalToSuperview()
                 make.width.equalTo(0)
             }
             contentView.layer.cornerRadius = 28
             contentView.snp.remakeConstraints { make in
                 make.width.equalToSuperview()
-                make.top.bottom.equalTo(sidebarView)
+                make.top.bottom.equalTo(sidebarLayoutView)
                 make.left.equalTo(gestureLayoutGuide.snp.right).offset(20)
             }
             createVisibleShadow()
@@ -83,7 +83,7 @@ extension MainController {
     func setupLayoutAsRelaxedStyle() {
         switch isSidebarCollapsed {
         case true:
-            sidebarView.snp.remakeConstraints { make in
+            sidebarLayoutView.snp.remakeConstraints { make in
                 make.left.equalToSuperview().offset(-50)
                 make.top.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
                 make.width.equalTo(sidebarWidth)
@@ -101,13 +101,13 @@ extension MainController {
             }
             removeShadow()
         case false:
-            sidebarView.snp.remakeConstraints { make in
+            sidebarLayoutView.snp.remakeConstraints { make in
                 make.top.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
                 make.left.equalTo(view.safeAreaLayoutGuide).inset(20)
                 make.width.equalTo(sidebarWidth)
             }
             gestureLayoutGuide.snp.remakeConstraints { make in
-                make.left.equalTo(sidebarView.snp.right)
+                make.left.equalTo(sidebarLayoutView.snp.right)
                 make.top.bottom.equalToSuperview()
                 make.width.equalTo(0)
             }
@@ -124,7 +124,7 @@ extension MainController {
                 contentView.snp.remakeConstraints { make in
                     make.left.equalTo(gestureLayoutGuide.snp.right).offset(20)
                     make.width.equalToSuperview()
-                    make.top.bottom.equalTo(sidebarView)
+                    make.top.bottom.equalTo(sidebarLayoutView)
                 }
                 createVisibleShadow()
             }
