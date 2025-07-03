@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/Litext",
       "state" : {
-        "revision" : "fb02814ad729b8a0b1db19db31e4c75535d58f8b",
-        "version" : "0.4.9"
+        "revision" : "c37f3ab5826659854311e20d6c3942d4905b00b6",
+        "version" : "0.5.0"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "efa3e3bd0ae82200d4534fac9e637adc5454582b",
-        "version" : "2.3.2"
+        "revision" : "28bd0b5f40ccfaf0f08a0b55289804063b8573fc",
+        "version" : "2.3.4"
       }
     },
     {
@@ -309,10 +309,10 @@
     {
       "identity" : "swiftmath",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mgriebling/SwiftMath",
+      "location" : "https://github.com/Lakr233/SwiftMath",
       "state" : {
-        "revision" : "606f9be66db6afe0c41c3b064723a57061723db7",
-        "version" : "1.7.1"
+        "revision" : "cfd646dcac0c5553e21ebf1ee05f9078277518bc",
+        "version" : "1.7.2"
       }
     },
     {

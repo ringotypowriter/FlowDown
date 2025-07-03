@@ -20,16 +20,21 @@ final class MessageListView: UIView {
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
 
     private var entryCount = 0
+    private let updateQueue = DispatchQueue(label: "MessageListView.UpdateQueue", qos: .userInteractive)
 
     var session: ConversationSession! {
         didSet {
             isFirstLoad = true
+            alpha = 0
             sessionScopedCancellables.forEach { $0.cancel() }
             sessionScopedCancellables.removeAll()
-            session.messagesDidChange.sink { [unowned self] messages, scrolling in
-                updateFromUpstreamPublisher(messages, scrolling)
-            }
-            .store(in: &sessionScopedCancellables)
+            session.messagesDidChange
+                .receive(on: updateQueue)
+                .throttle(for: .seconds(0.1), scheduler: updateQueue, latest: true)
+                .sink { [unowned self] messages, scrolling in
+                    updateFromUpstreamPublisher(messages, scrolling)
+                }
+                .store(in: &sessionScopedCancellables)
             session.userDidSendMessage.sink { [unowned self] _ in
                 isAutoScrollingToBottom = true
             }
@@ -252,22 +257,15 @@ final class MessageListView: UIView {
         dataSource.applySnapshot(using: entries, animatingDifferences: animated)
     }
 
-    private let updateLock = NSLock()
-
     func updateFromUpstreamPublisher(_ messages: [Message], _ scrolling: Bool) {
-        updateLock.lock()
-        defer { updateLock.unlock() }
-
+        assert(!Thread.isMainThread)
         let entries = entries(from: messages)
 
-        if !Thread.isMainThread {
-            // do the pre render
-            for entry in entries {
-                switch entry {
-                case let .aiContent(_, messageRepresentation):
-                    _ = markdownPackageCache.package(for: messageRepresentation, theme: theme)
-                default: break
-                }
+        for entry in entries {
+            switch entry {
+            case let .aiContent(_, messageRepresentation):
+                _ = markdownPackageCache.package(for: messageRepresentation, theme: theme)
+            default: break
             }
         }
 
@@ -291,12 +289,8 @@ final class MessageListView: UIView {
             isUpdatingSuppressed = false
         }
 
-        if Thread.isMainThread {
-            sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
-        } else {
-            DispatchQueue.main.asyncAndWait {
-                self.sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
-            }
+        DispatchQueue.main.asyncAndWait {
+            self.sendViewModelToUpdate(entries, someEntiresBeingRemoved, shouldScrolling)
         }
     }
 
@@ -305,6 +299,9 @@ final class MessageListView: UIView {
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
         if shouldScrolling {
             listView.scroll(to: listView.maximumContentOffset)
+        }
+        if self.alpha == 0 {
+            UIView.animate(withDuration: 0.25) { self.alpha = 1 }
         }
     }
 }
