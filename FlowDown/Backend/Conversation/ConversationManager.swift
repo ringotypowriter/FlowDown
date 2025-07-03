@@ -32,7 +32,7 @@ class ConversationManager: NSObject {
         }
     }
 
-    let conversations: CurrentValueSubject<[Conversation], Never> = .init([])
+    let conversations: CurrentValueSubject<OrderedDictionary<Conversation.ID, Conversation>, Never> = .init([:])
 
     override private init() {
         super.init()

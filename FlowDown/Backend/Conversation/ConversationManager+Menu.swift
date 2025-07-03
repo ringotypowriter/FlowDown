@@ -398,7 +398,7 @@ extension ConversationManager {
                         attributes: .destructive
                     ) { _ in
                         ConversationManager.shared.deleteConversation(identifier: conv.id)
-                        if let first = ConversationManager.shared.conversations.value.first?.id {
+                        if let first = ConversationManager.shared.conversations.value.values.first?.id {
                             suggestNewSelection(first)
                         }
                     }
@@ -426,7 +426,7 @@ extension ConversationManager {
                                 attributes: .destructive
                             ) { _ in
                                 ConversationManager.shared.deleteConversation(identifier: conv.id)
-                                if let first = ConversationManager.shared.conversations.value.first?.id {
+                                if let first = ConversationManager.shared.conversations.value.values.first?.id {
                                     suggestNewSelection(first)
                                 }
                             },

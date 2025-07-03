@@ -300,7 +300,7 @@ final class MessageListView: UIView {
         if shouldScrolling {
             listView.scroll(to: listView.maximumContentOffset)
         }
-        if self.alpha == 0 {
+        if alpha == 0 {
             UIView.animate(withDuration: 0.25) { self.alpha = 1 }
         }
     }

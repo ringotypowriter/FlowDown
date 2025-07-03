@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import OrderedCollections
 import RichEditor
 import Storage
 
@@ -14,14 +15,16 @@ extension ConversationManager {
     func scanAll() {
         let items: [Conversation] = sdb.conversationList()
         print("[+] scanned \(items.count) conversations")
-        conversations.send(items)
+        // Cannot convert value of type '[Conversation]' to expected argument type 'OrderedDictionary<Conversation.ID, Conversation>' (aka 'OrderedDictionary<Int64, Conversation>')
+        let dic = OrderedDictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
+        conversations.send(dic)
     }
 
     func initialConversation() -> Conversation {
-        if let firstItem = conversations.value.first,
+        if let firstItem = conversations.value.values.first,
            message(within: firstItem.id).isEmpty
         {
-            print("[+] using first empty conversation with index: \(firstItem.id)")
+            print("[+] using first empty conversation with id: \(firstItem.id)")
             return firstItem
         }
         print("[+] creating a new conversation")

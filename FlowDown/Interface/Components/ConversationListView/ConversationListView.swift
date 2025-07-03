@@ -128,7 +128,7 @@ class ConversationListView: UIView {
     }
 
     func updateDataSource() {
-        let list = ConversationManager.shared.conversations.value
+        let list = ConversationManager.shared.conversations.value.values
         guard !list.isEmpty else {
             _ = ConversationManager.shared.initialConversation()
             return
@@ -194,7 +194,7 @@ class ConversationListView: UIView {
 
     func keepAtLeastOncFocus() {
         guard tableView.indexPathsForSelectedRows?.count ?? 0 == 0 else { return }
-        let item = ConversationManager.shared.conversations.value.first
+        let item = ConversationManager.shared.conversations.value.values.first
         if let item {
             select(identifier: item.id)
         } else {

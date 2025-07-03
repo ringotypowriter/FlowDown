@@ -6,6 +6,7 @@
 //
 
 import AlertController
+import OrderedCollections
 import Storage
 import UIKit
 
@@ -200,7 +201,7 @@ extension AppDelegate {
     // conversation navigation
     @objc func selectPreviousConversationFromMenu(_: Any?) {
         withCurrentConversation { mainVC, conversationID, _ in
-            let list = ConversationManager.shared.conversations.value
+            let list = ConversationManager.shared.conversations.value.values
             guard let currentIndex = list.firstIndex(where: { $0.id == conversationID }), currentIndex > 0 else { return }
             let previousID = list[currentIndex - 1].id
             mainVC.sidebar.chatSelection = previousID
@@ -212,7 +213,7 @@ extension AppDelegate {
 
     @objc func selectNextConversationFromMenu(_: Any?) {
         withCurrentConversation { mainVC, conversationID, _ in
-            let list = ConversationManager.shared.conversations.value
+            let list = ConversationManager.shared.conversations.value.values
             guard let currentIndex = list.firstIndex(where: { $0.id == conversationID }), currentIndex < list.count - 1 else { return }
             let nextID = list[currentIndex + 1].id
             mainVC.sidebar.chatSelection = nextID
