@@ -46,7 +46,7 @@
 | 自定义 LLM      | ✅ [指南](https://apps.qaq.wiki/docs/flowdown/zh/documents/advanced_settings/enterprise.html) | ✅                     |
 | 离线 LLM（MLX） | ✅ [列表](https://apps.qaq.wiki/docs/flowdown/zh/documents/quickstart/local_models.html)      | ❌                     |
 | 视觉 LLM        | ✅                                                                                            | ❌                     |
-| 开源            | ✅ _最终_                                                                                     | ✅                     |
+| 开源            | ✅ _终于_                                                                                     | ✅                     |
 | 网络搜索        | ✅                                                                                            | ❌                     |
 | 附件            | ✅                                                                                            | ❌                     |
 | 语言本地化      | ✅                                                                                            | ❌                     |
