@@ -16,3 +16,30 @@ fi
 PROJECT_ROOT=$(pwd)
 
 ./Resources/DevKit/scripts/scan.license.sh
+
+xcodebuild -workspace FlowDown.xcworkspace \
+    -scheme FlowDown \
+    -configuration Release \
+    -destination 'generic/platform=iOS' \
+    -archivePath "$PROJECT_ROOT/.build/FlowDown.xcarchive" \
+    archive
+
+xcodebuild -workspace FlowDown.xcworkspace \
+    -scheme FlowDown-Catalyst \
+    -configuration Release \
+    -destination 'generic/platform=macOS' \
+    -archivePath "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive"
+
+xcodebuild -exportArchive \
+    -archivePath "$PROJECT_ROOT/.build/FlowDown.xcarchive" \
+    -exportPath "$PROJECT_ROOT/.build/FlowDown.ipa" \
+    -exportOptionsPlist "$PROJECT_ROOT/Resources/DevKit/scripts/export-options.plist" \
+    -allowProvisioningUpdates
+
+xcodebuild -exportArchive \
+    -archivePath "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" \
+    -exportPath "$PROJECT_ROOT/.build/FlowDown-Catalyst.app" \
+    -exportOptionsPlist "$PROJECT_ROOT/Resources/DevKit/scripts/export-options-catalyst.plist" \
+    -allowProvisioningUpdates   
+
+
