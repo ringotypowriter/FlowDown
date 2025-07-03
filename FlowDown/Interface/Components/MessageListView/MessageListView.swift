@@ -25,7 +25,6 @@ final class MessageListView: UIView {
     var session: ConversationSession! {
         didSet {
             isFirstLoad = true
-            alpha = 0
             sessionScopedCancellables.forEach { $0.cancel() }
             sessionScopedCancellables.removeAll()
             session.messagesDidChange
@@ -299,9 +298,6 @@ final class MessageListView: UIView {
         dataSource.applySnapshot(using: entries, animatingDifferences: someEntiresBeingRemoved ? true : false)
         if shouldScrolling {
             listView.scroll(to: listView.maximumContentOffset)
-        }
-        if alpha == 0 {
-            UIView.animate(withDuration: 0.25) { self.alpha = 1 }
         }
     }
 }
