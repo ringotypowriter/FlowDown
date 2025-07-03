@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ktiays/GlyphixTextFx/",
       "state" : {
-        "revision" : "a0433f18b8032a75711e724d0c85c900363438b4",
-        "version" : "2.2.1"
+        "revision" : "a765c64b02919e0fa8e8c4d29d08ada24003ef0e",
+        "version" : "2.3.1"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "cdd670d2ffc01e5aaf2326130980e175a75166fd",
-        "version" : "2.3.5"
+        "revision" : "e492029ae609632b6ea2880b4f3992d10d3748d6",
+        "version" : "2.3.7"
       }
     },
     {
