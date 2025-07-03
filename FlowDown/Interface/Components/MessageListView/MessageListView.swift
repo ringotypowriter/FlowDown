@@ -29,7 +29,6 @@ final class MessageListView: UIView {
             sessionScopedCancellables.removeAll()
             session.messagesDidChange
                 .receive(on: updateQueue)
-                .throttle(for: .seconds(0.1), scheduler: updateQueue, latest: true)
                 .sink { [unowned self] messages, scrolling in
                     updateFromUpstreamPublisher(messages, scrolling)
                 }
