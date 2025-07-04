@@ -15,7 +15,7 @@ FlowDown is a blazing fast and smooth client app for using AI/LLM with full prot
 
 Or `brew install --cask flowdown` (maintained by 3rd party)
 
-Or [TestFlight](https://testflight.apple.com/join/StpMeybv) for beta testing. Expires anytume, don't use it for production.
+Or [TestFlight](https://testflight.apple.com/join/StpMeybv) for beta testing. Expires anytime, don't use it for production.
 
 By downloading FlowDown from App Store, free models are included. To use our product, have a look at: [https://apps.qaq.wiki/docs/flowdown/](https://apps.qaq.wiki/docs/flowdown/)
 
