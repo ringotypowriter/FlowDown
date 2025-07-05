@@ -1016,7 +1016,7 @@
 			repositoryURL = "https://github.com/Lakr233/MarkdownView";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.4.8;
+				minimumVersion = 2.4.9;
 			};
 		};
 		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
