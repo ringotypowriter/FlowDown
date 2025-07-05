@@ -58,6 +58,12 @@ extension AppDelegate {
                 options: .displayInline,
                 children: [
                     UIKeyCommand(
+                        title: String(localized: "Check for Updates..."),
+                        action: #selector(checkForUpdatesFromMenu(_:)),
+                        input: "u",
+                        modifierFlags: [.command, .shift]
+                    ),
+                    UIKeyCommand(
                         title: String(localized: "Settings..."),
                         action: #selector(openSettingsFromMenu(_:)),
                         input: ",",
@@ -141,6 +147,9 @@ extension AppDelegate {
             .first
     }
 
+    @objc func checkForUpdatesFromMenu(_: Any?) {
+        UpdatedManger.shared.check()
+    }
     // Wire from MainController
     @objc func requestNewChatFromMenu(_: Any?) {
         (mainWindow?.rootViewController as? MainController)?.requestNewChat()

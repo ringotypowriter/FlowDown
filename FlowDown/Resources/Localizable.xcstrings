@@ -93,6 +93,16 @@
         }
       }
     },
+    "A new version %@ is available. \nPlease update to enjoy the latest features and improvements." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一个新版本 %@ 已经准备好了！\n请前往下载并享受新功能和特性！"
+          }
+        }
+      }
+    },
     "A tool model is required for browsing." : {
       "localizations" : {
         "zh-Hans" : {
@@ -672,6 +682,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "检查"
+          }
+        }
+      }
+    },
+    "Check for Updates..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新"
           }
         }
       }
@@ -6041,6 +6061,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新全部模型"
+          }
+        }
+      }
+    },
+    "Update Available" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新可用"
           }
         }
       }
