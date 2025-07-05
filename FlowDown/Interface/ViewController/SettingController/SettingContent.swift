@@ -249,7 +249,7 @@ extension SettingController.SettingContent {
             addSubview(versionButton)
             let action = UIAction { _ in
                 // 直接在这里执行点击后的逻辑
-                UpdatedManger.shared.check()
+                UpdateManager.shared.check()
             }
             versionButton.addAction(action, for: .touchUpInside)
             

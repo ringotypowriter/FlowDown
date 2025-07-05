@@ -60,7 +60,7 @@ DispatchQueue.global().async {
     try? FileManager.default.removeItem(at: clean)
 }
 #if os(macOS) || targetEnvironment(macCatalyst)
-_ = UpdatedManger.shared
+_ = UpdateManager.shared
 #endif
 _ = UIApplicationMain(
     CommandLine.argc,

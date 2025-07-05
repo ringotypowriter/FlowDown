@@ -148,7 +148,7 @@ extension AppDelegate {
     }
 
     @objc func checkForUpdatesFromMenu(_: Any?) {
-        UpdatedManger.shared.check()
+        UpdateManager.shared.check()
     }
     // Wire from MainController
     @objc func requestNewChatFromMenu(_: Any?) {

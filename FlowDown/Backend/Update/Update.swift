@@ -7,8 +7,8 @@ enum DistributionChannel {
     case gitHub
 }
 
-class UpdatedManger {
-    static let shared = UpdatedManger()
+class UpdateManager {
+    static let shared = UpdateManager()
     let currentChannel: DistributionChannel
     
     private init() {
