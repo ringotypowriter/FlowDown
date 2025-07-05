@@ -111,7 +111,7 @@ extension MessageListView: ListViewAdapter {
             case let .aiContent(_, message):
                 markdownViewForSizeCalculation.theme = theme
                 let package = markdownPackageCache.package(for: message, theme: theme)
-                markdownViewForSizeCalculation.setMarkdown(package.blocks, renderedContent: package.renderedContent)
+                markdownViewForSizeCalculation.setMarkdown(package)
                 let boundingSize = markdownViewForSizeCalculation.boundingSize(for: containerWidth)
                 return ceil(boundingSize.height)
             case .hint:
@@ -155,7 +155,7 @@ extension MessageListView: ListViewAdapter {
             if case let .aiContent(_, message) = entry {
                 aiMessageView.theme = theme
                 let package = markdownPackageCache.package(for: message, theme: theme)
-                aiMessageView.markdownView.setMarkdown(package.blocks, renderedContent: package.renderedContent)
+                aiMessageView.markdownView.setMarkdown(package)
                 aiMessageView.linkTapHandler = { [weak self] link, range, touchLocation in
                     self?.handleLinkTapped(link, in: range, at: aiMessageView.convert(touchLocation, to: self))
                 }
