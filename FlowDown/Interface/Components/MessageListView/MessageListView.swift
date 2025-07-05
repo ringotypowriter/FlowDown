@@ -91,7 +91,6 @@ final class MessageListView: UIView {
                 .init(x: 0, y: listView.maximumContentOffset.y),
                 animated: false
             )
-            listView.setNeedsLayout()
         }
         addSubview(listView)
         listView.snp.makeConstraints { make in
