@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "29a9da19d6dc21af4e629c423961b0f453ffe192",
-        "version" : "2.3.8"
+        "revision" : "756516b65cfdaf30bea8dbe47a55e0e43a322aa6",
+        "version" : "2.4.1"
       }
     },
     {
