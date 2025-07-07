@@ -40,7 +40,7 @@ extension MainController {
         viewController.present(alert, animated: true)
     }
 
-    func queueNewConversation(text: String, shouldSend: Boolean = false) {
+    func queueNewConversation(text: String, shouldSend: Bool = false) {
         DispatchQueue.main.async {
             let conversation = ConversationManager.shared.createNewConversation()
             print("[+] created new conversation with ID: \(conversation.id)")
