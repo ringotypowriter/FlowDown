@@ -148,8 +148,10 @@ extension AppDelegate {
     }
 
     @objc func checkForUpdatesFromMenu(_: Any?) {
-        UpdateManager.shared.check()
+        UpdateManager.shared.anchor(mainWindow?.rootViewController?.view ?? .init())
+        UpdateManager.shared.performUpdateCheckFromUI()
     }
+
     // Wire from MainController
     @objc func requestNewChatFromMenu(_: Any?) {
         (mainWindow?.rootViewController as? MainController)?.requestNewChat()

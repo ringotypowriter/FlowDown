@@ -64,6 +64,15 @@
       }
     },
     {
+      "identity" : "dpkgversion",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/DpkgVersion",
+      "state" : {
+        "revision" : "64f192ac8c74f334e5b610c3da9aa9b456502ced",
+        "version" : "1.0.4"
+      }
+    },
+    {
       "identity" : "eventsource",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/loopwork-ai/eventsource",
@@ -140,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "7386d2ba1ad93c7e9c7825922fd87a080f0c77cd",
-        "version" : "2.5.3"
+        "revision" : "14565977adeaa94d3ef8ba0bb6d879945f964263",
+        "version" : "2.5.4"
       }
     },
     {

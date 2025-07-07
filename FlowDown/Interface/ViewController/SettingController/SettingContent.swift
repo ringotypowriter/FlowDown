@@ -248,16 +248,15 @@ extension SettingController.SettingContent {
             super.init(frame: .zero)
             addSubview(versionButton)
             let action = UIAction { _ in
-                // 直接在这里执行点击后的逻辑
-                UpdateManager.shared.check()
+                UpdateManager.shared.anchor(self)
+                UpdateManager.shared.performUpdateCheckFromUI()
             }
             versionButton.addAction(action, for: .touchUpInside)
-            
+
             addSubview(versionButton)
             versionButton.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
-
         }
 
         @available(*, unavailable)

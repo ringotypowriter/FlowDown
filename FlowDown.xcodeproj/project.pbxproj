@@ -48,6 +48,8 @@
 		5050EB7C2D4789A300634B81 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB7B2D4789A300634B81 /* Transformers */; };
 		505535BC2D72F38900F54B28 /* AlignedCollectionViewFlowLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */; };
 		505535C12D72F7EF00F54B28 /* PrivacyPolicy.md in Resources */ = {isa = PBXBuildFile; fileRef = 505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */; };
+		505742452E1B8B2A00A26090 /* DpkgVersion in Frameworks */ = {isa = PBXBuildFile; productRef = 505742442E1B8B2A00A26090 /* DpkgVersion */; };
+		505742472E1B8B8100A26090 /* DpkgVersion in Frameworks */ = {isa = PBXBuildFile; productRef = 505742462E1B8B8100A26090 /* DpkgVersion */; };
 		505BC6F92D42A73600894BB0 /* AlertController in Frameworks */ = {isa = PBXBuildFile; productRef = 505BC6F82D42A73600894BB0 /* AlertController */; };
 		505FC6192D4945E500F4CB17 /* SPIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 505FC6182D4945E500F4CB17 /* SPIndicator */; };
 		505FC65B2D4A754F00F4CB17 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 505FC65A2D4A754F00F4CB17 /* MLXVLM */; };
@@ -172,6 +174,7 @@
 				50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */,
 				50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */,
 				50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */,
+				505742452E1B8B2A00A26090 /* DpkgVersion in Frameworks */,
 				50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */,
 				50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */,
 				50343FE52DA2515C00CC6820 /* RunestoneEditor in Frameworks */,
@@ -190,6 +193,7 @@
 				50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */,
 				501C98E12D3E52CE00CD8E11 /* RichEditor in Frameworks */,
 				505FC6192D4945E500F4CB17 /* SPIndicator in Frameworks */,
+				505742472E1B8B8100A26090 /* DpkgVersion in Frameworks */,
 				5050EB0B2D46DCB900634B81 /* MLXLMCommon in Frameworks */,
 				50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */,
 				5050EACF2D46D41400634B81 /* MLX in Frameworks */,
@@ -324,6 +328,7 @@
 				50DDB1722DDF170000351E46 /* ListViewKit */,
 				50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */,
 				86B4FDBF2E1190AD00C6DC8F /* MCP */,
+				505742442E1B8B2A00A26090 /* DpkgVersion */,
 			);
 			productName = FlowDown;
 			productReference = 50343FF02DA2515C00CC6820 /* FlowDown.app */;
@@ -380,6 +385,7 @@
 				50CB4E742DE30A57009C58E1 /* Digger */,
 				50FBFC6B2DEA2E5400098EC4 /* XMLCoder */,
 				86B4FDC12E1190C000C6DC8F /* MCP */,
+				505742462E1B8B8100A26090 /* DpkgVersion */,
 			);
 			productName = FlowDown;
 			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
@@ -431,6 +437,7 @@
 				50A350B92DE4B5C3008F094E /* XCRemoteSwiftPackageReference "MarkdownView" */,
 				50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 				86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */,
+				505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -1003,6 +1010,14 @@
 				minimumVersion = 0.1.15;
 			};
 		};
+		505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/DpkgVersion";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
 		505FC6172D4945B300F4CB17 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ivanvorobei/SPIndicator";
@@ -1016,7 +1031,7 @@
 			repositoryURL = "https://github.com/Lakr233/MarkdownView";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.3;
+				minimumVersion = 2.5.4;
 			};
 		};
 		50B492922D4F602C00F4D2B3 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
@@ -1258,6 +1273,16 @@
 		505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AlignedCollectionViewFlowLayout;
+		};
+		505742442E1B8B2A00A26090 /* DpkgVersion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */;
+			productName = DpkgVersion;
+		};
+		505742462E1B8B8100A26090 /* DpkgVersion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */;
+			productName = DpkgVersion;
 		};
 		505BC6F82D42A73600894BB0 /* AlertController */ = {
 			isa = XCSwiftPackageProductDependency;

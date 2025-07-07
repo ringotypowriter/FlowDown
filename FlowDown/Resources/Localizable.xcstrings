@@ -93,12 +93,12 @@
         }
       }
     },
-    "A new version %@ is available. \nPlease update to enjoy the latest features and improvements." : {
+    "A new version %@ is available. Would you like to download it?" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一个新版本 %@ 已经准备好了！\n请前往下载并享受新功能和特性！"
+            "value" : "新版本 %@ 已准备就绪，你要前往下载吗？"
           }
         }
       }
@@ -692,6 +692,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "检查更新"
+          }
+        }
+      }
+    },
+    "Checking for Updates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新中"
           }
         }
       }
@@ -2356,6 +2366,16 @@
         }
       }
     },
+    "Failed to parse release information." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法获取版本信息。"
+          }
+        }
+      }
+    },
     "Failed to query calendar: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3779,6 +3799,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型未响应。"
+          }
+        }
+      }
+    },
+    "No Update Available" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无可用更新"
           }
         }
       }

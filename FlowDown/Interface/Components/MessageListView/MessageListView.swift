@@ -14,7 +14,7 @@ import Storage
 import UIKit
 
 final class MessageListView: UIView {
-    private lazy var listView: MessageListViewCore = .init()
+    private lazy var listView: ListViewKit.ListView = .init()
     var contentSize: CGSize { listView.contentSize }
 
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
@@ -23,9 +23,11 @@ final class MessageListView: UIView {
     private let updateQueue = DispatchQueue(label: "MessageListView.UpdateQueue", qos: .userInteractive)
 
     private var isFirstLoad: Bool = true
+
     var session: ConversationSession! {
         didSet {
             isFirstLoad = true
+            alpha = 0
             sessionScopedCancellables.forEach { $0.cancel() }
             sessionScopedCancellables.removeAll()
             Publishers.CombineLatest(
@@ -81,17 +83,6 @@ final class MessageListView: UIView {
         listView.contentInsetAdjustmentBehavior = .never
         listView.showsVerticalScrollIndicator = false
         listView.showsHorizontalScrollIndicator = false
-        listView.layoutSubviewsCallback = { [weak self] in
-            guard let self, isFirstLoad,
-                  frame.width > 0, frame.height > 0,
-                  window != nil
-            else { return }
-            defer { isFirstLoad = false }
-            listView.setContentOffset(
-                .init(x: 0, y: listView.maximumContentOffset.y),
-                animated: false
-            )
-        }
         addSubview(listView)
         listView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -108,7 +99,7 @@ final class MessageListView: UIView {
                 guard let self else { return }
                 theme = MarkdownTheme.default
                 listView.reloadData()
-                updateList(animated: false)
+                updateList()
             }
             .store(in: &viewCancellables)
     }
@@ -207,9 +198,9 @@ final class MessageListView: UIView {
         present(menu: menu, anchorPoint: .init(x: location.x, y: location.y + 4))
     }
 
-    func updateList(animated: Bool = true) {
+    func updateList() {
         let entries = entries(from: session.messages)
-        dataSource.applySnapshot(using: entries, animatingDifferences: animated)
+        dataSource.applySnapshot(using: entries, animatingDifferences: false)
     }
 
     func updateFromUpstreamPublisher(_ messages: [Message], _ scrolling: Bool, isLoading: String?) {
@@ -230,8 +221,19 @@ final class MessageListView: UIView {
 
         entryCount = entries.count
         DispatchQueue.main.asyncAndWait {
-            dataSource.applySnapshot(using: entries, animatingDifferences: true)
-            if shouldScrolling { listView.scroll(to: listView.maximumContentOffset) }
+            if isFirstLoad || alpha == 0 {
+                isFirstLoad = false
+                dataSource.applySnapshot(using: entries, animatingDifferences: false)
+                listView.setContentOffset(.init(x: 0, y: listView.maximumContentOffset.y), animated: false)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    UIView.animate(withDuration: 0.25) { self.alpha = 1 }
+                }
+            } else {
+                dataSource.applySnapshot(using: entries, animatingDifferences: true)
+                if shouldScrolling {
+                    listView.scroll(to: listView.maximumContentOffset)
+                }
+            }
         }
     }
 }
@@ -248,17 +250,6 @@ extension MessageListView: UIScrollViewDelegate {
     func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             updateAutoScrolling()
-        }
-    }
-}
-
-extension MessageListView {
-    final class MessageListViewCore: ListViewKit.ListView {
-        var layoutSubviewsCallback: (() -> Void)?
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            layoutSubviewsCallback?()
         }
     }
 }

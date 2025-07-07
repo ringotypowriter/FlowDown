@@ -59,8 +59,9 @@ DispatchQueue.global().async {
         .appendingPathComponent("DisposableResources")
     try? FileManager.default.removeItem(at: clean)
 }
+
 #if os(macOS) || targetEnvironment(macCatalyst)
-_ = UpdateManager.shared
+    _ = UpdateManager.shared
 #endif
 _ = UIApplicationMain(
     CommandLine.argc,
