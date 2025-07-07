@@ -34,7 +34,7 @@ final class AiMessageView: MessageListRowView {
     private func configureSubviews() {
         contentView.addSubview(markdownView)
     }
-
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         markdownView.prepareForReuse()
@@ -42,7 +42,6 @@ final class AiMessageView: MessageListRowView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
         markdownView.frame = contentView.bounds
     }
 }
