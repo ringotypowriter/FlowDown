@@ -103,10 +103,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let pathComponents = url.pathComponents
         guard pathComponents.count >= 2 else { return }
         let encodedMessage = pathComponents[1]
-        guard let message = encodedMessage.removingPercentEncoding,
-              !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        else { return }
-        mainController.queueNewConversation(text: message)
+        mainController.queueNewConversation(text: message, shouldSend: !encodedMessage.removingPercentEncoding.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
 
     func sceneDidDisconnect(_: UIScene) {}
