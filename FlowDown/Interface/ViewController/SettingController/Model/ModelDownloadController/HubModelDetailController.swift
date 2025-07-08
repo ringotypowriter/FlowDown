@@ -62,11 +62,11 @@ class HubModelDetailController: StackScrollController {
         let result = MarkdownParser().parse(markdown)
         var theme = MarkdownTheme()
         theme.align(to: UIFont.preferredFont(forTextStyle: .subheadline).pointSize)
-        let render = result.render(theme: theme)
+        let package = MarkdownTextView.PreprocessContent(parserResult: result, theme: theme)
         DispatchQueue.main.async {
             let markdownView = MarkdownTextView()
             markdownView.theme = theme
-            markdownView.setMarkdown(.init(blocks: result.document, rendered: render))
+            markdownView.setMarkdown(package)
             markdownView.alpha = 0
             markdownView.codePreviewHandler = { [weak self] language, code in
                 let viewer = CodeEditorController(language: language, text: code.string)
