@@ -83,7 +83,26 @@ extension ConversationSearchController.ContentController {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func configure(with result: SearchResult, searchTerm: String) {
+        override func prepareForReuse() {
+            super.prepareForReuse()
+            
+            // Reset highlight state when cell is reused
+            backgroundColor = .clear
+            transform = .identity
+            
+            // Clear cached content
+            titleLabel.attributedText = nil
+            titleLabel.text = nil
+            subtitleLabel.attributedText = nil
+            
+            // Remove subtitle if it was added
+            if textStackView.arrangedSubviews.contains(subtitleLabel) {
+                textStackView.removeArrangedSubview(subtitleLabel)
+                subtitleLabel.removeFromSuperview()
+            }
+        }
+
+        func configure(with result: SearchResult, searchTerm: String, isHighlighted: Bool = false) {
             iconView.image = result.conversation.interfaceImage
 
             // Highlight search term in title
@@ -124,6 +143,28 @@ extension ConversationSearchController.ContentController {
             } else {
                 textStackView.removeArrangedSubview(subtitleLabel)
                 subtitleLabel.removeFromSuperview()
+            }
+            
+            // Apply highlighting after all content is set
+            updateHighlightState(isHighlighted)
+        }
+        
+        func updateHighlightState(_ isHighlighted: Bool) {
+            // Use smooth animation for highlight changes with better performance
+            let animationDuration: TimeInterval = 0.12
+            let backgroundColor = isHighlighted ? UIColor.systemBlue.withAlphaComponent(0.1) : .clear
+            let transform = isHighlighted ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
+            
+            // Only animate if the state actually changed
+            guard self.backgroundColor != backgroundColor || self.transform != transform else { return }
+            
+            UIView.animate(
+                withDuration: animationDuration,
+                delay: 0,
+                options: [.curveEaseInOut, .allowUserInteraction, .beginFromCurrentState]
+            ) {
+                self.backgroundColor = backgroundColor
+                self.transform = transform
             }
         }
 
