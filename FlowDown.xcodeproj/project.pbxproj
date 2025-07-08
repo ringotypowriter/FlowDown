@@ -13,7 +13,6 @@
 		502B98062D535F25003200B6 /* Emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 502B98052D535F25003200B6 /* Emoji.json */; };
 		502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 502BCBD02D43DB2B00500180 /* ConfigurableKit */; };
 		50343FCD2DA2515C00CC6820 /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC02DA2515C00CC6820 /* Respring */; };
-		50343FCE2DA2515C00CC6820 /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBD2DA2515C00CC6820 /* Litext */; };
 		50343FCF2DA2515C00CC6820 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB72DA2515C00CC6820 /* Digger */; };
 		50343FD02DA2515C00CC6820 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAB2DA2515C00CC6820 /* Storage */; };
 		50343FD12DA2515C00CC6820 /* RichEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAA2DA2515C00CC6820 /* RichEditor */; };
@@ -72,7 +71,6 @@
 		86B4FDC02E1190AD00C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDBF2E1190AD00C6DC8F /* MCP */; };
 		86B4FDC22E1190C000C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDC12E1190C000C6DC8F /* MCP */; };
 		ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED16359B2D5C5BDA0081BD0B /* ChatClientKit */; };
-		ED74633E2D5A706C0009E83F /* Litext in Frameworks */ = {isa = PBXBuildFile; productRef = ED74633D2D5A706C0009E83F /* Litext */; };
 		EDF9A13E2D67788A001D183C /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = EDF9A13D2D67788A001D183C /* Respring */; };
 /* End PBXBuildFile section */
 
@@ -151,7 +149,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				50343FCD2DA2515C00CC6820 /* Respring in Frameworks */,
-				50343FCE2DA2515C00CC6820 /* Litext in Frameworks */,
 				50343FCF2DA2515C00CC6820 /* Digger in Frameworks */,
 				50343FD02DA2515C00CC6820 /* Storage in Frameworks */,
 				50343FD12DA2515C00CC6820 /* RichEditor in Frameworks */,
@@ -187,7 +184,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EDF9A13E2D67788A001D183C /* Respring in Frameworks */,
-				ED74633E2D5A706C0009E83F /* Litext in Frameworks */,
 				50FBFC6C2DEA2E5400098EC4 /* XMLCoder in Frameworks */,
 				50B4CDAC2D4794F90028EB33 /* Digger in Frameworks */,
 				50C9035B2D428DAD00E6E3A8 /* Storage in Frameworks */,
@@ -317,7 +313,6 @@
 				50343FB82DA2515C00CC6820 /* SPIndicator */,
 				50343FBA2DA2515C00CC6820 /* MLXVLM */,
 				50343FBB2DA2515C00CC6820 /* ZIPFoundation */,
-				50343FBD2DA2515C00CC6820 /* Litext */,
 				50343FBE2DA2515C00CC6820 /* ChatClientKit */,
 				50343FBF2DA2515C00CC6820 /* ScrubberKit */,
 				50343FC02DA2515C00CC6820 /* Respring */,
@@ -373,7 +368,6 @@
 				505FC6182D4945E500F4CB17 /* SPIndicator */,
 				505FC65A2D4A754F00F4CB17 /* MLXVLM */,
 				50B492932D4F609E00F4D2B3 /* ZIPFoundation */,
-				ED74633D2D5A706C0009E83F /* Litext */,
 				ED16359B2D5C5BDA0081BD0B /* ChatClientKit */,
 				500373C42D62757700585574 /* ScrubberKit */,
 				EDF9A13D2D67788A001D183C /* Respring */,
@@ -1206,10 +1200,6 @@
 			package = 50343FBC2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
 		};
-		50343FBD2DA2515C00CC6820 /* Litext */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Litext;
-		};
 		50343FBE2DA2515C00CC6820 /* ChatClientKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ChatClientKit;
@@ -1372,10 +1362,6 @@
 		ED16359B2D5C5BDA0081BD0B /* ChatClientKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ChatClientKit;
-		};
-		ED74633D2D5A706C0009E83F /* Litext */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Litext;
 		};
 		EDF9A13D2D67788A001D183C /* Respring */ = {
 			isa = XCSwiftPackageProductDependency;
