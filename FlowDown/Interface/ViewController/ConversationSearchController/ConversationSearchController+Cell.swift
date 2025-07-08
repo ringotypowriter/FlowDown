@@ -150,21 +150,16 @@ extension ConversationSearchController.ContentController {
         }
         
         func updateHighlightState(_ isHighlighted: Bool) {
-            // Use smooth animation for highlight changes with better performance
             let animationDuration: TimeInterval = 0.12
-            let backgroundColor = isHighlighted ? UIColor.systemBlue.withAlphaComponent(0.1) : .clear
-            let transform = isHighlighted ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
-            
-            // Only animate if the state actually changed
-            guard self.backgroundColor != backgroundColor || self.transform != transform else { return }
-            
+            let backgroundColor = isHighlighted ? UIColor.tintColor.withAlphaComponent(0.1) : .clear
+            guard self.backgroundColor != backgroundColor else { return }
+
             UIView.animate(
                 withDuration: animationDuration,
                 delay: 0,
                 options: [.curveEaseInOut, .allowUserInteraction, .beginFromCurrentState]
             ) {
                 self.backgroundColor = backgroundColor
-                self.transform = transform
             }
         }
 
@@ -190,3 +185,4 @@ extension ConversationSearchController.ContentController {
         }
     }
 }
+
