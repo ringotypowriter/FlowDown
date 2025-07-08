@@ -14,12 +14,10 @@ let package = Package(
         .library(name: "Storage", targets: ["Storage"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Lakr233/MarkdownView", from: "2.3.2"),
         .package(url: "https://github.com/Tencent/wcdb", exact: "2.1.11"),
     ],
     targets: [
         .target(name: "Storage", dependencies: [
-            .product(name: "MarkdownParser", package: "MarkdownView"),
             .product(name: "WCDBSwift", package: "wcdb"),
         ]),
     ]
