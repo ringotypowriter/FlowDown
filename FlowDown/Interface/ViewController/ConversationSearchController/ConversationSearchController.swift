@@ -120,7 +120,7 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
         }
         
         // Start a new timer for debounced search
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: false) { [weak self] _ in
             self?.performSearch(query: searchText)
         }
     }
@@ -162,6 +162,7 @@ extension ConversationSearchController {
         
         deinit {
             searchTimer?.invalidate()
+            NotificationCenter.default.removeObserver(self)
         }
 
         override func viewDidLoad() {
