@@ -361,7 +361,7 @@ extension ChatView {
                     menuButton.present(menu: .init(children: [
                         convMenu,
                         UIAction(title: String(localized: "Show Sidebar"), image: UIImage(systemName: "sidebar.left")) { _ in
-                            mainController.expendSidebar()
+                            mainController.openSidebar()
                         },
                     ]))
                 } else {
