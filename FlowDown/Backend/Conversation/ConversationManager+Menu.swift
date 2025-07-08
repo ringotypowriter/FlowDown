@@ -142,35 +142,6 @@ extension ConversationManager {
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: String(localized: "Generate New Title"),
-                    image: UIImage(systemName: "arrow.clockwise")
-                ) { _ in
-                    Indicator.progress(
-                        title: String(localized: "Generating New Title") + "...",
-                        controller: controller
-                    ) { completion in
-                        Task.detached {
-                            let sessionManager = ConversationSessionManager.shared
-                            let session = sessionManager.session(for: conv.id)
-                            if let title = await session.generateConversationTitle() {
-                                ConversationManager.shared.editConversation(identifier: conv.id) { conversation in
-                                    conversation.title = title
-                                }
-                            } else {
-                                Indicator.present(
-                                    title: String(localized: "Unable to generate tittle"),
-                                    preset: .error,
-                                    haptic: .error,
-                                    referencingView: view
-                                )
-                            }
-                            DispatchQueue.main.async {
-                                completion {}
-                            }
-                        }
-                    }
-                },
-                UIAction(
                     title: String(localized: "Generate New Icon"),
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
@@ -188,6 +159,35 @@ extension ConversationManager {
                             } else {
                                 Indicator.present(
                                     title: String(localized: "Unable to generate icon"),
+                                    preset: .error,
+                                    haptic: .error,
+                                    referencingView: view
+                                )
+                            }
+                            DispatchQueue.main.async {
+                                completion {}
+                            }
+                        }
+                    }
+                },
+                UIAction(
+                    title: String(localized: "Generate New Title"),
+                    image: UIImage(systemName: "arrow.clockwise")
+                ) { _ in
+                    Indicator.progress(
+                        title: String(localized: "Generating New Title") + "...",
+                        controller: controller
+                    ) { completion in
+                        Task.detached {
+                            let sessionManager = ConversationSessionManager.shared
+                            let session = sessionManager.session(for: conv.id)
+                            if let title = await session.generateConversationTitle() {
+                                ConversationManager.shared.editConversation(identifier: conv.id) { conversation in
+                                    conversation.title = title
+                                }
+                            } else {
+                                Indicator.present(
+                                    title: String(localized: "Unable to generate tittle"),
                                     preset: .error,
                                     haptic: .error,
                                     referencingView: view
