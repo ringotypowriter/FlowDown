@@ -73,7 +73,6 @@ extension AppDelegate {
             ),
             afterMenu: .preferences
         )
-        // dunno why this doesnt work, leave it to fix later
         builder.insertChild(
             UIMenu(
                 title: "",
@@ -83,11 +82,11 @@ extension AppDelegate {
                         title: String(localized: "Search Conversations..."),
                         action: #selector(searchConversationsFromMenu(_:)),
                         input: "f",
-                        modifierFlags: .command
+                        modifierFlags: [.command, .shift]
                     ),
                 ]
             ),
-            atStartOfMenu: .file
+            atStartOfMenu: .edit
         )
         builder.insertChild(
             UIMenu(
