@@ -97,25 +97,15 @@ extension ConversationSearchController.ContentController: UITableViewDelegate {
 // MARK: - UITableViewDataSourcePrefetching
 @available(iOS 10.0, *)
 extension ConversationSearchController.ContentController: UITableViewDataSourcePrefetching {
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        // Pre-load any heavy content if needed
-        // For now, this is mostly handled by the attributed string creation
-        // which happens in cellForRowAt
-    }
-    
-    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        // Cancel any prefetching operations if needed
-    }
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {}
+    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {}
 }
 
 
 // MARK: - UISearchBarDelegate
 extension ConversationSearchController.ContentController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // Invalidate any existing timer
         searchTimer?.invalidate()
-        
-        // Reset highlighted index and cached cell when search changes
         highlightedIndex = nil
         currentHighlightedCell = nil
         
@@ -128,14 +118,12 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
             return
         }
         
-        // Start a new timer for debounced search
         searchTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: false) { [weak self] _ in
             self?.performSearch(query: searchText)
         }
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // Handle enter key press on search bar - select first result if available
         searchBar.resignFirstResponder()
         if !searchResults.isEmpty {
             let indexToSelect = highlightedIndex ?? 0
@@ -145,7 +133,6 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // Immediately dismiss the controller
         if let navController = navigationController {
             navController.dismiss(animated: true) { [weak self] in
                 self?.callback(nil)
@@ -159,9 +146,7 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
 }
 
 // MARK: - UITextFieldDelegate
-extension ConversationSearchController.ContentController: UITextFieldDelegate {
-    // This is used for capturing keyboard events
-}
+extension ConversationSearchController.ContentController: UITextFieldDelegate {}
 
 // MARK: - Keyboard Navigation Protocol
 protocol KeyboardNavigationDelegate: AnyObject {
@@ -190,15 +175,12 @@ class KeyboardNavigationSearchBar: UISearchBar {
     }
     
     private func setupKeyboardHandling() {
-        // Find the text field inside the search bar
         if let textField = self.value(forKey: "searchField") as? UITextField {
             textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         }
     }
     
-    @objc private func textFieldDidChange() {
-        // This will be called when text changes
-    }
+    @objc private func textFieldDidChange() {}
     
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         for press in presses {
@@ -248,8 +230,8 @@ extension ConversationSearchController {
         
         var searchResults: [SearchResult] = []
         private var searchTimer: Timer?
-        private var highlightedIndex: Int? = nil // Track highlighted row for keyboard navigation
-        private weak var currentHighlightedCell: SearchResultCell? // Cache current highlighted cell for performance
+        private var highlightedIndex: Int?
+        private weak var currentHighlightedCell: SearchResultCell?
 
         init(callback: @escaping SearchCallback) {
             self.callback = callback
@@ -271,14 +253,12 @@ extension ConversationSearchController {
 
             view.backgroundColor = .background
             
-            // Setup search bar
             searchBar.placeholder = String(localized: "Search")
             searchBar.delegate = self
             searchBar.showsCancelButton = true
             searchBar.searchBarStyle = .minimal
             searchBar.keyboardNavigationDelegate = self
             
-            // Add search bar directly to the view
             view.addSubview(searchBar)
             searchBar.snp.makeConstraints { make in
                 make.top.equalTo(view.safeAreaLayoutGuide)
@@ -286,10 +266,8 @@ extension ConversationSearchController {
                 make.height.equalTo(56)
             }
             
-            // Keep keyboard visible while scrolling for better search experience
             tableView.keyboardDismissMode = .none
             
-            // Setup table view below search bar
             view.addSubview(tableView)
             tableView.snp.makeConstraints { make in
                 make.top.equalTo(searchBar.snp.bottom)
@@ -304,7 +282,6 @@ extension ConversationSearchController {
             tableView.rowHeight = UITableView.automaticDimension
             tableView.estimatedRowHeight = 60
             
-            // Enable prefetching for better performance
             if #available(iOS 10.0, *) {
                 tableView.prefetchDataSource = self
             }
@@ -317,19 +294,28 @@ extension ConversationSearchController {
 
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            // Don't try to become first responder here, let the search bar handle it
+            
+            // For touch devices, focus immediately for fast keyboard popup
+            #if !targetEnvironment(macCatalyst)
+            if traitCollection.userInterfaceIdiom == .phone {
+                searchBar.becomeFirstResponder()
+            }
+            #endif
         }
         
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
             
-            // Ensure search bar gets and keeps focus with a slight delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                guard let self = self else { return }
-                if !self.searchBar.isFirstResponder {
-                    self.searchBar.becomeFirstResponder()
+            // For devices with external keyboards or iPad, focus after presentation completes
+            #if targetEnvironment(macCatalyst)
+            searchBar.becomeFirstResponder()
+            #else
+            if traitCollection.userInterfaceIdiom != .phone {
+                DispatchQueue.main.async { [weak self] in
+                    self?.searchBar.becomeFirstResponder()
                 }
             }
+            #endif
             
             tableView.reloadData()
             updateNoResultsView()
@@ -341,8 +327,6 @@ extension ConversationSearchController {
         
         func performSearch(query: String) {
             searchResults = ConversationManager.shared.searchConversations(query: query)
-            
-            // Reset highlighted index and cached cell when search results change
             highlightedIndex = nil
             currentHighlightedCell = nil
             
@@ -361,37 +345,11 @@ extension ConversationSearchController {
         // MARK: - Keyboard Navigation
         
         func setupKeyboardNavigation() {
-            // Set up the search bar to handle keyboard events
             searchBar.returnKeyType = .search
-            
-            // Add a subtle hint about keyboard navigation
-            let inputAccessoryToolbar = UIToolbar()
-            inputAccessoryToolbar.barStyle = .default
-            inputAccessoryToolbar.isTranslucent = true
-            inputAccessoryToolbar.sizeToFit()
-            
-            // Create flexible space items
-            let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            
-            // Create info button to show keyboard shortcuts
-            let infoButton = UIBarButtonItem(
-                title: "↑↓ Navigate • Enter Select",
-                style: .plain,
-                target: nil,
-                action: nil
-            )
-            infoButton.isEnabled = false
-            infoButton.setTitleTextAttributes([
-                .foregroundColor: UIColor.secondaryLabel,
-                .font: UIFont.systemFont(ofSize: 12)
-            ], for: .disabled)
-            
-            inputAccessoryToolbar.setItems([flexibleSpace, infoButton, flexibleSpace], animated: false)
-            searchBar.inputAccessoryView = inputAccessoryToolbar
         }
         
         override var canBecomeFirstResponder: Bool {
-            return false // Don't steal focus from search bar
+            return false
         }
         
         private func handleEnterKey() {
@@ -432,7 +390,6 @@ extension ConversationSearchController {
                 let newIndex = max(0, currentIndex - 1)
                 updateHighlightedIndex(newIndex)
             } else {
-                // If nothing is highlighted, select the last item
                 updateHighlightedIndex(searchResults.count - 1)
             }
         }
@@ -444,7 +401,6 @@ extension ConversationSearchController {
                 let newIndex = min(searchResults.count - 1, currentIndex + 1)
                 updateHighlightedIndex(newIndex)
             } else {
-                // If nothing is highlighted, select the first item
                 updateHighlightedIndex(0)
             }
         }
@@ -453,20 +409,17 @@ extension ConversationSearchController {
             let oldIndex = highlightedIndex
             highlightedIndex = newIndex
             
-            // Efficiently update cell appearances using cached reference
             if let oldIndex = oldIndex, oldIndex != newIndex {
                 if let oldCell = currentHighlightedCell {
                     oldCell.updateHighlightState(false)
                 }
             }
             
-            // Get and cache the new highlighted cell
             if let newCell = tableView.cellForRow(at: IndexPath(row: newIndex, section: 0)) as? SearchResultCell {
                 newCell.updateHighlightState(true)
                 currentHighlightedCell = newCell
             }
             
-            // Scroll to visible if needed
             let newIndexPath = IndexPath(row: newIndex, section: 0)
             tableView.scrollToRow(at: newIndexPath, at: .none, animated: true)
         }
@@ -482,7 +435,6 @@ extension ConversationSearchController {
             
             print("ConversationSearch: Selecting conversation '\(result.conversation.title)' with ID: \(conversationId)")
             
-            // Dismiss the search controller and call the callback
             if let navController = navigationController {
                 navController.dismiss(animated: true) { [weak self] in
                     print("ConversationSearch: Calling callback with ID: \(conversationId)")
@@ -504,7 +456,6 @@ extension ConversationSearchController {
             stackView.spacing = 12
             stackView.alignment = .center
             
-            // Icon
             let iconView = UIImageView()
             iconView.image = UIImage(systemName: "moon.zzz")
             iconView.tintColor = .secondaryLabel
@@ -513,14 +464,12 @@ extension ConversationSearchController {
                 make.width.height.equalTo(64)
             }
             
-            // Title
             let titleLabel = UILabel()
             titleLabel.text = String(localized: "No Results")
             titleLabel.font = .preferredFont(forTextStyle: .headline)
             titleLabel.textColor = .label
             titleLabel.textAlignment = .center
             
-            // Subtitle
             let subtitleLabel = UILabel()
             subtitleLabel.text = String(localized: "Check the spelling or try a new search.")
             subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
@@ -565,7 +514,6 @@ extension ConversationSearchController {
             stackView.spacing = 12
             stackView.alignment = .center
             
-            // Icon
             let iconView = UIImageView()
             iconView.image = UIImage(systemName: "loupe")
             iconView.tintColor = .secondaryLabel
@@ -574,14 +522,12 @@ extension ConversationSearchController {
                 make.width.height.equalTo(64)
             }
             
-            // Title
             let titleLabel = UILabel()
             titleLabel.text = String(localized: "Search Conversations")
             titleLabel.font = .preferredFont(forTextStyle: .headline)
             titleLabel.textColor = .label
             titleLabel.textAlignment = .center
             
-            // Subtitle
             let subtitleLabel = UILabel()
             subtitleLabel.text = String(localized: "Find conversations by title or message")
             subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
@@ -608,7 +554,6 @@ extension ConversationSearchController {
         }
         
         func setupKeyboardHandling() {
-            // Adjust content when keyboard appears
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(keyboardWillShow(_:)),
@@ -628,12 +573,10 @@ extension ConversationSearchController {
             guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
             let keyboardHeight = keyboardFrame.height
             
-            // Adjust no results view to be above keyboard
             noResultsView.snp.updateConstraints { make in
                 make.bottom.equalToSuperview().offset(-keyboardHeight)
             }
             
-            // Adjust empty state view to be above keyboard
             emptyStateView.snp.updateConstraints { make in
                 make.bottom.equalToSuperview().offset(-keyboardHeight)
             }
@@ -644,12 +587,10 @@ extension ConversationSearchController {
         }
         
         @objc func keyboardWillHide(_ notification: Notification) {
-            // Reset constraints
             noResultsView.snp.updateConstraints { make in
                 make.bottom.equalToSuperview()
             }
             
-            // Reset empty state view constraints
             emptyStateView.snp.updateConstraints { make in
                 make.bottom.equalToSuperview()
             }

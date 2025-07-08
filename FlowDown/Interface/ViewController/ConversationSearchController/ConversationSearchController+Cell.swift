@@ -24,7 +24,6 @@ extension ConversationSearchController.ContentController {
             backgroundColor = .clear
             accessoryType = .disclosureIndicator
 
-            // Icon setup
             iconView.contentMode = .scaleAspectFit
             iconView.layer.cornerRadius = 6
             iconView.clipsToBounds = true
@@ -32,21 +31,18 @@ extension ConversationSearchController.ContentController {
                 make.width.height.equalTo(28)
             }
 
-            // Title label
             titleLabel.font = .preferredFont(forTextStyle: .body)
             titleLabel.textColor = .label
             titleLabel.numberOfLines = 1
             titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
-            // Date label
             dateLabel.font = .preferredFont(forTextStyle: .caption2)
             dateLabel.textColor = .secondaryLabel
             dateLabel.setContentHuggingPriority(.required, for: .horizontal)
             dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
             dateLabel.numberOfLines = 1
 
-            // Title and date stack
             titleDateStackView.axis = .horizontal
             titleDateStackView.spacing = 8
             titleDateStackView.alignment = .center
@@ -54,18 +50,14 @@ extension ConversationSearchController.ContentController {
             titleDateStackView.addArrangedSubview(titleLabel)
             titleDateStackView.addArrangedSubview(dateLabel)
 
-            // Subtitle label
             subtitleLabel.font = .preferredFont(forTextStyle: .caption1)
             subtitleLabel.textColor = .secondaryLabel
             subtitleLabel.numberOfLines = 2
 
-            // Text stack
             textStackView.axis = .vertical
             textStackView.spacing = 4
             textStackView.addArrangedSubview(titleDateStackView)
-            // Note: subtitleLabel is added dynamically in configure method
 
-            // Main stack
             stackView.axis = .horizontal
             stackView.spacing = 12
             stackView.alignment = .center
@@ -85,17 +77,12 @@ extension ConversationSearchController.ContentController {
 
         override func prepareForReuse() {
             super.prepareForReuse()
-            
-            // Reset highlight state when cell is reused
             backgroundColor = .clear
             transform = .identity
-            
-            // Clear cached content
             titleLabel.attributedText = nil
             titleLabel.text = nil
             subtitleLabel.attributedText = nil
             
-            // Remove subtitle if it was added
             if textStackView.arrangedSubviews.contains(subtitleLabel) {
                 textStackView.removeArrangedSubview(subtitleLabel)
                 subtitleLabel.removeFromSuperview()
@@ -105,7 +92,6 @@ extension ConversationSearchController.ContentController {
         func configure(with result: SearchResult, searchTerm: String, isHighlighted: Bool = false) {
             iconView.image = result.conversation.interfaceImage
 
-            // Highlight search term in title
             if result.matchType == .title && !searchTerm.isEmpty {
                 titleLabel.attributedText = NSAttributedString.highlightedString(
                     text: result.conversation.title,
@@ -117,16 +103,13 @@ extension ConversationSearchController.ContentController {
                 titleLabel.text = result.conversation.title
             }
 
-            // Set date
             dateLabel.text = formatDate(result.conversation.creation)
 
-            // Show/hide subtitle based on message preview
             if result.matchType == .message, let preview = result.messagePreview {
                 if textStackView.arrangedSubviews.count == 1 {
                     textStackView.addArrangedSubview(subtitleLabel)
                 }
 
-                // Clean up the preview text by removing newlines and extra whitespace
                 let cleanedPreview = preview
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                     .replacingOccurrences(of: "\n", with: " ")
@@ -145,7 +128,6 @@ extension ConversationSearchController.ContentController {
                 subtitleLabel.removeFromSuperview()
             }
             
-            // Apply highlighting after all content is set
             updateHighlightState(isHighlighted)
         }
         
@@ -169,17 +151,17 @@ extension ConversationSearchController.ContentController {
 
             if calendar.isDateInToday(date) {
                 let formatter = DateFormatter()
-                formatter.timeStyle = .short
+                formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "jm", options: 0, locale: Locale.current)
                 return formatter.string(from: date)
             } else if calendar.isDateInYesterday(date) {
                 return String(localized: "Yesterday")
             } else if let dayDifference = calendar.dateComponents([.day], from: date, to: now).day, dayDifference < 7 {
                 let formatter = DateFormatter()
-                formatter.dateFormat = "EEEE"  // Day of week
+                formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE", options: 0, locale: Locale.current)
                 return formatter.string(from: date)
             } else {
                 let formatter = DateFormatter()
-                formatter.dateStyle = .short
+                formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMd", options: 0, locale: Locale.current)
                 return formatter.string(from: date)
             }
         }
