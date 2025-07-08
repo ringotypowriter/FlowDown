@@ -14,6 +14,9 @@ extension NSAttributedString {
         baseAttributes: [NSAttributedString.Key: Any] = [:],
         highlightAttributes: [NSAttributedString.Key: Any] = [:]
     ) -> NSAttributedString {
+        guard !searchTerm.isEmpty else {
+            return NSAttributedString(string: text, attributes: baseAttributes)
+        }
         let attributedString = NSMutableAttributedString(string: text, attributes: baseAttributes)
         
         let lowercasedText = text.lowercased()

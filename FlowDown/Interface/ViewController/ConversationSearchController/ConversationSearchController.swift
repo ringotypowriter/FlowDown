@@ -73,7 +73,10 @@ extension ConversationSearchController.ContentController: UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell", for: indexPath) as! SearchResultCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell", for: indexPath) as? SearchResultCell else {
+            assertionFailure("Failed to dequeue SearchResultCell")
+            return UITableViewCell()
+        }
         let result = searchResults[indexPath.row]
         let searchTerm = searchBar.text ?? ""
         cell.configure(with: result, searchTerm: searchTerm)
@@ -106,6 +109,9 @@ extension ConversationSearchController.ContentController: UITableViewDelegate {
 // MARK: - UISearchBarDelegate
 extension ConversationSearchController.ContentController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // Invalidate any existing timer
+        searchTimer?.invalidate()
+        
         guard !searchText.isEmpty else {
             searchResults = []
             tableView.reloadData()
@@ -113,7 +119,10 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
             return
         }
         
-        performSearch(query: searchText)
+        // Start a new timer for debounced search
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
+            self?.performSearch(query: searchText)
+        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -136,10 +145,10 @@ extension ConversationSearchController {
         let emptyStateView = UIView()
         
         var searchResults: [SearchResult] = []
+        private var searchTimer: Timer?
 
         init(callback: @escaping SearchCallback) {
             super.init(nibName: nil, bundle: nil)
-//            title = String(localized: "Search")
             self.callback = { [weak self] in
                 callback($0)
                 self?.callback = { _ in }
@@ -149,6 +158,10 @@ extension ConversationSearchController {
         @available(*, unavailable)
         required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+        
+        deinit {
+            searchTimer?.invalidate()
         }
 
         override func viewDidLoad() {
@@ -327,10 +340,6 @@ extension ConversationSearchController {
             
             view.addSubview(emptyStateView)
             emptyStateView.snp.makeConstraints { make in
-//                make.top.equalTo(searchBar.snp.bottom)
-//                make.left.right.equalToSuperview()
-//                make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-100) // Leave space for keyboard
-                
                 make.top.equalTo(searchBar.snp.bottom)
                 make.left.right.equalToSuperview()
                 make.bottom.equalToSuperview()

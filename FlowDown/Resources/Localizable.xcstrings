@@ -2491,7 +2491,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过标题或消息内容进行查找"
+            "value" : "查找对话标题或消息内容"
           }
         }
       }

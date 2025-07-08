@@ -137,7 +137,7 @@ extension ConversationSearchController.ContentController {
                 return formatter.string(from: date)
             } else if calendar.isDateInYesterday(date) {
                 return String(localized: "Yesterday")
-            } else if calendar.dateComponents([.day], from: date, to: now).day! < 7 {
+            } else if let dayDifference = calendar.dateComponents([.day], from: date, to: now).day, dayDifference < 7 {
                 let formatter = DateFormatter()
                 formatter.dateFormat = "EEEE"  // Day of week
                 return formatter.string(from: date)
