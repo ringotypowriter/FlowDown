@@ -378,6 +378,10 @@ class MainController: UIViewController {
     @objc func expendSidebar() {
         view.doWithAnimation { self.isSidebarCollapsed = false }
     }
+
+    @objc func searchConversationsFromMenu(_ sender: Any? = nil) {
+        sidebar.searchButton.delegate?.searchButtonDidTap()
+    }
 }
 
 extension MainController: NewChatButton.Delegate {

@@ -73,6 +73,22 @@ extension AppDelegate {
             ),
             afterMenu: .preferences
         )
+        // dunno why this doesnt work, leave it to fix later
+        builder.insertChild(
+            UIMenu(
+                title: "",
+                options: .displayInline,
+                children: [
+                    UIKeyCommand(
+                        title: String(localized: "Search Conversations..."),
+                        action: #selector(searchConversationsFromMenu(_:)),
+                        input: "f",
+                        modifierFlags: .command
+                    ),
+                ]
+            ),
+            atStartOfMenu: .file
+        )
         builder.insertChild(
             UIMenu(
                 title: "",
@@ -155,6 +171,10 @@ extension AppDelegate {
     // Wire from MainController
     @objc func requestNewChatFromMenu(_: Any?) {
         (mainWindow?.rootViewController as? MainController)?.requestNewChat()
+    }
+
+    @objc func searchConversationsFromMenu(_: Any?) {
+        (mainWindow?.rootViewController as? MainController)?.searchConversationsFromMenu()
     }
 
     @objc func openSettingsFromMenu(_: Any?) {
