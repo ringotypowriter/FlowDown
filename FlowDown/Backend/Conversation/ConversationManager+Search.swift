@@ -17,11 +17,9 @@ extension ConversationManager {
         var titleResults: [SearchResult] = []
         var addedConversations = Set<Conversation.ID>()
 
-        // Search in all conversations
         for conversation in conversations.value.values {
             var foundInMessage = false
 
-            // First check messages
             let messages = message(within: conversation.id).filter { $0.role != .system }
             for message in messages {
                 if message.document.lowercased().contains(lowercasedQuery) {
@@ -34,11 +32,10 @@ extension ConversationManager {
                     ))
                     addedConversations.insert(conversation.id)
                     foundInMessage = true
-                    break // Only one result per conversation for messages
+                    break
                 }
             }
 
-            // Then check title if not already found in messages
             if !foundInMessage && conversation.title.lowercased().contains(lowercasedQuery) {
                 titleResults.append(SearchResult(
                     conversation: conversation,
@@ -48,7 +45,6 @@ extension ConversationManager {
             }
         }
 
-        // Return message results first, then title results
         return messageResults + titleResults
     }
 

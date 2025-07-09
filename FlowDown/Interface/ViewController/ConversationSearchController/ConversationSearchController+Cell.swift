@@ -132,15 +132,10 @@ extension ConversationSearchController.ContentController {
         }
         
         func updateHighlightState(_ isHighlighted: Bool) {
-            let animationDuration: TimeInterval = 0.12
             let backgroundColor = isHighlighted ? UIColor.tintColor.withAlphaComponent(0.1) : .clear
             guard self.backgroundColor != backgroundColor else { return }
 
-            UIView.animate(
-                withDuration: animationDuration,
-                delay: 0,
-                options: [.curveEaseInOut, .allowUserInteraction, .beginFromCurrentState]
-            ) {
+            UIView.animate(withDuration: 0.12, delay: 0, options: [.curveEaseInOut, .allowUserInteraction, .beginFromCurrentState]) {
                 self.backgroundColor = backgroundColor
             }
         }

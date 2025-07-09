@@ -62,7 +62,6 @@ extension ConversationSearchController {
     typealias SearchCallback = (Conversation.ID?) -> Void
 }
 
-// MARK: - UITableViewDataSource
 extension ConversationSearchController.ContentController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return searchResults.isEmpty ? 0 : 1
@@ -85,24 +84,15 @@ extension ConversationSearchController.ContentController: UITableViewDataSource 
     }
 }
 
-// MARK: - UITableViewDelegate
 extension ConversationSearchController.ContentController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("ConversationSearch: Table view cell selected at row \(indexPath.row)")
         tableView.deselectRow(at: indexPath, animated: true)
         selectResult(at: indexPath)
     }
 }
 
-// MARK: - UITableViewDataSourcePrefetching
-@available(iOS 10.0, *)
-extension ConversationSearchController.ContentController: UITableViewDataSourcePrefetching {
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {}
-    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {}
-}
 
 
-// MARK: - UISearchBarDelegate
 extension ConversationSearchController.ContentController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchTimer?.invalidate()
@@ -145,17 +135,13 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
     }
 }
 
-// MARK: - UITextFieldDelegate
-extension ConversationSearchController.ContentController: UITextFieldDelegate {}
 
-// MARK: - Keyboard Navigation Protocol
 protocol KeyboardNavigationDelegate: AnyObject {
     func didPressUpArrow()
     func didPressDownArrow()
     func didPressEnter()
 }
 
-// MARK: - Custom Search Bar with Keyboard Navigation
 class KeyboardNavigationSearchBar: UISearchBar {
     weak var keyboardNavigationDelegate: KeyboardNavigationDelegate?
     
@@ -175,12 +161,8 @@ class KeyboardNavigationSearchBar: UISearchBar {
     }
     
     private func setupKeyboardHandling() {
-        if let textField = self.value(forKey: "searchField") as? UITextField {
-            textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        }
     }
     
-    @objc private func textFieldDidChange() {}
     
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         for press in presses {
@@ -204,7 +186,6 @@ class KeyboardNavigationSearchBar: UISearchBar {
     }
 }
 
-// MARK: - Keyboard Navigation Delegate
 extension ConversationSearchController.ContentController: KeyboardNavigationDelegate {
     func didPressUpArrow() {
         handleUpArrow()
@@ -282,10 +263,6 @@ extension ConversationSearchController {
             tableView.rowHeight = UITableView.automaticDimension
             tableView.estimatedRowHeight = 60
             
-            if #available(iOS 10.0, *) {
-                tableView.prefetchDataSource = self
-            }
-            
             setupNoResultsView()
             setupEmptyStateView()
             setupKeyboardHandling()
@@ -321,9 +298,6 @@ extension ConversationSearchController {
             updateNoResultsView()
         }
 
-        override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-        }
         
         func performSearch(query: String) {
             searchResults = ConversationManager.shared.searchConversations(query: query)
@@ -342,15 +316,11 @@ extension ConversationSearchController {
             }
         }
         
-        // MARK: - Keyboard Navigation
         
         func setupKeyboardNavigation() {
             searchBar.returnKeyType = .search
         }
         
-        override var canBecomeFirstResponder: Bool {
-            return false
-        }
         
         private func handleEnterKey() {
             guard !searchResults.isEmpty else { return }
@@ -425,24 +395,17 @@ extension ConversationSearchController {
         }
         
         private func selectResult(at indexPath: IndexPath) {
-            guard indexPath.row < searchResults.count else { 
-                print("ConversationSearch: Invalid index \(indexPath.row) for \(searchResults.count) results")
-                return 
-            }
+            guard indexPath.row < searchResults.count else { return }
             
             let result = searchResults[indexPath.row]
             let conversationId = result.conversation.id
             
-            print("ConversationSearch: Selecting conversation '\(result.conversation.title)' with ID: \(conversationId)")
-            
             if let navController = navigationController {
                 navController.dismiss(animated: true) { [weak self] in
-                    print("ConversationSearch: Calling callback with ID: \(conversationId)")
                     self?.callback(conversationId)
                 }
             } else {
                 dismiss(animated: true) { [weak self] in
-                    print("ConversationSearch: Calling callback with ID: \(conversationId)")
                     self?.callback(conversationId)
                 }
             }
