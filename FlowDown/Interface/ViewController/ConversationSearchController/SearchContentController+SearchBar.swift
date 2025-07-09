@@ -13,8 +13,6 @@ extension SearchContentController: UISearchBarDelegate {
 
         guard !searchText.isEmpty else {
             searchResults = []
-            tableView.reloadData()
-            updateNoResultsView()
             return
         }
 

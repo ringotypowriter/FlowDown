@@ -16,7 +16,13 @@ class SearchContentController: UIViewController {
     let noResultsView = UIView()
     let emptyStateView = UIView()
 
-    var searchResults: [ConversationSearchResult] = []
+    var searchResults: [ConversationSearchResult] = [] {
+        didSet {
+            updateNoResultsView()
+            tableView.reloadData()
+        }
+    }
+
     var highlightedIndex: IndexPath?
     var currentHighlightedCell: SearchResultCell? {
         guard let highlightedIndex else { return nil }
@@ -84,17 +90,29 @@ class SearchContentController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        tableView.reloadData()
-        updateNoResultsView()
-
-        if !searchBar.isFirstResponder { searchBar.becomeFirstResponder() }
+        if !searchBar.isFirstResponder {
+            searchBar.becomeFirstResponder()
+        }
     }
 
+    private var currentSearchToken: UUID = .init()
+    private let searchQueue = DispatchQueue(
+        label: "SearchContentController.searchQueue",
+        qos: .userInitiated
+    )
+
     @objc func performSearch(query: String) {
-        searchResults = ConversationManager.shared.searchConversations(query: query)
-        highlightedIndex = nil
-        tableView.reloadData()
-        updateNoResultsView()
+        let token = UUID()
+        currentSearchToken = token
+        // serial queue to handle requests so we are doing only the latest one
+        searchQueue.async { [weak self] in
+            guard let self, currentSearchToken == token else { return }
+            let searchResults = ConversationManager.shared.searchConversations(query: query)
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.searchResults = searchResults
+            }
+        }
     }
 
     func handleEnterKey() {
