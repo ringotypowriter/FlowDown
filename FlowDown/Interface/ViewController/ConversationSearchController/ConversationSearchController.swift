@@ -549,9 +549,12 @@ extension ConversationSearchController {
         }
         
         @objc func keyboardWillShow(_ notification: NSNotification) {
-            guard let userInfo = notification.userInfo else { return }
-            let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-            let keyboard = self.view.convert(keyboardScreenEndFrame, from: self.view.window)
+            guard let userInfo = notification.userInfo,
+                  let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { 
+                return 
+            }
+            
+            let keyboard = self.view.convert(keyboardFrame, from: self.view.window)
             let height = self.view.frame.size.height
             
             if (keyboard.origin.y + keyboard.size.height) > height {
