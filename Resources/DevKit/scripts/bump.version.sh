@@ -1,5 +1,10 @@
 #!/bin/zsh
 
+if [[ "$BUMP_VERSION_ALLOWED" == "NO" ]]; then
+    echo "[!] bumping version skipped"
+    exit 0
+fi
+
 cd "$(dirname "$0")"
 
 while [[ ! -d .git ]] && [[ "$(pwd)" != "/" ]]; do

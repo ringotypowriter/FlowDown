@@ -17,6 +17,8 @@ PROJECT_ROOT=$(pwd)
 
 ./Resources/DevKit/scripts/scan.license.sh
 
+export BUMP_VERSION_ALLOWED=NO
+
 xcodebuild -workspace FlowDown.xcworkspace \
     -scheme FlowDown \
     -configuration Release \
