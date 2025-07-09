@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ktiays/GlyphixTextFx/",
       "state" : {
-        "revision" : "a765c64b02919e0fa8e8c4d29d08ada24003ef0e",
-        "version" : "2.3.1"
+        "revision" : "a4a0a0df21ab8c79f57525c08149b4d577ee2319",
+        "version" : "2.3.2"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "48bca2506c98c31022cf401c4ff2e3427f4bcd50",
-        "version" : "3.0.5"
+        "revision" : "5c1d91e69b5c7f768a906739f5ba9f4d055de098",
+        "version" : "3.0.6"
       }
     },
     {
@@ -159,7 +159,7 @@
       "location" : "https://github.com/ml-explore/mlx-swift-examples/",
       "state" : {
         "branch" : "main",
-        "revision" : "2fcd726f82c85f0c9ebc4f8f8a19dd447ab07bc5"
+        "revision" : "42b0d21a607b97c3b99d1e20626b7d9b14827b81"
       }
     },
     {
