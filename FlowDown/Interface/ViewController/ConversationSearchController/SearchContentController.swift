@@ -17,7 +17,6 @@ class SearchContentController: UIViewController {
     let emptyStateView = UIView()
 
     var searchResults: [ConversationSearchResult] = []
-    var searchTimer: Timer?
     var highlightedIndex: IndexPath?
     var currentHighlightedCell: SearchResultCell? {
         guard let highlightedIndex else { return nil }
@@ -32,11 +31,6 @@ class SearchContentController: UIViewController {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        searchTimer?.invalidate()
-        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewDidLoad() {
@@ -96,7 +90,7 @@ class SearchContentController: UIViewController {
         if !searchBar.isFirstResponder { searchBar.becomeFirstResponder() }
     }
 
-    func performSearch(query: String) {
+    @objc func performSearch(query: String) {
         searchResults = ConversationManager.shared.searchConversations(query: query)
         highlightedIndex = nil
         tableView.reloadData()

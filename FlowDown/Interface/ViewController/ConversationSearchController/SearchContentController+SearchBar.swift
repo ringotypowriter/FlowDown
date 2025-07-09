@@ -9,31 +9,30 @@ import UIKit
 
 extension SearchContentController: UISearchBarDelegate {
     func searchBar(_: UISearchBar, textDidChange searchText: String) {
-        searchTimer?.invalidate()
         highlightedIndex = nil
 
         guard !searchText.isEmpty else {
             searchResults = []
-            DispatchQueue.main.async { [weak self] in
-                guard let self, view.window != nil, tableView.superview != nil else { return }
-                tableView.reloadData()
-                updateNoResultsView()
-            }
+            tableView.reloadData()
+            updateNoResultsView()
             return
         }
 
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: false) { [weak self] _ in
-            self?.performSearch(query: searchText)
-        }
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(performSearch(query:)),
+            object: nil
+        )
+        perform(#selector(performSearch(query:)), with: searchText, afterDelay: 0.1)
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
-        if !searchResults.isEmpty {
-            let indexToSelect = highlightedIndex?.row ?? 0
-            highlightedIndex = .init(row: indexToSelect, section: 0)
-            handleEnterKey()
-        }
+        guard !searchResults.isEmpty else { return }
+
+        let indexToSelect = highlightedIndex?.row ?? 0
+        highlightedIndex = .init(row: indexToSelect, section: 0)
+        handleEnterKey()
     }
 
     func searchBarCancelButtonClicked(_: UISearchBar) {
