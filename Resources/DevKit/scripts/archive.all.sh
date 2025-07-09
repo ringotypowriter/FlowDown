@@ -25,6 +25,9 @@ xcodebuild -workspace FlowDown.xcworkspace \
     -archivePath "$PROJECT_ROOT/.build/FlowDown.xcarchive" \
     archive | xcbeautify
 
+echo "[*] registering FlowDown.xcarchive in Xcode Organizer..."
+open "$PROJECT_ROOT/.build/FlowDown.xcarchive" -g
+
 xcodebuild -workspace FlowDown.xcworkspace \
     -scheme FlowDown-Catalyst \
     -configuration Release \
@@ -32,9 +35,9 @@ xcodebuild -workspace FlowDown.xcworkspace \
     -archivePath "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" \
     archive | xcbeautify
 
-echo "[*] archives are ready, openning in Xcode..."
-
-open "$PROJECT_ROOT/.build/FlowDown.xcarchive"
-open "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive"
+echo "[*] registering FlowDown-Catalyst.xcarchive in Xcode Organizer..."
+open "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" -g
 
 echo "[*] done"
+
+osascript -e 'display notification "FlowDown has completed archive process." with title "Build Success"'
