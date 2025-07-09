@@ -80,6 +80,12 @@ extension ConversationSearchController.ContentController: UITableViewDataSource 
         let searchTerm = searchBar.text ?? ""
         let isHighlighted = highlightedIndex == indexPath.row
         cell.configure(with: result, searchTerm: searchTerm, isHighlighted: isHighlighted)
+        
+        // Update currentHighlightedCell reference if this is the highlighted cell
+        if isHighlighted {
+            currentHighlightedCell = cell
+        }
+        
         return cell
     }
 }
@@ -101,9 +107,12 @@ extension ConversationSearchController.ContentController: UISearchBarDelegate {
         
         guard !searchText.isEmpty else {
             searchResults = []
-            if view.window != nil {
-                tableView.reloadData()
-                updateNoResultsView()
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, self.view.window != nil, self.tableView.superview != nil else { return }
+                self.tableView.reloadData()
+                self.updateNoResultsView()
+                // Clear any stale cell references after reload
+                self.currentHighlightedCell = nil
             }
             return
         }
@@ -294,17 +303,26 @@ extension ConversationSearchController {
             
             // For devices with external keyboards or iPad, focus after presentation completes
             #if targetEnvironment(macCatalyst)
-            searchBar.becomeFirstResponder()
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, self.view.window != nil else { return }
+                self.searchBar.becomeFirstResponder()
+            }
             #else
             if traitCollection.userInterfaceIdiom != .phone {
                 DispatchQueue.main.async { [weak self] in
-                    self?.searchBar.becomeFirstResponder()
+                    guard let self = self, self.view.window != nil else { return }
+                    self.searchBar.becomeFirstResponder()
                 }
             }
             #endif
             
-            tableView.reloadData()
-            updateNoResultsView()
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, self.view.window != nil, self.tableView.superview != nil else { return }
+                self.tableView.reloadData()
+                self.updateNoResultsView()
+                // Clear any stale cell references after reload
+                self.currentHighlightedCell = nil
+            }
         }
 
         
@@ -313,15 +331,12 @@ extension ConversationSearchController {
             highlightedIndex = nil
             currentHighlightedCell = nil
             
-            if view.window != nil {
-                tableView.reloadData()
-                updateNoResultsView()
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self, self.view.window != nil else { return }
-                    self.tableView.reloadData()
-                    self.updateNoResultsView()
-                }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, self.view.window != nil, self.tableView.superview != nil else { return }
+                self.tableView.reloadData()
+                self.updateNoResultsView()
+                // Clear any stale cell references after reload
+                self.currentHighlightedCell = nil
             }
         }
         
@@ -388,18 +403,21 @@ extension ConversationSearchController {
             let oldIndex = highlightedIndex
             highlightedIndex = newIndex
             
-            if let oldIndex = oldIndex, oldIndex != newIndex {
-                if let oldCell = currentHighlightedCell {
-                    oldCell.updateHighlightState(false)
+            // Clear all visible cells' highlight state first to prevent double highlighting
+            for visibleCell in tableView.visibleCells {
+                if let searchCell = visibleCell as? SearchResultCell {
+                    searchCell.updateHighlightState(false)
                 }
             }
+            currentHighlightedCell = nil
             
-            if let newCell = tableView.cellForRow(at: IndexPath(row: newIndex, section: 0)) as? SearchResultCell {
+            // Update the new highlighted cell
+            let newIndexPath = IndexPath(row: newIndex, section: 0)
+            if let newCell = tableView.cellForRow(at: newIndexPath) as? SearchResultCell {
                 newCell.updateHighlightState(true)
                 currentHighlightedCell = newCell
             }
             
-            let newIndexPath = IndexPath(row: newIndex, section: 0)
             tableView.scrollToRow(at: newIndexPath, at: .none, animated: true)
         }
         
@@ -470,6 +488,8 @@ extension ConversationSearchController {
         }
         
         func updateNoResultsView() {
+            guard view.window != nil, tableView.superview != nil else { return }
+            
             let hasQuery = !(searchBar.text ?? "").isEmpty
             let hasResults = !searchResults.isEmpty
             
