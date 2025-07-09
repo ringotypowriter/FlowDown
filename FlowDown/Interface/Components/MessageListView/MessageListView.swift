@@ -129,7 +129,7 @@ final class MessageListView: UIView {
         loadingIndicatorPublisher.send(nil)
     }
 
-    func handleLinkTapped(_ link: MarkdownTextView.LinkPayload, in _: NSRange, at point: CGPoint) {
+    func handleLinkTapped(_ link: LinkPayload, in _: NSRange, at point: CGPoint) {
         // long press handled
         guard parentViewController?.presentedViewController == nil else { return }
         switch link {

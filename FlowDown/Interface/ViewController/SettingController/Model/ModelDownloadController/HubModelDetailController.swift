@@ -66,7 +66,7 @@ class HubModelDetailController: StackScrollController {
         DispatchQueue.main.async {
             let markdownView = MarkdownTextView()
             markdownView.theme = theme
-            markdownView.setMarkdown(package)
+            markdownView.setMarkdownManually(package)
             markdownView.alpha = 0
             markdownView.codePreviewHandler = { [weak self] language, code in
                 let viewer = CodeEditorController(language: language, text: code.string)

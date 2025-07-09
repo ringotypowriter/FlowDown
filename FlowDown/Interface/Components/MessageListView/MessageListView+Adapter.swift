@@ -111,7 +111,7 @@ extension MessageListView: ListViewAdapter {
             case let .aiContent(_, message):
                 markdownViewForSizeCalculation.theme = theme
                 let package = markdownPackageCache.package(for: message, theme: theme)
-                markdownViewForSizeCalculation.setMarkdown(package)
+                markdownViewForSizeCalculation.setMarkdownManually(package)
                 let boundingSize = markdownViewForSizeCalculation.boundingSize(for: containerWidth)
                 return ceil(boundingSize.height)
             case .hint:

@@ -9,9 +9,11 @@ import SnapKit
 import UIKit
 
 final class AiMessageView: MessageListRowView {
-    private(set) lazy var markdownView: MarkdownTextView = .init()
+    private(set) lazy var markdownView: MarkdownTextView = .init().with {
+        $0.throttleInterval = 1 / 60
+    }
 
-    var linkTapHandler: ((MarkdownTextView.LinkPayload, NSRange, CGPoint) -> Void)? {
+    var linkTapHandler: ((LinkPayload, NSRange, CGPoint) -> Void)? {
         get { markdownView.linkHandler }
         set { markdownView.linkHandler = newValue }
     }
@@ -37,7 +39,6 @@ final class AiMessageView: MessageListRowView {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        markdownView.prepareForReuse()
     }
 
     override func layoutSubviews() {
