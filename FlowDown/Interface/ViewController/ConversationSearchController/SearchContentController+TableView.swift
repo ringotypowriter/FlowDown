@@ -11,7 +11,7 @@ extension SearchContentController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         highlightedIndex = indexPath
-        selectResult(at: indexPath)
+        selectResultAndDismiss(at: indexPath)
     }
 }
 

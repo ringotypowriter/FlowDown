@@ -5,6 +5,7 @@
 //  Created by 秋星桥 on 7/9/25.
 //
 
+import Combine
 import UIKit
 
 class SearchContentController: UIViewController {
@@ -22,8 +23,6 @@ class SearchContentController: UIViewController {
         guard let highlightedIndex else { return nil }
         return tableView.cellForRow(at: highlightedIndex) as? SearchResultCell
     }
-
-    var hasKeyboard = false
 
     init(callback: @escaping ConversationSearchController.SearchCallback) {
         self.callback = callback
@@ -75,19 +74,17 @@ class SearchContentController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 60
 
+        searchBar.returnKeyType = .search
+
         setupNoResultsView()
         setupEmptyStateView()
-        setupKeyboardNavigation()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // For touch devices, focus immediately for fast keyboard popup
         #if !targetEnvironment(macCatalyst)
-            if traitCollection.userInterfaceIdiom == .phone {
-                searchBar.becomeFirstResponder()
-            }
+            searchBar.becomeFirstResponder()
         #endif
     }
 
@@ -95,22 +92,15 @@ class SearchContentController: UIViewController {
         super.viewDidAppear(animated)
         tableView.reloadData()
         updateNoResultsView()
-        searchBar.becomeFirstResponder()
+
+        if !searchBar.isFirstResponder { searchBar.becomeFirstResponder() }
     }
 
     func performSearch(query: String) {
         searchResults = ConversationManager.shared.searchConversations(query: query)
         highlightedIndex = nil
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self, view.window != nil, tableView.superview != nil else { return }
-            tableView.reloadData()
-            updateNoResultsView()
-        }
-    }
-
-    func setupKeyboardNavigation() {
-        searchBar.returnKeyType = .search
+        tableView.reloadData()
+        updateNoResultsView()
     }
 
     func handleEnterKey() {
@@ -120,54 +110,49 @@ class SearchContentController: UIViewController {
         guard let selectionIndexPath else { return }
 
         if highlightedIndex != selectionIndexPath {
-            updateHighlightedIndex(selectionIndexPath.row)
+            updateHighlightedIndex(selectionIndexPath)
         }
         currentHighlightedCell?.puddingAnimate()
-        selectResult(at: selectionIndexPath)
+        selectResultAndDismiss(at: selectionIndexPath)
     }
 
     func handleUpArrow() {
         guard !searchResults.isEmpty else { return }
 
-        if let currentIndex = highlightedIndex {
-            let newIndex = max(0, currentIndex.row - 1)
-            updateHighlightedIndex(newIndex)
+        if var currentIndex = highlightedIndex {
+            currentIndex.row -= 1
+            currentIndex.row = max(currentIndex.row, 0)
+            updateHighlightedIndex(currentIndex)
         } else {
-            updateHighlightedIndex(searchResults.count - 1)
+            updateHighlightedIndex(.init(row: searchResults.count - 1, section: 0))
         }
     }
 
     func handleDownArrow() {
         guard !searchResults.isEmpty else { return }
 
-        if let currentIndex = highlightedIndex {
-            let newIndex = min(searchResults.count - 1, currentIndex.row + 1)
-            updateHighlightedIndex(newIndex)
+        if var currentIndex = highlightedIndex {
+            currentIndex.row += 1
+            currentIndex.row = min(currentIndex.row, searchResults.count - 1)
+            updateHighlightedIndex(currentIndex)
         } else {
-            updateHighlightedIndex(0)
+            updateHighlightedIndex(.init(row: 0, section: 0))
         }
     }
 
-    func updateHighlightedIndex(_ newIndex: Int) {
-        highlightedIndex = .init(row: newIndex, section: 0)
+    func updateHighlightedIndex(_ newIndex: IndexPath) {
+        highlightedIndex = newIndex
 
-        // Clear all visible cells' highlight state first to prevent double highlighting
-        for visibleCell in tableView.visibleCells {
-            if let searchCell = visibleCell as? SearchResultCell {
-                searchCell.updateHighlightState(false)
-            }
+        let cells = tableView.visibleCells.compactMap { $0 as? SearchResultCell }
+        for visibleCell in cells {
+            let shouldHighlight = tableView.indexPath(for: visibleCell) == newIndex
+            visibleCell.updateHighlightState(shouldHighlight)
         }
 
-        // Update the new highlighted cell
-        let newIndexPath = IndexPath(row: newIndex, section: 0)
-        if let newCell = tableView.cellForRow(at: newIndexPath) as? SearchResultCell {
-            newCell.updateHighlightState(true)
-        }
-
-        tableView.scrollToRow(at: newIndexPath, at: .none, animated: true)
+        tableView.scrollToRow(at: newIndex, at: .none, animated: true)
     }
 
-    func selectResult(at indexPath: IndexPath) {
+    func selectResultAndDismiss(at indexPath: IndexPath) {
         guard indexPath.row < searchResults.count else { return }
 
         let result = searchResults[indexPath.row]
@@ -182,54 +167,5 @@ class SearchContentController: UIViewController {
                 self?.callback(conversationId)
             }
         }
-    }
-
-    func setupNoResultsView() {
-        noResultsView.backgroundColor = .clear
-
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 12
-        stackView.alignment = .center
-
-        let iconView = UIImageView()
-        iconView.image = UIImage(systemName: "moon.zzz")
-        iconView.tintColor = .secondaryLabel
-        iconView.contentMode = .scaleAspectFit
-        iconView.snp.makeConstraints { make in
-            make.width.height.equalTo(64)
-        }
-
-        let titleLabel = UILabel()
-        titleLabel.text = String(localized: "No Results")
-        titleLabel.font = .preferredFont(forTextStyle: .headline)
-        titleLabel.textColor = .label
-        titleLabel.textAlignment = .center
-
-        let subtitleLabel = UILabel()
-        subtitleLabel.text = String(localized: "Check the spelling or try a new search.")
-        subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
-        subtitleLabel.textColor = .secondaryLabel
-        subtitleLabel.textAlignment = .center
-        subtitleLabel.numberOfLines = 0
-
-        stackView.addArrangedSubview(iconView)
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(subtitleLabel)
-
-        noResultsView.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.width.lessThanOrEqualTo(300)
-        }
-
-        view.addSubview(noResultsView)
-        noResultsView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
-        }
-
-        noResultsView.isHidden = true
     }
 }
