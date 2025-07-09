@@ -17,6 +17,8 @@ PROJECT_ROOT=$(pwd)
 
 ./Resources/DevKit/scripts/scan.license.sh
 
+export BUMP_VERSION_ALLOWED=NO
+
 xcodebuild -workspace FlowDown.xcworkspace \
     -scheme FlowDown \
     -configuration Release \
@@ -31,14 +33,9 @@ xcodebuild -workspace FlowDown.xcworkspace \
     -archivePath "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" \
     archive | xcbeautify
 
-xcodebuild -exportArchive \
-    -archivePath "$PROJECT_ROOT/.build/FlowDown.xcarchive" \
-    -exportPath "$PROJECT_ROOT/.build/FlowDown.ipa" \
-    -exportOptionsPlist "$PROJECT_ROOT/Resources/DevKit/scripts/export-options.plist" \
-    -allowProvisioningUpdates
+echo "[*] archives are ready, openning in Xcode..."
 
-xcodebuild -exportArchive \
-    -archivePath "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" \
-    -exportPath "$PROJECT_ROOT/.build/FlowDown-Catalyst.app" \
-    -exportOptionsPlist "$PROJECT_ROOT/Resources/DevKit/scripts/export-options-catalyst.plist" \
-    -allowProvisioningUpdates
+open "$PROJECT_ROOT/.build/FlowDown.xcarchive"
+open "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive"
+
+echo "[*] done"

@@ -375,7 +375,7 @@ class MainController: UIViewController {
         }
     }
 
-    @objc func expendSidebar() {
+    @objc func openSidebar() {
         view.doWithAnimation { self.isSidebarCollapsed = false }
     }
 
