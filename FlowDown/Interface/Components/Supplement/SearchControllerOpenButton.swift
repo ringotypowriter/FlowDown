@@ -9,7 +9,7 @@ import UIKit
 
 class SearchControllerOpenButton: UIButton {
     weak var delegate: Delegate?
-    
+
     init() {
         super.init(frame: .zero)
         setImage(UIImage(systemName: "magnifyingglass"), for: .normal)

@@ -36,7 +36,7 @@ extension ConversationManager {
                 }
             }
 
-            if !foundInMessage && conversation.title.lowercased().contains(lowercasedQuery) {
+            if !foundInMessage, conversation.title.lowercased().contains(lowercasedQuery) {
                 titleResults.append(SearchResult(
                     conversation: conversation,
                     matchType: .title,
@@ -57,7 +57,7 @@ extension ConversationManager {
         let startIndex = text.index(range.lowerBound, offsetBy: -min(30, text.distance(from: text.startIndex, to: range.lowerBound)))
         let endIndex = text.index(range.upperBound, offsetBy: min(70, text.distance(from: range.upperBound, to: text.endIndex)))
 
-        var preview = String(text[startIndex..<endIndex])
+        var preview = String(text[startIndex ..< endIndex])
         if startIndex > text.startIndex {
             preview = "..." + preview
         }

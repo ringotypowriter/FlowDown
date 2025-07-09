@@ -71,7 +71,7 @@ extension ConversationSearchController.ContentController {
         }
 
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
@@ -82,7 +82,7 @@ extension ConversationSearchController.ContentController {
             titleLabel.attributedText = nil
             titleLabel.text = nil
             subtitleLabel.attributedText = nil
-            
+
             if textStackView.arrangedSubviews.contains(subtitleLabel) {
                 textStackView.removeArrangedSubview(subtitleLabel)
                 subtitleLabel.removeFromSuperview()
@@ -92,7 +92,7 @@ extension ConversationSearchController.ContentController {
         func configure(with result: SearchResult, searchTerm: String, isHighlighted: Bool = false) {
             iconView.image = result.conversation.interfaceImage
 
-            if result.matchType == .title && !searchTerm.isEmpty {
+            if result.matchType == .title, !searchTerm.isEmpty {
                 titleLabel.attributedText = NSAttributedString.highlightedString(
                     text: result.conversation.title,
                     searchTerm: searchTerm,
@@ -119,7 +119,7 @@ extension ConversationSearchController.ContentController {
                     searchTerm: searchTerm,
                     baseAttributes: [
                         .font: UIFont.preferredFont(forTextStyle: .caption1),
-                        .foregroundColor: UIColor.secondaryLabel
+                        .foregroundColor: UIColor.secondaryLabel,
                     ],
                     highlightAttributes: [.backgroundColor: UIColor.systemYellow.withAlphaComponent(0.3)]
                 )
@@ -127,10 +127,10 @@ extension ConversationSearchController.ContentController {
                 textStackView.removeArrangedSubview(subtitleLabel)
                 subtitleLabel.removeFromSuperview()
             }
-            
+
             updateHighlightState(isHighlighted)
         }
-        
+
         func updateHighlightState(_ isHighlighted: Bool) {
             let backgroundColor = isHighlighted ? UIColor.tintColor.withAlphaComponent(0.1) : .clear
             guard self.backgroundColor != backgroundColor else { return }
@@ -162,4 +162,3 @@ extension ConversationSearchController.ContentController {
         }
     }
 }
-

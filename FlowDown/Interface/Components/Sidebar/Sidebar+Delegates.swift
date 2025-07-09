@@ -28,7 +28,8 @@ extension Sidebar: SearchControllerOpenButton.Delegate {
                 self?.chatSelection = conversationId
                 // Collapse sidebar after search dismissal only on compact size classes
                 if let mainController = self?.parentViewController as? MainController,
-                   mainController.traitCollection.horizontalSizeClass == .compact {
+                   mainController.traitCollection.horizontalSizeClass == .compact
+                {
                     mainController.view.doWithAnimation {
                         mainController.isSidebarCollapsed = true
                     }

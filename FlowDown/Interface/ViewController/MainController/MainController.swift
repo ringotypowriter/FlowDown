@@ -379,7 +379,7 @@ class MainController: UIViewController {
         view.doWithAnimation { self.isSidebarCollapsed = false }
     }
 
-    @objc func searchConversationsFromMenu(_ sender: Any? = nil) {
+    @objc func searchConversationsFromMenu(_: Any? = nil) {
         sidebar.searchButton.delegate?.searchButtonDidTap()
     }
 }
