@@ -213,6 +213,10 @@ extension ConversationSearchController {
         private var searchTimer: Timer?
         private var highlightedIndex: Int?
         private weak var currentHighlightedCell: SearchResultCell?
+        private var noResultsViewBottomConstraint: Constraint?
+        private var emptyStateViewBottomConstraint: Constraint?
+        private var tableViewBottomConstraint: Constraint?
+        private var hasKeyboard = false
 
         init(callback: @escaping SearchCallback) {
             self.callback = callback
@@ -228,6 +232,8 @@ extension ConversationSearchController {
             searchTimer?.invalidate()
             NotificationCenter.default.removeObserver(self)
         }
+        
+        private func observeKeyboardConnections() {}
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -252,7 +258,8 @@ extension ConversationSearchController {
             view.addSubview(tableView)
             tableView.snp.makeConstraints { make in
                 make.top.equalTo(searchBar.snp.bottom)
-                make.left.right.bottom.equalToSuperview()
+                make.left.right.equalToSuperview()
+                tableViewBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).constraint
             }
             tableView.delegate = self
             tableView.dataSource = self
@@ -267,6 +274,8 @@ extension ConversationSearchController {
             setupEmptyStateView()
             setupKeyboardHandling()
             setupKeyboardNavigation()
+            
+            observeKeyboardConnections()
         }
 
         override func viewWillAppear(_ animated: Bool) {
@@ -454,7 +463,7 @@ extension ConversationSearchController {
             noResultsView.snp.makeConstraints { make in
                 make.top.equalTo(searchBar.snp.bottom)
                 make.left.right.equalToSuperview()
-                make.bottom.equalToSuperview()
+                noResultsViewBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).constraint
             }
             
             noResultsView.isHidden = true
@@ -512,7 +521,7 @@ extension ConversationSearchController {
             emptyStateView.snp.makeConstraints { make in
                 make.top.equalTo(searchBar.snp.bottom)
                 make.left.right.equalToSuperview()
-                make.bottom.equalToSuperview()
+                emptyStateViewBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).constraint
             }
         }
         
@@ -530,37 +539,62 @@ extension ConversationSearchController {
                 name: UIResponder.keyboardWillHideNotification,
                 object: nil
             )
+            
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillChangeFrame(_:)),
+                name: UIResponder.keyboardWillChangeFrameNotification,
+                object: nil
+            )
         }
         
-        @objc func keyboardWillShow(_ notification: Notification) {
-            guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-            let keyboardHeight = keyboardFrame.height
+        @objc func keyboardWillShow(_ notification: NSNotification) {
+            guard let userInfo = notification.userInfo else { return }
+            let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+            let keyboard = self.view.convert(keyboardScreenEndFrame, from: self.view.window)
+            let height = self.view.frame.size.height
             
-            noResultsView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(-keyboardHeight)
+            if (keyboard.origin.y + keyboard.size.height) > height {
+                self.hasKeyboard = true
             }
             
-            emptyStateView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(-keyboardHeight)
-            }
-            
-            UIView.animate(withDuration: 0.3) {
-                self.view.layoutIfNeeded()
-            }
+            updateLayoutForKeyboard(notification: notification)
         }
         
-        @objc func keyboardWillHide(_ notification: Notification) {
-            noResultsView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview()
+        @objc func keyboardWillHide(_ notification: NSNotification) {
+            self.hasKeyboard = false
+            updateLayoutForKeyboard(notification: notification)
+        }
+        
+        @objc func keyboardWillChangeFrame(_ notification: NSNotification) {
+            updateLayoutForKeyboard(notification: notification)
+        }
+        
+        private func updateLayoutForKeyboard(notification: NSNotification) {
+            guard let userInfo = notification.userInfo,
+                  let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+                  let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+                  let animationCurve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt else {
+                return
             }
             
-            emptyStateView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview()
-            }
+            let convertedFrame = view.convert(keyboardFrame, from: view.window)
+            let intersection = view.bounds.intersection(convertedFrame)
+            let keyboardHeight = intersection.height
             
-            UIView.animate(withDuration: 0.3) {
-                self.view.layoutIfNeeded()
-            }
+            tableViewBottomConstraint?.update(offset: -keyboardHeight)
+            noResultsViewBottomConstraint?.update(offset: -keyboardHeight)
+            emptyStateViewBottomConstraint?.update(offset: -keyboardHeight)
+            
+            let animationOptions = UIView.AnimationOptions(rawValue: animationCurve << 16)
+            UIView.animate(
+                withDuration: max(animationDuration, 0.1),
+                delay: 0,
+                options: [animationOptions, .beginFromCurrentState],
+                animations: {
+                    self.view.layoutIfNeeded()
+                }
+            )
         }
     }
 }
