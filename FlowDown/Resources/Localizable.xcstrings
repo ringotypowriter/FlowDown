@@ -4707,16 +4707,6 @@
         }
       }
     },
-    "Search Conversations..." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "搜索对话…"
-          }
-        }
-      }
-    },
     "Search Emoji" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4763,6 +4753,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜索策略"
+          }
+        }
+      }
+    },
+    "Search…" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索..."
           }
         }
       }

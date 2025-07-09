@@ -79,7 +79,7 @@ extension AppDelegate {
                 options: .displayInline,
                 children: [
                     UIKeyCommand(
-                        title: String(localized: "Search Conversations..."),
+                        title: String(localized: "Search…"),
                         action: #selector(searchConversationsFromMenu(_:)),
                         input: "f",
                         modifierFlags: [.command, .shift]
