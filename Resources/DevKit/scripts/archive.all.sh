@@ -15,8 +15,8 @@ fi
 
 PROJECT_ROOT=$(pwd)
 
-./Resources/DevKit/scripts/scan.license.sh
 ./Resources/DevKit/scripts/bump.version.sh
+./Resources/DevKit/scripts/scan.license.sh
 
 xcodebuild -workspace FlowDown.xcworkspace \
     -scheme FlowDown \
