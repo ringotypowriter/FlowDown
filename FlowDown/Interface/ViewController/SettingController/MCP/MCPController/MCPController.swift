@@ -78,6 +78,14 @@ extension SettingController.SettingContent {
                 .store(in: &cancellable)
         }
 
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            MCPService.shared.updateFromDatabase()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+
         func updateSnapshot(_ clients: [ModelContextClient]) {
             var snapshot = Snapshot()
             snapshot.appendSections([.main])

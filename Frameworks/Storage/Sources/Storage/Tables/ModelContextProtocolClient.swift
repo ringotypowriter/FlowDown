@@ -7,6 +7,31 @@
 import Foundation
 import WCDBSwift
 
+public struct StringArrayCodable: ColumnCodable {
+    public let array: [String]
+
+    public init(_ array: [String]) {
+        self.array = array
+    }
+
+    public init?(with value: WCDBSwift.Value) {
+        let data = value.stringValue.data(using: .utf8) ?? Data()
+        guard let array = try? JSONDecoder().decode([String].self, from: data) else {
+            return nil
+        }
+        self.array = array
+    }
+
+    public func archivedValue() -> WCDBSwift.Value {
+        let data = (try? JSONEncoder().encode(array)) ?? Data()
+        return .init(String(data: data, encoding: .utf8) ?? "[]")
+    }
+
+    public static var columnType: WCDBSwift.ColumnType {
+        .text
+    }
+}
+
 public final class ModelContextClient: Identifiable, Codable, TableCodable {
     public var id: Int64 = .init()
     public var name: String = ""
@@ -19,14 +44,17 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
     public var toolsEnabled: EnableCodable = .init()
     public var resourcesEnabled: EnableCodable = .init()
     public var templateEnabled: EnableCodable = .init()
+    public var lastConnected: Date?
+    public var connectionStatus: ConnectionStatus = .disconnected
+    public var capabilities: StringArrayCodable = .init([])
 
-    public var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
-    public var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
+    public var isAutoIncrement: Bool = false
+    public var lastInsertedRowID: Int64 = 0
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = ModelContextClient
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true, isUnique: true)
+            BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true)
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
             BindColumnConstraint(type, isNotNull: true, defaultTo: ClientType.http.rawValue)
@@ -36,8 +64,10 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
             BindColumnConstraint(isEnabled, isNotNull: true, defaultTo: true)
             BindColumnConstraint(toolsEnabled, isNotNull: true, defaultTo: EnableCodable())
             BindColumnConstraint(resourcesEnabled, isNotNull: true, defaultTo: EnableCodable())
-            BindColumnConstraint(templateEnabled, isNotNull: true, defaultTo:
-                EnableCodable())
+            BindColumnConstraint(templateEnabled, isNotNull: true, defaultTo: EnableCodable())
+            BindColumnConstraint(lastConnected, isNotNull: false)
+            BindColumnConstraint(connectionStatus, isNotNull: true, defaultTo: ConnectionStatus.disconnected.rawValue)
+            BindColumnConstraint(capabilities, isNotNull: true, defaultTo: StringArrayCodable([]))
         }
 
         case id
@@ -51,6 +81,9 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
         case toolsEnabled
         case templateEnabled
         case resourcesEnabled
+        case lastConnected
+        case connectionStatus
+        case capabilities
     }
 
     public init(
@@ -64,7 +97,10 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
         isEnabled: Bool = true,
         toolsEnabled: EnableCodable = .init(),
         resourcesEnabled: EnableCodable = .init(),
-        templateEnabled: EnableCodable = .init()
+        templateEnabled: EnableCodable = .init(),
+        lastConnected: Date? = nil,
+        connectionStatus: ConnectionStatus = .disconnected,
+        capabilities: StringArrayCodable = StringArrayCodable([])
     ) {
         self.id = id
         self.name = name
@@ -77,6 +113,9 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
         self.toolsEnabled = toolsEnabled
         self.resourcesEnabled = resourcesEnabled
         self.templateEnabled = templateEnabled
+        self.lastConnected = lastConnected
+        self.connectionStatus = connectionStatus
+        self.capabilities = capabilities
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -96,6 +135,26 @@ public extension ModelContextClient {
     enum ClientType: String, Codable, ColumnCodable {
         case http
         case sse
+
+        public init?(with value: WCDBSwift.Value) {
+            let rawValue = value.stringValue
+            self.init(rawValue: rawValue)
+        }
+
+        public func archivedValue() -> WCDBSwift.Value {
+            .init(rawValue)
+        }
+
+        public static var columnType: WCDBSwift.ColumnType {
+            .text
+        }
+    }
+
+    enum ConnectionStatus: String, Codable, ColumnCodable {
+        case disconnected
+        case connecting
+        case connected
+        case failed
 
         public init?(with value: WCDBSwift.Value) {
             let rawValue = value.stringValue

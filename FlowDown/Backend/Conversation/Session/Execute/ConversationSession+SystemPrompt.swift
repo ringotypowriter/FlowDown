@@ -15,7 +15,7 @@ extension ConversationSession {
         _ modelName: String,
         _ modelWillExecuteTools: Bool,
         _ object: RichEditorView.Object
-    ) {
+    ) async {
         requestMessages.append(
             .system(
                 content: .text(String(localized:
@@ -31,6 +31,9 @@ extension ConversationSession {
                 ))
             )
         )
+
+        // Dedicated MCP context system message
+        await injectMCPSystemMessage(&requestMessages, object)
 
         if case .bool(true) = object.options[.browsing] {
             let sensitivity = ModelManager.shared.searchSensitivity
@@ -59,6 +62,15 @@ extension ConversationSession {
         }
 
         requestMessages.append(.user(content: .text(object.text)))
+    }
+
+    private func injectMCPSystemMessage(
+        _: inout [ChatRequestBody.Message],
+        _: RichEditorView.Object
+    ) async {
+        // Check if any MCP clients are enabled
+        let enabledClients = MCPService.shared.enabledClients
+        guard !enabledClients.isEmpty else { return }
     }
 
     func moveSystemMessagesToFront(_ requestMessages: inout [ChatRequestBody.Message]) {

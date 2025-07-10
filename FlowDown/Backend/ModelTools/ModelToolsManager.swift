@@ -66,6 +66,15 @@ class ModelToolsManager {
         }
     }
 
+    func getEnabledToolsWithMCP() async -> [ModelTool] {
+        var result = enabledTools
+
+        let mcpTools = await MCPService.shared.getMCPTools()
+        result.append(contentsOf: mcpTools.filter(\.isEnabled))
+
+        return result
+    }
+
     var configurableTools: [ModelTool] {
         tools.filter { tool in
             if tool is MTWaitForNextRound { return false }
@@ -81,8 +90,32 @@ class ModelToolsManager {
         }
     }
 
+    func findTool(for request: ToolCallRequest) async -> ModelTool? {
+        print("[*] finding tool call with function name \(request.name)")
+        let allTools = await getEnabledToolsWithMCP()
+        return allTools.first {
+            $0.functionName.lowercased() == request.name.lowercased()
+        }
+    }
+
     func perform(withTool tool: ModelTool, parms: String, anchorTo view: UIView) -> String? {
         assert(!Thread.isMainThread)
+
+        if tool is MCPTool {
+            var ans = String(localized: "Execute tool call timed out")
+            let sem = DispatchSemaphore(value: 0)
+
+            Task {
+                do {
+                    ans = try await tool.execute(with: parms, anchorTo: view)
+                } catch {
+                    ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
+                }
+                sem.signal()
+            }
+            sem.wait()
+            return ans
+        }
 
         var ans = String(localized: "Execute tool call timed out")
         let sem = DispatchSemaphore(value: 0)

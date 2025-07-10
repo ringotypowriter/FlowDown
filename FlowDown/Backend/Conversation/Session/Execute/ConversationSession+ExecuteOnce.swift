@@ -107,7 +107,7 @@ extension ConversationSession {
         await currentMessageListView.loading(with: String(localized: "Utilizing tool call"))
 
         for request in pendingToolCalls {
-            guard let tool = ModelToolsManager.shared.tool(for: request) else {
+            guard let tool = await ModelToolsManager.shared.findTool(for: request) else {
                 throw NSError(
                     domain: "Tool Error",
                     code: -1,
