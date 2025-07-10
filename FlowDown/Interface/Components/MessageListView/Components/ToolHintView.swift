@@ -98,6 +98,7 @@ final class ToolHintView: MessageListRowView {
             symbolView.image = image
             symbolView.tintColor = .systemRed
         }
+        layoutIfNeeded()
     }
 
     private func updateContent() {
@@ -115,6 +116,9 @@ final class ToolHintView: MessageListRowView {
         } else {
             label.text = text ?? .init()
         }
+        label.invalidateIntrinsicContentSize()
+        label.sizeToFit()
+        setNeedsLayout()
     }
 
     @objc
