@@ -37,7 +37,10 @@ class BrandingLabel: UILabel {
     }
 
     static func readBrandingValue() -> String {
-        UserDefaults.standard.string(forKey: BrandingLabel.configurableObject.key) ?? String(localized: "FlowDown")
+        if let value = UserDefaults.standard.string(forKey: BrandingLabel.configurableObject.key),
+           !value.isEmpty
+        { return value }
+        return String(localized: "FlowDown")
     }
 
     init() {
@@ -66,7 +69,7 @@ class BrandingLabel: UILabel {
         NotificationCenter.default.removeObserver(self)
     }
 
-    @objc private func updateBrandingLabel() {
+    @objc func updateBrandingLabel() {
         text = BrandingLabel.readBrandingValue()
         sizeToFit() // Ensure the label resizes to fit the new text
     }

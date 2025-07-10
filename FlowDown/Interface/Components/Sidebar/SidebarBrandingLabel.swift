@@ -10,14 +10,18 @@ import UIKit
 class SidebarBrandingLabel: BrandingLabel {
     override init() {
         super.init()
-        #if DEBUG
-            text? += " 🐦"
-        #endif
         font = .preferredFont(forTextStyle: .title3).bold
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError()
+    }
+
+    override func updateBrandingLabel() {
+        super.updateBrandingLabel()
+        #if DEBUG
+            text? += " 🐦"
+        #endif
     }
 }
