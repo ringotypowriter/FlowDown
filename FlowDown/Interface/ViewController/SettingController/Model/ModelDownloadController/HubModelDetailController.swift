@@ -66,6 +66,7 @@ class HubModelDetailController: StackScrollController {
         DispatchQueue.main.async {
             let markdownView = MarkdownTextView()
             markdownView.theme = theme
+            markdownView.bindContentOffset(from: self.scrollView)
             markdownView.setMarkdownManually(package)
             markdownView.alpha = 0
             self.view.doWithAnimation {
