@@ -10,7 +10,7 @@ import Storage
 import UIKit
 
 extension SettingController.SettingContent.MCPController {
-    class MCPClientCell: UITableViewCell {
+    class MCPServerCell: UITableViewCell {
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             let margin = AutoLayoutMarginView(configurableView)
@@ -36,8 +36,8 @@ extension SettingController.SettingContent.MCPController {
             super.prepareForReuse()
         }
 
-        func configure(with clientId: ModelContextClient.ID) {
-            guard let client = MCPService.shared.client(with: clientId) else {
+        func configure(with clientId: ModelContextServer.ID) {
+            guard let client = MCPService.shared.server(with: clientId) else {
                 return
             }
 
@@ -49,13 +49,14 @@ extension SettingController.SettingContent.MCPController {
             }
 
             configurableView.configure(icon: icon)
-            configurableView.configure(title: client.name.isEmpty ? String(localized: "Unnamed Client") : client.name)
+            if let url = URL(string: client.endpoint), let host = url.host {
+                configurableView.configure(title: "@\(host)")
+            } else {
+                configurableView.configure(title: "Unknown Server")
+            }
 
             var descriptions: [String] = []
             descriptions.append(client.type.rawValue.uppercased())
-            if !client.endpoint.isEmpty {
-                descriptions.append(client.endpoint)
-            }
 
             if client.isEnabled {
                 let connectionStatusText = getConnectionStatusText(client.connectionStatus)
@@ -70,7 +71,7 @@ extension SettingController.SettingContent.MCPController {
             configurableView.configure(description: descriptions.joined(separator: " • "))
         }
 
-        private func getConnectionStatusText(_ status: ModelContextClient.ConnectionStatus) -> String {
+        private func getConnectionStatusText(_ status: ModelContextServer.ConnectionStatus) -> String {
             switch status {
             case .connected:
                 String(localized: "Connected")
@@ -83,7 +84,7 @@ extension SettingController.SettingContent.MCPController {
             }
         }
 
-        private func getConnectionStatusColor(_ status: ModelContextClient.ConnectionStatus) -> UIColor {
+        private func getConnectionStatusColor(_ status: ModelContextServer.ConnectionStatus) -> UIColor {
             switch status {
             case .connected:
                 UIColor(red: 65 / 255.0, green: 190 / 255.0, blue: 171 / 255.0, alpha: 1.0)

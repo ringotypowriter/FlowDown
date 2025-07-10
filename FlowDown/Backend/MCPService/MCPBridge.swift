@@ -1,5 +1,5 @@
 //
-//  MCPConnectionManager.swift
+//  MCPBridge.swift
 //  FlowDown
 //
 //  Created by Alan Ye on 7/10/25.
@@ -11,18 +11,17 @@ import Storage
 
 // MARK: - Connection Manager
 
-class MCPConnectionManager {
-    private let config: ModelContextClient
+class MCPConnection {
+    private let config: ModelContextServer
     private var client: MCP.Client?
 
-    init(config: ModelContextClient) {
+    init(config: ModelContextServer) {
         self.config = config
     }
 
     func connect() async throws {
-        let client = MCP.Client(name: "FlowDown", version: "1.0.0")
+        let client = MCP.Client(name: Bundle.main.bundleIdentifier!, version: AnchorVersion.version)
         let transport = try MCPTransportManager.createTransport(from: config)
-
         try await client.connect(transport: transport)
         self.client = client
     }

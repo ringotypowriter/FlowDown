@@ -8,36 +8,33 @@
 import Foundation
 
 enum MCPError: Swift.Error, LocalizedError, Equatable {
-    case invalidEndpoint
-    case clientNotFound
+    case serverDisabled
     case connectionFailed
-    case capabilityNotSupported(String)
+    case capabilityNotSupported
     case samplingDenied
     case noViewController
     case noModelAvailable
     case elicitationDenied
-    case invalidHTTPScheme
+    case invalidConfiguration
 
     var errorDescription: String? {
         switch self {
-        case .invalidEndpoint:
-            "Invalid endpoint URL"
-        case .clientNotFound:
-            "MCP client not found"
+        case .serverDisabled:
+            String(localized: "The server is currently disabled.")
+        case .invalidConfiguration:
+            String(localized: "Invalid configuration.")
         case .connectionFailed:
-            "Failed to connect to MCP server"
-        case let .capabilityNotSupported(capability):
-            "MCP server doesn't support '\(capability)' capability"
+            String(localized: "Unable to connect to the MCP server. Please check your network or server status.")
+        case .capabilityNotSupported:
+            String(localized: "The MCP server does not support required capability.")
         case .samplingDenied:
-            "User denied sampling request"
+            String(localized: "Sampling request was denied by the user.")
         case .noViewController:
-            "Cannot display user interface"
+            String(localized: "Unable to present the user interface at this time.")
         case .noModelAvailable:
-            "No AI model available for sampling"
+            String(localized: "No AI model is currently available for sampling.")
         case .elicitationDenied:
-            "User denied elicitation request"
-        case .invalidHTTPScheme:
-            "Invalid HTTP scheme. Use http:// or https://"
+            String(localized: "Elicitation request was denied by the user.")
         }
     }
 }

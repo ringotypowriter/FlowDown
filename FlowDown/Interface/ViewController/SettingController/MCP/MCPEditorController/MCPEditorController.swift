@@ -6,10 +6,10 @@ import Storage
 import UIKit
 
 class MCPEditorController: StackScrollController {
-    let clientId: ModelContextClient.ID
+    let clientId: ModelContextServer.ID
     var cancellables: Set<AnyCancellable> = .init()
 
-    init(clientId: ModelContextClient.ID) {
+    init(clientId: ModelContextServer.ID) {
         self.clientId = clientId
         super.init(nibName: nil, bundle: nil)
         title = String(localized: "Edit MCP Server")
@@ -24,6 +24,8 @@ class MCPEditorController: StackScrollController {
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
     }
+
+    let testFooterView = ConfigurableSectionFooterView().with(footer: "")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +63,7 @@ class MCPEditorController: StackScrollController {
     @objc func deleteTapped() {
         let alert = AlertViewController(
             title: String(localized: "Delete Server"),
-            message: String(localized: "Are you sure you want to delete this model context protocol server? This action cannot be undone.")
+            message: String(localized: "Are you sure you want to delete this MCP server? This action cannot be undone.")
         ) { context in
             context.addAction(title: String(localized: "Cancel")) {
                 context.dispose()
@@ -80,17 +82,13 @@ class MCPEditorController: StackScrollController {
     override func setupContentViews() {
         super.setupContentViews()
 
-        guard let client = MCPService.shared.client(with: clientId) else { return }
+        guard let server = MCPService.shared.server(with: clientId) else { return }
 
         // MARK: - Enabled
 
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Enabled"))
-        ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
         let enabledView = ConfigurableToggleActionView()
-        enabledView.boolValue = client.isEnabled
+        enabledView.boolValue = server.isEnabled
         enabledView.actionBlock = { value in
             MCPService.shared.edit(identifier: self.clientId) { client in
                 client.isEnabled = value
@@ -99,42 +97,8 @@ class MCPEditorController: StackScrollController {
         }
         enabledView.configure(icon: .init(systemName: "power"))
         enabledView.configure(title: String(localized: "Enabled"))
-        enabledView.configure(description: String(localized: "Determine if the Model Context Protocol server is enabled."))
+        enabledView.configure(description: String(localized: "Determine if this MCP server is enabled. Tools are only updated when this server is enabled."))
         stackView.addArrangedSubviewWithMargin(enabledView)
-        stackView.addArrangedSubview(SeparatorView())
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionFooterView()
-                .with(footer: String(localized: "When enabled, this client will participate in Model Context Protocol operations. When disabled, all related requests will be ignored."))
-        ) { $0.top /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
-        // MARK: - Metadata
-
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Metadata"))
-        ) { $0.bottom /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-        let nameView = ConfigurableInfoView().setTapBlock { view in
-            let input = AlertInputViewController(
-                title: String(localized: "Edit Name"),
-                message: String(localized: "The display name of this model context protocol client."),
-                placeholder: String(localized: "Unnamed MCP"),
-                text: client.name
-            ) { output in
-                MCPService.shared.edit(identifier: self.clientId) { client in
-                    client.name = output
-                }
-                self.refreshUI()
-                view.configure(value: output.isEmpty ? String(localized: "Unnamed Server") : output)
-            }
-            view.parentViewController?.present(input, animated: true)
-        }
-        nameView.configure(icon: .init(systemName: "tag"))
-        nameView.configure(title: String(localized: "Name"))
-        nameView.configure(description: String(localized: "The display name of this Model Context Protocol client."))
-        nameView.configure(value: client.name.isEmpty ? String(localized: "Unnamed Server") : client.name)
-        stackView.addArrangedSubviewWithMargin(nameView)
         stackView.addArrangedSubview(SeparatorView())
 
         // MARK: - Connection
@@ -148,28 +112,28 @@ class MCPEditorController: StackScrollController {
         typeView.configure(icon: .init(systemName: "gear"))
         typeView.configure(title: String(localized: "Connection Type"))
         typeView.configure(description: String(localized: "The transport protocol to use for this client."))
-        typeView.configure(value: client.type.rawValue.uppercased())
+        typeView.configure(value: server.type.rawValue.uppercased())
         typeView.setTapBlock { view in
             let children = [
                 UIAction(
-                    title: "Streamble HTTP",
+                    title: String(localized: "Streamble HTTP"),
                     image: UIImage(systemName: "network")
                 ) { _ in
                     MCPService.shared.edit(identifier: self.clientId) { client in
                         client.type = .http
                     }
                     self.refreshUI()
-                    view.configure(value: "HTTP")
+                    view.configure(value: String(localized: "Streamble HTTP"))
                 },
                 UIAction(
-                    title: "SSE (Deprecated)",
+                    title: String(localized: "SSE"),
                     image: UIImage(systemName: "antenna.radiowaves.left.and.right")
                 ) { _ in
                     MCPService.shared.edit(identifier: self.clientId) { client in
                         client.type = .sse
                     }
                     self.refreshUI()
-                    view.configure(value: "SSE")
+                    view.configure(value: String(localized: "SSE"))
                 },
             ]
             view.present(
@@ -182,13 +146,12 @@ class MCPEditorController: StackScrollController {
 
         let endpointView = ConfigurableInfoView().setTapBlock { view in
             let placeholder = "https://"
-            let message = String(localized: "The URL endpoint for this model context protocol client.")
 
             let input = AlertInputViewController(
                 title: String(localized: "Edit Endpoint"),
-                message: message,
+                message: String(localized: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix."),
                 placeholder: placeholder,
-                text: client.endpoint.isEmpty ? "https://" : client.endpoint
+                text: server.endpoint.isEmpty ? "https://" : server.endpoint
             ) { output in
                 MCPService.shared.edit(identifier: self.clientId) { client in
                     client.endpoint = output
@@ -200,13 +163,13 @@ class MCPEditorController: StackScrollController {
         }
         endpointView.configure(icon: .init(systemName: "link"))
         endpointView.configure(title: String(localized: "Endpoint"))
-        endpointView.configure(description: String(localized: "The URL endpoint for this model context protocol client."))
-        endpointView.configure(value: client.endpoint.isEmpty ? String(localized: "Not Configured") : client.endpoint)
+        endpointView.configure(description: String(localized: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix."))
+        endpointView.configure(value: server.endpoint.isEmpty ? String(localized: "Not Configured") : server.endpoint)
         stackView.addArrangedSubviewWithMargin(endpointView)
         stackView.addArrangedSubview(SeparatorView())
 
         let headerView = ConfigurableInfoView().setTapBlock { view in
-            guard let client = MCPService.shared.client(with: self.clientId) else { return }
+            guard let client = MCPService.shared.server(with: self.clientId) else { return }
             var text = client.header
             if text.isEmpty { text = "{}" }
             let textEditor = JsonStringMapEditorController(text: text)
@@ -228,81 +191,9 @@ class MCPEditorController: StackScrollController {
         headerView.configure(icon: .init(systemName: "list.bullet"))
         headerView.configure(title: String(localized: "Headers"))
         headerView.configure(description: String(localized: "This value will be added to the request as additional header."))
-        headerView.configure(value: client.header.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
+        headerView.configure(value: server.header.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
         stackView.addArrangedSubviewWithMargin(headerView)
         stackView.addArrangedSubview(SeparatorView())
-
-        let timeoutView = ConfigurableInfoView().setTapBlock { view in
-            let input = AlertInputViewController(
-                title: String(localized: "Edit Timeout"),
-                message: String(localized: "Request timeout in seconds."),
-                placeholder: "60",
-                text: "\(client.timeout)"
-            ) { output in
-                let timeout = Int(output) ?? 60
-                MCPService.shared.edit(identifier: self.clientId) { client in
-                    client.timeout = timeout
-                }
-                view.configure(value: "\(timeout)s")
-            }
-            view.parentViewController?.present(input, animated: true)
-        }
-        timeoutView.configure(icon: .init(systemName: "timer"))
-        timeoutView.configure(title: String(localized: "Timeout"))
-        timeoutView.configure(description: String(localized: "Request timeout in seconds."))
-        timeoutView.configure(value: "\(client.timeout)s")
-        stackView.addArrangedSubviewWithMargin(timeoutView)
-        stackView.addArrangedSubview(SeparatorView())
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionFooterView()
-                .with(footer: String(localized: "Fill in the connection parameters according to your server configuration to ensure the client can communicate with the server properly. The path of Streamable HTTP is usually /mcp."))
-        ) { $0.top /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
-
-        // MARK: - Available Tools
-
-        if client.isEnabled {
-            stackView.addArrangedSubviewWithMargin(
-                ConfigurableSectionHeaderView()
-                    .with(header: String(localized: "Available Tools"))
-            ) { $0.bottom /= 2 }
-            stackView.addArrangedSubview(SeparatorView())
-
-            let toolsView = ConfigurableInfoView()
-            toolsView.configure(icon: .init(systemName: "hammer"))
-            toolsView.configure(title: String(localized: "Tools"))
-            toolsView.configure(description: String(localized: "Tools available from this MCP server"))
-
-            if MCPService.shared.activeClients[client.name] != nil {
-                toolsView.configure(value: String(localized: "Loading..."))
-
-                Task {
-                    do {
-                        let tools = try await MCPService.shared.listTools(from: client.name)
-                        await MainActor.run {
-                            let toolsText = tools.isEmpty ?
-                                String(localized: "No tools available") :
-                                tools.map(\.name).joined(separator: ", ")
-                            toolsView.configure(value: toolsText)
-                        }
-                    } catch {
-                        await MainActor.run {
-                            toolsView.configure(value: String(localized: "Error loading tools"))
-                        }
-                    }
-                }
-            } else {
-                toolsView.configure(value: String(localized: "Server not connected"))
-            }
-
-            stackView.addArrangedSubviewWithMargin(toolsView)
-            stackView.addArrangedSubview(SeparatorView())
-            stackView.addArrangedSubviewWithMargin(
-                ConfigurableSectionFooterView()
-                    .with(footer: String(localized: "These tools will be available to the LLM when this server is enabled and connected."))
-            ) { $0.top /= 2 }
-            stackView.addArrangedSubview(SeparatorView())
-        }
 
         // MARK: - Test
 
@@ -311,19 +202,17 @@ class MCPEditorController: StackScrollController {
                 .with(header: String(localized: "Verification"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
+
         let testAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
             testConfiguration()
         }
         testAction.configure(icon: UIImage(systemName: "testtube.2"))
-        testAction.configure(title: String(localized: "Verify Server"))
-        testAction.configure(description: String(localized: "Verify the configuration of the Model Context Protocol server."))
+        testAction.configure(title: String(localized: "Verify Configuration"))
+        testAction.configure(description: String(localized: "Verify the configuration of this MCP server and list available tools for your inform."))
         stackView.addArrangedSubviewWithMargin(testAction)
         stackView.addArrangedSubview(SeparatorView())
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionFooterView()
-                .with(footer: String(localized: "Use this to verify if the current configuration is valid. It is recommended to test after making changes."))
-        ) { $0.top /= 2 }
+        stackView.addArrangedSubviewWithMargin(testFooterView) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         // MARK: - Management
@@ -339,7 +228,7 @@ class MCPEditorController: StackScrollController {
         }
         deleteAction.configure(icon: UIImage(systemName: "trash"))
         deleteAction.configure(title: String(localized: "Delete Server"))
-        deleteAction.configure(description: String(localized: "Delete this Model Context Protocol server permanently."))
+        deleteAction.configure(description: String(localized: "Delete this MCP server permanently."))
         deleteAction.titleLabel.textColor = .systemRed
         deleteAction.iconView.tintColor = .systemRed
         deleteAction.descriptionLabel.textColor = .systemRed
@@ -348,12 +237,36 @@ class MCPEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(UIView())
+
+        // MARK: FOOTER
+
+        let icon = UIImageView().with {
+            $0.image = .modelCloud
+            $0.tintColor = .separator
+            $0.contentMode = .scaleAspectFit
+            $0.snp.makeConstraints { make in
+                make.width.height.equalTo(24)
+            }
+        }
+        stackView.addArrangedSubviewWithMargin(icon) { $0.bottom /= 2 }
+
+        let footer = UILabel().with {
+            $0.font = .rounded(
+                ofSize: UIFont.preferredFont(forTextStyle: .footnote).pointSize,
+                weight: .regular
+            )
+            $0.textColor = .label.withAlphaComponent(0.25)
+            $0.numberOfLines = 0
+            $0.text = clientId
+            $0.textAlignment = .center
+        }
+        stackView.addArrangedSubviewWithMargin(footer) { $0.top /= 2 }
+        stackView.addArrangedSubviewWithMargin(UIView())
     }
 
     private func refreshUI() {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         setupContentViews()
-
         applySeparatorConstraints()
     }
 
@@ -375,10 +288,10 @@ class MCPEditorController: StackScrollController {
     }
 
     private func testConfiguration() {
-        guard let freshClient = MCPService.shared.client(with: clientId) else { return }
+        guard let freshClient = MCPService.shared.server(with: clientId) else { return }
 
         Indicator.progress(
-            title: String(localized: "Verifying Server"),
+            title: String(localized: "Verifying Configuration"),
             controller: self
         ) { completionHandler in
             Task {
@@ -386,19 +299,24 @@ class MCPEditorController: StackScrollController {
                     DispatchQueue.main.async {
                         completionHandler {
                             switch result {
-                            case let .success(message):
+                            case let .success(tools):
                                 Indicator.present(
                                     title: String(localized: "Configuration Verified"),
-                                    message: message,
+                                    haptic: .success,
                                     referencingView: self.view
                                 )
+                                self.testFooterView.with(footer: String(localized: "Available tool(s): \(tools)"))
                             case let .failure(error):
-                                Indicator.present(
+                                let alert = AlertViewController(
                                     title: String(localized: "Verification Failed"),
-                                    message: error.localizedDescription,
-                                    preset: .error,
-                                    referencingView: self.view
-                                )
+                                    message: error.localizedDescription
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
+                                    }
+                                }
+                                self.present(alert, animated: true)
+                                self.testFooterView.with(footer: error.localizedDescription)
                             }
                         }
                     }
@@ -407,41 +325,23 @@ class MCPEditorController: StackScrollController {
         }
     }
 
-    private func testMCPConnection(client: ModelContextClient, completion: @escaping (Result<String, Swift.Error>) -> Void) async {
+    private func testMCPConnection(client: ModelContextServer, completion: @escaping (Result<String, Swift.Error>) -> Void) async {
         do {
-            let tempClient = MCP.Client(name: "FlowDown Test", version: "1.0.0")
+            let tempClient = MCP.Client(name: Bundle.main.bundleIdentifier!, version: AnchorVersion.version)
             let transport = try createTransport(for: client)
-
             try await tempClient.connect(transport: transport)
-
             let (tools, _) = try await tempClient.listTools()
-
             await tempClient.disconnect()
-
-            let message = formatToolsTestResult(tools)
-            completion(.success(message))
-
+            completion(.success(tools.map(\.name).joined(separator: ", ")))
         } catch {
             completion(.failure(error))
         }
     }
 
-    private func formatToolsTestResult(_ tools: [Tool]) -> String {
-        if tools.isEmpty {
-            return String(localized: "No tools available.")
-        }
-
-        let toolWord = tools.count == 1 ? "tool" : "tools"
-        let result = String(localized: "Found \(tools.count) \(toolWord)")
-
-        return result
-    }
-
-    private func createTransport(for config: ModelContextClient) throws -> any Transport {
+    private func createTransport(for config: ModelContextServer) throws -> any Transport {
         guard let url = URL(string: config.endpoint) else {
-            throw MCPError.invalidEndpoint
+            throw MCPError.invalidConfiguration
         }
-
         switch config.type {
         case .http, .sse:
             return HTTPClientTransport(endpoint: url)

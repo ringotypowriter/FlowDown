@@ -15,12 +15,12 @@ class MCPService: NSObject {
 
     // MARK: - Properties
 
-    public let clients: CurrentValueSubject<[ModelContextClient], Never> = .init([])
-    var activeClients: [String: MCP.Client] = [:]
-    private var connectionManagers: [String: MCPConnectionManager] = [:]
+    public let clients: CurrentValueSubject<[ModelContextServer], Never> = .init([])
+    var activeServer: [String: MCP.Client] = [:]
+    private var connectionManagers: [String: MCPConnection] = [:]
     private var cancellables = Set<AnyCancellable>()
 
-    var enabledClients: [ModelContextClient] {
+    var enabledClients: [ModelContextServer] {
         clients.value.filter(\.isEnabled)
     }
 
@@ -35,18 +35,16 @@ class MCPService: NSObject {
             .map { $0.filter(\.isEnabled) }
             .removeDuplicates()
             .ensureMainThread()
-            .sink { [weak self] enabledMCPClients in
+            .sink { [weak self] enabledServers in
                 guard let self else { return }
-                Task {
-                    await self.updateActiveClients(enabledMCPClients)
-                }
+                Task { await self.updateActiveClients(enabledServers) }
             }
             .store(in: &cancellables)
     }
 
     // MARK: - Client
 
-    private func updateActiveClients(_ enabledClients: [ModelContextClient]) async {
+    private func updateActiveClients(_ enabledClients: [ModelContextServer]) async {
         let enabledClientNames = Set(enabledClients.map(\.name))
 
         for clientName in connectionManagers.keys {
@@ -62,10 +60,10 @@ class MCPService: NSObject {
         }
     }
 
-    private func connectClient(_ config: ModelContextClient) async {
+    private func connectClient(_ config: ModelContextServer) async {
         updateClientStatus(config.id, status: .connecting)
 
-        let connectionManager = MCPConnectionManager(config: config)
+        let connectionManager = MCPConnection(config: config)
         connectionManagers[config.name] = connectionManager
 
         await attemptConnectionWithRetry(manager: connectionManager, config: config)
@@ -77,14 +75,14 @@ class MCPService: NSObject {
             connectionManagers.removeValue(forKey: clientName)
         }
 
-        activeClients.removeValue(forKey: clientName)
+        activeServer.removeValue(forKey: clientName)
 
         if let config = clients.value.first(where: { $0.name == clientName }) {
             updateClientStatus(config.id, status: .disconnected)
         }
     }
 
-    private func updateClientStatus(_ clientId: ModelContextClient.ID, status: ModelContextClient.ConnectionStatus) {
+    private func updateClientStatus(_ clientId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
         edit(identifier: clientId) { client in
             client.connectionStatus = status
             if status == .connected {
@@ -95,7 +93,7 @@ class MCPService: NSObject {
 
     // MARK: - Connection Retry
 
-    private func attemptConnectionWithRetry(manager: MCPConnectionManager, config: ModelContextClient) async {
+    private func attemptConnectionWithRetry(manager: MCPConnection, config: ModelContextServer) async {
         let maxRetries = 3
         let baseDelay: TimeInterval = 1.0
 
@@ -103,7 +101,7 @@ class MCPService: NSObject {
             do {
                 try await manager.connect()
                 if let client = manager.connectedClient {
-                    activeClients[config.name] = client
+                    activeServer[config.name] = client
                     await negotiateCapabilities(client: client, config: config)
                 }
                 updateClientStatus(config.id, status: .connected)
@@ -120,7 +118,7 @@ class MCPService: NSObject {
 
     // MARK: - Capability Negotiation
 
-    private func negotiateCapabilities(client: MCP.Client, config: ModelContextClient) async {
+    private func negotiateCapabilities(client: MCP.Client, config: ModelContextServer) async {
         var discoveredCapabilities: [String] = []
 
         do {
@@ -136,28 +134,33 @@ class MCPService: NSObject {
         }
     }
 
+    func getMCPTools() async -> [MCPTool] {
+        let toolInfos = await getAllTools()
+        return toolInfos.map { MCPTool(toolInfo: $0, mcpService: self) }
+    }
+
     // MARK: - Database
 
     func updateFromDatabase() {
         clients.send(sdb.modelContextClientList())
     }
 
-    func create() -> ModelContextClient {
+    func create() -> ModelContextServer {
         defer { updateFromDatabase() }
         return sdb.modelContextClientMake()
     }
 
-    func client(with identifier: ModelContextClient.ID?) -> ModelContextClient? {
+    func server(with identifier: ModelContextServer.ID?) -> ModelContextServer? {
         guard let identifier else { return nil }
         return sdb.modelContextClientWith(identifier)
     }
 
-    func remove(_ identifier: ModelContextClient.ID) {
+    func remove(_ identifier: ModelContextServer.ID) {
         defer { updateFromDatabase() }
         sdb.modelContextClientRemove(identifier: identifier)
     }
 
-    func edit(identifier: ModelContextClient.ID, block: @escaping (inout ModelContextClient) -> Void) {
+    func edit(identifier: ModelContextServer.ID, block: @escaping (inout ModelContextServer) -> Void) {
         defer { updateFromDatabase() }
         sdb.modelContextClientEdit(identifier: identifier, block)
     }

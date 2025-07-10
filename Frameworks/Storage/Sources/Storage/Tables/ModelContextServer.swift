@@ -1,5 +1,5 @@
 //
-//  MCPClient.swift
+//  ModelContextServer.swift
 //  Storage
 //
 //  Created by LiBr on 6/29/25.
@@ -32,11 +32,11 @@ public struct StringArrayCodable: ColumnCodable {
     }
 }
 
-public final class ModelContextClient: Identifiable, Codable, TableCodable {
-    public var id: Int64 = .init()
+public final class ModelContextServer: Identifiable, Codable, TableCodable {
+    public var id: String = UUID().uuidString
     public var name: String = ""
     public var comment: String = ""
-    public var type: ClientType = .http
+    public var type: ServerType = .http
     public var endpoint: String = ""
     public var header: String = ""
     public var timeout: Int = 60
@@ -48,16 +48,13 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
     public var connectionStatus: ConnectionStatus = .disconnected
     public var capabilities: StringArrayCodable = .init([])
 
-    public var isAutoIncrement: Bool = false
-    public var lastInsertedRowID: Int64 = 0
-
     public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = ModelContextClient
+        public typealias Root = ModelContextServer
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true)
+            BindColumnConstraint(id, isPrimary: true, defaultTo: UUID().uuidString)
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
-            BindColumnConstraint(type, isNotNull: true, defaultTo: ClientType.http.rawValue)
+            BindColumnConstraint(type, isNotNull: true, defaultTo: ServerType.http.rawValue)
             BindColumnConstraint(endpoint, isNotNull: true, defaultTo: "")
             BindColumnConstraint(header, isNotNull: true, defaultTo: "")
             BindColumnConstraint(timeout, isNotNull: true, defaultTo: 60)
@@ -87,10 +84,10 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
     }
 
     public init(
-        id: Int64 = .init(),
+        id: String = UUID().uuidString,
         name: String = "",
-        description: String = "",
-        type: ClientType = .http,
+        comment: String = "",
+        type: ServerType = .http,
         endpoint: String = "",
         header: String = "",
         timeout: Int = 60,
@@ -104,7 +101,7 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
     ) {
         self.id = id
         self.name = name
-        comment = description
+        self.comment = comment
         self.type = type
         self.endpoint = endpoint
         self.header = header
@@ -123,16 +120,16 @@ public final class ModelContextClient: Identifiable, Codable, TableCodable {
     }
 }
 
-extension ModelContextClient: Equatable {
-    public static func == (lhs: ModelContextClient, rhs: ModelContextClient) -> Bool {
+extension ModelContextServer: Equatable {
+    public static func == (lhs: ModelContextServer, rhs: ModelContextServer) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension ModelContextClient: Hashable {}
+extension ModelContextServer: Hashable {}
 
-public extension ModelContextClient {
-    enum ClientType: String, Codable, ColumnCodable {
+public extension ModelContextServer {
+    enum ServerType: String, Codable, ColumnCodable {
         case http
         case sse
 
@@ -171,7 +168,7 @@ public extension ModelContextClient {
     }
 }
 
-public extension ModelContextClient {
+public extension ModelContextServer {
     struct EnableCodable: Codable, ColumnCodable {
         public init?(with value: WCDBSwift.Value) {
             let data = value.dataValue

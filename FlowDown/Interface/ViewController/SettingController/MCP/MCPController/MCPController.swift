@@ -18,8 +18,8 @@ extension SettingController.SettingContent {
             case main
         }
 
-        typealias DataSource = UITableViewDiffableDataSource<TableViewSection, ModelContextClient.ID>
-        typealias Snapshot = NSDiffableDataSourceSnapshot<TableViewSection, ModelContextClient.ID>
+        typealias DataSource = UITableViewDiffableDataSource<TableViewSection, ModelContextServer.ID>
+        typealias Snapshot = NSDiffableDataSourceSnapshot<TableViewSection, ModelContextServer.ID>
 
         var cancellable: Set<AnyCancellable> = []
 
@@ -28,11 +28,11 @@ extension SettingController.SettingContent {
             dataSource = .init(tableView: tableView, cellProvider: Self.cellProvider)
 
             super.init(nibName: nil, bundle: nil)
-            title = String(localized: "Model Context Protocol")
+            title = String(localized: "MCP Servers")
 
             tableView.register(
-                MCPClientCell.self,
-                forCellReuseIdentifier: NSStringFromClass(MCPClientCell.self)
+                MCPServerCell.self,
+                forCellReuseIdentifier: NSStringFromClass(MCPServerCell.self)
             )
         }
 
@@ -86,7 +86,7 @@ extension SettingController.SettingContent {
             }
         }
 
-        func updateSnapshot(_ clients: [ModelContextClient]) {
+        func updateSnapshot(_ clients: [ModelContextServer]) {
             var snapshot = Snapshot()
             snapshot.appendSections([.main])
             snapshot.appendItems(clients.map(\.id), toSection: .main)
@@ -95,11 +95,11 @@ extension SettingController.SettingContent {
 
         static let cellProvider: DataSource.CellProvider = { tableView, indexPath, clientId in
             let cell = tableView.dequeueReusableCell(
-                withIdentifier: NSStringFromClass(MCPClientCell.self),
+                withIdentifier: NSStringFromClass(MCPServerCell.self),
                 for: indexPath
             )
             cell.contentView.isUserInteractionEnabled = false
-            if let cell = cell as? MCPClientCell {
+            if let cell = cell as? MCPServerCell {
                 cell.configure(with: clientId)
             }
             return cell

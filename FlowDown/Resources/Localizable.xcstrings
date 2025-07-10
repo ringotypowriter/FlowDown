@@ -405,12 +405,12 @@
         }
       }
     },
-    "Are you sure you want to delete this model context protocol server? This action cannot be undone." : {
+    "Are you sure you want to delete this MCP server? This action cannot be undone." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你确定要删除这个上下文客户端吗？这项操作不可撤销。"
+            "value" : "你确定要删除这个 MCP 服务器吗？此操作不可撤销。"
           }
         }
       }
@@ -495,12 +495,12 @@
         }
       }
     },
-    "Available Tools" : {
+    "Available tool(s): %@" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "可用工具"
+            "value" : "可用工具：%@"
           }
         }
       }
@@ -1482,12 +1482,12 @@
         }
       }
     },
-    "Delete this Model Context Protocol server permanently." : {
+    "Delete this MCP server permanently." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "永久删除这个模型上下文服务器。"
+            "value" : "永久删除这个 MCP 服务器。"
           }
         }
       }
@@ -1552,12 +1552,12 @@
         }
       }
     },
-    "Determine if the Model Context Protocol server is enabled." : {
+    "Determine if this MCP server is enabled. Tools are only updated when this server is enabled." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "检查模型上下文服务器是否启用。"
+            "value" : "工具列表仅在 MCP 服务器启用时更新。"
           }
         }
       }
@@ -1894,16 +1894,6 @@
         }
       }
     },
-    "Edit Timeout" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设定超时"
-          }
-        }
-      }
-    },
     "Edit Token" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1941,6 +1931,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可能是模型已损坏或不被支持。"
+          }
+        }
+      }
+    },
+    "Elicitation request was denied by the user." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引出请求被用户拒绝。"
           }
         }
       }
@@ -2085,16 +2085,6 @@
         }
       }
     },
-    "Error loading tools" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法载入工具"
-          }
-        }
-      }
-    },
     "Error Occurred" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2152,6 +2142,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "事件：%@"
+          }
+        }
+      }
+    },
+    "Execute" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行"
+          }
+        }
+      }
+    },
+    "Execute MCP Tool" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行 MCP 工具"
           }
         }
       }
@@ -2342,6 +2352,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法解码数据。"
+          }
+        }
+      }
+    },
+    "Failed to display approval dialog" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法显示认证对话框。"
           }
         }
       }
@@ -2586,16 +2606,6 @@
         }
       }
     },
-    "Fill in the connection parameters according to your server configuration to ensure the client can communicate with the server properly. The path of Streamable HTTP is usually /mcp." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "填入连接的参数来配置到服务器的连接。可流式传输的服务通常要求 HTTP 路径为 /mcp。"
-          }
-        }
-      }
-    },
     "Filter Options" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2655,22 +2665,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "食物 & 饮品"
-          }
-        }
-      }
-    },
-    "Found %lld %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Found %1$lld %2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已找到 %1$lld %2$@"
           }
         }
       }
@@ -3133,6 +3127,16 @@
         }
       }
     },
+    "Invalid configuration." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效的配置"
+          }
+        }
+      }
+    },
     "Invalid ICS file content" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3290,16 +3294,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "列举要点"
-          }
-        }
-      }
-    },
-    "Loading..." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载中..."
           }
         }
       }
@@ -3466,16 +3460,6 @@
         }
       }
     },
-    "Manage Model Context Protocol Servers." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "管理模型上下文协议服务器。"
-          }
-        }
-      }
-    },
     "Manage permissions for the application. Your privacy is important to us." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3486,12 +3470,52 @@
         }
       }
     },
+    "Manage tools provided by MCP servers." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理由此 MCP 服务器提供的工具。"
+          }
+        }
+      }
+    },
     "Management" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "管理"
+          }
+        }
+      }
+    },
+    "MCP Servers" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP 服务器"
+          }
+        }
+      }
+    },
+    "MCP Tool" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP 工具"
+          }
+        }
+      }
+    },
+    "MCP Tools" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP 工具"
           }
         }
       }
@@ -3615,16 +3639,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型卡"
-          }
-        }
-      }
-    },
-    "Model Context Protocol" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模型上下文"
           }
         }
       }
@@ -3863,6 +3877,16 @@
         }
       }
     },
+    "No AI model is currently available for sampling." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "采样的模型不可用。"
+          }
+        }
+      }
+    },
     "No Chat Templates" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3985,26 +4009,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无结果"
-          }
-        }
-      }
-    },
-    "No tools available" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有可用工具"
-          }
-        }
-      }
-    },
-    "No tools available." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有可用工具。"
           }
         }
       }
@@ -4713,16 +4717,6 @@
         }
       }
     },
-    "Request timeout in seconds." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请求超时的秒钟数。"
-          }
-        }
-      }
-    },
     "Request User Input" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4839,6 +4833,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重写模版"
+          }
+        }
+      }
+    },
+    "Sampling request was denied by the user." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "采样的请求被拒绝。"
           }
         }
       }
@@ -4979,16 +4983,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在打招呼..."
-          }
-        }
-      }
-    },
-    "Server not connected" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "服务器未连接"
           }
         }
       }
@@ -5196,6 +5190,16 @@
         }
       }
     },
+    "SSE" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器事件（SSE）"
+          }
+        }
+      }
+    },
     "Stable @ 0.5" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5232,6 +5236,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "省：%@"
+          }
+        }
+      }
+    },
+    "Streamble HTTP" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "流式文本传输（Streamable HTTP）"
           }
         }
       }
@@ -5519,26 +5533,6 @@
         }
       }
     },
-    "The display name of this model context protocol client." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此模型上下文协议客户端所使用的名称。"
-          }
-        }
-      }
-    },
-    "The display name of this Model Context Protocol client." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此模型上下文服务客户端的昵称。"
-          }
-        }
-      }
-    },
     "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5555,6 +5549,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最大搜索结果数量。"
+          }
+        }
+      }
+    },
+    "The MCP server does not support required capability." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选 MCP 服务器不支持需要的功能。"
           }
         }
       }
@@ -5589,6 +5593,22 @@
         }
       }
     },
+    "The model wants to execute '%@' from %@. This tool can access external resources.\n\nDescription: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The model wants to execute '%1$@' from %2$@. This tool can access external resources.\n\nDescription: %3$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此模型想要执行 来自 %2$@ 的 %1$@ 工具。此工具可以访问外部资源。\n\n远端提供的描述：%3$@"
+          }
+        }
+      }
+    },
     "The name of the model to be used." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5605,6 +5625,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "提示作为语言模型的初始指令，定义了对话的角色、行为和上下文。"
+          }
+        }
+      }
+    },
+    "The server is currently disabled." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此服务目前被禁用。"
           }
         }
       }
@@ -5639,12 +5669,12 @@
         }
       }
     },
-    "The URL endpoint for this model context protocol client." : {
+    "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此模型上下文协议客户端的 URL。"
+            "value" : "MCP 服务器的端点地址，通常以 /mcp/ 结尾。"
           }
         }
       }
@@ -5675,16 +5705,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这些工具仅供支持工具调用的模型使用，且由模型决定是否使用。"
-          }
-        }
-      }
-    },
-    "These tools will be available to the LLM when this server is enabled and connected." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这些工具将在启用并连接时对模型可用。"
           }
         }
       }
@@ -5889,16 +5909,6 @@
         }
       }
     },
-    "Timeout" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "超时"
-          }
-        }
-      }
-    },
     "Tiny" : {
       "comment" : "Font Size",
       "localizations" : {
@@ -5970,6 +5980,16 @@
         }
       }
     },
+    "Tool execution cancelled by user" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具调用被取消"
+          }
+        }
+      }
+    },
     "Tool execution failed: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5990,22 +6010,22 @@
         }
       }
     },
-    "Tools available from this MCP server" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此模型上下文服务器可用的工具"
-          }
-        }
-      }
-    },
     "Tools Configuration" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "工具配置"
+          }
+        }
+      }
+    },
+    "Tools from connected MCP servers" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来自成功连接的 MCP 服务器所提供的工具"
           }
         }
       }
@@ -6017,6 +6037,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "旅行& 地点"
+          }
+        }
+      }
+    },
+    "Unable to connect to the MCP server. Please check your network or server status." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接到所选 MCP 服务器，请检查你的网络和配置。"
           }
         }
       }
@@ -6121,6 +6151,16 @@
         }
       }
     },
+    "Unable to present the user interface at this time." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未能在限定时间内展示内容。"
+          }
+        }
+      }
+    },
     "Unable to process tool request with name: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6207,36 +6247,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不设限制"
-          }
-        }
-      }
-    },
-    "Unnamed Client" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未命名客户端"
-          }
-        }
-      }
-    },
-    "Unnamed MCP" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未命名 MCP"
-          }
-        }
-      }
-    },
-    "Unnamed Server" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未命名服务器"
           }
         }
       }
@@ -6371,16 +6381,6 @@
         }
       }
     },
-    "Use this to verify if the current configuration is valid. It is recommended to test after making changes." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法验证此配置。请检查后重试。"
-          }
-        }
-      }
-    },
     "Use Tool" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6501,6 +6501,16 @@
         }
       }
     },
+    "Verify Configuration" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证配置"
+          }
+        }
+      }
+    },
     "Verify Model" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6511,22 +6521,12 @@
         }
       }
     },
-    "Verify Server" : {
+    "Verify the configuration of this MCP server and list available tools for your inform." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "验证服务器"
-          }
-        }
-      }
-    },
-    "Verify the configuration of the Model Context Protocol server." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "验证此模型上下文协议服务器的配置。"
+            "value" : "验证此 MCP 服务器的配置文件并列出可用的工具列表。"
           }
         }
       }
@@ -6551,22 +6551,22 @@
         }
       }
     },
+    "Verifying Configuration" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在验证配置"
+          }
+        }
+      }
+    },
     "Verifying Model" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在验证模型"
-          }
-        }
-      }
-    },
-    "Verifying Server" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在验证服务器"
           }
         }
       }
@@ -6879,16 +6879,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如果启用，粘贴进编辑器的大段文本将会被转换成附件，以提供更流畅的编辑体验。你可以点击附件来编辑内容。"
-          }
-        }
-      }
-    },
-    "When enabled, this client will participate in Model Context Protocol operations. When disabled, all related requests will be ignored." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当启用时，此协议所提供的资源将会被更新。"
           }
         }
       }

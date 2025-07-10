@@ -89,6 +89,15 @@ extension SettingController.SettingContent {
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
+            let mcpObject = ConfigurableObject(
+                icon: "server.rack",
+                title: String(localized: "MCP Tools"),
+                explain: String(localized: "Manage tools provided by MCP servers."),
+                ephemeralAnnotation: .page { MCPController() }
+            )
+            stackView.addArrangedSubviewWithMargin(mcpObject.createView())
+            stackView.addArrangedSubview(SeparatorView())
+
             for tool in ModelToolsManager.shared.configurableTools {
                 stackView.addArrangedSubviewWithMargin(tool.createConfigurableObjectView())
                 stackView.addArrangedSubview(SeparatorView())

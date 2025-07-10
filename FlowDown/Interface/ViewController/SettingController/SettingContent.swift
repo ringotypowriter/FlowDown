@@ -38,12 +38,6 @@ extension SettingController {
                 ephemeralAnnotation: .page { ToolsController() }
             ),
             .init(
-                icon: "server.rack",
-                title: String(localized: "Model Context Protocol"),
-                explain: String(localized: "Manage Model Context Protocol Servers."),
-                ephemeralAnnotation: .page { MCPController() }
-            ),
-            .init(
                 icon: "lock.shield",
                 title: String(localized: "Data Control"),
                 explain: String(localized: "Get control of your data, export or delete."),
