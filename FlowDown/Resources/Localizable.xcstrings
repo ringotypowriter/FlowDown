@@ -2272,6 +2272,9 @@
         }
       }
     },
+    "Export this MCP server as a .fdmcp file for sharing or backup." : {
+
+    },
     "Export this model to share with others." : {
       "localizations" : {
         "zh-Hans" : {

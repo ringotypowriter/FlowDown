@@ -131,7 +131,32 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
             MCPService.shared.remove(clientId)
             completion(true)
         }
+        delete.image = UIImage(systemName: "trash")
         return UISwipeActionsConfiguration(actions: [delete])
+    }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
+
+        let menu = UIMenu(options: [.displayInline], children: [
+            UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                self.exportServer(clientId)
+            },
+            UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                MCPService.shared.remove(clientId)
+            },
+        ])
+
+        #if targetEnvironment(macCatalyst)
+            if let cell = tableView.cellForRow(at: indexPath) {
+                cell.present(menu: menu, anchorPoint: point)
+            }
+            return nil
+        #else
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                menu
+            }
+        #endif
     }
 }
 
@@ -292,6 +317,47 @@ extension SettingController.SettingContent.MCPController: UITableViewDragDelegat
                     }
                 }
             }
+        }
+    }
+}
+
+extension SettingController.SettingContent.MCPController {
+    func exportServer(_ serverId: ModelContextServer.ID) {
+        guard let server = MCPService.shared.server(with: serverId) else { return }
+
+        let tempFileDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("DisposableResources")
+            .appendingPathComponent(UUID().uuidString)
+        let serverName = if let url = URL(string: server.endpoint), let host = url.host {
+            host
+        } else if !server.name.isEmpty {
+            server.name
+        } else {
+            "MCPServer"
+        }
+        let tempFile = tempFileDir
+            .appendingPathComponent("Export-\(serverName.sanitizedFileName)")
+            .appendingPathExtension("fdmcp")
+        try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
+        FileManager.default.createFile(atPath: tempFile.path, contents: nil)
+
+        do {
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .xml
+            let data = try encoder.encode(server)
+            try data.write(to: tempFile, options: .atomic)
+
+            let exporter = FileExporterHelper()
+            exporter.targetFileURL = tempFile
+            exporter.referencedView = view
+            exporter.deleteAfterComplete = true
+            exporter.exportTitle = String(localized: "Export MCP Server")
+            exporter.completion = {
+                try? FileManager.default.removeItem(at: tempFileDir)
+            }
+            exporter.execute(presentingViewController: self)
+        } catch {
+            print("[-] failed to export MCP server: \(error)")
         }
     }
 }

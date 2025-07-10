@@ -56,14 +56,47 @@ class MCPEditorController: StackScrollController {
         refreshUI()
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        if let server = MCPService.shared.server(with: serverId) {}
-    }
-
     @objc func checkTapped() {
         navigationController?.popViewController(animated: true)
+    }
+
+    @objc func exportTapped() {
+        guard let server = MCPService.shared.server(with: serverId) else { return }
+
+        let tempFileDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("DisposableResources")
+            .appendingPathComponent(UUID().uuidString)
+        let serverName = if let url = URL(string: server.endpoint), let host = url.host {
+            host
+        } else if !server.name.isEmpty {
+            server.name
+        } else {
+            "MCPServer"
+        }
+        let tempFile = tempFileDir
+            .appendingPathComponent("Export-\(serverName.sanitizedFileName)")
+            .appendingPathExtension("fdmcp")
+        try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
+        FileManager.default.createFile(atPath: tempFile.path, contents: nil)
+
+        do {
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .xml
+            let data = try encoder.encode(server)
+            try data.write(to: tempFile, options: .atomic)
+
+            let exporter = FileExporterHelper()
+            exporter.targetFileURL = tempFile
+            exporter.referencedView = view
+            exporter.deleteAfterComplete = true
+            exporter.exportTitle = String(localized: "Export MCP Server")
+            exporter.completion = {
+                try? FileManager.default.removeItem(at: tempFileDir)
+            }
+            exporter.execute(presentingViewController: self)
+        } catch {
+            print("[-] failed to export MCP server: \(error)")
+        }
     }
 
     @objc func deleteTapped() {
@@ -231,6 +264,19 @@ class MCPEditorController: StackScrollController {
                 .with(header: String(localized: "Management"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
+
+        var exportOptionReader: UIView?
+        let exportOption = ConfigurableActionView { [weak self] _ in
+            guard let self else { return }
+            exportTapped()
+        }
+        exportOptionReader = exportOption
+        exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
+        exportOption.configure(title: String(localized: "Export Server"))
+        exportOption.configure(description: String(localized: "Export this MCP server as a .fdmcp file for sharing or backup."))
+        stackView.addArrangedSubviewWithMargin(exportOption)
+        stackView.addArrangedSubview(SeparatorView())
+
         let deleteAction = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
             deleteTapped()
