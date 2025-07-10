@@ -2273,7 +2273,14 @@
       }
     },
     "Export this MCP server as a .fdmcp file for sharing or backup." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将此 MCP 服务器配置导出为 .fdmcp 文件用于备份或共享。"
+          }
+        }
+      }
     },
     "Export this model to share with others." : {
       "localizations" : {
@@ -2501,6 +2508,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法生成输出。"
+          }
+        }
+      }
+    },
+    "Failed to import MCP server: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导入 MCP 服务器：%@"
           }
         }
       }
@@ -5345,6 +5362,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "成功导入 %@"
+          }
+        }
+      }
+    },
+    "Successfully imported MCP server %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功导入 MCP 服务器：%@"
           }
         }
       }
