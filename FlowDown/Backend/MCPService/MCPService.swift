@@ -15,14 +15,9 @@ class MCPService: NSObject {
 
     // MARK: - Properties
 
-    public let clients: CurrentValueSubject<[ModelContextServer], Never> = .init([])
-    var activeServer: [String: MCP.Client] = [:]
-    private var connectionManagers: [String: MCPConnection] = [:]
+    public let servers: CurrentValueSubject<[ModelContextServer], Never> = .init([])
+    private(set) var connections: [String: MCPConnection] = [:]
     private var cancellables = Set<AnyCancellable>()
-
-    var enabledClients: [ModelContextServer] {
-        clients.value.filter(\.isEnabled)
-    }
 
     // MARK: - Initialization
 
@@ -31,7 +26,7 @@ class MCPService: NSObject {
 
         updateFromDatabase()
 
-        clients
+        servers
             .map { $0.filter(\.isEnabled) }
             .removeDuplicates()
             .ensureMainThread()
@@ -42,19 +37,34 @@ class MCPService: NSObject {
             .store(in: &cancellables)
     }
 
+    @discardableResult
+    public func prepareForConversation() async -> [Swift.Error] {
+        var errors: [Swift.Error] = .init()
+        for (name, connection) in connections {
+            do {
+                try await connection.connect()
+            } catch {
+                print("[-] connect to server \(name) failed with \(error.localizedDescription)")
+                errors.append(error)
+            }
+        }
+        return errors
+    }
+
     // MARK: - Client
 
     private func updateActiveClients(_ enabledClients: [ModelContextServer]) async {
         let enabledClientNames = Set(enabledClients.map(\.name))
 
-        for clientName in connectionManagers.keys {
+        for clientName in connections.keys {
             if !enabledClientNames.contains(clientName) {
                 await disconnectClient(clientName)
+                connections.removeValue(forKey: clientName)
             }
         }
 
         for client in enabledClients {
-            if connectionManagers[client.name] == nil {
+            if connections[client.name] == nil {
                 await connectClient(client)
             }
         }
@@ -64,20 +74,18 @@ class MCPService: NSObject {
         updateClientStatus(config.id, status: .connecting)
 
         let connectionManager = MCPConnection(config: config)
-        connectionManagers[config.name] = connectionManager
+        connections[config.name] = connectionManager
 
         await attemptConnectionWithRetry(manager: connectionManager, config: config)
     }
 
     private func disconnectClient(_ clientName: String) async {
-        if let manager = connectionManagers[clientName] {
+        if let manager = connections[clientName] {
             await manager.disconnect()
-            connectionManagers.removeValue(forKey: clientName)
+            connections.removeValue(forKey: clientName)
         }
 
-        activeServer.removeValue(forKey: clientName)
-
-        if let config = clients.value.first(where: { $0.name == clientName }) {
+        if let config = servers.value.first(where: { $0.name == clientName }) {
             updateClientStatus(config.id, status: .disconnected)
         }
     }
@@ -100,8 +108,7 @@ class MCPService: NSObject {
         for attempt in 1 ... maxRetries {
             do {
                 try await manager.connect()
-                if let client = manager.connectedClient {
-                    activeServer[config.name] = client
+                if let client = manager.client {
                     await negotiateCapabilities(client: client, config: config)
                 }
                 updateClientStatus(config.id, status: .connected)
@@ -142,7 +149,7 @@ class MCPService: NSObject {
     // MARK: - Database
 
     func updateFromDatabase() {
-        clients.send(sdb.modelContextClientList())
+        servers.send(sdb.modelContextClientList())
     }
 
     func create() -> ModelContextServer {
@@ -168,11 +175,11 @@ class MCPService: NSObject {
     // MARK: - Connection
 
     func isClientConnected(_ clientName: String) -> Bool {
-        connectionManagers[clientName]?.isConnected ?? false
+        connections[clientName]?.isConnected ?? false
     }
 
     func reconnectClient(_ clientName: String) async {
-        if let manager = connectionManagers[clientName] {
+        if let manager = connections[clientName] {
             try? await manager.connect()
         }
     }

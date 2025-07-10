@@ -13,13 +13,22 @@ import Storage
 
 class MCPConnection {
     private let config: ModelContextServer
-    private var client: MCP.Client?
+    private(set) var client: MCP.Client?
 
     init(config: ModelContextServer) {
         self.config = config
     }
 
     func connect() async throws {
+        guard client == nil else { return }
+        guard let url = URL(string: config.endpoint),
+              let host = url.host,
+              !host.isEmpty,
+              let scheme = url.scheme?.lowercased(),
+              ["http", "https"].contains(scheme)
+        else {
+            throw MCPError.invalidConfiguration
+        }
         let client = MCP.Client(name: Bundle.main.bundleIdentifier!, version: AnchorVersion.version)
         let transport = try MCPTransportManager.createTransport(from: config)
         try await client.connect(transport: transport)
@@ -27,14 +36,8 @@ class MCPConnection {
     }
 
     func disconnect() async {
-        if let client {
-            await client.disconnect()
-            self.client = nil
-        }
-    }
-
-    var connectedClient: MCP.Client? {
-        client
+        await client?.disconnect()
+        client = nil
     }
 
     var isConnected: Bool {

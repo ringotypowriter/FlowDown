@@ -47,6 +47,7 @@ extension ConversationSession {
                         }
                     }
                 }
+
                 await requestUpdate(view: currentMessageListView)
                 await doInfereExecute(
                     modelID: modelID,
@@ -96,8 +97,9 @@ extension ConversationSession {
 
         // prevent screen lock
         await MainActor.run { UIApplication.shared.isIdleTimerDisabled = true }
-
         saveIfNeeded(object)
+
+        await MCPService.shared.prepareForConversation()
 
         var tools: [ModelTool] = []
         if modelWillExecuteTools {

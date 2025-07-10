@@ -16,24 +16,20 @@ extension ConversationSession {
         _ modelWillExecuteTools: Bool,
         _ object: RichEditorView.Object
     ) async {
-        requestMessages.append(
-            .system(
-                content: .text(String(localized:
-                    """
-                    System is providing you up to date information about current query:
+        let sysPrompt = [
+            String(localized:
+                """
+                System is providing you up to date information about current query:
 
-                    Model/Your Name: \(modelName)
-                    Current Date: \(Date().formatted(date: .long, time: .complete))
-                    Current User Locale: \(Locale.current.identifier)
+                Model/Your Name: \(modelName)
+                Current Date: \(Date().formatted(date: .long, time: .complete))
+                Current User Locale: \(Locale.current.identifier)
 
-                    Please use up-to-date information and ensure compliance with the previously provided guidelines.
-                    """
-                ))
-            )
-        )
-
-        // Dedicated MCP context system message
-        await injectMCPSystemMessage(&requestMessages, object)
+                Please use up-to-date information and ensure compliance with the previously provided guidelines.
+                """
+            ),
+        ]
+        requestMessages.append(.system(content: .text(sysPrompt.joined(separator: "\n"))))
 
         if case .bool(true) = object.options[.browsing] {
             let sensitivity = ModelManager.shared.searchSensitivity
@@ -62,15 +58,6 @@ extension ConversationSession {
         }
 
         requestMessages.append(.user(content: .text(object.text)))
-    }
-
-    private func injectMCPSystemMessage(
-        _: inout [ChatRequestBody.Message],
-        _: RichEditorView.Object
-    ) async {
-        // Check if any MCP clients are enabled
-        let enabledClients = MCPService.shared.enabledClients
-        guard !enabledClients.isEmpty else { return }
     }
 
     func moveSystemMessagesToFront(_ requestMessages: inout [ChatRequestBody.Message]) {

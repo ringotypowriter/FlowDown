@@ -70,7 +70,7 @@ extension SettingController.SettingContent {
                 make.edges.equalToSuperview()
             }
 
-            MCPService.shared.clients
+            MCPService.shared.servers
                 .ensureMainThread()
                 .sink { [weak self] clients in
                     self?.updateSnapshot(clients)

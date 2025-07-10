@@ -6,11 +6,11 @@ import Storage
 import UIKit
 
 class MCPEditorController: StackScrollController {
-    let clientId: ModelContextServer.ID
+    let serverId: ModelContextServer.ID
     var cancellables: Set<AnyCancellable> = .init()
 
     init(clientId: ModelContextServer.ID) {
-        self.clientId = clientId
+        serverId = clientId
         super.init(nibName: nil, bundle: nil)
         title = String(localized: "Edit MCP Server")
     }
@@ -38,13 +38,13 @@ class MCPEditorController: StackScrollController {
             action: #selector(checkTapped)
         )
 
-        MCPService.shared.clients
+        MCPService.shared.servers
             .removeDuplicates()
             .ensureMainThread()
             .delay(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] clients in
                 guard let self, isVisible else { return }
-                if !clients.contains(where: { $0.id == self.clientId }) {
+                if !clients.contains(where: { $0.id == self.serverId }) {
                     navigationController?.popViewController(animated: true)
                 }
             }
@@ -54,6 +54,12 @@ class MCPEditorController: StackScrollController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         refreshUI()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        if let server = MCPService.shared.server(with: serverId) {}
     }
 
     @objc func checkTapped() {
@@ -71,7 +77,7 @@ class MCPEditorController: StackScrollController {
             context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
                 context.dispose { [weak self] in
                     guard let self else { return }
-                    MCPService.shared.remove(clientId)
+                    MCPService.shared.remove(serverId)
                     navigationController?.popViewController(animated: true)
                 }
             }
@@ -82,7 +88,7 @@ class MCPEditorController: StackScrollController {
     override func setupContentViews() {
         super.setupContentViews()
 
-        guard let server = MCPService.shared.server(with: clientId) else { return }
+        guard let server = MCPService.shared.server(with: serverId) else { return }
 
         // MARK: - Enabled
 
@@ -90,10 +96,13 @@ class MCPEditorController: StackScrollController {
         let enabledView = ConfigurableToggleActionView()
         enabledView.boolValue = server.isEnabled
         enabledView.actionBlock = { value in
-            MCPService.shared.edit(identifier: self.clientId) { client in
+            MCPService.shared.edit(identifier: self.serverId) { client in
                 client.isEnabled = value
             }
-            self.refreshUI()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                // let toggle finish animate
+                self.refreshUI()
+            }
         }
         enabledView.configure(icon: .init(systemName: "power"))
         enabledView.configure(title: String(localized: "Enabled"))
@@ -119,7 +128,7 @@ class MCPEditorController: StackScrollController {
                     title: String(localized: "Streamble HTTP"),
                     image: UIImage(systemName: "network")
                 ) { _ in
-                    MCPService.shared.edit(identifier: self.clientId) { client in
+                    MCPService.shared.edit(identifier: self.serverId) { client in
                         client.type = .http
                     }
                     self.refreshUI()
@@ -129,7 +138,7 @@ class MCPEditorController: StackScrollController {
                     title: String(localized: "SSE"),
                     image: UIImage(systemName: "antenna.radiowaves.left.and.right")
                 ) { _ in
-                    MCPService.shared.edit(identifier: self.clientId) { client in
+                    MCPService.shared.edit(identifier: self.serverId) { client in
                         client.type = .sse
                     }
                     self.refreshUI()
@@ -153,7 +162,7 @@ class MCPEditorController: StackScrollController {
                 placeholder: placeholder,
                 text: server.endpoint.isEmpty ? "https://" : server.endpoint
             ) { output in
-                MCPService.shared.edit(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.serverId) { client in
                     client.endpoint = output
                 }
                 self.refreshUI()
@@ -169,7 +178,7 @@ class MCPEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         let headerView = ConfigurableInfoView().setTapBlock { view in
-            guard let client = MCPService.shared.server(with: self.clientId) else { return }
+            guard let client = MCPService.shared.server(with: self.serverId) else { return }
             var text = client.header
             if text.isEmpty { text = "{}" }
             let textEditor = JsonStringMapEditorController(text: text)
@@ -180,7 +189,7 @@ class MCPEditorController: StackScrollController {
                 }
                 let jsonData = try? JSONSerialization.data(withJSONObject: object, options: .prettyPrinted)
                 let jsonString = String(data: jsonData ?? Data(), encoding: .utf8) ?? ""
-                MCPService.shared.edit(identifier: self.clientId) { client in
+                MCPService.shared.edit(identifier: self.serverId) { client in
                     client.header = jsonString == "{}" ? "" : jsonString
                 }
                 self.refreshUI()
@@ -257,20 +266,22 @@ class MCPEditorController: StackScrollController {
             )
             $0.textColor = .label.withAlphaComponent(0.25)
             $0.numberOfLines = 0
-            $0.text = clientId
+            $0.text = serverId
             $0.textAlignment = .center
         }
         stackView.addArrangedSubviewWithMargin(footer) { $0.top /= 2 }
         stackView.addArrangedSubviewWithMargin(UIView())
     }
+}
 
-    private func refreshUI() {
+extension MCPEditorController {
+    func refreshUI() {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         setupContentViews()
         applySeparatorConstraints()
     }
 
-    private func applySeparatorConstraints() {
+    func applySeparatorConstraints() {
         stackView
             .subviews
             .compactMap { view -> SeparatorView? in
@@ -287,15 +298,15 @@ class MCPEditorController: StackScrollController {
             }
     }
 
-    private func testConfiguration() {
-        guard let freshClient = MCPService.shared.server(with: clientId) else { return }
+    func testConfiguration() {
+        guard let freshClient = MCPService.shared.server(with: serverId) else { return }
 
         Indicator.progress(
             title: String(localized: "Verifying Configuration"),
             controller: self
         ) { completionHandler in
             Task {
-                await self.testMCPConnection(client: freshClient) { (result: Result<String, Swift.Error>) in
+                await self.testConnection(client: freshClient) { (result: Result<String, Swift.Error>) in
                     DispatchQueue.main.async {
                         completionHandler {
                             switch result {
@@ -325,7 +336,7 @@ class MCPEditorController: StackScrollController {
         }
     }
 
-    private func testMCPConnection(client: ModelContextServer, completion: @escaping (Result<String, Swift.Error>) -> Void) async {
+    func testConnection(client: ModelContextServer, completion: @escaping (Result<String, Swift.Error>) -> Void) async {
         do {
             let tempClient = MCP.Client(name: Bundle.main.bundleIdentifier!, version: AnchorVersion.version)
             let transport = try createTransport(for: client)
@@ -338,7 +349,7 @@ class MCPEditorController: StackScrollController {
         }
     }
 
-    private func createTransport(for config: ModelContextServer) throws -> any Transport {
+    func createTransport(for config: ModelContextServer) throws -> any Transport {
         guard let url = URL(string: config.endpoint) else {
             throw MCPError.invalidConfiguration
         }
