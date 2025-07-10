@@ -121,6 +121,12 @@ extension ChatView: RichEditorView.Delegate {
             currentMessageListView: currentMessageListView,
             inputObject: object
         ) {}
+
+        #if targetEnvironment(macCatalyst)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.editor.focus()
+            }
+        #endif
     }
 
     func onRichEditorError(_ error: String) {
