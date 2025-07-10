@@ -4858,7 +4858,14 @@
       }
     },
     "Set" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设定"
+          }
+        }
+      }
     },
     "Set a new title for the conversation. Leave empty to keep unchanged. This will disable auto-renaming." : {
       "localizations" : {
