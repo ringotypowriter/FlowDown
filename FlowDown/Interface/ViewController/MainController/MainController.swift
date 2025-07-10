@@ -387,6 +387,9 @@ class MainController: UIViewController {
 extension MainController: NewChatButton.Delegate {
     func newChatDidCreated(_ identifier: Conversation.ID) {
         sidebar.newChatDidCreated(identifier)
+        if !allowSidebarPersistence {
+            view.doWithAnimation { self.isSidebarCollapsed = true }
+        }
         chatView.use(conversation: identifier) { [weak self] in
             self?.chatView.focusEditor()
         }
