@@ -101,7 +101,7 @@ extension ConversationSession {
 
         var tools: [ModelTool] = []
         if modelWillExecuteTools {
-            tools.append(contentsOf: ModelToolsManager.shared.enabledTools)
+            await tools.append(contentsOf: ModelToolsManager.shared.getEnabledToolsWithMCP())
             if modelWillGoSearchWeb {
                 // enabled by default
                 // tools.append(MTWebSearchTool())
@@ -225,7 +225,7 @@ extension ConversationSession {
 
         // MARK: - 添加最新的系统提示
 
-        injectNewSystemCommand(&requestMessages, modelName, modelWillExecuteTools, object)
+        await injectNewSystemCommand(&requestMessages, modelName, modelWillExecuteTools, object)
 
         // MARK: - 删除超出上下文长度限制的消息
 
