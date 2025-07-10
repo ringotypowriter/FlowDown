@@ -102,7 +102,7 @@ class MCPService: NSObject {
     // MARK: - Connection Retry
 
     private func attemptConnectionWithRetry(manager: MCPConnection, config: ModelContextServer) async {
-        let maxRetries = 3
+        let maxRetries = 5
         let baseDelay: TimeInterval = 1.0
 
         for attempt in 1 ... maxRetries {
