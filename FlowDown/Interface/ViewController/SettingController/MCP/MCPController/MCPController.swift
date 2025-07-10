@@ -4,10 +4,14 @@
 //
 //  Created by LiBr on 6/30/25.
 //
+import AlertController
 import Combine
 import ConfigurableKit
 import Storage
 import UIKit
+import UniformTypeIdentifiers
+
+private let utType = UTType(filenameExtension: "fdmcp")?.identifier ?? "wiki.qaq.fdmcp"
 
 extension SettingController.SettingContent {
     class MCPController: UIViewController {
@@ -58,6 +62,9 @@ extension SettingController.SettingContent {
 
             dataSource.defaultRowAnimation = .fade
             tableView.delegate = self
+            tableView.dragDelegate = self
+            tableView.dropDelegate = self
+            tableView.dragInteractionEnabled = true
             tableView.separatorStyle = .singleLine
             tableView.separatorColor = SeparatorView.color
             tableView.backgroundColor = .clear
@@ -125,5 +132,166 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
             completion(true)
         }
         return UISwipeActionsConfiguration(actions: [delete])
+    }
+}
+
+extension SettingController.SettingContent.MCPController: UIDocumentPickerDelegate {
+    func doImport(urls: [URL]) {
+        guard !urls.isEmpty else { return }
+
+        Indicator.progress(
+            title: String(localized: "Importing MCP Servers"),
+            controller: self
+        ) { completionHandler in
+            var success = 0
+            var failure: [Error] = .init()
+
+            for url in urls {
+                do {
+                    _ = url.startAccessingSecurityScopedResource()
+                    defer { url.stopAccessingSecurityScopedResource() }
+                    let data = try Data(contentsOf: url)
+                    let decoder = PropertyListDecoder()
+                    let server = try decoder.decode(ModelContextServer.self, from: data)
+                    DispatchQueue.main.asyncAndWait {
+                        MCPService.shared.insert(server)
+                    }
+                    success += 1
+                } catch {
+                    failure.append(error)
+                }
+            }
+
+            completionHandler {
+                if !failure.isEmpty {
+                    let alert = AlertViewController(
+                        title: String(localized: "Import Failed"),
+                        message: String(
+                            format: String(localized: "%d servers imported successfully, %d failed."),
+                            success,
+                            failure.count
+                        )
+                    ) { context in
+                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                            context.dispose()
+                        }
+                    }
+                    self.present(alert, animated: true)
+                } else {
+                    Indicator.present(
+                        title: String(localized: "Imported \(success) servers."),
+                        preset: .done,
+                        haptic: .success,
+                        referencingView: self.view
+                    )
+                }
+            }
+        }
+    }
+
+    func documentPicker(
+        _: UIDocumentPickerViewController,
+        didPickDocumentsAt urls: [URL]
+    ) {
+        doImport(urls: urls)
+    }
+}
+
+extension SettingController.SettingContent.MCPController: UITableViewDragDelegate, UITableViewDropDelegate {
+    func tableView(_: UITableView, itemsForBeginning _: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        guard let serverId = dataSource.itemIdentifier(for: indexPath),
+              let server = MCPService.shared.server(with: serverId)
+        else {
+            return []
+        }
+
+        let itemProvider = NSItemProvider()
+
+        do {
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .xml
+            let data = try encoder.encode(server)
+            itemProvider.registerDataRepresentation(
+                forTypeIdentifier: utType,
+                visibility: .all
+            ) { completion in
+                completion(data, nil)
+                return nil
+            }
+
+            // Set suggested name based on server host or name
+            let serverName = if let url = URL(string: server.endpoint), let host = url.host {
+                host
+            } else if !server.name.isEmpty {
+                server.name
+            } else {
+                "MCPServer"
+            }
+            itemProvider.suggestedName = "\(serverName.sanitizedFileName).fdmcp"
+        } catch {
+            print("[-] failed to encode MCP server for drag: \(error)")
+        }
+
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = serverId
+        return [dragItem]
+    }
+
+    func tableView(_: UITableView, canMoveRowAt _: IndexPath) -> Bool {
+        true
+    }
+
+    func tableView(_: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if sourceIndexPath == destinationIndexPath { return }
+        guard let sourceItem = dataSource.itemIdentifier(for: sourceIndexPath) else { return }
+
+        var snapshot = dataSource.snapshot()
+        if sourceIndexPath.row < destinationIndexPath.row {
+            if let destinationItem = dataSource.itemIdentifier(
+                for: IndexPath(row: destinationIndexPath.row, section: 0)
+            ) {
+                guard sourceItem != destinationItem else { return }
+                snapshot.moveItem(sourceItem, afterItem: destinationItem)
+            }
+        } else {
+            if let destinationItem = dataSource.itemIdentifier(for: destinationIndexPath) {
+                guard sourceItem != destinationItem else { return }
+                snapshot.moveItem(sourceItem, beforeItem: destinationItem)
+            }
+        }
+
+        dataSource.apply(snapshot, animatingDifferences: false)
+
+        // Note: Unlike ChatTemplateManager, MCPService doesn't have a reorder method yet
+        // If needed, add a reorder method to MCPService to maintain custom ordering
+    }
+
+    func tableView(_: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath _: IndexPath?) -> UITableViewDropProposal {
+        if session.localDragSession != nil {
+            return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        } else if session.hasItemsConforming(toTypeIdentifiers: [utType]) {
+            return UITableViewDropProposal(operation: .copy, intent: .insertAtDestinationIndexPath)
+        }
+        return UITableViewDropProposal(operation: .cancel)
+    }
+
+    func tableView(_: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        for item in coordinator.items {
+            let itemProvider = item.dragItem.itemProvider
+            if itemProvider.hasItemConformingToTypeIdentifier(utType) {
+                itemProvider.loadDataRepresentation(forTypeIdentifier: utType) { data, error in
+                    guard let data, error == nil else { return }
+                    do {
+                        let decoder = PropertyListDecoder()
+                        let server = try decoder.decode(ModelContextServer.self, from: data)
+                        DispatchQueue.main.async {
+                            MCPService.shared.insert(server)
+                        }
+                    } catch {
+                        print("[-] failed to decode dropped template: \(error)")
+                    }
+                }
+            }
+        }
     }
 }

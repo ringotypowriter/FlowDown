@@ -9,7 +9,7 @@ import Foundation
 import WCDBSwift
 
 public extension Storage {
-    func modelContextClientList() -> [ModelContextServer] {
+    func modelContextServerList() -> [ModelContextServer] {
         (
             try? db.getObjects(
                 fromTable: ModelContextServer.table,
@@ -20,27 +20,27 @@ public extension Storage {
         ) ?? []
     }
 
-    func modelContextClientMake() -> ModelContextServer {
+    func modelContextServerMake() -> ModelContextServer {
         let object = ModelContextServer()
         try? db.insert([object], intoTable: ModelContextServer.table)
         return object
     }
 
-    func modelContextClientPut(object: ModelContextServer) {
+    func modelContextServerPut(object: ModelContextServer) {
         try? db.insertOrReplace(
             [object],
             intoTable: ModelContextServer.table
         )
     }
 
-    func modelContextClientWith(_ identifier: ModelContextServer.ID) -> ModelContextServer? {
+    func modelContextServerWith(_ identifier: ModelContextServer.ID) -> ModelContextServer? {
         try? db.getObject(
             fromTable: ModelContextServer.table,
             where: ModelContextServer.Properties.id == identifier
         )
     }
 
-    func modelContextClientEdit(identifier: ModelContextServer.ID, _ block: @escaping (inout ModelContextServer) -> Void) {
+    func modelContextServerEdit(identifier: ModelContextServer.ID, _ block: @escaping (inout ModelContextServer) -> Void) {
         let read: ModelContextServer? = try? db.getObject(
             fromTable: ModelContextServer.table,
             where: ModelContextServer.Properties.id == identifier
@@ -53,7 +53,7 @@ public extension Storage {
         )
     }
 
-    func modelContextClientRemove(identifier: ModelContextServer.ID) {
+    func modelContextServerRemove(identifier: ModelContextServer.ID) {
         try? db.delete(
             fromTable: ModelContextServer.table,
             where: ModelContextServer.Properties.id == identifier

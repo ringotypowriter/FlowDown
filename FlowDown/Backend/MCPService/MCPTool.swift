@@ -86,7 +86,6 @@ class MCPTool: ModelTool {
             )
 
             return formatToolResult(result.content, isError: result.isError)
-
         } catch {
             throw error
         }
@@ -130,7 +129,7 @@ class MCPTool: ModelTool {
         return try await withCheckedThrowingContinuation { continuation in
             let alert = AlertViewController(
                 title: String(localized: "Execute MCP Tool"),
-                message: String(localized: "The model wants to execute '\(toolInfo.name)' from \(toolInfo.clientName). This tool can access external resources.\n\nDescription: \(toolInfo.description ?? "No description available")")
+                message: String(localized: "The model wants to execute '\(toolInfo.name)' from \(toolInfo.clientName). This tool can access external resources.\n\nDescription: \(toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")")
             ) { context in
                 context.addAction(title: String(localized: "Cancel")) {
                     context.dispose {

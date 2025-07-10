@@ -51,10 +51,15 @@ class MCPService: NSObject {
         return errors
     }
 
+    public func insert(_ server: ModelContextServer) {
+        sdb.modelContextServerPut(object: server)
+        updateFromDatabase()
+    }
+
     // MARK: - Client
 
-    private func updateActiveClients(_ enabledClients: [ModelContextServer]) async {
-        let enabledClientNames = Set(enabledClients.map(\.name))
+    private func updateActiveClients(_ eligibleServers: [ModelContextServer]) async {
+        let enabledClientNames = Set(eligibleServers.map(\.name))
 
         for clientName in connections.keys {
             if !enabledClientNames.contains(clientName) {
@@ -63,7 +68,7 @@ class MCPService: NSObject {
             }
         }
 
-        for client in enabledClients {
+        for client in eligibleServers {
             if connections[client.name] == nil {
                 await connectClient(client)
             }
@@ -149,27 +154,27 @@ class MCPService: NSObject {
     // MARK: - Database
 
     func updateFromDatabase() {
-        servers.send(sdb.modelContextClientList())
+        servers.send(sdb.modelContextServerList())
     }
 
     func create() -> ModelContextServer {
         defer { updateFromDatabase() }
-        return sdb.modelContextClientMake()
+        return sdb.modelContextServerMake()
     }
 
     func server(with identifier: ModelContextServer.ID?) -> ModelContextServer? {
         guard let identifier else { return nil }
-        return sdb.modelContextClientWith(identifier)
+        return sdb.modelContextServerWith(identifier)
     }
 
     func remove(_ identifier: ModelContextServer.ID) {
         defer { updateFromDatabase() }
-        sdb.modelContextClientRemove(identifier: identifier)
+        sdb.modelContextServerRemove(identifier: identifier)
     }
 
     func edit(identifier: ModelContextServer.ID, block: @escaping (inout ModelContextServer) -> Void) {
         defer { updateFromDatabase() }
-        sdb.modelContextClientEdit(identifier: identifier, block)
+        sdb.modelContextServerEdit(identifier: identifier, block)
     }
 
     // MARK: - Connection

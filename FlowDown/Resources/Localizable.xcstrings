@@ -27,6 +27,22 @@
         }
       }
     },
+    "%d servers imported successfully, %d failed." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$d servers imported successfully, %2$d failed."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$d 服务器成功导入，%2$d 失败。"
+          }
+        }
+      }
+    },
     "%d templates imported successfully, %d failed." : {
       "localizations" : {
         "en" : {
@@ -1272,6 +1288,16 @@
         }
       }
     },
+    "Create Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建服务器"
+          }
+        }
+      }
+    },
     "Create Template" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2186,12 +2212,32 @@
         }
       }
     },
+    "Export MCP Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出服务器"
+          }
+        }
+      }
+    },
     "Export Model" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "导出"
+          }
+        }
+      }
+    },
+    "Export Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出服务器"
           }
         }
       }
@@ -3016,12 +3062,32 @@
         }
       }
     },
+    "Imported %lld servers." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已导入 %lld 服务器。"
+          }
+        }
+      }
+    },
     "Imported %lld templates." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "导入了 %lld 个模版。"
+          }
+        }
+      }
+    },
+    "Importing MCP Servers" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在导入 MCP 服务器"
           }
         }
       }
@@ -3486,6 +3552,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "管理"
+          }
+        }
+      }
+    },
+    "MCP Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP 服务器"
           }
         }
       }

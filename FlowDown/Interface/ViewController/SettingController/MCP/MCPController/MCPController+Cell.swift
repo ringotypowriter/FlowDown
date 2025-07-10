@@ -10,7 +10,9 @@ import Storage
 import UIKit
 
 extension SettingController.SettingContent.MCPController {
-    class MCPServerCell: UITableViewCell {
+    class MCPServerCell: UITableViewCell, UIContextMenuInteractionDelegate {
+        private var timer: Timer? = nil
+
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             let margin = AutoLayoutMarginView(configurableView)
@@ -20,6 +22,15 @@ extension SettingController.SettingContent.MCPController {
             }
             separatorInset = .zero
             selectionStyle = .none
+            backgroundColor = .clear
+            contentView.addInteraction(UIContextMenuInteraction(delegate: self))
+            let timer = Timer(timeInterval: 2, repeats: true) { [weak self] _ in
+                guard let self else { return }
+                guard let clientId else { return }
+                configure(with: clientId) // update the status
+            }
+            RunLoop.main.add(timer, forMode: .common)
+            self.timer = timer
         }
 
         @available(*, unavailable)
@@ -27,16 +38,24 @@ extension SettingController.SettingContent.MCPController {
             fatalError()
         }
 
+        deinit {
+            timer?.invalidate()
+        }
+
         let configurableView = ConfigurableActionView(
             responseEverywhere: true,
             actionBlock: { _ in }
         )
 
+        var clientId: ModelContextServer.ID?
+
         override func prepareForReuse() {
             super.prepareForReuse()
+            clientId = nil
         }
 
         func configure(with clientId: ModelContextServer.ID) {
+            self.clientId = clientId
             guard let client = MCPService.shared.server(with: clientId) else {
                 return
             }
@@ -95,6 +114,58 @@ extension SettingController.SettingContent.MCPController {
             case .failed:
                 .systemRed
             }
+        }
+
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            configurationForMenuAtLocation location: CGPoint
+        ) -> UIContextMenuConfiguration? {
+            guard let clientId else { return nil }
+            let menu = UIMenu(options: [.displayInline], children: [
+                UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                    self.exportServer(clientId)
+                },
+                UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    MCPService.shared.remove(clientId)
+                },
+            ])
+            #if targetEnvironment(macCatalyst)
+                present(menu: menu, anchorPoint: location)
+                return nil
+            #else
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                    menu
+                }
+            #endif
+        }
+
+        private func exportServer(_ serverId: ModelContextServer.ID) {
+            guard let server = MCPService.shared.server(with: serverId),
+                  let parentViewController
+            else { return }
+
+            let tempFileDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent("DisposableResources")
+                .appendingPathComponent(UUID().uuidString)
+            let serverName = URL(string: server.endpoint)?.host ?? "Server"
+            let tempFile = tempFileDir
+                .appendingPathComponent("Export-\(serverName.sanitizedFileName)")
+                .appendingPathExtension("fdmcp")
+            try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
+            FileManager.default.createFile(atPath: tempFile.path, contents: nil)
+            let encoder = PropertyListEncoder()
+            encoder.outputFormat = .xml
+            try? encoder.encode(server).write(to: tempFile, options: .atomic)
+
+            let exporter = FileExporterHelper()
+            exporter.targetFileURL = tempFile
+            exporter.referencedView = self
+            exporter.deleteAfterComplete = true
+            exporter.exportTitle = String(localized: "Export MCP Server")
+            exporter.completion = {
+                try? FileManager.default.removeItem(at: tempFileDir)
+            }
+            exporter.execute(presentingViewController: parentViewController)
         }
     }
 }
