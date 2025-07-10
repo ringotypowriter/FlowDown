@@ -44,6 +44,10 @@ class MCPTool: ModelTool {
         )
     }
 
+    override var isEnabled: Bool {
+        true
+    }
+
     override class var controlObject: ConfigurableObject {
         assertionFailure()
         return .init(
