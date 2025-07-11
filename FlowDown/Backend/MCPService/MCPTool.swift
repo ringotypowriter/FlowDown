@@ -13,14 +13,20 @@ import MCP
 import Storage
 
 class MCPTool: ModelTool {
+    // MARK: - Properties
+
     let toolInfo: MCPToolInfo
     let mcpService: MCPService
+
+    // MARK: - Initialization
 
     init(toolInfo: MCPToolInfo, mcpService: MCPService) {
         self.toolInfo = toolInfo
         self.mcpService = mcpService
         super.init()
     }
+
+    // MARK: - ModelTool Implementation
 
     override var shortDescription: String {
         toolInfo.description ?? String(localized: "MCP Tool")
@@ -60,6 +66,8 @@ class MCPTool: ModelTool {
         )
     }
 
+    // MARK: - Tool Execution
+
     override func execute(with input: String, anchorTo view: UIView) async throws -> String {
         let approved = try await requestUserApprovalForToolExecution(view: view)
         guard approved else {
@@ -90,6 +98,8 @@ class MCPTool: ModelTool {
             throw error
         }
     }
+
+    // MARK: - Private Helper Methods
 
     private func formatToolResult(_ contents: [Tool.Content], isError: Bool?) -> String {
         var result = ""

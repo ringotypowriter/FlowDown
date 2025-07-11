@@ -12,6 +12,7 @@ import Storage
 
 class MCPService: NSObject {
     static let shared = MCPService()
+    static let executor = MCPServiceActor.shared
 
     // MARK: - Properties
 
@@ -23,29 +24,45 @@ class MCPService: NSObject {
 
     override private init() {
         super.init()
-
+        for server in sdb.modelContextServerList() {
+            updateServerStatus(server.id, status: .disconnected)
+        }
         updateFromDatabase()
+        setupServerSync()
+    }
 
+    // MARK: - Setup
+
+    private func setupServerSync() {
         servers
             .map { $0.filter(\.isEnabled) }
             .removeDuplicates()
             .ensureMainThread()
             .sink { [weak self] enabledServers in
                 guard let self else { return }
-                Task { await self.syncServerConnections(enabledServers) }
+                Task {
+                    await MCPService.executor.run {
+                        await self.syncServerConnections(enabledServers)
+                    }
+                }
             }
             .store(in: &cancellables)
     }
 
+    // MARK: - Public Methods
+
     @discardableResult
     public func prepareForConversation() async -> [Swift.Error] {
-        var errors: [Swift.Error] = .init()
+        var errors: [Swift.Error] = []
         let snapshot = connections // for thread safety
-        for (name, connection) in snapshot {
+
+        for (serverID, connection) in snapshot {
             do {
-                try await connection.connect()
+                try await MCPService.executor.run {
+                    try await connection.connect()
+                }
             } catch {
-                print("[-] connect to server \(name) failed with \(error.localizedDescription)")
+                print("[-] failed to connect to server \(serverID): \(error.localizedDescription)")
                 errors.append(error)
             }
         }
@@ -58,57 +75,85 @@ class MCPService: NSObject {
     }
 
     public func ensureOrReconnect(_ serverID: ModelContextServer.ID) {
-        if let connection = connections[serverID], connection.client != nil {
-            return
-        }
-        guard let server = sdb.modelContextServerWith(serverID) else {
-            return
-        }
+        if let connection = connections[serverID], connection.client != nil { return }
+        guard let server = sdb.modelContextServerWith(serverID) else { return }
         updateServerStatus(serverID, status: .disconnected)
-        Task.detached { await self.connectToServer(server) }
+        Task {
+            await MCPService.executor.run {
+                await self.connectToServer(server)
+            }
+        }
     }
 
-    func rebuildConnectionAndInspect(
+    func testConnection(
         serverID: ModelContextServer.ID,
         completion: @escaping (Result<String, Swift.Error>) -> Void
     ) {
-        Task.detached {
-            do {
-                guard let server = self.server(with: serverID) else {
-                    throw MCPError.invalidConfiguration
-                }
-                await self.connections[serverID]?.disconnect()
-                self.updateServerStatus(serverID, status: .disconnected)
-                let connection: MCPConnection = try await self.connectOnce(server)
-                self.connections[serverID] = connection
-                if let client = connection.client {
+        Task {
+            await MCPService.executor.run {
+                do {
+                    guard let server = self.server(with: serverID) else {
+                        throw MCPError.invalidConfiguration
+                    }
+                    self.connections[serverID]?.disconnect()
+                    self.updateServerStatus(serverID, status: .disconnected)
+                    let connection: MCPConnection = try await self.connectOnce(server)
+                    self.connections[serverID] = connection
+                    guard let client = connection.client else {
+                        assertionFailure()
+                        throw MCPError.connectionFailed
+                    }
                     await self.negotiateCapabilities(client: client, config: server)
                     let tools = try await client.listTools().tools
                     completion(.success(tools.map(\.name).joined(separator: ", ")))
-                } else {
-                    assertionFailure()
+                } catch {
+                    completion(.failure(error))
                 }
-            } catch {}
+            }
         }
     }
+
+    // MARK: - Private Connection Management
 
     private func syncServerConnections(_ eligibleServers: [ModelContextServer]) async {
         for server in eligibleServers {
             ensureOrReconnect(server.id)
         }
-        for (key, value) in connections {
-            if !eligibleServers.map(\.id).contains(key) {
-                Task.detached { await value.disconnect() }
-                connections.removeValue(forKey: key)
-                updateServerStatus(key, status: .disconnected)
+
+        let eligibleServerIds = Set(eligibleServers.map(\.id))
+        for (serverId, connection) in connections {
+            if !eligibleServerIds.contains(serverId) {
+                connection.disconnect()
+                connections.removeValue(forKey: serverId)
+                updateServerStatus(serverId, status: .disconnected)
             }
         }
     }
 
     private func connectToServer(_ config: ModelContextServer) async {
         updateServerStatus(config.id, status: .connecting)
-        let connection = try? await connectOnce(config)
-        connections[config.id] = connection
+
+        do {
+            let connection = try await MCPService.executor.run {
+                try await self.connectOnce(config)
+            }
+            connections[config.id] = connection
+        } catch {
+            print("[-] failed to connect to server \(config.id): \(error.localizedDescription)")
+            updateServerStatus(config.id, status: .disconnected)
+        }
+    }
+
+    private func connectOnce(_ config: ModelContextServer) async throws -> MCPConnection {
+        let connection = MCPConnection(config: config)
+        try await connection.connect()
+        if let client = connection.client {
+            await negotiateCapabilities(client: client, config: config)
+        } else {
+            assertionFailure("failed to establish client connection")
+        }
+        updateServerStatus(config.id, status: .connected)
+        return connection
     }
 
     private func updateServerStatus(_ clientId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
@@ -119,42 +164,6 @@ class MCPService: NSObject {
             }
         }
     }
-
-    private func connectOnce(_ config: ModelContextServer) async throws -> MCPConnection {
-        let connection = MCPConnection(config: config)
-        try await connection.connect()
-        if let client = connection.client {
-            await negotiateCapabilities(client: client, config: config)
-        } else {
-            assertionFailure()
-        }
-        updateServerStatus(config.id, status: .connected)
-        return connection
-    }
-
-    private func attemptConnectionWithRetry(config: ModelContextServer) async {
-        let maxRetries = 3
-        let baseDelay: TimeInterval = 1.0
-
-        for attempt in 1 ... maxRetries {
-            do {
-                print("[+] connecting to server \(config.id) (attempt \(attempt))")
-                let connection = try await connectOnce(config)
-                connections[config.id] = connection
-                print("[+] successfully connected to server \(config.id)")
-                updateServerStatus(config.id, status: .connected)
-                return
-            } catch {
-                if attempt == maxRetries {
-                    updateServerStatus(config.id, status: .disconnected)
-                } else {
-                    try? await Task.sleep(nanoseconds: UInt64(baseDelay * Double(attempt) * 1_000_000_000))
-                }
-            }
-        }
-    }
-
-    // MARK: - Capability Negotiation
 
     private func negotiateCapabilities(client: MCP.Client, config: ModelContextServer) async {
         var discoveredCapabilities: [String] = []
@@ -167,6 +176,7 @@ class MCPService: NSObject {
         } catch {
             print("[-] failed to list tools: \(error.localizedDescription)")
         }
+
         edit(identifier: config.id) { client in
             client.capabilities = StringArrayCodable(discoveredCapabilities)
         }
@@ -177,7 +187,7 @@ class MCPService: NSObject {
         return toolInfos.map { MCPTool(toolInfo: $0, mcpService: self) }
     }
 
-    // MARK: - Database
+    // MARK: - Database Methods
 
     func updateFromDatabase() {
         servers.send(sdb.modelContextServerList())

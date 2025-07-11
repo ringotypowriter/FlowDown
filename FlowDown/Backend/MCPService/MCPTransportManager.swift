@@ -9,9 +9,9 @@ import Foundation
 import MCP
 import Storage
 
-class MCPTransportManager {
-    static func createTransport(from client: ModelContextServer) throws -> HTTPClientTransport {
-        guard let url = URL(string: client.endpoint) else {
+extension ModelContextServer {
+    func createTransport() throws -> HTTPClientTransport {
+        guard let url = URL(string: endpoint) else {
             throw MCPError.invalidConfiguration
         }
 

@@ -12,7 +12,7 @@ import Foundation
 import MCP
 import UIKit
 
-// MARK: - MCPService Tools
+// MARK: - MCPService Tools Extension
 
 extension MCPService {
     func callTool(name: String, arguments: [String: Value]? = nil, from clientName: String) async throws -> (content: [Tool.Content], isError: Bool?) {
@@ -32,7 +32,7 @@ extension MCPService {
                 let toolInfos = tools.map { MCPToolInfo(tool: $0, clientName: clientName) }
                 allTools.append(contentsOf: toolInfos)
             } catch {
-                print("[-] failed to acquire tools from \(clientName) \(error.localizedDescription)")
+                print("[-] Failed to acquire tools from \(clientName): \(error.localizedDescription)")
             }
         }
 

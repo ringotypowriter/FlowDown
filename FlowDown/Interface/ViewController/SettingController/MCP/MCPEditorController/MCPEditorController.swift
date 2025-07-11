@@ -348,7 +348,7 @@ extension MCPEditorController {
             title: String(localized: "Verifying Configuration"),
             controller: self
         ) { completionHandler in
-            MCPService.shared.rebuildConnectionAndInspect(
+            MCPService.shared.testConnection(
                 serverID: self.serverId
             ) { result in
                 completionHandler {
