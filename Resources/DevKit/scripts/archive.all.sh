@@ -15,7 +15,6 @@ fi
 
 PROJECT_ROOT=$(pwd)
 
-
 if [[ -n $(git status --porcelain) ]]; then
     echo "[!] git is not clean"
     exit 1
