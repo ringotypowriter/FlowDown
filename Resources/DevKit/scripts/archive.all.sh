@@ -15,7 +15,16 @@ fi
 
 PROJECT_ROOT=$(pwd)
 
+
+if [[ -n $(git status --porcelain) ]]; then
+    echo "[!] git is not clean"
+    exit 1
+fi
+
 ./Resources/DevKit/scripts/bump.version.sh
+git add -A
+git commit -m "Archive Commit $(date +%Y-%m-%d %H:%M:%S)"
+
 ./Resources/DevKit/scripts/scan.license.sh
 
 xcodebuild -workspace FlowDown.xcworkspace \
