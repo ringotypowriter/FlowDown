@@ -12,6 +12,13 @@ import Storage
 struct MCPToolInfo {
     let tool: Tool
     let serverID: ModelContextServer.ID
+    let serverName: String
+
+    init(tool: Tool, serverID: ModelContextServer.ID, serverName: String) {
+        self.tool = tool
+        self.serverID = serverID
+        self.serverName = serverName
+    }
 
     var name: String { tool.name }
     var description: String? { tool.description }

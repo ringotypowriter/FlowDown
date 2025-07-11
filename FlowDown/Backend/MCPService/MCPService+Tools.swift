@@ -31,8 +31,9 @@ extension MCPService {
                 guard let server = server(with: serverID), server.isEnabled else {
                     continue
                 }
+                let name = URL(string: server.endpoint)?.host ?? serverID
                 let tools = try await connection.listTools().tools
-                let toolInfos = tools.map { MCPToolInfo(tool: $0, serverID: serverID) }
+                let toolInfos = tools.map { MCPToolInfo(tool: $0, serverID: serverID, serverName: name) }
                 allTools.append(contentsOf: toolInfos)
             } catch {
                 print("[-] failed to acquire tools from \(serverID): \(error.localizedDescription)")
