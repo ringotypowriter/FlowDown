@@ -66,12 +66,10 @@ class ModelToolsManager {
         }
     }
 
-    func getEnabledToolsWithMCP() async -> [ModelTool] {
+    func getEnabledToolsIncludeMCP() async -> [ModelTool] {
         var result = enabledTools
-
         let mcpTools = await MCPService.shared.listServerTools()
         result.append(contentsOf: mcpTools.filter(\.isEnabled))
-
         return result
     }
 
@@ -92,7 +90,7 @@ class ModelToolsManager {
 
     func findTool(for request: ToolCallRequest) async -> ModelTool? {
         print("[*] finding tool call with function name \(request.name)")
-        let allTools = await getEnabledToolsWithMCP()
+        let allTools = await getEnabledToolsIncludeMCP()
         return allTools.first {
             $0.functionName.lowercased() == request.name.lowercased()
         }

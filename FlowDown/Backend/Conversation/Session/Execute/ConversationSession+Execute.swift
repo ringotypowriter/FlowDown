@@ -99,16 +99,19 @@ extension ConversationSession {
         await MainActor.run { UIApplication.shared.isIdleTimerDisabled = true }
         saveIfNeeded(object)
 
-        await MCPService.shared.prepareForConversation()
+        let servers = MCPService.shared.servers.value
+        let shouldPrepareMCP = servers.filter(\.isEnabled).count > 0
+        if shouldPrepareMCP {
+            await currentMessageListView.loading(with: String(localized: "Updating MCP Tools"))
+            await MCPService.shared.prepareForConversation()
+            await currentMessageListView.stopLoading()
+        }
 
         var tools: [ModelTool] = []
         if modelWillExecuteTools {
-            await tools.append(contentsOf: ModelToolsManager.shared.getEnabledToolsWithMCP())
-            if modelWillGoSearchWeb {
-                // enabled by default
-                // tools.append(MTWebSearchTool())
-            } else {
-                // but if user disabled web search here, remove it from available tools
+            await tools.append(contentsOf: ModelToolsManager.shared.getEnabledToolsIncludeMCP())
+            if !modelWillGoSearchWeb {
+                // remove this tool if not enabled
                 tools = tools.filter { !($0 is MTWebSearchTool) }
             }
         }
