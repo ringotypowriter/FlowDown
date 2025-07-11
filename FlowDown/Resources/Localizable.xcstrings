@@ -3586,6 +3586,16 @@
         }
       }
     },
+    "MCP Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP 设置"
+          }
+        }
+      }
+    },
     "MCP Tool" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6132,6 +6142,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "来自成功连接的 MCP 服务器所提供的工具"
+          }
+        }
+      }
+    },
+    "Tools Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具设置"
           }
         }
       }
