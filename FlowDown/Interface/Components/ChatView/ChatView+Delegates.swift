@@ -236,6 +236,22 @@ extension ChatView: RichEditorView.Delegate {
         anchor.present(menu: menu)
     }
 
+    func onRichEditorShowAlternativeToolsMenu(anchor: UIView) {
+        let menu = UIMenu(title: String(localized: "Shortcuts"), children: [
+            UIAction(title: String(localized: "MCP Settings")) { [weak self] _ in
+                SettingController.setNextEntryPage(.mcp)
+                let settingController = SettingController()
+                self?.parentViewController?.present(settingController, animated: true)
+            },
+            UIAction(title: String(localized: "Tools Settings")) { [weak self] _ in
+                SettingController.setNextEntryPage(.tools)
+                let settingController = SettingController()
+                self?.parentViewController?.present(settingController, animated: true)
+            },
+        ])
+        anchor.present(menu: menu)
+    }
+
     func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool {
         ModelManager.shared.modelCapabilities(identifier: modelIdentifier).contains(.tool)
     }

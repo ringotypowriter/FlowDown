@@ -142,6 +142,8 @@ extension SettingController.EntryPage {
             return SettingController.SettingContent.ModelController()
         case .tools:
             return SettingController.SettingContent.ToolsController()
+        case .mcp:
+            return SettingController.SettingContent.MCPController()
         case .dataControl:
             return SettingController.SettingContent.DataControlController()
         case .permissionList:
