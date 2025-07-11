@@ -97,6 +97,7 @@ class HubModelDownloadController: UIViewController {
         let warning = AlertViewController(
             title: String(localized: "Warning"),
             message: String(localized: "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution.")
+                + "\n\n" + String(localized: "Ready to dive in? Select a model to see its size and details.")
         ) { context in
             context.addAction(title: String(localized: "Cancel")) {
                 context.dispose { [weak self] in

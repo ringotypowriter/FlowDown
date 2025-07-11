@@ -4733,6 +4733,16 @@
         }
       }
     },
+    "Ready to dive in? Select a model to see its size and details." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "准备好出发了？选择一个模型来查看他的详情（含尺寸）。"
+          }
+        }
+      }
+    },
     "Recent Used" : {
       "localizations" : {
         "zh-Hans" : {
