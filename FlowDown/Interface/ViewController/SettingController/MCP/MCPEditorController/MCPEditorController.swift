@@ -344,53 +344,36 @@ extension MCPEditorController {
     }
 
     func testConfiguration() {
-        guard let freshClient = MCPService.shared.server(with: serverId) else { return }
-
         Indicator.progress(
             title: String(localized: "Verifying Configuration"),
             controller: self
         ) { completionHandler in
-            Task {
-                await self.testConnection(client: freshClient) { (result: Result<String, Swift.Error>) in
-                    DispatchQueue.main.async {
-                        completionHandler {
-                            switch result {
-                            case let .success(tools):
-                                Indicator.present(
-                                    title: String(localized: "Configuration Verified"),
-                                    haptic: .success,
-                                    referencingView: self.view
-                                )
-                                self.testFooterView.with(footer: String(localized: "Available tool(s): \(tools)"))
-                            case let .failure(error):
-                                let alert = AlertViewController(
-                                    title: String(localized: "Verification Failed"),
-                                    message: error.localizedDescription
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                self.present(alert, animated: true)
-                                self.testFooterView.with(footer: error.localizedDescription)
+            MCPService.shared.rebuildConnectionAndInspect(
+                serverID: self.serverId
+            ) { result in
+                completionHandler {
+                    switch result {
+                    case let .success(tools):
+                        Indicator.present(
+                            title: String(localized: "Configuration Verified"),
+                            haptic: .success,
+                            referencingView: self.view
+                        )
+                        self.testFooterView.with(footer: String(localized: "Available tool(s): \(tools)"))
+                    case let .failure(error):
+                        let alert = AlertViewController(
+                            title: String(localized: "Verification Failed"),
+                            message: error.localizedDescription
+                        ) { context in
+                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                context.dispose()
                             }
                         }
+                        self.present(alert, animated: true)
+                        self.testFooterView.with(footer: error.localizedDescription)
                     }
                 }
             }
-        }
-    }
-
-    func testConnection(client: ModelContextServer, completion: @escaping (Result<String, Swift.Error>) -> Void) async {
-        do {
-            let tempClient = MCP.Client(name: Bundle.main.bundleIdentifier!, version: AnchorVersion.version)
-            let transport = try createTransport(for: client)
-            try await tempClient.connect(transport: transport)
-            let (tools, _) = try await tempClient.listTools()
-            await tempClient.disconnect()
-            completion(.success(tools.map(\.name).joined(separator: ", ")))
-        } catch {
-            completion(.failure(error))
         }
     }
 

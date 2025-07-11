@@ -32,7 +32,7 @@ class MCPService: NSObject {
             .ensureMainThread()
             .sink { [weak self] enabledServers in
                 guard let self else { return }
-                Task { await self.updateActiveClients(enabledServers) }
+                Task { await self.syncServerConnections(enabledServers) }
             }
             .store(in: &cancellables)
     }
@@ -40,7 +40,8 @@ class MCPService: NSObject {
     @discardableResult
     public func prepareForConversation() async -> [Swift.Error] {
         var errors: [Swift.Error] = .init()
-        for (name, connection) in connections {
+        let snapshot = connections // for thread safety
+        for (name, connection) in snapshot {
             do {
                 try await connection.connect()
             } catch {
@@ -63,11 +64,35 @@ class MCPService: NSObject {
         guard let server = sdb.modelContextServerWith(serverID) else {
             return
         }
-        updateClientStatus(serverID, status: .disconnected)
-        Task.detached { await self.connectClient(server) }
+        updateServerStatus(serverID, status: .disconnected)
+        Task.detached { await self.connectToServer(server) }
     }
 
-    private func updateActiveClients(_ eligibleServers: [ModelContextServer]) async {
+    func rebuildConnectionAndInspect(
+        serverID: ModelContextServer.ID,
+        completion: @escaping (Result<String, Swift.Error>) -> Void
+    ) {
+        Task.detached {
+            do {
+                guard let server = self.server(with: serverID) else {
+                    throw MCPError.invalidConfiguration
+                }
+                await self.connections[serverID]?.disconnect()
+                self.updateServerStatus(serverID, status: .disconnected)
+                let connection: MCPConnection = try await self.connectOnce(server)
+                self.connections[serverID] = connection
+                if let client = connection.client {
+                    await self.negotiateCapabilities(client: client, config: server)
+                    let tools = try await client.listTools().tools
+                    completion(.success(tools.map(\.name).joined(separator: ", ")))
+                } else {
+                    assertionFailure()
+                }
+            } catch {}
+        }
+    }
+
+    private func syncServerConnections(_ eligibleServers: [ModelContextServer]) async {
         for server in eligibleServers {
             ensureOrReconnect(server.id)
         }
@@ -75,19 +100,18 @@ class MCPService: NSObject {
             if !eligibleServers.map(\.id).contains(key) {
                 Task.detached { await value.disconnect() }
                 connections.removeValue(forKey: key)
-                updateClientStatus(key, status: .disconnected)
+                updateServerStatus(key, status: .disconnected)
             }
         }
     }
 
-    private func connectClient(_ config: ModelContextServer) async {
-        updateClientStatus(config.id, status: .connecting)
-        let connection = connections[config.id] ?? MCPConnection(config: config)
+    private func connectToServer(_ config: ModelContextServer) async {
+        updateServerStatus(config.id, status: .connecting)
+        let connection = try? await connectOnce(config)
         connections[config.id] = connection
-        await attemptConnectionWithRetry(manager: connection, config: config)
     }
 
-    private func updateClientStatus(_ clientId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
+    private func updateServerStatus(_ clientId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
         edit(identifier: clientId) { client in
             client.connectionStatus = status
             if status == .connected {
@@ -96,21 +120,33 @@ class MCPService: NSObject {
         }
     }
 
-    private func attemptConnectionWithRetry(manager: MCPConnection, config: ModelContextServer) async {
+    private func connectOnce(_ config: ModelContextServer) async throws -> MCPConnection {
+        let connection = MCPConnection(config: config)
+        try await connection.connect()
+        if let client = connection.client {
+            await negotiateCapabilities(client: client, config: config)
+        } else {
+            assertionFailure()
+        }
+        updateServerStatus(config.id, status: .connected)
+        return connection
+    }
+
+    private func attemptConnectionWithRetry(config: ModelContextServer) async {
         let maxRetries = 3
         let baseDelay: TimeInterval = 1.0
 
         for attempt in 1 ... maxRetries {
             do {
-                try await manager.connect()
-                if let client = manager.client {
-                    await negotiateCapabilities(client: client, config: config)
-                }
-                updateClientStatus(config.id, status: .connected)
+                print("[+] connecting to server \(config.id) (attempt \(attempt))")
+                let connection = try await connectOnce(config)
+                connections[config.id] = connection
+                print("[+] successfully connected to server \(config.id)")
+                updateServerStatus(config.id, status: .connected)
                 return
             } catch {
                 if attempt == maxRetries {
-                    updateClientStatus(config.id, status: .disconnected)
+                    updateServerStatus(config.id, status: .disconnected)
                 } else {
                     try? await Task.sleep(nanoseconds: UInt64(baseDelay * Double(attempt) * 1_000_000_000))
                 }

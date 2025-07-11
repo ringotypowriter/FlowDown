@@ -30,12 +30,14 @@ class MCPConnection {
             throw MCPError.invalidConfiguration
         }
         let client = MCP.Client(name: Bundle.main.bundleIdentifier!, version: AnchorVersion.version)
+        print("[*] client connecting \(String(describing: client))")
         let transport = try MCPTransportManager.createTransport(from: config)
         try await client.connect(transport: transport)
         self.client = client
     }
 
     func disconnect() async {
+        print("[*] disposing client \(String(describing: client))")
         await client?.disconnect()
         client = nil
     }
