@@ -163,12 +163,6 @@ open class RemoteChatClient: ChatService {
                 let eventSource = EventSource()
                 let dataTask = eventSource.dataTask(for: request)
 
-                continuation.onTermination = { _ in
-                    Task {
-                        print("[-] cancelling dataTask due to task termination")
-                    }
-                }
-
                 for await event in dataTask.events() {
                     switch event {
                     case .open:
