@@ -241,6 +241,7 @@
       }
     },
     "Advance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1609,6 +1610,7 @@
       }
     },
     "Disable Warnings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2128,6 +2130,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "必要"
+          }
+        }
+      }
+    },
+    "Estimated download size: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预计下载的大小：%@"
           }
         }
       }
