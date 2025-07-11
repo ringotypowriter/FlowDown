@@ -69,7 +69,7 @@ class ModelToolsManager {
     func getEnabledToolsWithMCP() async -> [ModelTool] {
         var result = enabledTools
 
-        let mcpTools = await MCPService.shared.getMCPTools()
+        let mcpTools = await MCPService.shared.listServerTools()
         result.append(contentsOf: mcpTools.filter(\.isEnabled))
 
         return result

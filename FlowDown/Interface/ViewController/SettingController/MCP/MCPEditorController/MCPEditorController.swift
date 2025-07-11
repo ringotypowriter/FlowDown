@@ -58,6 +58,7 @@ class MCPEditorController: StackScrollController {
 
     @objc func checkTapped() {
         navigationController?.popViewController(animated: true)
+        MCPService.shared.ensureOrReconnect(serverId)
     }
 
     @objc func exportTapped() {

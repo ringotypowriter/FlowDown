@@ -16,7 +16,7 @@ class MCPService: NSObject {
     // MARK: - Properties
 
     public let servers: CurrentValueSubject<[ModelContextServer], Never> = .init([])
-    private(set) var connections: [String: MCPConnection] = [:]
+    private(set) var connections: [ModelContextServer.ID: MCPConnection] = [:]
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
@@ -56,43 +56,35 @@ class MCPService: NSObject {
         updateFromDatabase()
     }
 
-    // MARK: - Client
+    public func ensureOrReconnect(_ serverID: ModelContextServer.ID) {
+        if let connection = connections[serverID], connection.client != nil {
+            return
+        }
+        guard let server = sdb.modelContextServerWith(serverID) else {
+            return
+        }
+        updateClientStatus(serverID, status: .disconnected)
+        Task.detached { await self.connectClient(server) }
+    }
 
     private func updateActiveClients(_ eligibleServers: [ModelContextServer]) async {
-        let enabledClientNames = Set(eligibleServers.map(\.name))
-
-        for clientName in connections.keys {
-            if !enabledClientNames.contains(clientName) {
-                await disconnectClient(clientName)
-                connections.removeValue(forKey: clientName)
-            }
+        for server in eligibleServers {
+            ensureOrReconnect(server.id)
         }
-
-        for client in eligibleServers {
-            if connections[client.name] == nil {
-                await connectClient(client)
+        for (key, value) in connections {
+            if !eligibleServers.map(\.id).contains(key) {
+                Task.detached { await value.disconnect() }
+                connections.removeValue(forKey: key)
+                updateClientStatus(key, status: .disconnected)
             }
         }
     }
 
     private func connectClient(_ config: ModelContextServer) async {
         updateClientStatus(config.id, status: .connecting)
-
-        let connectionManager = MCPConnection(config: config)
-        connections[config.name] = connectionManager
-
-        await attemptConnectionWithRetry(manager: connectionManager, config: config)
-    }
-
-    private func disconnectClient(_ clientName: String) async {
-        if let manager = connections[clientName] {
-            await manager.disconnect()
-            connections.removeValue(forKey: clientName)
-        }
-
-        if let config = servers.value.first(where: { $0.name == clientName }) {
-            updateClientStatus(config.id, status: .disconnected)
-        }
+        let connection = connections[config.id] ?? MCPConnection(config: config)
+        connections[config.id] = connection
+        await attemptConnectionWithRetry(manager: connection, config: config)
     }
 
     private func updateClientStatus(_ clientId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
@@ -104,10 +96,8 @@ class MCPService: NSObject {
         }
     }
 
-    // MARK: - Connection Retry
-
     private func attemptConnectionWithRetry(manager: MCPConnection, config: ModelContextServer) async {
-        let maxRetries = 5
+        let maxRetries = 3
         let baseDelay: TimeInterval = 1.0
 
         for attempt in 1 ... maxRetries {
@@ -139,14 +129,14 @@ class MCPService: NSObject {
                 discoveredCapabilities.append("tools")
             }
         } catch {
-            // Tools not available
+            print("[-] failed to list tools: \(error.localizedDescription)")
         }
         edit(identifier: config.id) { client in
             client.capabilities = StringArrayCodable(discoveredCapabilities)
         }
     }
 
-    func getMCPTools() async -> [MCPTool] {
+    func listServerTools() async -> [MCPTool] {
         let toolInfos = await getAllTools()
         return toolInfos.map { MCPTool(toolInfo: $0, mcpService: self) }
     }
@@ -175,17 +165,5 @@ class MCPService: NSObject {
     func edit(identifier: ModelContextServer.ID, block: @escaping (inout ModelContextServer) -> Void) {
         defer { updateFromDatabase() }
         sdb.modelContextServerEdit(identifier: identifier, block)
-    }
-
-    // MARK: - Connection
-
-    func isClientConnected(_ clientName: String) -> Bool {
-        connections[clientName]?.isConnected ?? false
-    }
-
-    func reconnectClient(_ clientName: String) async {
-        if let manager = connections[clientName] {
-            try? await manager.connect()
-        }
     }
 }
