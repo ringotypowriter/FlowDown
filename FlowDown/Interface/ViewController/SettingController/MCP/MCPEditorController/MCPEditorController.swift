@@ -265,12 +265,10 @@ class MCPEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        var exportOptionReader: UIView?
         let exportOption = ConfigurableActionView { [weak self] _ in
             guard let self else { return }
             exportTapped()
         }
-        exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: String(localized: "Export Server"))
         exportOption.configure(description: String(localized: "Export this MCP server as a .fdmcp file for sharing or backup."))
