@@ -26,13 +26,16 @@ extension MCPService {
     func getAllTools() async -> [MCPToolInfo] {
         var allTools: [MCPToolInfo] = []
 
-        for (clientName, connection) in connections.compactMapValues(\.client) {
+        for (serverID, connection) in connections.compactMapValues(\.client) {
             do {
+                guard let server = server(with: serverID), server.isEnabled else {
+                    continue
+                }
                 let tools = try await connection.listTools().tools
-                let toolInfos = tools.map { MCPToolInfo(tool: $0, clientName: clientName) }
+                let toolInfos = tools.map { MCPToolInfo(tool: $0, serverID: serverID) }
                 allTools.append(contentsOf: toolInfos)
             } catch {
-                print("[-] Failed to acquire tools from \(clientName): \(error.localizedDescription)")
+                print("[-] failed to acquire tools from \(serverID): \(error.localizedDescription)")
             }
         }
 

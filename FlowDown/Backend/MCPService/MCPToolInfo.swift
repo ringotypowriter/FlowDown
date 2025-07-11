@@ -7,10 +7,11 @@
 
 import Foundation
 import MCP
+import Storage
 
 struct MCPToolInfo {
     let tool: Tool
-    let clientName: String
+    let serverID: ModelContextServer.ID
 
     var name: String { tool.name }
     var description: String? { tool.description }

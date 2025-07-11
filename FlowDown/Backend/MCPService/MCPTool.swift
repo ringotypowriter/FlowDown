@@ -90,7 +90,7 @@ class MCPTool: ModelTool {
             let result = try await mcpService.callTool(
                 name: toolInfo.name,
                 arguments: arguments,
-                from: toolInfo.clientName
+                from: toolInfo.serverID
             )
 
             return formatToolResult(result.content, isError: result.isError)
@@ -139,7 +139,7 @@ class MCPTool: ModelTool {
         return try await withCheckedThrowingContinuation { continuation in
             let alert = AlertViewController(
                 title: String(localized: "Execute MCP Tool"),
-                message: String(localized: "The model wants to execute '\(toolInfo.name)' from \(toolInfo.clientName). This tool can access external resources.\n\nDescription: \(toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")")
+                message: String(localized: "The model wants to execute '\(toolInfo.name)' from \(toolInfo.serverID). This tool can access external resources.\n\nDescription: \(toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")")
             ) { context in
                 context.addAction(title: String(localized: "Cancel")) {
                     context.dispose {

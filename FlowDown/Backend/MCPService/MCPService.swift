@@ -96,9 +96,10 @@ class MCPService: NSObject {
                         throw MCPError.invalidConfiguration
                     }
                     self.connections[serverID]?.disconnect()
+                    self.connections.removeValue(forKey: serverID)
                     self.updateServerStatus(serverID, status: .disconnected)
                     let connection: MCPConnection = try await self.connectOnce(server)
-                    self.connections[serverID] = connection
+                    if server.isEnabled { self.connections[serverID] = connection }
                     guard let client = connection.client else {
                         assertionFailure()
                         throw MCPError.connectionFailed
@@ -156,8 +157,8 @@ class MCPService: NSObject {
         return connection
     }
 
-    private func updateServerStatus(_ clientId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
-        edit(identifier: clientId) { client in
+    private func updateServerStatus(_ serverId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
+        edit(identifier: serverId) { client in
             client.connectionStatus = status
             if status == .connected {
                 client.lastConnected = Date()
