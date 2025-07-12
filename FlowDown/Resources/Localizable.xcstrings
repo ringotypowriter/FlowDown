@@ -2463,6 +2463,7 @@
       }
     },
     "Failed to fetch model profile" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2613,6 +2614,7 @@
       }
     },
     "Fetch" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2633,6 +2635,7 @@
       }
     },
     "Fetching Model" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
