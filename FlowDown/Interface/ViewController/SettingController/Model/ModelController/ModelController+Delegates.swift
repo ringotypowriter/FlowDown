@@ -89,6 +89,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
         })
         #if targetEnvironment(macCatalyst)
             let cell = tableView.cellForRow(at: indexPath)
+            let point = tableView.convert(point, to: cell)
             cell?.present(menu: .init(children: actions), anchorPoint: point)
             return nil
         #else
