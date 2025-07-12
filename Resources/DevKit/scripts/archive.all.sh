@@ -22,7 +22,7 @@ fi
 
 ./Resources/DevKit/scripts/bump.version.sh
 git add -A
-git commit -m "Archive Commit $(date +%Y-%m-%d %H:%M:%S)"
+git commit -m "Archive Commit $(date)"
 
 ./Resources/DevKit/scripts/scan.license.sh
 
