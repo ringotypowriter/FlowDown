@@ -219,13 +219,12 @@ extension ConversationSession {
         let servers = MCPService.shared.servers.value
         let shouldPrepareMCP = servers.filter(\.isEnabled).count > 0
         if shouldPrepareMCP {
-            await currentMessageListView.loading()
+            await currentMessageListView.loading(with: String(localized: "Preparing Model Context..."))
             await MCPService.shared.prepareForConversation()
         }
 
         var tools: [ModelTool] = []
         if modelWillExecuteTools {
-            if shouldPrepareMCP { await currentMessageListView.loading() }
             await tools.append(contentsOf: ModelToolsManager.shared.getEnabledToolsIncludeMCP())
             if !modelWillGoSearchWeb {
                 // remove this tool if not enabled

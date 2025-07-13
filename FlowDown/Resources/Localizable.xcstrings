@@ -4572,6 +4572,16 @@
         }
       }
     },
+    "Preparing Model Context..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在准备模型上下文…"
+          }
+        }
+      }
+    },
     "Preview" : {
       "localizations" : {
         "zh-Hans" : {

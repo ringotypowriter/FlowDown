@@ -27,6 +27,8 @@ extension ModelContextServer {
             [String: String].self,
             from: header.data(using: .utf8) ?? .init()
         )
+        config.timeoutIntervalForRequest = .init(timeout)
+        config.timeoutIntervalForResource = .init(timeout)
         config.httpAdditionalHeaders = headers
 
         return HTTPClientTransport(endpoint: url, configuration: config)
