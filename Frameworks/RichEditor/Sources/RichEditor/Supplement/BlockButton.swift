@@ -15,7 +15,6 @@ class BlockButton: UIView {
 
     var actionBlock: () -> Void = {}
     var contextMenuChecker: (() -> Bool)?
-    private var touchStartTime: CFTimeInterval = 0
 
     let font = UIFont.systemFont(ofSize: 14, weight: .semibold)
     let spacing: CGFloat = 8
@@ -74,11 +73,6 @@ class BlockButton: UIView {
             width: bounds.width - iconView.frame.maxX - spacing - inset,
             height: bounds.height - inset * 2
         )
-    }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        touchStartTime = CACurrentMediaTime()
     }
 
     @objc private func onTapped() {

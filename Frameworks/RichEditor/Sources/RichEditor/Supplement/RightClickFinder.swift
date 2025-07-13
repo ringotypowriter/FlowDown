@@ -10,7 +10,6 @@ import UIKit
 public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
     private lazy var interaction = UIContextMenuInteraction(delegate: self)
     private var action: (() -> Void)? = nil
-    private weak var targetView: UIView?
     private var contextMenuActivationTime: CFTimeInterval = 0
 
     override public init() {
@@ -48,7 +47,6 @@ public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
     public func install(on view: UIView, action: @escaping () -> Void) {
         assert(self.action == nil, "RightClickFinder can only be installed once")
         self.action = action
-        targetView = view
         view.isUserInteractionEnabled = true
         view.addInteraction(interaction)
     }
