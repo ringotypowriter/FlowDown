@@ -147,10 +147,18 @@ extension ConversationSession {
                     ))
                 }
                 await currentMessageListView.loading()
-                requestMessages.append(.tool(
-                    content: .text(webAttachments.map(\.textRepresentation).joined(separator: "\n")),
-                    toolCallID: request.id.uuidString
-                ))
+
+                if webAttachments.isEmpty {
+                    requestMessages.append(.tool(
+                        content: .text(String(localized: "Web search returned no results.")),
+                        toolCallID: request.id.uuidString
+                    ))
+                } else {
+                    requestMessages.append(.tool(
+                        content: .text(webAttachments.map(\.textRepresentation).joined(separator: "\n")),
+                        toolCallID: request.id.uuidString
+                    ))
+                }
             } else {
                 // 标准工具
                 guard let result = ModelToolsManager.shared.perform(
