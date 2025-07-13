@@ -219,7 +219,7 @@ extension ConversationSession {
         let servers = MCPService.shared.servers.value
         let shouldPrepareMCP = servers.filter(\.isEnabled).count > 0
         if shouldPrepareMCP {
-            await currentMessageListView.loading(with: String(localized: "Preparing Model Context..."))
+            await currentMessageListView.loading(with: String(localized: "Preparing Model Context"))
             await MCPService.shared.prepareForConversation()
         }
 
