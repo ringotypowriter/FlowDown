@@ -11,7 +11,7 @@ public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
     private lazy var interaction = UIContextMenuInteraction(delegate: self)
     private var action: (() -> Void)? = nil
     private weak var targetView: UIView?
-    private var contextMenuWillShow = false
+    private var contextMenuActivationTime: CFTimeInterval = 0
 
     override public init() {
         super.init()
@@ -21,7 +21,7 @@ public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
         _: UIContextMenuInteraction,
         configurationForMenuAtLocation _: CGPoint
     ) -> UIContextMenuConfiguration? {
-        contextMenuWillShow = true
+        contextMenuActivationTime = CACurrentMediaTime()
         action?()
         return nil
     }
@@ -30,22 +30,19 @@ public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
         _: UIContextMenuInteraction,
         willDisplayMenuFor _: UIContextMenuConfiguration,
         animator _: UIContextMenuInteractionAnimating?
-    ) {
-        contextMenuWillShow = true
-    }
+    )
 
     public func contextMenuInteraction(
         _: UIContextMenuInteraction,
         willEndFor _: UIContextMenuConfiguration,
         animator _: UIContextMenuInteractionAnimating?
     ) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            self?.contextMenuWillShow = false
-        }
+        contextMenuActivationTime = 0
     }
 
     public var isContextMenuActive: Bool {
-        contextMenuWillShow
+        let timeSinceActivation = CACurrentMediaTime() - contextMenuActivationTime
+        return contextMenuActivationTime > 0 && timeSinceActivation < 0.5
     }
 
     public func install(on view: UIView, action: @escaping () -> Void) {

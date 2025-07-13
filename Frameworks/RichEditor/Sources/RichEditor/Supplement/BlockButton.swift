@@ -82,10 +82,6 @@ class BlockButton: UIView {
     }
 
     @objc private func onTapped() {
-        let touchDuration = CACurrentMediaTime() - touchStartTime
-        if touchDuration > 0.5 {
-            return
-        }
         if let checker = contextMenuChecker, checker() {
             return
         }
