@@ -131,7 +131,6 @@ extension ModelContextServer: Hashable {}
 public extension ModelContextServer {
     enum ServerType: String, Codable, ColumnCodable {
         case http
-        case sse
 
         public init?(with value: WCDBSwift.Value) {
             let rawValue = value.stringValue

@@ -2162,16 +2162,6 @@
         }
       }
     },
-    "Execute" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "执行"
-          }
-        }
-      }
-    },
     "Execute MCP Tool" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2402,16 +2392,6 @@
         }
       }
     },
-    "Failed to display approval dialog" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法显示认证对话框。"
-          }
-        }
-      }
-    },
     "Failed to display confirmation dialog." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2458,17 +2438,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法从模型的响应提取所需信息。"
-          }
-        }
-      }
-    },
-    "Failed to fetch model profile" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法获取模型数据"
           }
         }
       }
@@ -2613,34 +2582,12 @@
         }
       }
     },
-    "Fetch" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "获取"
-          }
-        }
-      }
-    },
     "Fetch from Server" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "从服务器获取"
-          }
-        }
-      }
-    },
-    "Fetching Model" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "获取模型"
           }
         }
       }
@@ -5237,12 +5184,32 @@
         }
       }
     },
+    "Skip the confirmation dialog when executing tools." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过工具调用的确认对话框直接执行工具调用。"
+          }
+        }
+      }
+    },
     "Skip the visual assessment process when the conversation model natively supports visual input. Enabling this option can improve the efficiency when using visual models, but if you switch to a model that does not support visual input after using it, the image information will be lost." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "当对话模型支持视觉输入时，跳过辨认图片的过程。开启这个选项可以提高视觉模型的效率，但在使用后若切换到不支持视觉输入的模型，则会丢失图片信息。"
+          }
+        }
+      }
+    },
+    "Skip Tool Confirmation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过确认"
           }
         }
       }
@@ -5295,16 +5262,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "语音识别"
-          }
-        }
-      }
-    },
-    "SSE" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "服务器事件（SSE）"
           }
         }
       }
@@ -6099,16 +6056,6 @@
         }
       }
     },
-    "Tool execution cancelled by user" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工具调用被取消"
-          }
-        }
-      }
-    },
     "Tool execution failed: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6872,6 +6819,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我们需要本地网络访问权限来连接到你所请求的服务提供商。"
+          }
+        }
+      }
+    },
+    "We strongly recommend that you do not enable this feature unless you are sure what you are doing. It may cause unexpected behavior and even data loss." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们强烈建议您不要启用此功能，除非您明确知道自己在做什么。这可能导致意外行为，甚至造成数据丢失。"
           }
         }
       }

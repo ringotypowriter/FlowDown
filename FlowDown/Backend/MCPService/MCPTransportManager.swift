@@ -21,6 +21,14 @@ extension ModelContextServer {
             throw MCPError.invalidConfiguration
         }
 
-        return HTTPClientTransport(endpoint: url)
+        let config = URLSessionConfiguration.default
+
+        let headers = try? JSONDecoder().decode(
+            [String: String].self,
+            from: header.data(using: .utf8) ?? .init()
+        )
+        config.httpAdditionalHeaders = headers
+
+        return HTTPClientTransport(endpoint: url, configuration: config)
     }
 }

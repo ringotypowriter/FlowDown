@@ -63,12 +63,13 @@ extension SettingController.SettingContent.MCPController {
             let icon = switch client.type {
             case .http:
                 UIImage(systemName: "network") ?? UIImage()
-            case .sse:
-                UIImage(systemName: "antenna.radiowaves.left.and.right") ?? UIImage()
             }
 
             configurableView.configure(icon: icon)
-            if let url = URL(string: client.endpoint), let host = url.host {
+
+            if !client.name.isEmpty {
+                configurableView.configure(title: client.name)
+            } else if let url = URL(string: client.endpoint), let host = url.host {
                 configurableView.configure(title: "@\(host)")
             } else {
                 configurableView.configure(title: "Unknown Server")

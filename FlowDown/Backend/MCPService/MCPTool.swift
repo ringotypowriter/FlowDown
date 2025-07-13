@@ -15,8 +15,8 @@ import Storage
 class MCPTool: ModelTool {
     // MARK: - Properties
 
-    let toolInfo: MCPToolInfo
-    let mcpService: MCPService
+    public let toolInfo: MCPToolInfo
+    public let mcpService: MCPService
 
     // MARK: - Initialization
 
@@ -68,14 +68,7 @@ class MCPTool: ModelTool {
 
     // MARK: - Tool Execution
 
-    override func execute(with input: String, anchorTo view: UIView) async throws -> String {
-        let approved = try await requestUserApprovalForToolExecution(view: view)
-        guard approved else {
-            throw NSError(domain: "MCPTool", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: String(localized: "Tool execution cancelled by user"),
-            ])
-        }
-
+    override func execute(with input: String, anchorTo _: UIView) async throws -> String {
         do {
             var arguments: [String: Value]?
             if !input.isEmpty {
@@ -126,42 +119,6 @@ class MCPTool: ModelTool {
         }
 
         return result.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    @MainActor
-    private func requestUserApprovalForToolExecution(view: UIView) async throws -> Bool {
-        guard let viewController = view.parentViewController else {
-            throw NSError(domain: "MCPTool", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: String(localized: "Failed to display approval dialog"),
-            ])
-        }
-
-        return try await withCheckedThrowingContinuation { continuation in
-            let alert = AlertViewController(
-                title: String(localized: "Execute MCP Tool"),
-                message: String(localized: "The model wants to execute '\(toolInfo.name)' from \(toolInfo.serverName). This tool can access external resources.\n\nDescription: \(toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")")
-            ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
-                    context.dispose {
-                        continuation.resume(returning: false)
-                    }
-                }
-                context.addAction(title: String(localized: "Execute"), attribute: .dangerous) {
-                    context.dispose {
-                        continuation.resume(returning: true)
-                    }
-                }
-            }
-
-            viewController.present(alert, animated: true) {
-                guard alert.isVisible else {
-                    continuation.resume(throwing: NSError(domain: "MCPTool", code: -1, userInfo: [
-                        NSLocalizedDescriptionKey: String(localized: "Failed to display approval dialog"),
-                    ]))
-                    return
-                }
-            }
-        }
     }
 }
 

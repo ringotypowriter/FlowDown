@@ -7,12 +7,30 @@
 
 import AlertController
 import ChatClientKit
+import ConfigurableKit
 import Foundation
+import UIKit
 
 class ModelToolsManager {
     static let shared = ModelToolsManager()
 
     private let tools: [ModelTool]
+
+    static let skipConfirmationKey = "ModelToolsManager.skipConfirmation"
+    static var skipConfirmationValue: Bool {
+        get { UserDefaults.standard.bool(forKey: ModelToolsManager.skipConfirmationKey) }
+        set { UserDefaults.standard.set(newValue, forKey: ModelToolsManager.skipConfirmationKey) }
+    }
+
+    static var skipConfirmation: ConfigurableToggleActionView {
+        .init().with {
+            $0.actionBlock = { skipConfirmationValue = $0 }
+            $0.configure(icon: UIImage(systemName: "hammer"))
+            $0.configure(title: String(localized: "Skip Tool Confirmation"))
+            $0.configure(description: String(localized: "Skip the confirmation dialog when executing tools."))
+            $0.boolValue = skipConfirmationValue
+        }
+    }
 
     private init() {
         #if targetEnvironment(macCatalyst)
@@ -99,50 +117,59 @@ class ModelToolsManager {
     func perform(withTool tool: ModelTool, parms: String, anchorTo view: UIView) -> String? {
         assert(!Thread.isMainThread)
 
-        if tool is MCPTool {
-            var ans = String(localized: "Execute tool call timed out")
-            let sem = DispatchSemaphore(value: 0)
-
-            Task {
-                do {
-                    ans = try await tool.execute(with: parms, anchorTo: view)
-                } catch {
-                    ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
-                }
-                sem.signal()
-            }
-            sem.wait()
-            return ans
-        }
-
         var ans = String(localized: "Execute tool call timed out")
         let sem = DispatchSemaphore(value: 0)
-        DispatchQueue.main.async {
-            let alert = AlertViewController(
-                title: String(localized: "Tool Call"),
-                message: String(localized: "Your model is calling a tool: \(tool.interfaceName)"),
-            ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
-                    context.dispose {
-                        sem.signal()
-                    }
-                }
-                context.addAction(title: String(localized: "Use Tool"), attribute: .dangerous) {
-                    context.dispose {
-                        Task {
-                            do {
-                                ans = try await tool.execute(with: parms, anchorTo: view)
-                            } catch {
-                                ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
-                            }
+
+        let execution = {
+            do {
+                ans = try await tool.execute(with: parms, anchorTo: view)
+            } catch {
+                ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
+            }
+            sem.signal()
+        }
+
+        if Self.skipConfirmationValue {
+            Task.detached { await execution() }
+        } else {
+            DispatchQueue.main.async {
+                let setupContext: (ActionContext) -> Void = { context in
+                    context.addAction(title: String(localized: "Cancel")) {
+                        context.dispose {
                             sem.signal()
                         }
                     }
+                    context.addAction(title: String(localized: "Use Tool"), attribute: .dangerous) {
+                        context.dispose {
+                            Task {
+                                do {
+                                    ans = try await tool.execute(with: parms, anchorTo: view)
+                                } catch {
+                                    ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
+                                }
+                                sem.signal()
+                            }
+                        }
+                    }
                 }
+
+                let alert = if let tool = tool as? MCPTool {
+                    AlertViewController(
+                        title: String(localized: "Execute MCP Tool"),
+                        message: String(localized: "The model wants to execute '\(tool.toolInfo.name)' from \(tool.toolInfo.serverName). This tool can access external resources.\n\nDescription: \(tool.toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")"),
+                        setupActions: setupContext
+                    )
+                } else {
+                    AlertViewController(
+                        title: String(localized: "Tool Call"),
+                        message: String(localized: "Your model is calling a tool: \(tool.interfaceName)"),
+                        setupActions: setupContext
+                    )
+                }
+                view.parentViewController?.present(alert, animated: true)
             }
-            view.parentViewController?.present(alert, animated: true)
+            sem.wait()
         }
-        sem.wait()
 
         return ans
     }

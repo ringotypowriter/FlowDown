@@ -124,6 +124,19 @@ class MCPEditorController: StackScrollController {
 
         guard let server = MCPService.shared.server(with: serverId) else { return }
 
+        if !server.comment.isEmpty {
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionHeaderView()
+                    .with(header: String(localized: "Comment"))
+            ) { $0.bottom /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionFooterView()
+                    .with(footer: server.comment)
+            )
+        }
+
         // MARK: - Enabled
 
         stackView.addArrangedSubview(SeparatorView())
@@ -167,16 +180,6 @@ class MCPEditorController: StackScrollController {
                     }
                     self.refreshUI()
                     view.configure(value: String(localized: "Streamble HTTP"))
-                },
-                UIAction(
-                    title: String(localized: "SSE"),
-                    image: UIImage(systemName: "antenna.radiowaves.left.and.right")
-                ) { _ in
-                    MCPService.shared.edit(identifier: self.serverId) { client in
-                        client.type = .sse
-                    }
-                    self.refreshUI()
-                    view.configure(value: String(localized: "SSE"))
                 },
             ]
             view.present(
@@ -374,16 +377,6 @@ extension MCPEditorController {
                     }
                 }
             }
-        }
-    }
-
-    func createTransport(for config: ModelContextServer) throws -> any Transport {
-        guard let url = URL(string: config.endpoint) else {
-            throw MCPError.invalidConfiguration
-        }
-        switch config.type {
-        case .http, .sse:
-            return HTTPClientTransport(endpoint: url)
         }
     }
 }
