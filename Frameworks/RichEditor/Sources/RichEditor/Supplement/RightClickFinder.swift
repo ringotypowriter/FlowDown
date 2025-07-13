@@ -30,7 +30,7 @@ public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
         _: UIContextMenuInteraction,
         willDisplayMenuFor _: UIContextMenuConfiguration,
         animator _: UIContextMenuInteractionAnimating?
-    )
+    ) {}
 
     public func contextMenuInteraction(
         _: UIContextMenuInteraction,
