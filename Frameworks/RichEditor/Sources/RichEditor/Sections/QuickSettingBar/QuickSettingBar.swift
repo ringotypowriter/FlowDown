@@ -87,6 +87,10 @@ public class QuickSettingBar: EditorSectionView {
             self?.delegate?.quickSettingBarShowAlternativeToolsMenu()
         }
 
+        toolsToggle.contextMenuChecker = { [weak toolsToggleRightClickFinder] in
+            return toolsToggleRightClickFinder?.isContextMenuActive ?? false
+        }
+
         heightPublisher.send(height)
 
         updateToolCallAvailability(false)
