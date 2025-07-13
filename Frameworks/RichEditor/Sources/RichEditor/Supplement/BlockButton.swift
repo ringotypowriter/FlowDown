@@ -11,13 +11,20 @@ class BlockButton: UIView {
     let borderView = UIView()
     let iconView = UIImageView()
     let titleLabel = UILabel()
+    private let tapGesture = UITapGestureRecognizer()
 
     var actionBlock: () -> Void = {}
+    var contextMenuChecker: (() -> Bool)?
+    private var touchStartTime: CFTimeInterval = 0
 
     let font = UIFont.systemFont(ofSize: 14, weight: .semibold)
     let spacing: CGFloat = 8
     let inset: CGFloat = 8
     let iconSize: CGFloat = 16
+
+    var tapGestureRecognizer: UITapGestureRecognizer {
+        tapGesture
+    }
 
     init(text: String, icon: String) {
         super.init(frame: .zero)
@@ -30,8 +37,8 @@ class BlockButton: UIView {
         titleLabel.text = text
         applyDefaultAppearance()
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(onTapped))
-        addGestureRecognizer(tap)
+        tapGesture.addTarget(self, action: #selector(onTapped))
+        addGestureRecognizer(tapGesture)
         isUserInteractionEnabled = true
     }
 
@@ -69,7 +76,19 @@ class BlockButton: UIView {
         )
     }
 
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        touchStartTime = CACurrentMediaTime()
+    }
+
     @objc private func onTapped() {
+        let touchDuration = CACurrentMediaTime() - touchStartTime
+        if touchDuration > 0.5 {
+            return
+        }
+        if let checker = contextMenuChecker, checker() {
+            return
+        }
         puddingAnimate()
         actionBlock()
     }
