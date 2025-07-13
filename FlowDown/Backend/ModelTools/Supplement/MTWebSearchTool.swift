@@ -105,7 +105,7 @@ class MTWebSearchTool: ModelTool {
             throw NSError(
                 domain: "MTWebSearchTool",
                 code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "No web search results found"]
+                userInfo: [NSLocalizedDescriptionKey: String(localized: "No web search results found")]
             )
         }
 

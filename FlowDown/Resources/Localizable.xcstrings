@@ -4069,6 +4069,16 @@
         }
       }
     },
+    "No web search results found" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网页搜索没有找到有效内容"
+          }
+        }
+      }
+    },
     "No web search results." : {
       "localizations" : {
         "zh-Hans" : {
