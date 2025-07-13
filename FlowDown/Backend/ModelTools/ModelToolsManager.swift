@@ -131,6 +131,7 @@ class ModelToolsManager {
 
         if Self.skipConfirmationValue {
             Task.detached { await execution() }
+            sem.wait()
         } else {
             DispatchQueue.main.async {
                 let setupContext: (ActionContext) -> Void = { context in
@@ -141,14 +142,7 @@ class ModelToolsManager {
                     }
                     context.addAction(title: String(localized: "Use Tool"), attribute: .dangerous) {
                         context.dispose {
-                            Task {
-                                do {
-                                    ans = try await tool.execute(with: parms, anchorTo: view)
-                                } catch {
-                                    ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
-                                }
-                                sem.signal()
-                            }
+                            Task.detached { await execution() }
                         }
                     }
                 }

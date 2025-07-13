@@ -6427,16 +6427,6 @@
         }
       }
     },
-    "Updating MCP Tools" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在更新 MCP 工具"
-          }
-        }
-      }
-    },
     "URL Access" : {
       "localizations" : {
         "zh-Hans" : {
