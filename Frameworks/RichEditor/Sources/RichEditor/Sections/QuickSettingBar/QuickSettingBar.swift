@@ -88,7 +88,7 @@ public class QuickSettingBar: EditorSectionView {
         }
 
         toolsToggle.contextMenuChecker = { [weak toolsToggleRightClickFinder] in
-            return toolsToggleRightClickFinder?.isContextMenuActive ?? false
+            toolsToggleRightClickFinder?.isContextMenuActive ?? false
         }
 
         heightPublisher.send(height)
