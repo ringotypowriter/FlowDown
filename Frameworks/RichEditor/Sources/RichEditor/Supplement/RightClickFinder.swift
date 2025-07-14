@@ -27,12 +27,6 @@ public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
 
     public func contextMenuInteraction(
         _: UIContextMenuInteraction,
-        willDisplayMenuFor _: UIContextMenuConfiguration,
-        animator _: UIContextMenuInteractionAnimating?
-    ) {}
-
-    public func contextMenuInteraction(
-        _: UIContextMenuInteraction,
         willEndFor _: UIContextMenuConfiguration,
         animator _: UIContextMenuInteractionAnimating?
     ) {
