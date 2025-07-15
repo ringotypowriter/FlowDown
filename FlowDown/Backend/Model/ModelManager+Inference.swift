@@ -332,8 +332,17 @@ extension ModelManager {
             )
         )
         let message = response.choices.first?.message
+        let reasoning = message?.reasoning ?? ""
+        let reasoningContent = message?.reasoningContent ?? ""
+
+        let finalReasoning = if reasoning == reasoningContent, !reasoning.isEmpty {
+            reasoning
+        } else {
+            [reasoning, reasoningContent].filter { !$0.isEmpty }.joined()
+        }
+
         return .init(
-            reasoningContent: message?.reasoningContent ?? .init(),
+            reasoningContent: finalReasoning,
             content: message?.content ?? .init(),
             // TODO: IMPL
             tool: []
@@ -362,10 +371,14 @@ extension ModelManager {
             switch streamObject {
             case let .chatCompletionChunk(chunk):
                 let delta = chunk.choices.first?.delta
-                msg.reasoningContent = [
-                    delta?.reasoning ?? .init(),
-                    delta?.reasoningContent ?? .init(),
-                ].joined()
+                let reasoning = delta?.reasoning ?? ""
+                let reasoningContent = delta?.reasoningContent ?? ""
+
+                msg.reasoningContent = if reasoning == reasoningContent, !reasoning.isEmpty {
+                    reasoning
+                } else {
+                    [reasoning, reasoningContent].filter { !$0.isEmpty }.joined()
+                }
                 msg.content = delta?.content ?? .init()
             case let .tool(call):
                 msg.toolCallRequests = [call]
