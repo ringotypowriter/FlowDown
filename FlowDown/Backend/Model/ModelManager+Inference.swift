@@ -332,8 +332,8 @@ extension ModelManager {
             )
         )
         let message = response.choices.first?.message
-        let reasoning = message?.reasoning ?? ""
-        let reasoningContent = message?.reasoningContent ?? ""
+        let reasoning = message?.reasoning ?? .init()
+        let reasoningContent = message?.reasoningContent ?? .init()
 
         let finalReasoning = if reasoning == reasoningContent, !reasoning.isEmpty {
             reasoning
@@ -371,8 +371,8 @@ extension ModelManager {
             switch streamObject {
             case let .chatCompletionChunk(chunk):
                 let delta = chunk.choices.first?.delta
-                let reasoning = delta?.reasoning ?? ""
-                let reasoningContent = delta?.reasoningContent ?? ""
+                let reasoning = delta?.reasoning ?? .init()
+                let reasoningContent = delta?.reasoningContent ?? .init()
 
                 msg.reasoningContent = if reasoning == reasoningContent, !reasoning.isEmpty {
                     reasoning
