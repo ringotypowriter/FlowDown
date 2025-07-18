@@ -13,7 +13,7 @@
 
 [![App Store Icon](../../../Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/us/app/flowdown-open-fast-ai/id6740553198)
 
-或通过 `brew install --cask flowdown` 安装（由第三方维护）
+或通过 `brew update && brew install --cask flowdown` 安装（由第三方维护）
 
 或 [TestFlight](https://testflight.apple.com/join/StpMeybv) 参与测试版体验。测试版随时可能过期，请勿用于生产环境。
 
