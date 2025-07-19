@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "eb16cfd29d8a4ccf8b8dc0b4612712e96e3553cb",
-        "version" : "3.2.1"
+        "revision" : "44522ab4bdeb24074f05b5611b197bd92a979e3e",
+        "version" : "3.2.2"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ml-explore/mlx-swift",
       "state" : {
-        "revision" : "b79c74ce773440b86a81ef925ea78dd5023a16c0",
-        "version" : "0.25.5"
+        "revision" : "96c0f69cf15f38abd6248bb71fca908171dab1d8",
+        "version" : "0.25.6"
       }
     },
     {
@@ -159,7 +159,7 @@
       "location" : "https://github.com/ml-explore/mlx-swift-examples/",
       "state" : {
         "branch" : "main",
-        "revision" : "42b0d21a607b97c3b99d1e20626b7d9b14827b81"
+        "revision" : "073e6577fbc886ec4e94a0e3adb2cc34e5ddebf5"
       }
     },
     {
