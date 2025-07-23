@@ -28,7 +28,7 @@ extension CloudModel {
 
             case .openai_fast:
                 CloudModel(
-                    id: "95b2ed31-d84d-4ce5-86a4-d362687bb18a",
+                    id: "5de6f19d-62ed-43bd-b17a-61b9a4b5db4b",
                     model_identifier: "openai-fast",
                     endpoint: "https://text.pollinations.ai/openai/v1/chat/completions",
                     context: .medium_64k,
