@@ -19,11 +19,11 @@ struct Persist<Value: Codable> {
     private let subject: CurrentValueSubject<Value, Never>
     private let cancellables: Set<AnyCancellable>
 
-    public var projectedValue: AnyPublisher<Value, Never> {
+    var projectedValue: AnyPublisher<Value, Never> {
         subject.eraseToAnyPublisher()
     }
 
-    public init(key: String, defaultValue: Value, engine: PersistProvider) {
+    init(key: String, defaultValue: Value, engine: PersistProvider) {
         self.key = key
         self.engine = engine
         self.defaultValue = defaultValue
@@ -37,17 +37,17 @@ struct Persist<Value: Codable> {
         self.cancellables = cancellables
     }
 
-    public var wrappedValue: Value {
+    var wrappedValue: Value {
         get { subject.value }
         set { subject.send(newValue) }
     }
 
-    public func invalidateCaches() {
+    func invalidateCaches() {
         let value = engine.obtainValue(for: key) ?? defaultValue
         subject.send(value)
     }
 
-    public func saveNow() {
+    func saveNow() {
         engine.writeValue(subject.value, forKey: key)
     }
 }

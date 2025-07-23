@@ -10,11 +10,11 @@ import UIKit
 
 extension UIConversation.MessageListView {
     class BaseCell: UITableViewCell, UIConversation.MessageListView.TableLayoutEngine.LayoutableCell {
-        var associatedObject: Element? = nil
+        var associatedObject: Element?
         var cancellable: Set<AnyCancellable> = []
         let containerView: UIView = .init()
 
-        var layoutEngine: UIConversation.MessageListView.TableLayoutEngine? = nil
+        var layoutEngine: UIConversation.MessageListView.TableLayoutEngine?
 
         func layoutCache() -> UIConversation.MessageListView.TableLayoutEngine.LayoutCache {
             guard let associatedObject, let engine = layoutEngine else {

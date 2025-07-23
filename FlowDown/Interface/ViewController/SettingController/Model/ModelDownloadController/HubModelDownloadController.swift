@@ -14,7 +14,7 @@ import UIKit
 class HubModelDownloadController: UIViewController {
     let activityIndicator = UIActivityIndicatorView(style: .medium)
 
-    var searchTask: URLSessionDataTask? = nil
+    var searchTask: URLSessionDataTask?
     var searchSession = UUID()
 
     var searchResults: [RemoteModel] = []

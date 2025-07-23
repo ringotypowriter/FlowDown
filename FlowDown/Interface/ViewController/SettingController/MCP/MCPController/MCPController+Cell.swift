@@ -11,7 +11,7 @@ import UIKit
 
 extension SettingController.SettingContent.MCPController {
     class MCPServerCell: UITableViewCell, UIContextMenuInteractionDelegate {
-        private var timer: Timer? = nil
+        private var timer: Timer?
 
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)

@@ -70,7 +70,7 @@ extension ModelAvailabilityEditorController {
             fatalError()
         }
 
-        private var identifier: CellViewModel.ID? = nil
+        private var identifier: CellViewModel.ID?
         override func prepareForReuse() {
             super.prepareForReuse()
             identifier = nil

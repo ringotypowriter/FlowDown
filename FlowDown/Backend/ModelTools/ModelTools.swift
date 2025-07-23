@@ -43,8 +43,7 @@ class ModelTool: NSObject {
         ConfigurableKit.value(forKey: Self.controlObject.key) ?? true
     }
 
-    nonisolated
-    func execute(with input: String, anchorTo _: UIView) async throws -> String {
+    nonisolated func execute(with input: String, anchorTo _: UIView) async throws -> String {
         _ = input
         throw NSError()
     }

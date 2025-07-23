@@ -34,7 +34,7 @@ class ConversationListView: UIView {
         didSet { delegate?.conversationListView(didSelect: selection.value) }
     }
 
-    var keepMyFocusTimer: Timer? = nil
+    var keepMyFocusTimer: Timer?
 
     init() {
         tableView = GroundedTableView(frame: .zero, style: .plain)

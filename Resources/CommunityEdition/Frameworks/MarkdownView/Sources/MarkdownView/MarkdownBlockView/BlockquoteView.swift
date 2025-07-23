@@ -65,7 +65,7 @@ extension BlockquoteView {
 
         required init() {}
 
-        var block: BlockNode? = nil
+        var block: BlockNode?
         func load(block: BlockNode) {
             guard self.block != block else { return }
             dirty = true

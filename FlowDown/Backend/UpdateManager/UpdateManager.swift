@@ -154,7 +154,8 @@ extension DistributionChannel {
                   let downloadPageUrl = URL(string: htmlUrl)
             else {
                 throw NSError(domain: "UpdateManagerError", code: 1, userInfo: [
-                    NSLocalizedDescriptionKey: String(localized: "Failed to parse release information.")])
+                    NSLocalizedDescriptionKey: String(localized: "Failed to parse release information."),
+                ])
             }
             print("[+] latest release version: \(tagName), url: \(htmlUrl)")
             return [.init(tag: tagName, downloadURL: downloadPageUrl)]

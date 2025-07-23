@@ -36,7 +36,7 @@ extension UIConversation {
         var contentHasUpdateToResolve: Bool = false
         var isAutomaticScrollAnimating = false
         let pauseUpdateDueToUserInteract = CurrentValueSubject<Bool, Never>(false)
-        var distributedPendingUpdateElements: Elements? = nil
+        var distributedPendingUpdateElements: Elements?
         let elementUpdateProcessLock = Lock()
 
         init(dataPublisher: AnyPublisher<[Element], Never>) {

@@ -14,7 +14,7 @@ import Storage
 import UIKit
 
 class ChatView: UIView {
-    var conversationIdentifier: Conversation.ID? = nil
+    var conversationIdentifier: Conversation.ID?
     var cancellables: Set<AnyCancellable> = .init()
 
     let handlerColor: UIColor = .init {

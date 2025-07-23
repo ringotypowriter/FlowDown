@@ -148,7 +148,7 @@ class HubModelDetailController: StackScrollController {
     }
 
     let downloadButtonIndicator = UIActivityIndicatorView(style: .medium)
-    var downloadSize: UInt64? = nil {
+    var downloadSize: UInt64? {
         didSet { updateBarItems() }
     }
 

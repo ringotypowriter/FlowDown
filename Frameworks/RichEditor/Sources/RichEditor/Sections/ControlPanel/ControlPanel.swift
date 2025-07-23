@@ -46,7 +46,7 @@ public class ControlPanel: EditorSectionView {
         ]
     #endif
 
-    weak var delegate: Delegate? = nil
+    weak var delegate: Delegate?
 
     override public func initializeViews() {
         super.initializeViews()

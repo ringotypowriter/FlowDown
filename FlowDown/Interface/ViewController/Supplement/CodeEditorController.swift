@@ -50,7 +50,7 @@ class CodeEditorController: UIViewController {
         fatalError()
     }
 
-    private var collector: ((String) -> Void)? = nil
+    private var collector: ((String) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()

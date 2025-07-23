@@ -15,8 +15,8 @@ import Storage
 class MCPTool: ModelTool {
     // MARK: - Properties
 
-    public let toolInfo: MCPToolInfo
-    public let mcpService: MCPService
+    let toolInfo: MCPToolInfo
+    let mcpService: MCPService
 
     // MARK: - Initialization
 

@@ -16,7 +16,7 @@ class MCPService: NSObject {
 
     // MARK: - Properties
 
-    public let servers: CurrentValueSubject<[ModelContextServer], Never> = .init([])
+    let servers: CurrentValueSubject<[ModelContextServer], Never> = .init([])
     private(set) var connections: [ModelContextServer.ID: MCPConnection] = [:]
     private var cancellables = Set<AnyCancellable>()
 
@@ -52,7 +52,7 @@ class MCPService: NSObject {
     // MARK: - Public Methods
 
     @discardableResult
-    public func prepareForConversation() async -> [Swift.Error] {
+    func prepareForConversation() async -> [Swift.Error] {
         var errors: [Swift.Error] = []
         let snapshot = connections // for thread safety
         for (serverID, connection) in snapshot {
@@ -72,12 +72,12 @@ class MCPService: NSObject {
         return errors
     }
 
-    public func insert(_ server: ModelContextServer) {
+    func insert(_ server: ModelContextServer) {
         sdb.modelContextServerPut(object: server)
         updateFromDatabase()
     }
 
-    public func ensureOrReconnect(_ serverID: ModelContextServer.ID) {
+    func ensureOrReconnect(_ serverID: ModelContextServer.ID) {
         if let connection = connections[serverID], connection.client != nil { return }
         guard let server = sdb.modelContextServerWith(serverID) else { return }
         updateServerStatus(serverID, status: .disconnected)

@@ -188,7 +188,7 @@ class MainController: UIViewController {
         ).cgPath
     }
 
-    var firstTouchLocation: CGPoint? = nil
+    var firstTouchLocation: CGPoint?
     var lastTouchBegin: Date = .init(timeIntervalSince1970: 0)
     var touchesMoved = false
 

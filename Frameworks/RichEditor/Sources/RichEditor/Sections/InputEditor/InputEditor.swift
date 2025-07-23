@@ -47,7 +47,7 @@ public class InputEditor: EditorSectionView {
         }
     }
 
-    weak var delegate: Delegate? = nil
+    weak var delegate: Delegate?
 
     deinit {
         NotificationCenter.default.removeObserver(self)

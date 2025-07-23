@@ -69,7 +69,7 @@ extension ConversationListView {
             fatalError()
         }
 
-        private var conversationIdentifier: Conversation.ID? = nil
+        private var conversationIdentifier: Conversation.ID?
 
         func use(_ conv: Conversation?) {
             conversationIdentifier = conv?.id

@@ -53,7 +53,7 @@ open class MLXChatClient: ChatService {
     // Hex UTF-8 bytes EF BF BD
     private static let decoderErrorSuffix = String(data: Data([0xEF, 0xBF, 0xBD]), encoding: .utf8)!
 
-    public var collectedErrors: String? = nil
+    public var collectedErrors: String?
 
     public init(url: URL) {
         self.url = url

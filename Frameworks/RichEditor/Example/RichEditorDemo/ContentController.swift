@@ -115,7 +115,7 @@ class ContentController: UIViewController, RichEditorView.Delegate {
     }
 
     var modelList = ["llama-3.3-70b", "qwen2.5-32b", "gpt4o-mini"]
-    var currentModel: String? = nil
+    var currentModel: String?
 
     func onRichEditorPickModel(anchor _: UIView, completion: @escaping () -> Void) {
         currentModel = modelList.randomElement()

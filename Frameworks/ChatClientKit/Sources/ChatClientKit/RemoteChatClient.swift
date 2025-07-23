@@ -25,7 +25,7 @@ open class RemoteChatClient: ChatService {
         case invalidData
     }
 
-    public var collectedErrors: String? = nil
+    public var collectedErrors: String?
 
     public var additionalHeaders: [String: String] = [:]
     public var additionalField: [String: Any] = [:]

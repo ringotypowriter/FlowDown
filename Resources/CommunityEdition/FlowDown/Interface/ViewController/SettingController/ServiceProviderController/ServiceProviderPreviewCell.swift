@@ -26,7 +26,7 @@ extension ServiceProviderController {
             fatalError()
         }
 
-        var associatedObject: ServiceProvider? = nil
+        var associatedObject: ServiceProvider?
 
         let configurableView = ConfigurableActionView(
             responseEverywhere: true,

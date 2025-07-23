@@ -9,7 +9,7 @@ import UIKit
 
 public class RightClickFinder: NSObject, UIContextMenuInteractionDelegate {
     private lazy var interaction = UIContextMenuInteraction(delegate: self)
-    private var action: (() -> Void)? = nil
+    private var action: (() -> Void)?
     private var contextMenuActivationTime: CFTimeInterval = 0
 
     override public init() {

@@ -50,7 +50,7 @@ extension GroupBlockView {
             children.map(\.manifest.intrinsicWidth).max() ?? 0
         }
 
-        var overrideGroupSpacing: CGFloat? = nil {
+        var overrideGroupSpacing: CGFloat? {
             didSet { dirty = true }
         }
 

@@ -20,7 +20,7 @@ extension AttachmentsBar {
             didSet { setNeedsLayout() }
         }
 
-        var item: Item? = nil
+        var item: Item?
 
         var attachmentBarView: AttachmentsBar? {
             var view: UIView = self
@@ -84,7 +84,7 @@ extension AttachmentsBar {
         let iconSize: CGFloat = 20
         let inset: CGFloat = 4
 
-        var item: Item? = nil
+        var item: Item?
 
         var isDeletable: Bool = true {
             didSet { setNeedsLayout() }

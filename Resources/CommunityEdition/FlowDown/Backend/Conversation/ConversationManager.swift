@@ -10,7 +10,7 @@ import Foundation
 import OrderedCollections
 
 class ConversationManager {
-    public static let shared = ConversationManager()
+    static let shared = ConversationManager()
     private init() {}
 
     typealias Conversations = OrderedDictionary<Conversation.ID, Conversation>
