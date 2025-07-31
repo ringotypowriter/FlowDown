@@ -12,10 +12,10 @@ extension MessageListView {
     final class MarkdownPackageCache {
         typealias MessageIdentifier = Message.ID
 
-        private var cache: [MessageIdentifier: MarkdownTextView.PreprocessContent] = [:]
+        private var cache: [MessageIdentifier: MarkdownTextView.PreprocessedContent] = [:]
         private var messageDidChanged: [MessageIdentifier: Int] = [:]
 
-        func package(for message: MessageRepresentation, theme: MarkdownTheme) -> MarkdownTextView.PreprocessContent {
+        func package(for message: MessageRepresentation, theme: MarkdownTheme) -> MarkdownTextView.PreprocessedContent {
             let id = message.id
             let cachedContent = messageDidChanged[id]
             if cachedContent == message.content.hashValue {
@@ -27,10 +27,10 @@ extension MessageListView {
             return updateCache(for: message, theme: theme)
         }
 
-        private func updateCache(for message: MessageRepresentation, theme: MarkdownTheme) -> MarkdownTextView.PreprocessContent {
+        private func updateCache(for message: MessageRepresentation, theme: MarkdownTheme) -> MarkdownTextView.PreprocessedContent {
             let content = message.content
             let result = MarkdownParser().parse(content)
-            let package = MarkdownTextView.PreprocessContent(parserResult: result, theme: theme)
+            let package = MarkdownTextView.PreprocessedContent(parserResult: result, theme: theme)
             cache[message.id] = package
             messageDidChanged[message.id] = message.content.hashValue
             return package

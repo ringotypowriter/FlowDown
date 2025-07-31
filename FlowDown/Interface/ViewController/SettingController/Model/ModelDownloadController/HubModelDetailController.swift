@@ -61,7 +61,7 @@ class HubModelDetailController: StackScrollController {
         let result = MarkdownParser().parse(markdown)
         var theme = MarkdownTheme()
         theme.align(to: UIFont.preferredFont(forTextStyle: .subheadline).pointSize)
-        let package = MarkdownTextView.PreprocessContent(parserResult: result, theme: theme)
+        let package = MarkdownTextView.PreprocessedContent(parserResult: result, theme: theme)
         DispatchQueue.main.async {
             let markdownView = MarkdownTextView().with {
                 $0.theme = theme
