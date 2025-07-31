@@ -248,8 +248,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "c1805596154bb3a265fd91b8ac0c4433b4348fb0",
-        "version" : "1.2.0"
+        "revision" : "8c0c0a8b49e080e54e5e328cc552821ff07cd341",
+        "version" : "1.2.1"
       }
     },
     {
@@ -257,8 +257,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "3d8596ed08bd13520157f0355e35caed215ffbfa",
-        "version" : "1.6.3"
+        "revision" : "ce592ae52f982c847a4efc0dd881cc9eb32d29f2",
+        "version" : "1.6.4"
       }
     },
     {
@@ -284,8 +284,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "61e4ca4b81b9e09e2ec863b00c340eb13497dac6",
-        "version" : "1.5.0"
+        "revision" : "b63d24d465e237966c3f59f47dcac6c70fb0bca3",
+        "version" : "1.6.1"
       }
     },
     {
@@ -320,8 +320,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "dee225a3da7b68d34936abc4dc8f34f2264db647",
-        "version" : "2.9.6"
+        "revision" : "a81b1a5ac933dee8c6cfccf05d5ffcc5eb8c7ec4",
+        "version" : "2.10.0"
       }
     },
     {
