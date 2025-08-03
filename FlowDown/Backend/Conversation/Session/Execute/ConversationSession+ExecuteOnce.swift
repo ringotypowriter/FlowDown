@@ -160,19 +160,31 @@ extension ConversationSession {
                     ))
                 }
             } else {
+                var toolStatus = Message.ToolStatus(name: tool.interfaceName, state: 0, message: "")
+                let toolMessage = appendNewMessage(role: .toolHint)
+                toolMessage.toolStatus = toolStatus
+                await requestUpdate(view: currentMessageListView)
+
                 // 标准工具
-                guard let result = ModelToolsManager.shared.perform(
+                let callResult = ModelToolsManager.shared.perform(
                     withTool: tool,
                     parms: request.args,
                     anchorTo: currentMessageListView
-                ) else { continue }
+                )
 
-                await requestUpdate(view: currentMessageListView)
-
-                let toolMessage = appendNewMessage(role: .toolHint)
-                toolMessage.toolStatus = .init(name: tool.interfaceName, state: 1, message: result)
-                await requestUpdate(view: currentMessageListView)
-                requestMessages.append(.tool(content: .text(result), toolCallID: request.id.uuidString))
+                switch callResult {
+                case let .success(result):
+                    toolStatus.state = 1
+                    toolStatus.message = result
+                    toolMessage.toolStatus = toolStatus
+                    await requestUpdate(view: currentMessageListView)
+                    requestMessages.append(.tool(content: .text(result), toolCallID: request.id.uuidString))
+                case let .failure(error):
+                    toolStatus.state = 2
+                    toolStatus.message = error.localizedDescription
+                    toolMessage.toolStatus = toolStatus
+                    await requestUpdate(view: currentMessageListView)
+                }
             }
         }
 

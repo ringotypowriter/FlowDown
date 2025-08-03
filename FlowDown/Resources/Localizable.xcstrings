@@ -6066,6 +6066,26 @@
         }
       }
     },
+    "Tool call for %@ failed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具 %@ 的调用失败。"
+          }
+        }
+      }
+    },
+    "Tool call for %@ running." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始调用工具 %@ 。"
+          }
+        }
+      }
+    },
     "Tool execution failed: %@" : {
       "localizations" : {
         "zh-Hans" : {
