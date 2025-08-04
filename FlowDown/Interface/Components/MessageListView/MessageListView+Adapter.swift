@@ -195,6 +195,8 @@ extension MessageListView: ListViewAdapter {
         } else if let toolHintView = rowView as? ToolHintView {
             if case let .toolCallStatus(status) = entry {
                 let state: ToolHintView.State = switch status.state {
+                case 0:
+                    .running
                 case 1:
                     .suceeded
                 default:

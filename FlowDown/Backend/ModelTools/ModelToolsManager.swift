@@ -114,15 +114,17 @@ class ModelToolsManager {
         }
     }
 
-    func perform(withTool tool: ModelTool, parms: String, anchorTo view: UIView) -> String? {
+    func perform(withTool tool: ModelTool, parms: String, anchorTo view: UIView) -> Result<String, Error> {
         assert(!Thread.isMainThread)
 
         var ans = String(localized: "Execute tool call timed out")
+        var success = false
         let sem = DispatchSemaphore(value: 0)
 
         let execution = {
             do {
                 ans = try await tool.execute(with: parms, anchorTo: view)
+                success = true
             } catch {
                 ans = String(localized: "Tool execution failed: \(error.localizedDescription)")
             }
@@ -165,6 +167,12 @@ class ModelToolsManager {
             sem.wait()
         }
 
-        return ans
+        if success {
+            return .success(ans)
+        } else {
+            return .failure(NSError(domain: "ToolCall", code: 500, userInfo: [
+                NSLocalizedDescriptionKey: ans,
+            ]))
+        }
     }
 }

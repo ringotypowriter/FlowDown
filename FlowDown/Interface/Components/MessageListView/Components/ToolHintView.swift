@@ -92,6 +92,11 @@ final class ToolHintView: MessageListRowView {
             let image = UIImage(systemName: "checkmark.seal", withConfiguration: configuration)
             symbolView.image = image
             symbolView.tintColor = .systemGreen
+        case .running:
+            contentView.backgroundColor = .systemBlue.withAlphaComponent(0.05)
+            let image = UIImage(systemName: "hourglass", withConfiguration: configuration)
+            symbolView.image = image
+            symbolView.tintColor = .systemBlue
         default:
             contentView.backgroundColor = .systemRed.withAlphaComponent(0.05)
             let image = UIImage(systemName: "xmark.seal", withConfiguration: configuration)
@@ -102,8 +107,17 @@ final class ToolHintView: MessageListRowView {
     }
 
     private func updateContent() {
-        isClickable = true
-        label.text = .init(localized: "Tool call for \(toolName) completed.")
+        switch state {
+        case .running:
+            isClickable = false
+            label.text = .init(localized: "Tool call for \(toolName) running.")
+        case .suceeded:
+            isClickable = true
+            label.text = .init(localized: "Tool call for \(toolName) completed.")
+        case .failed:
+            isClickable = true
+            label.text = .init(localized: "Tool call for \(toolName) failed.")
+        }
         label.invalidateIntrinsicContentSize()
         label.sizeToFit()
         setNeedsLayout()
