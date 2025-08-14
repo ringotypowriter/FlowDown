@@ -9,8 +9,9 @@ import Combine
 import Foundation
 import Storage
 
-class MemoryStore: ObservableObject, @unchecked Sendable {
-    static let shared = MemoryStore()
+@MainActor
+public class MemoryStore: ObservableObject {
+    public static let shared = MemoryStore()
 
     private let queue = DispatchQueue(label: "wiki.qaq.MemoryStore", qos: .utility)
     private let maxMemoryCount = 1000
@@ -20,8 +21,8 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
     @Published var memoryCount: Int = 0
 
     private init() {
-        Task { @MainActor in
-            updateMemoryCount()
+        Task {
+            await updateMemoryCount()
         }
     }
 
@@ -57,7 +58,7 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
                     try storage.deleteOldMemories(keepCount: self.maxMemoryCount)
 
                     Task { @MainActor in
-                        self.updateMemoryCount()
+                        await self.updateMemoryCount()
                     }
 
                     continuation.resume()
@@ -160,7 +161,7 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
                     try storage.deleteMemory(id: id)
 
                     Task { @MainActor in
-                        self.updateMemoryCount()
+                        await self.updateMemoryCount()
                     }
 
                     continuation.resume()
@@ -181,7 +182,7 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
                     try storage.deleteAllMemories()
 
                     Task { @MainActor in
-                        self.updateMemoryCount()
+                        await self.updateMemoryCount()
                     }
 
                     continuation.resume()
@@ -279,7 +280,7 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
             try storage.deleteMemory(id: id)
 
             Task { @MainActor in
-                self.updateMemoryCount()
+                await self.updateMemoryCount()
             }
 
             if let reason {
@@ -311,7 +312,7 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
                 try storage.deleteOldMemories(keepCount: self.maxMemoryCount)
 
                 Task { @MainActor in
-                    self.updateMemoryCount()
+                    await self.updateMemoryCount()
                 }
             } catch {
                 print("[MemoryStore] Failed to store memory: \(error)")
@@ -319,22 +320,19 @@ class MemoryStore: ObservableObject, @unchecked Sendable {
         }
     }
 
-    @MainActor
-    private func updateMemoryCount() {
-        Task {
-            do {
-                let count = try await getMemoryCount()
-                self.memoryCount = count
-            } catch {
-                print("[MemoryStore] Failed to update memory count: \(error)")
-            }
+    private func updateMemoryCount() async {
+        do {
+            let count = try await getMemoryCount()
+            memoryCount = count
+        } catch {
+            print("[MemoryStore] Failed to update memory count: \(error)")
         }
     }
 }
 
 // MARK: - Error Types
 
-enum MemoryStoreError: Error {
+public enum MemoryStoreError: Error, LocalizedError {
     case invalidContent(String)
     case memoryNotFound(String)
     case storageError(String)

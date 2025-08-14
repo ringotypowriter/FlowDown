@@ -60,6 +60,6 @@ class MTListMemoriesTool: ModelTool {
             limit = min(max(limitValue, 1), 100) // Ensure between 1 and 100
         }
 
-        return MemoryStore.shared.listMemoriesWithIds(limit: limit)
+        return await MemoryStore.shared.listMemoriesWithIds(limit: limit)
     }
 }

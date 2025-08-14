@@ -68,6 +68,6 @@ class MTDeleteMemoryTool: ModelTool {
         }
 
         let reason = json["reason"] as? String
-        return MemoryStore.shared.deleteMemory(id: memoryId, reason: reason)
+        return await MemoryStore.shared.deleteMemory(id: memoryId, reason: reason)
     }
 }

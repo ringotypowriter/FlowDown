@@ -70,6 +70,6 @@ class MTUpdateMemoryTool: ModelTool {
             )
         }
 
-        return MemoryStore.shared.updateMemory(id: memoryId, newContent: newContent)
+        return await MemoryStore.shared.updateMemory(id: memoryId, newContent: newContent)
     }
 }
