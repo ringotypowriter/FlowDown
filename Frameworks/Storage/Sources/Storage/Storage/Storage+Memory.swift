@@ -9,7 +9,7 @@ import Foundation
 import WCDBSwift
 
 public extension Storage {
-    enum MemoryError: Error {
+    enum MemoryError: Error, LocalizedError {
         case insertFailed(String)
         case retrieveFailed(String)
         case deleteFailed(String)
@@ -95,8 +95,8 @@ public extension Storage {
 
     func getMemoryCount() throws -> Int {
         do {
-            let memories = try db.getObjects(fromTable: Memory.table) as [Memory]
-            return memories.count
+            let objects: [Memory] = try db.getObjects(fromTable: Memory.table)
+            return objects.count
         } catch {
             throw MemoryError.retrieveFailed(error.localizedDescription)
         }
@@ -153,7 +153,8 @@ public extension Storage {
 
     func deleteOldMemories(keepCount: Int) throws {
         do {
-            let totalCount = try getMemoryCount()
+            let allMemories: [Memory] = try db.getObjects(fromTable: Memory.table)
+            let totalCount = allMemories.count
             guard totalCount > keepCount else { return }
 
             let memoriesToDelete = try db.getObjects(

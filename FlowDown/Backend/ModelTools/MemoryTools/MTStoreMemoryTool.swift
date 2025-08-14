@@ -65,7 +65,7 @@ class MTStoreMemoryTool: ModelTool {
             )
         }
 
-        MemoryStore.shared.store(content: content)
+        await MemoryStore.shared.store(content: content)
 
         return String(localized: "Memory stored successfully: \(content)")
     }

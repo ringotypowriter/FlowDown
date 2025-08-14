@@ -46,6 +46,6 @@ class MTRecallMemoryTool: ModelTool {
     }
 
     override func execute(with _: String, anchorTo _: UIView) async throws -> String {
-        MemoryStore.shared.getAllMemories()
+        await MemoryStore.shared.getAllMemories()
     }
 }
