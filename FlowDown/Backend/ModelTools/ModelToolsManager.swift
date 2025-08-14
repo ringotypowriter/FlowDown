@@ -46,6 +46,12 @@ class ModelToolsManager {
 //            MTLocationTool(),
 
                 MTURLTool(),
+
+                MTStoreMemoryTool(),
+                MTRecallMemoryTool(),
+                MTListMemoriesTool(),
+                MTUpdateMemoryTool(),
+                MTDeleteMemoryTool(),
             ]
         #else
             tools = [
@@ -60,6 +66,12 @@ class ModelToolsManager {
                 MTLocationTool(),
 
                 MTURLTool(),
+
+                MTStoreMemoryTool(),
+                MTRecallMemoryTool(),
+                MTListMemoriesTool(),
+                MTUpdateMemoryTool(),
+                MTDeleteMemoryTool(),
             ]
         #endif
 

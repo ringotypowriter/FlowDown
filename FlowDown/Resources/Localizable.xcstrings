@@ -280,6 +280,9 @@
         }
       }
     },
+    "All memory data is stored locally on your device. Export operations allow you to backup your memory data." : {
+
+    },
     "Allowed in Foreground" : {
       "localizations" : {
         "zh-Hans" : {
@@ -289,6 +292,21 @@
           }
         }
       }
+    },
+    "Allows AI to delete specific memories that are no longer needed." : {
+
+    },
+    "Allows AI to list memories with IDs for management operations." : {
+
+    },
+    "Allows AI to retrieve stored memories for context." : {
+
+    },
+    "Allows AI to store important information for future conversations." : {
+
+    },
+    "Allows AI to update existing memory content." : {
+
     },
     "Allows LLM to access your current location information." : {
       "localizations" : {
@@ -411,6 +429,9 @@
         }
       }
     },
+    "Are you sure you want to delete all stored memories? This action cannot be undone." : {
+
+    },
     "Are you sure you want to delete this MCP server? This action cannot be undone." : {
       "localizations" : {
         "zh-Hans" : {
@@ -420,6 +441,9 @@
           }
         }
       }
+    },
+    "Are you sure you want to delete this memory?\n\n%@" : {
+
     },
     "Are you sure you want to delete this model? This action cannot be undone." : {
       "localizations" : {
@@ -541,6 +565,9 @@
           }
         }
       }
+    },
+    "Browse, search, and manage stored memories." : {
+
     },
     "Browsed %lld website(s)" : {
       "localizations" : {
@@ -811,6 +838,12 @@
           }
         }
       }
+    },
+    "Clear All" : {
+
+    },
+    "Clear All Memories" : {
+
     },
     "Clear Editing" : {
       "localizations" : {
@@ -1358,6 +1391,9 @@
         }
       }
     },
+    "Data Management" : {
+
+    },
     "Database" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1438,6 +1474,9 @@
         }
       }
     },
+    "Delete all stored memories permanently." : {
+
+    },
     "Delete Chat" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1467,6 +1506,9 @@
           }
         }
       }
+    },
+    "Delete Memory" : {
+
     },
     "Delete Model" : {
       "localizations" : {
@@ -2182,6 +2224,9 @@
         }
       }
     },
+    "Export all memories as JSON file." : {
+
+    },
     "Export Database" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2192,6 +2237,9 @@
         }
       }
     },
+    "Export Failed" : {
+
+    },
     "Export MCP Server" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2201,6 +2249,9 @@
           }
         }
       }
+    },
+    "Export Memories" : {
+
     },
     "Export Model" : {
       "localizations" : {
@@ -2362,6 +2413,9 @@
         }
       }
     },
+    "Failed to clear memories: %@" : {
+
+    },
     "Failed to Compress Conversation" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2391,6 +2445,9 @@
           }
         }
       }
+    },
+    "Failed to delete memory: %@" : {
+
     },
     "Failed to display confirmation dialog." : {
       "localizations" : {
@@ -2431,6 +2488,9 @@
           }
         }
       }
+    },
+    "Failed to export memories: %@" : {
+
     },
     "Failed to extract required information from model response." : {
       "localizations" : {
@@ -3183,6 +3243,9 @@
         }
       }
     },
+    "Invalid memory content" : {
+
+    },
     "Invalid model configuration." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3212,6 +3275,12 @@
           }
         }
       }
+    },
+    "Invalid parameters. Both memory_id and new_content are required." : {
+
+    },
+    "Invalid parameters. memory_id is required." : {
+
     },
     "Invalid response." : {
       "localizations" : {
@@ -3323,6 +3392,9 @@
           }
         }
       }
+    },
+    "List Memories" : {
+
     },
     "Local Area Network" : {
       "localizations" : {
@@ -3476,6 +3548,9 @@
         }
       }
     },
+    "Manage AI memory tools and stored conversation memories." : {
+
+    },
     "Manage language model providers or download local models." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3586,6 +3661,24 @@
           }
         }
       }
+    },
+    "Memories Cleared" : {
+
+    },
+    "Memory List" : {
+
+    },
+    "Memory Management" : {
+
+    },
+    "Memory stored successfully: %@" : {
+
+    },
+    "Memory Tools" : {
+
+    },
+    "Memory Tools Available:\n\nSTORE MEMORY - Use store_memory proactively to save important user information:\n• Personal details: \"User is a software engineer\", \"User prefers dark mode\"\n• Project context: \"Working on iOS app called FlowDown\", \"Using Swift and UIKit\"\n• Preferences: \"User likes detailed explanations\", \"User prefers concise responses\"\n• Goals: \"Learning SwiftUI\", \"Building a chat application\"\n• Important facts: \"User's timezone is PST\", \"User works remotely\"\n\nFORMAT: Store memories in third person format (e.g., \"User is a student\" not \"I'm a student\")\nWHEN: Immediately when user shares personal info, preferences, or important context\n\nRECALL MEMORY - Use recall_memory to get context:\n• At conversation start to understand user background\n• When you need context about user preferences or past discussions\n• Before making recommendations to personalize them\n\nMANAGE MEMORY - Use list_memories, update_memory, delete_memory to maintain accuracy:\n• List memories when you need to update or remove specific information\n• Update memories when information changes or becomes more specific\n• Delete memories when information becomes outdated or incorrect\n\nBe proactive about memory management to provide personalized, contextually aware assistance. Always format stored information clearly and in third person perspective." : {
+
     },
     "Message" : {
       "localizations" : {
@@ -3998,6 +4091,9 @@
           }
         }
       }
+    },
+    "No Memories" : {
+
     },
     "No Model Available" : {
       "localizations" : {
@@ -4713,6 +4809,9 @@
         }
       }
     },
+    "Recall Memory" : {
+
+    },
     "Recent Used" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4962,6 +5061,9 @@
           }
         }
       }
+    },
+    "Search memories..." : {
+
     },
     "Search Model" : {
       "localizations" : {
@@ -5315,6 +5417,9 @@
           }
         }
       }
+    },
+    "Store Memory" : {
+
     },
     "Streamble HTTP" : {
       "localizations" : {
@@ -5725,7 +5830,7 @@
         }
       }
     },
-    "The system provides several tools for your convenience. Please use them wisely and according to the user’s query. Avoid requesting information that is already provided or easily inferred." : {
+    "The system provides several tools for your convenience. Please use them wisely and according to the user's query. Avoid requesting information that is already provided or easily inferred." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5765,6 +5870,9 @@
         }
       }
     },
+    "There are no memories to export." : {
+
+    },
     "These are the open-source licenses for the frameworks used in this app." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5784,6 +5892,9 @@
           }
         }
       }
+    },
+    "These tools allow the AI to store, recall, and manage important information from conversations for better context awareness." : {
+
     },
     "These tools can only be used by models that support tool calls, and whether to use them is determined by the model." : {
       "localizations" : {
@@ -6456,6 +6567,9 @@
           }
         }
       }
+    },
+    "Update Memory" : {
+
     },
     "URL Access" : {
       "localizations" : {
