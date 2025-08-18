@@ -41,7 +41,7 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubview(SeparatorView())
 
             // Add memory tool controls
-            let memoryTools = ModelToolsManager.shared.configurableTools.filter { tool in
+            let memoryTools = ModelToolsManager.shared.tools.filter { tool in
                 false
                     || tool is MTStoreMemoryTool
                     || tool is MTRecallMemoryTool

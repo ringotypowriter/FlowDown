@@ -14,7 +14,7 @@ import UIKit
 class ModelToolsManager {
     static let shared = ModelToolsManager()
 
-    private let tools: [ModelTool]
+    let tools: [ModelTool]
 
     static let skipConfirmationKey = "ModelToolsManager.skipConfirmation"
     static var skipConfirmationValue: Bool {
