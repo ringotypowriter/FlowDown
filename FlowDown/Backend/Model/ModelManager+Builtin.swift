@@ -18,8 +18,8 @@ extension CloudModel {
             switch self {
             case .openai:
                 CloudModel(
-                    id: "95b2ed31-d84d-4ce5-86a4-d362687bb18a",
-                    model_identifier: "openai",
+                    id: "d26f2641-2802-490c-afcd-5e053460f829",
+                    model_identifier: "gemini",
                     endpoint: "https://text.pollinations.ai/openai/v1/chat/completions",
                     context: .medium_64k,
                     capabilities: [.tool, .visual],
@@ -28,8 +28,8 @@ extension CloudModel {
 
             case .openai_fast:
                 CloudModel(
-                    id: "5de6f19d-62ed-43bd-b17a-61b9a4b5db4b",
-                    model_identifier: "openai-fast",
+                    id: "0193f07a-2bc1-4937-ac68-ea3adbdb38ee",
+                    model_identifier: "gpt-5-nano",
                     endpoint: "https://text.pollinations.ai/openai/v1/chat/completions",
                     context: .medium_64k,
                     capabilities: [.tool, .visual],
