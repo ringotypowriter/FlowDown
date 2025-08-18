@@ -128,7 +128,7 @@ extension SettingController.SettingContent {
                         title: String(localized: "No Memories"),
                         message: String(localized: "There are no memories to export.")
                     ) { context in
-                        context.addAction(title: String(localized: "OK")) {
+                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
                             context.dispose()
                         }
                     }
@@ -175,7 +175,7 @@ extension SettingController.SettingContent {
                     title: String(localized: "Export Failed"),
                     message: String(localized: "Failed to export memories: \(error.localizedDescription)")
                 ) { context in
-                    context.addAction(title: String(localized: "OK")) {
+                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
                         context.dispose()
                     }
                 }
@@ -209,7 +209,7 @@ extension SettingController.SettingContent {
                                         title: String(localized: "Error"),
                                         message: String(localized: "Failed to clear memories: \(error.localizedDescription)")
                                     ) { context in
-                                        context.addAction(title: String(localized: "OK")) {
+                                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
                                             context.dispose()
                                         }
                                     }

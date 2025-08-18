@@ -135,7 +135,7 @@ class MemoryListController: UIViewController {
                         title: String(localized: "Error"),
                         message: String(localized: "Failed to delete memory: \(error.localizedDescription)")
                     ) { context in
-                        context.addAction(title: String(localized: "OK")) {
+                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
                             context.dispose()
                         }
                     }
