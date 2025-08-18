@@ -42,9 +42,12 @@ extension SettingController.SettingContent {
 
             // Add memory tool controls
             let memoryTools = ModelToolsManager.shared.configurableTools.filter { tool in
-                tool is MTStoreMemoryTool || tool is MTRecallMemoryTool ||
-                    tool is MTListMemoriesTool || tool is MTUpdateMemoryTool ||
-                    tool is MTDeleteMemoryTool
+                false
+                    || tool is MTStoreMemoryTool
+                    || tool is MTRecallMemoryTool
+                    || tool is MTListMemoriesTool
+                    || tool is MTUpdateMemoryTool
+                    || tool is MTDeleteMemoryTool
             }
 
             for tool in memoryTools {

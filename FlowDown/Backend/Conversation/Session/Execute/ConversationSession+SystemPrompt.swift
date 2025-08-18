@@ -60,11 +60,11 @@ extension ConversationSession {
             }
 
             if memoryToolsEnabled {
-                toolGuidance += "\n\n" + String(localized:
+                toolGuidance += "\n\n" +
                     """
                     Memory Tools Available:
 
-                    STORE MEMORY - Use store_memory proactively to save important user information:
+                    STORE MEMORY - Use store_memory proactively to save important user information like:
                     • Personal details: "User is a software engineer", "User prefers dark mode"
                     • Project context: "Working on iOS app called FlowDown", "Using Swift and UIKit"
                     • Preferences: "User likes detailed explanations", "User prefers concise responses"
@@ -86,7 +86,6 @@ extension ConversationSession {
 
                     Be proactive about memory management to provide personalized, contextually aware assistance. Always format stored information clearly and in third person perspective.
                     """
-                )
             }
 
             requestMessages.append(

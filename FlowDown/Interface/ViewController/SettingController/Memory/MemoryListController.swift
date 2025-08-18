@@ -48,6 +48,7 @@ class MemoryListController: UIViewController {
         searchController.searchBar.searchBarStyle = .minimal
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.preferredSearchBarPlacement = .stacked
 
         // Setup table view
         tableView.delegate = self
@@ -63,7 +64,7 @@ class MemoryListController: UIViewController {
     }
 
     private func loadMemories() {
-        Task {
+        Task.detached {
             do {
                 let loadedMemories = try await MemoryStore.shared.getAllMemoriesAsync()
                 await MainActor.run {
@@ -81,7 +82,7 @@ class MemoryListController: UIViewController {
     }
 
     private func searchMemories(query: String) {
-        Task {
+        Task.detached {
             do {
                 let searchResults = try await MemoryStore.shared.searchMemories(query: query, limit: 50)
                 await MainActor.run {
@@ -114,47 +115,34 @@ class MemoryListController: UIViewController {
     private func deleteMemory(at indexPath: IndexPath) {
         let memory = currentMemories()[indexPath.row]
 
-        let alert = AlertViewController(
-            title: String(localized: "Delete Memory"),
-            message: String(localized: "Are you sure you want to delete this memory?\n\n\(memory.content)")
-        ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
-                context.dispose()
-            }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
-                context.dispose {
-                    Task {
-                        do {
-                            try await MemoryStore.shared.deleteMemoryAsync(id: memory.id)
-                            await MainActor.run {
-                                if self.isSearching {
-                                    self.filteredMemories.remove(at: indexPath.row)
-                                    if let originalIndex = self.memories.firstIndex(where: { $0.id == memory.id }) {
-                                        self.memories.remove(at: originalIndex)
-                                    }
-                                } else {
-                                    self.memories.remove(at: indexPath.row)
-                                }
-                                self.tableView.deleteRows(at: [indexPath], with: .fade)
-                            }
-                        } catch {
-                            await MainActor.run {
-                                let errorAlert = AlertViewController(
-                                    title: String(localized: "Error"),
-                                    message: String(localized: "Failed to delete memory: \(error.localizedDescription)")
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK")) {
-                                        context.dispose()
-                                    }
-                                }
-                                self.present(errorAlert, animated: true)
-                            }
+        Task.detached {
+            do {
+                try await MemoryStore.shared.deleteMemoryAsync(id: memory.id)
+                await MainActor.run {
+                    if self.isSearching {
+                        self.filteredMemories.remove(at: indexPath.row)
+                        if let originalIndex = self.memories.firstIndex(where: { $0.id == memory.id }) {
+                            self.memories.remove(at: originalIndex)
+                        }
+                    } else {
+                        self.memories.remove(at: indexPath.row)
+                    }
+                    self.tableView.deleteRows(at: [indexPath], with: .fade)
+                }
+            } catch {
+                await MainActor.run {
+                    let errorAlert = AlertViewController(
+                        title: String(localized: "Error"),
+                        message: String(localized: "Failed to delete memory: \(error.localizedDescription)")
+                    ) { context in
+                        context.addAction(title: String(localized: "OK")) {
+                            context.dispose()
                         }
                     }
+                    self.present(errorAlert, animated: true)
                 }
             }
         }
-        present(alert, animated: true)
     }
 }
 
@@ -184,6 +172,16 @@ extension MemoryListController: UITableViewDelegate {
 
     func tableView(_: UITableView, titleForDeleteConfirmationButtonForRowAt _: IndexPath) -> String? {
         String(localized: "Delete")
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let menu = UIMenu(options: [.displayInline], children: [
+            UIAction(title: String(localized: "Delete Memory"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+                self?.deleteMemory(at: indexPath)
+            },
+        ])
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.present(menu: menu)
     }
 }
 
