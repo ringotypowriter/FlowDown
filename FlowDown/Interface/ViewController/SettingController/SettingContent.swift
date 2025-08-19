@@ -38,7 +38,7 @@ extension SettingController {
                 ephemeralAnnotation: .page { ToolsController() }
             ),
             .init(
-                icon: "circle.bottomrighthalf.pattern.checkered",
+                icon: "moon.stars",
                 title: String(localized: "Memory Management"),
                 explain: String(localized: "Manage AI memory tools and stored conversation memories."),
                 ephemeralAnnotation: .page { MemoryController() }

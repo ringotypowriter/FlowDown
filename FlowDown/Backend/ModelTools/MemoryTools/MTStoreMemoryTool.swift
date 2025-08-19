@@ -44,7 +44,7 @@ class MTStoreMemoryTool: ModelTool {
 
     override class var controlObject: ConfigurableObject {
         .init(
-            icon: "circle.lefthalf.filled.righthalf.striped.horizontal.inverse",
+            icon: "square.and.arrow.down",
             title: String(localized: "Store Memory"),
             explain: String(localized: "Allows AI to store important information for future conversations."),
             key: "wiki.qaq.ModelTools.StoreMemoryTool.enabled",

@@ -36,7 +36,7 @@ class MTRecallMemoryTool: ModelTool {
 
     override class var controlObject: ConfigurableObject {
         .init(
-            icon: "circle.lefthalf.striped.horizontal.inverse",
+            icon: "square.and.arrow.down",
             title: String(localized: "Recall Memory"),
             explain: String(localized: "Allows AI to retrieve stored memories for context."),
             key: "wiki.qaq.ModelTools.RecallMemoryTool.enabled",

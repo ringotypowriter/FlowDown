@@ -33,6 +33,7 @@ class MTListMemoriesTool: ModelTool {
                         "description": "Maximum number of memories to retrieve (default: 20, max: 100).",
                     ],
                 ],
+                "required": ["limit"],
                 "additionalProperties": false,
             ],
             strict: true

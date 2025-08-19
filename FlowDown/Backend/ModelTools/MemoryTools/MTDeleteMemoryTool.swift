@@ -34,10 +34,10 @@ class MTDeleteMemoryTool: ModelTool {
                     ],
                     "reason": [
                         "type": "string",
-                        "description": "Optional reason for deleting this memory (e.g., 'outdated', 'incorrect', 'no longer relevant').",
+                        "description": "Reason for deleting this memory (e.g., 'outdated', 'incorrect', 'no longer relevant').",
                     ],
                 ],
-                "required": ["memory_id"],
+                "required": ["memory_id", "reason"],
                 "additionalProperties": false,
             ],
             strict: true
