@@ -11,6 +11,13 @@ import MarkdownParser
 import RegexBuilder
 import Storage
 
+private let numberWithHat = Regex {
+    ZeroOrMore(.whitespace)
+    One("^")
+    OneOrMore(.digit)
+    ZeroOrMore(.whitespace)
+}
+
 private let numberWithOptionalHat = Regex {
     ZeroOrMore(.whitespace)
     Optionally("^")
@@ -22,7 +29,7 @@ private let regex = Regex {
     "["
 
     Capture {
-        numberWithOptionalHat
+        numberWithHat
         ZeroOrMore {
             ","
             numberWithOptionalHat
@@ -108,10 +115,12 @@ extension ConversationSession {
 
             if let type, prevent.contains(type) {
                 // do not process content inside code block
+                print("[*] ignoring content inside block with type \(type)")
                 continue
             }
 
             let replacement = replacedLink.joined(separator: " ")
+            print("[*] replacing \(source) with \(replacement) at range \(range)")
             content.replaceSubrange(range, with: replacement)
         }
 
