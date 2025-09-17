@@ -1,51 +1,71 @@
-# Swift Code Style Guidelines
+# Repository Guidelines
 
-- @import ./CLAUDE.md
+## Overview
+FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a privacy-first mindset. The Xcode workspace hosts the app plus several Swift Package Manager frameworks that power storage, editing, and model integrations. Treat this document as the definitive playbook for any coding agent collaborating on the project.
 
-## Core Style
-- **Indentation**: 4 spaces
-- **Braces**: Opening brace on same line
-- **Spacing**: Single space around operators and commas
-- **Naming**: PascalCase for types, camelCase for properties/methods
+## Environment & Tooling
+- Prefer working through `FlowDown.xcworkspace` so app and frameworks build together with the correct schemes.
+- Use `make` for release archives; clean artifacts with `make clean` (see `Resources/DevKit/scripts/archive.all.sh`).
+- Reach for `xcbeautify -qq` when running `xcodebuild` locally to keep logs concise.
+- Always consult Context7 before drafting changes: `/websites/developer_apple` for Apple documentation, `/tencent/wcdb` for WCDB details, and `/ml-explore/mlx-swift` for MLX-Swift guidance. Resolve library IDs and keep notes on the sources you cite.
 
-## File Organization
-- Logical directory grouping
-- PascalCase files for types, `+` for extensions
-- Modular design with extensions
+## Platform Requirements & Dependencies
+- Target platforms reflect framework minimums: iOS 16.0+, macCatalyst 16.0+, macOS 13.3+ (ChatClientKit). Validate targets whenever you introduce new packages or adjust deployment settings.
+- Toolchain: Swift 5.9+ is required to satisfy package manifests (`swift-tools-version: 5.9`). Align Xcode project `SWIFT_VERSION` settings with this toolchain when updating build configurations.
+- Core dependencies (via SwiftPM): MLX/MLX-examples for on-device models, WCDB for storage, MarkdownView for rendering, and dedicated UI/editor libraries like RichEditor and RunestoneEditor.
 
-## Modern Swift Features
-- **@Observable macro**: Replace `ObservableObject`/`@Published`
-- **Swift concurrency**: `async/await`, `Task`, `actor`, `@MainActor`
-- **Result builders**: Declarative APIs
-- **Property wrappers**: Use line breaks for long declarations
-- **Opaque types**: `some` for protocol returns
+## Project Structure
+- `FlowDown.xcworkspace`: Entry point with app and frameworks.
+- `FlowDown/`: Application sources divided into `Application/` (entry surfaces), `Backend/` (conversations, models, storage, security), `Interface/` (SwiftUI plus UIKit bridges), and `PlatformSupport/` (macOS/Catalyst glue).
+- `Frameworks/`: Shared Swift packages (`ChatClientKit`, `Storage`, `RichEditor`, `RunestoneEditor`). Each package owns its manifest and dependency graph.
+- `Resources/`: Shared assets, localization collateral, privacy documents, and DevKit utilities.
+- `Playgrounds/`: Exploratory prototypes; do not assume production readiness.
 
-## Code Structure
-- Early returns to reduce nesting
-- Guard statements for optional unwrapping
-- Single responsibility per type/extension
-- Value types over reference types
+## Build & Run Commands
+- Open the workspace: `open FlowDown.xcworkspace`.
+- Debug builds:
+  - iOS: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 15'`.
+  - macOS Catalyst: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown-Catalyst -configuration Debug -destination 'platform=macOS'`.
+- Release archive (both platforms):
+  - `make` to archive.
+  - `make clean` to reset build artifacts.
+- Package-only verification: `swift build --package-path Frameworks/<Package>`.
+- When running CI-style builds, prefer `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug build`.
 
-## Error Handling
-- `Result` enum for typed errors
-- `throws`/`try` for propagation
-- Optional chaining with `guard let`/`if let`
-- Typed error definitions
+## Development Guidelines
+### Swift Style
+- 4-space indentation with opening braces on the same line.
+- Single spaces around operators and after commas.
+- PascalCase types; camelCase properties, methods, and file names.
+- Organize extensions into targeted files (`Type+Feature.swift`) and keep each file focused on one responsibility.
+- Lean on modern Swift patterns: `@Observable`, structured concurrency (`async`/`await`), result builders, and protocol-oriented design.
 
-## Architecture
-- Protocol-oriented design
-- Dependency injection over singletons
-- Composition over inheritance
-- Factory/Repository patterns
+### Architecture & Key Services
+- Respect the established managers: `ModelManager`, `ModelToolsManager`, `ConversationManager`, `MCPService`, and `UpdateManager`. Consult them before adding new singletons.
+- Compose features via dependency injection and protocols instead of inheritance.
+- Keep Catalyst-specific behaviour under `PlatformSupport/` to avoid leaking platform checks throughout the codebase.
+- Security hardening lives in `FlowDown/Backend/Security/`: release builds validate app signatures, strip debuggers, and verify sandbox enforcement (see `main.swift`).
 
-## Debug Assertions
-- Use `assert()` for development-time invariant checking
-- Use `assertionFailure()` for unreachable code paths
-- Assertions removed in release builds for performance
-- Precondition checking with `precondition()` for fatal errors
+## Testing Expectations
+- Add or update unit/UI tests alongside behavioural changes. No `FlowDownTests` target ships today; introduce new suites under sensible targets (e.g., create an app test target or add tests within `Frameworks/<Package>/Tests`) when expanding coverage.
+- Name tests using `testFeatureScenario_expectation`.
+- Run `xcodebuild test -workspace FlowDown.xcworkspace -scheme FlowDown` for end-to-end coverage once a test target exists, or `swift test --package-path Frameworks/<Package>` for package scope.
+- Document manual verification steps whenever UI or integration flows lack automation. Regression notes are essential where automated coverage is absent.
 
-## Memory Management
-- `weak` references for cycles
-- `unowned` when guaranteed non-nil
-- Capture lists in closures
-- `deinit` for cleanup
+## Security & Privacy
+- Never hardcode secrets; rely on user-supplied keys and platform keychains.
+- Validate new managers or services against the sanctioned singleton list above.
+- Use `assert`/`precondition` to capture invariants during development.
+- Audit persistence changes for privacy impacts before shipping.
+- Remember existing safeguards: Catalyst builds run sandbox checks, release builds enforce signature validation, and anti-debugging guards run during startup.
+
+## Documentation & Knowledge Sharing
+- Capture key findings from external research in PR descriptions so future contributors can trace decisions.
+- Reference official docs, WWDC sessions, or sample projects when introducing new APIs.
+- Keep architectural rationale and trade-offs close to the code (doc comments or dedicated markdown) when complexity grows.
+
+## Collaboration Workflow
+- Craft concise, capitalized commit subjects (e.g., `Adjust Compiler Settings`) and use bodies to explain decisions or link issues (`#123`).
+- Group related work per commit and avoid bundling unrelated refactors.
+- Pull requests must include a summary, testing checklist, and before/after visuals for UI changes. Mention localization or asset updates when relevant.
+- Tag reviewers responsible for the affected modules and outline any follow-up tasks or risks.

@@ -81,6 +81,7 @@ DerivedData
 DerivedData/
 Icon
 Network Trash Folder
+Package.resolved
 Pipeline/Dockers/Buildtime/
 Podfile.lock
 Pods/
