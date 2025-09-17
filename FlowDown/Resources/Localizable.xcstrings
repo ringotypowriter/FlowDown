@@ -2353,7 +2353,14 @@
       }
     },
     "Export Document" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出文档"
+          }
+        }
+      }
     },
     "Export Failed" : {
       "localizations" : {
@@ -2366,7 +2373,14 @@
       }
     },
     "Export Markdown" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出标记文档"
+          }
+        }
+      }
     },
     "Export MCP Server" : {
       "localizations" : {
@@ -2399,7 +2413,14 @@
       }
     },
     "Export Plain Text" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出纯文本"
+          }
+        }
+      }
     },
     "Export Server" : {
       "localizations" : {
@@ -5072,17 +5093,6 @@
         }
       }
     },
-    "Rednering Content" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在渲染"
-          }
-        }
-      }
-    },
     "Redo" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5134,7 +5144,14 @@
       }
     },
     "Rendering Content" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在渲染"
+          }
+        }
+      }
     },
     "Request User Input" : {
       "localizations" : {
