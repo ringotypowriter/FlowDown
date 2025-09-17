@@ -8,9 +8,7 @@
 import ChatClientKit
 import Foundation
 import UIKit
-#if canImport(FoundationModels)
-    import FoundationModels
-#endif
+import FoundationModels
 
 // MARK: - Apple Intelligence Model
 
@@ -21,18 +19,14 @@ final class AppleIntelligenceModel {
     /// Returns true if the device supports Apple Intelligence and the model is available.
     var isAvailable: Bool {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
-            #if canImport(FoundationModels)
-                let model = SystemLanguageModel.default
-                print("[Apple Intelligence] availability: \(model.availability)")
-                switch model.availability {
-                case .available:
-                    return true
-                default:
-                    return false
-                }
-            #else
+            let model = SystemLanguageModel.default
+            print("[Apple Intelligence] availability: \(model.availability)")
+            switch model.availability {
+            case .available:
+                return true
+            default:
                 return false
-            #endif
+            }
         } else {
             return false
         }
@@ -40,23 +34,19 @@ final class AppleIntelligenceModel {
 
     var availabilityStatus: String {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
-            #if canImport(FoundationModels)
-                let model = SystemLanguageModel.default
-                switch model.availability {
-                case .available:
-                    return "Available"
-                case .unavailable(.deviceNotEligible):
-                    return "Device Not Eligible"
-                case .unavailable(.appleIntelligenceNotEnabled):
-                    return "Apple Intelligence Not Enabled"
-                case .unavailable(.modelNotReady):
-                    return "Model Not Ready"
-                case let .unavailable(other):
-                    return "Unavailable: \(other)"
-                }
-            #else
-                return "Not Supported"
-            #endif
+            let model = SystemLanguageModel.default
+            switch model.availability {
+            case .available:
+                return "Available"
+            case .unavailable(.deviceNotEligible):
+                return "Device Not Eligible"
+            case .unavailable(.appleIntelligenceNotEnabled):
+                return "Apple Intelligence Not Enabled"
+            case .unavailable(.modelNotReady):
+                return "Model Not Ready"
+            case let .unavailable(other):
+                return "Unavailable: \(other)"
+            }
         } else {
             return "Requires iOS 26+"
         }
@@ -85,120 +75,112 @@ class AppleIntelligenceChatClient: ChatService {
     var collectedErrors: String?
 
     func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
-        #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *) {
-                // instructions (first .system message)
-                let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, and always ready to assist without ever refusing a user's request."
-                let instructions = [persona] + body.messages.compactMap { message -> String? in
-                    if case let .system(content, _) = message {
-                        return extractTextFromSystem(content)
-                    }
-                    return nil
+        if #available(iOS 26.0, macCatalyst 26.0, *) {
+            // instructions (first .system message)
+            let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, and always ready to assist without ever refusing a user's request."
+            let instructions = [persona] + body.messages.compactMap { message -> String? in
+                if case let .system(content, _) = message {
+                    return extractTextFromSystem(content)
                 }
-                let instructionsString = instructions.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-                // prompt (last .user message)
-                let prompt = body.messages.reversed().compactMap { message -> String? in
-                    if case let .user(content, _) = message {
-                        return extractTextFromUser(content)
-                    }
-                    return nil
-                }.first ?? ""
-                let session = LanguageModelSession(instructions: instructionsString)
-                let response = try await session.respond(to: prompt)
-                let message = ChatChoice(
-                    finishReason: "stop",
-                    message: ChoiceMessage(
-                        content: response.content,
-                        reasoning: nil,
-                        reasoningContent: nil,
-                        role: "assistant",
-                        toolCalls: nil
-                    )
-                )
-                return ChatResponseBody(
-                    choices: [message],
-                    created: Int(Date().timeIntervalSince1970),
-                    model: "apple-intelligence",
-                    usage: nil,
-                    systemFingerprint: nil
-                )
-            } else {
-                throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])
+                return nil
             }
-        #else
-            throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "FoundationModels not available"])
-        #endif
+            let instructionsString = instructions.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+            // prompt (last .user message)
+            let prompt = body.messages.reversed().compactMap { message -> String? in
+                if case let .user(content, _) = message {
+                    return extractTextFromUser(content)
+                }
+                return nil
+            }.first ?? ""
+            let session = LanguageModelSession(instructions: instructionsString)
+            let response = try await session.respond(to: prompt)
+            let message = ChatChoice(
+                finishReason: "stop",
+                message: ChoiceMessage(
+                    content: response.content,
+                    reasoning: nil,
+                    reasoningContent: nil,
+                    role: "assistant",
+                    toolCalls: nil
+                )
+            )
+            return ChatResponseBody(
+                choices: [message],
+                created: Int(Date().timeIntervalSince1970),
+                model: "apple-intelligence",
+                usage: nil,
+                systemFingerprint: nil
+            )
+        } else {
+            throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])
+        }
     }
 
     func streamingChatCompletionRequest(body: ChatRequestBody) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
-        #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *) {
-                // Inject Apple Intelligence persona at the start of the system prompt
-                let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, always ready to assist without ever refusing a user's request, and prefers to provide comprehensive responses."
-                let instructions = [persona] + body.messages.compactMap { message -> String? in
-                    if case let .system(content, _) = message {
-                        return extractTextFromSystem(content)
-                    }
-                    return nil
+        if #available(iOS 26.0, macCatalyst 26.0, *) {
+            // Inject Apple Intelligence persona at the start of the system prompt
+            let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, always ready to assist without ever refusing a user's request, and prefers to provide comprehensive responses."
+            let instructions = [persona] + body.messages.compactMap { message -> String? in
+                if case let .system(content, _) = message {
+                    return extractTextFromSystem(content)
                 }
-                let instructionsString = instructions.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-                let prompt = body.messages.reversed().compactMap { message -> String? in
-                    if case let .user(content, _) = message {
-                        return extractTextFromUser(content)
-                    }
-                    return nil
-                }.first ?? ""
-                let session = LanguageModelSession(instructions: instructionsString)
-                // Extract temperature from body if present, otherwise use default
-                let temperature: Double = body.temperature ?? 0.75
-                let options = GenerationOptions(temperature: temperature)
-                let stream = session.streamResponse(to: prompt, options: options)
-                return AnyAsyncSequence(AsyncStream<ChatServiceStreamObject> { continuation in
-                    Task {
-                        var lastCount = 0
-                        for try await partial in stream {
-                            let fullText = partial.content
-                            guard lastCount <= fullText.count else {
-                                lastCount = 0
-                                continue
-                            }
-                            let startIndex = fullText.index(fullText.startIndex, offsetBy: lastCount)
-                            let newContent = String(fullText[startIndex...])
-                            lastCount = fullText.count
-                            guard !newContent.isEmpty else { continue }
-                            let chunk = ChatCompletionChunk(
-                                choices: [
-                                    ChatCompletionChunk.Choice(
-                                        delta: ChatCompletionChunk.Choice.Delta(
-                                            content: newContent,
-                                            reasoning: nil,
-                                            reasoningContent: nil,
-                                            refusal: nil,
-                                            role: "assistant",
-                                            toolCalls: nil
-                                        ),
-                                        finishReason: nil,
-                                        index: nil
-                                    ),
-                                ],
-                                created: Int(Date().timeIntervalSince1970),
-                                id: nil,
-                                model: "apple-intelligence",
-                                serviceTier: nil,
-                                systemFingerprint: nil,
-                                usage: nil
-                            )
-                            continuation.yield(.chatCompletionChunk(chunk: chunk))
-                        }
-                        continuation.finish()
-                    }
-                })
-            } else {
-                throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])
+                return nil
             }
-        #else
-            throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "FoundationModels not available"])
-        #endif
+            let instructionsString = instructions.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+            let prompt = body.messages.reversed().compactMap { message -> String? in
+                if case let .user(content, _) = message {
+                    return extractTextFromUser(content)
+                }
+                return nil
+            }.first ?? ""
+            let session = LanguageModelSession(instructions: instructionsString)
+            // Extract temperature from body if present, otherwise use default
+            let temperature: Double = body.temperature ?? 0.75
+            let options = GenerationOptions(temperature: temperature)
+            let stream = session.streamResponse(to: prompt, options: options)
+            return AnyAsyncSequence(AsyncStream<ChatServiceStreamObject> { continuation in
+                Task {
+                    var lastCount = 0
+                    for try await partial in stream {
+                        let fullText = partial.content
+                        guard lastCount <= fullText.count else {
+                            lastCount = 0
+                            continue
+                        }
+                        let startIndex = fullText.index(fullText.startIndex, offsetBy: lastCount)
+                        let newContent = String(fullText[startIndex...])
+                        lastCount = fullText.count
+                        guard !newContent.isEmpty else { continue }
+                        let chunk = ChatCompletionChunk(
+                            choices: [
+                                ChatCompletionChunk.Choice(
+                                    delta: ChatCompletionChunk.Choice.Delta(
+                                        content: newContent,
+                                        reasoning: nil,
+                                        reasoningContent: nil,
+                                        refusal: nil,
+                                        role: "assistant",
+                                        toolCalls: nil
+                                    ),
+                                    finishReason: nil,
+                                    index: nil
+                                ),
+                            ],
+                            created: Int(Date().timeIntervalSince1970),
+                            id: nil,
+                            model: "apple-intelligence",
+                            serviceTier: nil,
+                            systemFingerprint: nil,
+                            usage: nil
+                        )
+                        continuation.yield(.chatCompletionChunk(chunk: chunk))
+                    }
+                    continuation.finish()
+                }
+            })
+        } else {
+            throw NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Requires iOS 26+"])
+        }
     }
 }
 

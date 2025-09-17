@@ -129,15 +129,11 @@ class ModelManager: NSObject {
     }
 
     func checkDefaultModels() {
-        #if canImport(FoundationModels)
-            let appleIntelligenceId: String? = if #available(iOS 26.0, macCatalyst 26.0, *) {
-                AppleIntelligenceModel.shared.modelIdentifier
-            } else {
-                nil
-            }
-        #else
-            let appleIntelligenceId: String? = nil
-        #endif
+        let appleIntelligenceId: String? = if #available(iOS 26.0, macCatalyst 26.0, *) {
+            AppleIntelligenceModel.shared.modelIdentifier
+        } else {
+            nil
+        }
         if !defaultModelForConversation.isEmpty,
            localModel(identifier: defaultModelForConversation) == nil,
            cloudModel(identifier: defaultModelForConversation) == nil,
@@ -169,24 +165,19 @@ class ModelManager: NSObject {
 
     func modelName(identifier: ModelIdentifier?) -> String {
         guard let identifier else { return "-" }
-        #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
-                return AppleIntelligenceModel.shared.modelDisplayName
-            }
-        #endif
-        return nil
-            ?? cloudModel(identifier: identifier)?.modelFullName
+        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+            return AppleIntelligenceModel.shared.modelDisplayName
+        }
+        return cloudModel(identifier: identifier)?.modelFullName
             ?? localModel(identifier: identifier)?.model_identifier
             ?? "-"
     }
 
     func modelCapabilities(identifier: ModelIdentifier) -> Set<ModelCapabilities> {
-        #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
-                // no endpoint
-                return [.tool]
-            }
-        #endif
+        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+            // no endpoint
+            return [.tool]
+        }
         if let cloudModel = cloudModel(identifier: identifier) {
             return cloudModel.capabilities
         }
@@ -197,12 +188,10 @@ class ModelManager: NSObject {
     }
 
     func modelContextLength(identifier: ModelIdentifier) -> Int {
-        #if canImport(FoundationModels)
-            if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
-                // Apple Intelligence: context length is not public, use a safe default
-                return 8192
-            }
-        #endif
+        if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
+            // Apple Intelligence: context length is not public, use a safe default
+            return 8192
+        }
         if let cloudModel = cloudModel(identifier: identifier) {
             return cloudModel.context.rawValue
         }
