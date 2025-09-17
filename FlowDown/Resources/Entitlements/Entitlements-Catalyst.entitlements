@@ -8,6 +8,10 @@
 	<true/>
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
+	<key>com.apple.security.hardened-process.platform-restrictions</key>
+	<integer>2</integer>
+	<key>com.apple.security.hardened-process.enhanced-security-version</key>
+	<integer>1</integer>
 	<key>com.apple.security.network.client</key>
 	<true/>
 	<key>com.apple.security.personal-information.calendars</key>
