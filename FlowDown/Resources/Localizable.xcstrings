@@ -2352,6 +2352,9 @@
         }
       }
     },
+    "Export Document" : {
+
+    },
     "Export Failed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2361,6 +2364,9 @@
           }
         }
       }
+    },
+    "Export Markdown" : {
+
     },
     "Export MCP Server" : {
       "localizations" : {
@@ -2391,6 +2397,9 @@
           }
         }
       }
+    },
+    "Export Plain Text" : {
+
     },
     "Export Server" : {
       "localizations" : {
@@ -5064,6 +5073,7 @@
       }
     },
     "Rednering Content" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5122,6 +5132,9 @@
           }
         }
       }
+    },
+    "Rendering Content" : {
+
     },
     "Request User Input" : {
       "localizations" : {
