@@ -181,7 +181,6 @@ extension SettingController.SettingContent {
 
             let defConvId = ModelManager.ModelIdentifier.defaultModelForConversation
             var handledConvModel = false
-            #if canImport(FoundationModels)
                 if #available(iOS 26.0, macCatalyst 26.0, *), defConvId == AppleIntelligenceModel.shared.modelIdentifier {
                     defaultConversationModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
                     defaultConversationModel.setTapBlock { [weak self] view in
@@ -196,7 +195,6 @@ extension SettingController.SettingContent {
                     }
                     handledConvModel = true
                 }
-            #endif
             if !handledConvModel {
                 if let localModel = ModelManager.shared.localModel(identifier: defConvId) {
                     defaultConversationModel.configure(value: localModel.model_identifier)
@@ -219,12 +217,10 @@ extension SettingController.SettingContent {
 
             let devAuxId = ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask
             var handledAuxModel = false
-            #if canImport(FoundationModels)
                 if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
                     defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
                     handledAuxModel = true
                 }
-            #endif
             if !handledAuxModel {
                 if let localModel = ModelManager.shared.localModel(identifier: devAuxId) {
                     defaultAuxiliaryModel.configure(value: localModel.model_identifier)
