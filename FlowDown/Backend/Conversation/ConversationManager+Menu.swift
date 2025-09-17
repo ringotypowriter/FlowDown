@@ -82,7 +82,7 @@ extension ConversationManager {
                     let captureView = ConversationCaptureView(session: session)
                     guard let controller = view.parentViewController else { return }
                     Indicator.progress(
-                        title: String(localized: "Rednering Content"),
+                        title: String(localized: "Rendering Content"),
                         controller: controller
                     ) { completionHandler in
                         DispatchQueue.main.async {
@@ -97,43 +97,106 @@ extension ConversationManager {
                                         )
                                         return
                                     }
+                                    let url = FileManager.default
+                                        .temporaryDirectory
+                                        .appendingPathComponent("DisposableResources")
+                                        .appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970))".sanitizedFileName)
+                                        .appendingPathExtension("png")
+                                    try? FileManager.default.createDirectory(
+                                        at: url.deletingLastPathComponent(),
+                                        withIntermediateDirectories: true
+                                    )
+                                    let png = image.pngData()
+                                    FileManager.default.createFile(atPath: url.path(), contents: png)
 
-                                    #if targetEnvironment(macCatalyst)
-                                        UIPasteboard.general.image = image
-                                        Indicator.present(
-                                            title: String(localized: "Copied"),
-                                            preset: .done,
-                                            haptic: .success,
-                                            referencingView: view
-                                        )
-                                    #else
-                                        let url = FileManager.default
-                                            .temporaryDirectory
-                                            .appendingPathComponent("DisposableResources")
-                                            .appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970))".sanitizedFileName)
-                                            .appendingPathExtension("png")
-                                        try? FileManager.default.createDirectory(
-                                            at: url.deletingLastPathComponent(),
-                                            withIntermediateDirectories: true
-                                        )
-                                        let png = image.pngData()
-                                        FileManager.default.createFile(atPath: url.path(), contents: png)
-
-                                        let shareSheet = UIActivityViewController(activityItems: [
-                                            url,
-                                        ], applicationActivities: [])
-                                        shareSheet.popoverPresentationController?.sourceView = view
-                                        shareSheet.popoverPresentationController?.sourceRect = view.bounds
-                                        shareSheet.completionWithItemsHandler = { _, _, _, _ in
-                                            try? FileManager.default.removeItem(at: url)
-                                        }
-                                        view.parentViewController?.present(shareSheet, animated: true)
-                                    #endif
+                                    let helper = FileExporterHelper()
+                                    helper.targetFileURL = url
+                                    helper.deleteAfterComplete = true
+                                    helper.exportTitle = String(localized: "Save Image")
+                                    helper.referencedView = view
+                                    helper.completion = { try? FileManager.default.removeItem(at: url) }
+                                    helper.execute(presentingViewController: controller)
                                 }
                             }
                         }
                     }
                 },
+                UIMenu(
+                    title: String(localized: "Export Document"),
+                    image: UIImage(systemName: "doc"),
+                    children: [
+                        UIAction(
+                            title: String(localized: "Export Plain Text"),
+                            image: UIImage(systemName: "doc.plaintext")
+                        ) { _ in
+                            ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .plainText) { result in
+                                switch result {
+                                case let .success(content):
+                                    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).txt")
+                                    do {
+                                        try content.write(to: url, atomically: true, encoding: .utf8)
+                                        let helper = FileExporterHelper()
+                                        helper.targetFileURL = url
+                                        helper.deleteAfterComplete = true
+                                        helper.exportTitle = String(localized: "Export Plain Text")
+                                        helper.referencedView = view
+                                        helper.completion = { try? FileManager.default.removeItem(at: url) }
+                                        helper.execute(presentingViewController: controller)
+                                    } catch {
+                                        Indicator.present(
+                                            title: String(localized: "Export Failed"),
+                                            preset: .error,
+                                            haptic: .error,
+                                            referencingView: view
+                                        )
+                                    }
+                                case .failure:
+                                    Indicator.present(
+                                        title: String(localized: "Export Failed"),
+                                        preset: .error,
+                                        haptic: .error,
+                                        referencingView: view
+                                    )
+                                }
+                            }
+                        },
+                        UIAction(
+                            title: String(localized: "Export Markdown"),
+                            image: UIImage(systemName: "doc.richtext")
+                        ) { _ in
+                            ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .markdown) { result in
+                                switch result {
+                                case let .success(content):
+                                    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).md")
+                                    do {
+                                        try content.write(to: url, atomically: true, encoding: .utf8)
+                                        let helper = FileExporterHelper()
+                                        helper.targetFileURL = url
+                                        helper.deleteAfterComplete = true
+                                        helper.exportTitle = String(localized: "Export Markdown")
+                                        helper.referencedView = view
+                                        helper.completion = { try? FileManager.default.removeItem(at: url) }
+                                        helper.execute(presentingViewController: controller)
+                                    } catch {
+                                        Indicator.present(
+                                            title: String(localized: "Export Failed"),
+                                            preset: .error,
+                                            haptic: .error,
+                                            referencingView: view
+                                        )
+                                    }
+                                case .failure:
+                                    Indicator.present(
+                                        title: String(localized: "Export Failed"),
+                                        preset: .error,
+                                        haptic: .error,
+                                        referencingView: view
+                                    )
+                                }
+                            }
+                        },
+                    ]
+                ),
             ]
         )
 

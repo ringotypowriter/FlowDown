@@ -1,5 +1,7 @@
 # Swift Code Style Guidelines
 
+- @import ./CLAUDE.md
+
 ## Core Style
 - **Indentation**: 4 spaces
 - **Braces**: Opening brace on same line
