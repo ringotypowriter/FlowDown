@@ -326,11 +326,15 @@ extension ModelManager {
         additionalBodyField: [String: Any] = [:]
     ) async throws -> InferenceMessage {
         let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
+        let requestTemperature: Double = switch temperatureStrategy(for: modelID) {
+        case let .send(value):
+            value
+        }
         let response = try await client.chatCompletionRequest(
             body: .init(
                 messages: prepareRequestBody(modelID: modelID, messages: input),
                 maxCompletionTokens: maxCompletionTokens,
-                temperature: .init(ModelManager.shared.temperature),
+                temperature: requestTemperature,
                 tools: tools
             )
         )
@@ -361,12 +365,16 @@ extension ModelManager {
     ) async throws -> AsyncThrowingStream<InferenceMessage, any Error> {
         let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
         client.collectedErrors = nil
+        let requestTemperature: Double = switch temperatureStrategy(for: modelID) {
+        case let .send(value):
+            value
+        }
 
         let stream = try await client.streamingChatCompletionRequest(
             body: .init(
                 messages: prepareRequestBody(modelID: modelID, messages: input),
                 maxCompletionTokens: maxCompletionTokens,
-                temperature: .init(ModelManager.shared.temperature),
+                temperature: requestTemperature,
                 tools: tools
             )
         ).compactMap { streamObject -> InferenceMessage in

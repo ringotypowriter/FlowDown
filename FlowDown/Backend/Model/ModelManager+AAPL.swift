@@ -157,8 +157,14 @@ class AppleIntelligenceChatClient: ChatService {
                     Task {
                         var lastCount = 0
                         for try await partial in stream {
-                            let newContent = String(partial.dropFirst(lastCount))
-                            lastCount = partial.count
+                            let fullText = partial.content
+                            guard lastCount <= fullText.count else {
+                                lastCount = 0
+                                continue
+                            }
+                            let startIndex = fullText.index(fullText.startIndex, offsetBy: lastCount)
+                            let newContent = String(fullText[startIndex...])
+                            lastCount = fullText.count
                             guard !newContent.isEmpty else { continue }
                             let chunk = ChatCompletionChunk(
                                 choices: [

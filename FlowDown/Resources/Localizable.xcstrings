@@ -1428,6 +1428,26 @@
         }
       }
     },
+    "Custom" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
+        }
+      }
+    },
+    "Custom @ %.2f" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义 @ %.2f"
+          }
+        }
+      }
+    },
     "Custom Tag Color" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3278,6 +3298,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推理缓存"
+          }
+        }
+      }
+    },
+    "Inference default" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推理默认"
           }
         }
       }

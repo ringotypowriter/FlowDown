@@ -30,3 +30,25 @@ public enum ModelContextLength: Int, Codable, CaseIterable {
     case huge_1m = 1_000_000 // 1m
     case infinity = 2_147_483_647
 }
+
+public enum ModelTemperaturePreference: String, CaseIterable {
+    case inherit
+    case custom
+}
+
+extension ModelTemperaturePreference: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = (try? container.decode(String.self)) ?? ""
+        if let value = ModelTemperaturePreference(rawValue: rawValue) {
+            self = value
+        } else {
+            self = .inherit
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
+}
