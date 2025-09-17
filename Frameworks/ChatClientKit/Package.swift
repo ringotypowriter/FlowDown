@@ -17,7 +17,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/ml-explore/mlx-swift", from: "0.21.3"),
         .package(url: "https://github.com/ml-explore/mlx-swift-examples", branch: "main"),
-        .package(url: "https://github.com/loopwork-ai/eventsource", from: "1.1.1"),
+        .package(url: "https://github.com/mattt/eventsource.git", from: "1.1.1"),
     ],
     targets: [
         .target(
