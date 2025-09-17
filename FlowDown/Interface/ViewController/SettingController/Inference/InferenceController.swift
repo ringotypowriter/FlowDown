@@ -181,20 +181,20 @@ extension SettingController.SettingContent {
 
             let defConvId = ModelManager.ModelIdentifier.defaultModelForConversation
             var handledConvModel = false
-                if #available(iOS 26.0, macCatalyst 26.0, *), defConvId == AppleIntelligenceModel.shared.modelIdentifier {
-                    defaultConversationModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
-                    defaultConversationModel.setTapBlock { [weak self] view in
-                        ModelManager.shared.presentModelSelectionMenu(
-                            anchoringView: view.valueLabel,
-                            currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
-                            allowSelectionWithNone: true
-                        ) { [weak self] identifier in
-                            ModelManager.ModelIdentifier.defaultModelForConversation = identifier
-                            self?.updateDefaultModelInfo()
-                        }
+            if #available(iOS 26.0, macCatalyst 26.0, *), defConvId == AppleIntelligenceModel.shared.modelIdentifier {
+                defaultConversationModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
+                defaultConversationModel.setTapBlock { [weak self] view in
+                    ModelManager.shared.presentModelSelectionMenu(
+                        anchoringView: view.valueLabel,
+                        currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
+                        allowSelectionWithNone: true
+                    ) { [weak self] identifier in
+                        ModelManager.ModelIdentifier.defaultModelForConversation = identifier
+                        self?.updateDefaultModelInfo()
                     }
-                    handledConvModel = true
                 }
+                handledConvModel = true
+            }
             if !handledConvModel {
                 if let localModel = ModelManager.shared.localModel(identifier: defConvId) {
                     defaultConversationModel.configure(value: localModel.model_identifier)
@@ -217,10 +217,10 @@ extension SettingController.SettingContent {
 
             let devAuxId = ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask
             var handledAuxModel = false
-                if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
-                    defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
-                    handledAuxModel = true
-                }
+            if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
+                defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
+                handledAuxModel = true
+            }
             if !handledAuxModel {
                 if let localModel = ModelManager.shared.localModel(identifier: devAuxId) {
                     defaultAuxiliaryModel.configure(value: localModel.model_identifier)

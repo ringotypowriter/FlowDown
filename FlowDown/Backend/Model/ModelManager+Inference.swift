@@ -7,13 +7,13 @@
 
 import ChatClientKit
 import Foundation
+import FoundationModels
 import GPTEncoder
 import MLX
 import MLXLLM
 import MLXLMCommon
 import MLXVLM
 import Storage
-import FoundationModels
 
 extension ModelManager {
     // - imageProcessingFailure : "height: 1 must be larger than factor: 28"

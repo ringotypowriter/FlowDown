@@ -7,8 +7,8 @@
 
 import ChatClientKit
 import Foundation
-import UIKit
 import FoundationModels
+import UIKit
 
 // MARK: - Apple Intelligence Model
 

@@ -7,9 +7,9 @@
 
 import ChatClientKit
 import Foundation
+import FoundationModels
 import Storage
 import XMLCoder
-import FoundationModels
 
 // MARK: - XML Models
 
