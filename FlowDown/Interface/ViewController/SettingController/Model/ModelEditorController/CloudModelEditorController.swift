@@ -394,6 +394,76 @@ class CloudModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
+                .with(header: String(localized: "Parameters"))
+        ) { $0.bottom /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
+
+        let temperatureView = ConfigurableInfoView().setTapBlock { [weak self] view in
+            guard let self,
+                  let model = ModelManager.shared.cloudModel(identifier: identifier)
+            else { return }
+
+            func updateDisplay(_ preference: ModelTemperaturePreference, override: Double?) {
+                view.configure(value: ModelManager.shared.displayTextForTemperature(
+                    preference: preference,
+                    override: override
+                ))
+            }
+
+            var actions: [UIMenuElement] = []
+
+            let inheritAction = UIAction(
+                title: String(localized: "Inference default"),
+                image: UIImage(systemName: "circle.dashed")
+            ) { _ in
+                ModelManager.shared.editCloudModel(identifier: model.id) { item in
+                    item.temperature_preference = .inherit
+                    item.temperature_override = nil
+                }
+                updateDisplay(.inherit, override: nil)
+            }
+            inheritAction.state = model.temperature_preference == .inherit ? .on : .off
+            actions.append(inheritAction)
+
+            for preset in ModelManager.shared.temperaturePresets {
+                let action = UIAction(
+                    title: preset.title,
+                    image: UIImage(systemName: preset.icon)
+                ) { _ in
+                    ModelManager.shared.editCloudModel(identifier: model.id) { item in
+                        item.temperature_preference = .custom
+                        item.temperature_override = preset.value
+                    }
+                    updateDisplay(.custom, override: preset.value)
+                }
+                if model.temperature_preference == .custom,
+                   let value = model.temperature_override,
+                   abs(value - preset.value) < 0.0001
+                {
+                    action.state = .on
+                }
+                actions.append(action)
+            }
+
+            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
+            view.present(
+                menu: menu,
+                anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)
+            )
+        }
+        temperatureView.configure(icon: .init(systemName: "sparkles"))
+        temperatureView.configure(title: String(localized: "Imagination"))
+        temperatureView.configure(description: String(localized: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature."))
+        let temperatureDisplay = ModelManager.shared.displayTextForTemperature(
+            preference: model?.temperature_preference ?? .inherit,
+            override: model?.temperature_override
+        )
+        temperatureView.configure(value: temperatureDisplay)
+        stackView.addArrangedSubviewWithMargin(temperatureView)
+        stackView.addArrangedSubview(SeparatorView())
+
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView()
                 .with(header: String(localized: "Verification"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())

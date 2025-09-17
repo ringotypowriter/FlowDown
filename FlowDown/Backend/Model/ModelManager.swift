@@ -17,6 +17,10 @@ class ModelManager: NSObject {
     static let shared = ModelManager()
     static let flowdownModelConfigurationExtension = "fdmodel"
 
+    enum TemperatureStrategy {
+        case send(Double)
+    }
+
     typealias ModelIdentifier = String
     typealias LocalModelIdentifier = LocalModel.ID
     typealias CloudModelIdentifier = CloudModel.ID
@@ -206,6 +210,62 @@ class ModelManager: NSObject {
             return localModel.context.rawValue
         }
         return 8192
+    }
+
+    func temperatureStrategy(for identifier: ModelIdentifier?) -> TemperatureStrategy {
+        if let identifier, let cloudModel = cloudModel(identifier: identifier) {
+            switch cloudModel.temperature_preference {
+            case .inherit:
+                break
+            case .custom:
+                if let override = cloudModel.temperature_override {
+                    return .send(override)
+                }
+            }
+        }
+
+        if let identifier, let localModel = localModel(identifier: identifier) {
+            switch localModel.temperature_preference {
+            case .inherit:
+                break
+            case .custom:
+                if let override = localModel.temperature_override {
+                    return .send(override)
+                }
+            }
+        }
+
+        return .send(Double(temperature))
+    }
+
+    func displayTextForTemperature(
+        preference: ModelTemperaturePreference,
+        override: Double?
+    ) -> String {
+        switch preference {
+        case .inherit:
+            return String(localized: "Inference default")
+        case .custom:
+            if let override {
+                return String(
+                    format: String(localized: "Custom @ %.2f"),
+                    override
+                )
+            }
+            return String(localized: "Custom")
+        }
+    }
+
+    var temperaturePresets: [(title: String, value: Double, icon: String)] {
+        [
+            (String(localized: "Freezing @ 0.0"), 0.1, "snowflake"),
+            (String(localized: "Precise @ 0.25"), 0.25, "thermometer.low"),
+            (String(localized: "Stable @ 0.5"), 0.5, "thermometer.low"),
+            (String(localized: "Humankind @ 0.75"), 0.75, "thermometer.medium"),
+            (String(localized: "Creative @ 1.0"), 1.0, "thermometer.medium"),
+            (String(localized: "Imaginative @ 1.5"), 1.5, "thermometer.high"),
+            (String(localized: "Magical @ 2.0"), 2.0, "thermometer.high"),
+        ]
     }
 
     func importModels(at urls: [URL], controller: UIViewController) {

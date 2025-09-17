@@ -18,6 +18,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public var headers: [String: String] = [:] // additional headers
     public var capabilities: Set<ModelCapabilities> = []
     public var context: ModelContextLength = .short_8k
+    public var temperature_preference: ModelTemperaturePreference = .inherit
+    public var temperature_override: Double?
 
     // can be used when loading model from our server
     // present to user on the top of the editor page
@@ -36,6 +38,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: Set<ModelCapabilities>())
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
+            BindColumnConstraint(temperature_preference, isNotNull: true, defaultTo: ModelTemperaturePreference.inherit)
+            BindColumnConstraint(temperature_override, isNotNull: false)
         }
 
         case id
@@ -48,6 +52,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case capabilities
         case context
         case comment
+        case temperature_preference
+        case temperature_override
     }
 
     public init(
@@ -60,7 +66,9 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         headers: [String: String] = [:],
         context _: ModelContextLength = .medium_64k,
         capabilities: Set<ModelCapabilities> = [],
-        comment: String = ""
+        comment: String = "",
+        temperature_preference: ModelTemperaturePreference = .inherit,
+        temperature_override: Double? = nil
     ) {
         self.id = id
         self.model_identifier = model_identifier
@@ -71,6 +79,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.headers = headers
         self.capabilities = capabilities
         self.comment = comment
+        self.temperature_preference = temperature_preference
+        self.temperature_override = temperature_override
     }
 
     public required init(from decoder: Decoder) throws {
@@ -85,6 +95,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         capabilities = try container.decodeIfPresent(Set<ModelCapabilities>.self, forKey: .capabilities) ?? []
         context = try container.decodeIfPresent(ModelContextLength.self, forKey: .context) ?? .short_8k
         comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
+        temperature_preference = try container.decodeIfPresent(ModelTemperaturePreference.self, forKey: .temperature_preference) ?? .inherit
+        temperature_override = try container.decodeIfPresent(Double.self, forKey: .temperature_override)
     }
 
     public static func == (lhs: CloudModel, rhs: CloudModel) -> Bool {
@@ -102,6 +114,23 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(capabilities)
         hasher.combine(context)
         hasher.combine(comment)
+        hasher.combine(temperature_preference)
+        hasher.combine(temperature_override)
+    }
+}
+
+extension ModelTemperaturePreference: ColumnCodable {
+    public init?(with value: WCDBSwift.Value) {
+        let text = value.stringValue
+        self = ModelTemperaturePreference(rawValue: text) ?? .inherit
+    }
+
+    public func archivedValue() -> WCDBSwift.Value {
+        .init(rawValue)
+    }
+
+    public static var columnType: ColumnType {
+        .text
     }
 }
 
