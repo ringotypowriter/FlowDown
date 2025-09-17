@@ -168,8 +168,7 @@ class ModelManager: NSObject {
         if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
             return AppleIntelligenceModel.shared.modelDisplayName
         }
-        return nil
-            ?? cloudModel(identifier: identifier)?.modelFullName
+        return cloudModel(identifier: identifier)?.modelFullName
             ?? localModel(identifier: identifier)?.model_identifier
             ?? "-"
     }
