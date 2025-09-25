@@ -53,7 +53,7 @@ extension ConversationSessionManager.Session {
             return nil
         }
 
-        let task = "Generate a concise, 3-5 word only title in pure text summarizing the chat history, within the <title> tag. Write in the user's primary language. Do not include any prefix, label, or markdown."
+        let task = "Generate a concise, 3-5 word only title summarizing the chat history, enclosed within the <title> tag. Write in the user's primary language. Do not include any prefix, label, or markdown."
 
         let conversationData = ConversationXML(
             task: task,
