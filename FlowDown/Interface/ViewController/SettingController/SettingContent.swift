@@ -115,18 +115,34 @@ extension SettingController {
 
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            navigationController?.setNavigationBarHidden(true, animated: animated)
+            if #available(iOS 26, macCatalyst 26, *) {
+                // nope, we dont hide it
+                if let nav = navigationController,
+                   nav.isNavigationBarHidden
+                {
+                    nav.setNavigationBarHidden(false, animated: animated)
+                }
+
+            } else {
+                navigationController?.setNavigationBarHidden(true, animated: animated)
+            }
             scrollView.flashScrollIndicators()
         }
 
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
             if #available(iOS 26, macCatalyst 26, *) {
-                if let nav = navigationController {
+                // nope, we dont hide it
+                if let nav = navigationController,
+                   nav.isNavigationBarHidden
+                {
                     nav.setNavigationBarHidden(false, animated: animated)
                 }
             } else {
-                if let nav = navigationController, nav.viewControllers.count > 1 {
+                if let nav = navigationController,
+                   nav.viewControllers.count > 1,
+                   nav.isNavigationBarHidden
+                {
                     nav.setNavigationBarHidden(false, animated: animated)
                 }
             }
