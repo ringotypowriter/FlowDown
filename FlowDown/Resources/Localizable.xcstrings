@@ -531,16 +531,6 @@
         }
       }
     },
-    "Apple Intelligence Unavailable" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple 智能不可用"
-          }
-        }
-      }
-    },
     "Application Prompt Behavior" : {
       "localizations" : {
         "zh-Hans" : {

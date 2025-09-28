@@ -44,8 +44,13 @@ extension ModelManager {
         }.filter { requiresCapabilities.isSubset(of: $0.capabilities) }
 
         var appleIntelligenceAvailable = false
-        if #available(iOS 26.0, macCatalyst 26.0, *) {
-            appleIntelligenceAvailable = AppleIntelligenceModel.shared.isAvailable && requiresCapabilities.isSubset(of: modelCapabilities(identifier: AppleIntelligenceModel.shared.modelIdentifier))
+        if #available(iOS 26.0, macCatalyst 26.0, *),
+           AppleIntelligenceModel.shared.isAvailable,
+           requiresCapabilities.isSubset(of: modelCapabilities(
+               identifier: AppleIntelligenceModel.shared.modelIdentifier
+           ))
+        {
+            appleIntelligenceAvailable = true
         }
 
         if localModels.isEmpty, cloudModels.isEmpty, !appleIntelligenceAvailable {
@@ -154,24 +159,6 @@ extension ModelManager {
                     state: currentSelection == AppleIntelligenceModel.shared.modelIdentifier ? .on : .off
                 ) { _ in
                     onCompletion(AppleIntelligenceModel.shared.modelIdentifier)
-                })
-            } else {
-                finalChildren.append(UIAction(
-                    title: String(localized: "Apple Intelligence"),
-                    image: UIImage(systemName: "apple.intelligence"),
-                    attributes: [.disabled],
-                    state: .off
-                ) { _ in
-                    // Show availability details when user tries to select unavailable Apple Intelligence
-                    let alert = AlertViewController(
-                        title: String(localized: "Apple Intelligence Unavailable"),
-                        message: AppleIntelligenceModel.shared.availabilityDescription
-                    ) { context in
-                        context.addAction(title: String(localized: "OK")) {
-                            context.dispose()
-                        }
-                    }
-                    controller.present(alert, animated: true)
                 })
             }
         }
