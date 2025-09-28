@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ChidoriMenu",
       "state" : {
-        "revision" : "6311d90e5b4262f1243405ad163c6c5e80e6f463",
-        "version" : "3.2.1"
+        "revision" : "27a1a96565fa934da56abb3a926318d5bee70e4d",
+        "version" : "4.0.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ConfigurableKit",
       "state" : {
-        "revision" : "ee48909a319cc37ffb63a556214f4db1f0cf7c9a",
-        "version" : "1.4.0"
+        "revision" : "fd6b5b717f888520d924ab007a4e2bcd66931489",
+        "version" : "2.0.0"
       }
     },
     {

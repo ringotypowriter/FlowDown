@@ -970,7 +970,7 @@
 			repositoryURL = "https://github.com/Lakr233/ConfigurableKit";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.3;
+				minimumVersion = 2.0.0;
 			};
 		};
 		50343FA32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
@@ -1082,7 +1082,7 @@
 			repositoryURL = "https://github.com/Lakr233/ChidoriMenu";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.2.1;
+				minimumVersion = 4.0.0;
 			};
 		};
 		5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {

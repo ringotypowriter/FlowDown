@@ -14,6 +14,7 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Target platforms reflect framework minimums: iOS 16.0+, macCatalyst 16.0+, macOS 13.3+ (ChatClientKit).
 - Toolchain: Swift 5.9+ is required to satisfy package manifests (`swift-tools-version: 5.9`).
 - Core dependencies (via SwiftPM): MLX/MLX-examples for on-device models, WCDB for storage, MarkdownView for rendering, and dedicated UI/editor libraries like RichEditor and RunestoneEditor.
+- MLX GPU support is automatically detected and disabled in simulator/x86_64 builds (see `main.swift`)
 
 ## Project Structure
 - `FlowDown.xcworkspace`: Entry point with app and frameworks.
@@ -28,10 +29,11 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
   - iOS: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 15'`
   - macOS Catalyst: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown-Catalyst -configuration Debug -destination 'platform=macOS'`
 - Release archive (both platforms):
-  - `make` to archive
+  - `make` to archive (runs `Resources/DevKit/scripts/archive.all.sh`)
   - `make clean` to reset build artifacts
 - Package-only verification: `swift build --package-path Frameworks/<Package>`
 - When running CI-style builds, prefer `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug build`
+- Archive script automatically commits changes and bumps version before building
 
 ## Development Guidelines
 ### Swift Style
@@ -46,6 +48,8 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Compose features via dependency injection and protocols instead of inheritance.
 - Keep Catalyst-specific behaviour under `PlatformSupport/` to avoid leaking platform checks throughout the codebase.
 - Security hardening lives in `FlowDown/Backend/Security/`: release builds validate app signatures, strip debuggers, and verify sandbox enforcement (see `main.swift`).
+- Backend services are organized by domain: `ChatTemplate`, `Conversation`, `Model`, `ModelTools`, `MCPService`, `Storage`, `Security`, `UpdateManager`
+- Key initialization sequence in `main.swift`: Storage → ModelManager → ModelToolsManager → ConversationManager → MCPService → UpdateManager (macOS/Catalyst only)
 
 ## Testing Expectations
 - Add or update unit/UI tests alongside behavioural changes. No `FlowDownTests` target ships today; introduce new suites under sensible targets (e.g., create an app test target or add tests within `Frameworks/<Package>/Tests`) when expanding coverage.
