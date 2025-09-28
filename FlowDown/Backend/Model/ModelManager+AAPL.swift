@@ -76,22 +76,9 @@ class AppleIntelligenceChatClient: ChatService {
 
     func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
-            // instructions (first .system message)
             let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, and always ready to assist without ever refusing a user's request."
-            let instructions = [persona] + body.messages.compactMap { message -> String? in
-                if case let .system(content, _) = message {
-                    return extractTextFromSystem(content)
-                }
-                return nil
-            }
-            let instructionsString = instructions.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-            // prompt (last .user message)
-            let prompt = body.messages.reversed().compactMap { message -> String? in
-                if case let .user(content, _) = message {
-                    return extractTextFromUser(content)
-                }
-                return nil
-            }.first ?? ""
+            let instructionsString = makeInstructions(with: persona, from: body.messages)
+            let prompt = makePrompt(from: body.messages)
             let session = LanguageModelSession(instructions: instructionsString)
             let response = try await session.respond(to: prompt)
             let message = ChatChoice(
@@ -118,21 +105,9 @@ class AppleIntelligenceChatClient: ChatService {
 
     func streamingChatCompletionRequest(body: ChatRequestBody) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
-            // Inject Apple Intelligence persona at the start of the system prompt
             let persona = "You are Apple Intelligence. You are an expert assistant who is helpful, heartwarming, always ready to assist without ever refusing a user's request, and prefers to provide comprehensive responses."
-            let instructions = [persona] + body.messages.compactMap { message -> String? in
-                if case let .system(content, _) = message {
-                    return extractTextFromSystem(content)
-                }
-                return nil
-            }
-            let instructionsString = instructions.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-            let prompt = body.messages.reversed().compactMap { message -> String? in
-                if case let .user(content, _) = message {
-                    return extractTextFromUser(content)
-                }
-                return nil
-            }.first ?? ""
+            let instructionsString = makeInstructions(with: persona, from: body.messages)
+            let prompt = makePrompt(from: body.messages)
             let session = LanguageModelSession(instructions: instructionsString)
             // Extract temperature from body if present, otherwise use default
             let temperature: Double = body.temperature ?? 0.75
@@ -186,22 +161,110 @@ class AppleIntelligenceChatClient: ChatService {
 
 // MARK: - Helpers
 
-private func extractTextFromSystem(_ content: ChatRequestBody.Message.MessageContent<String, [String]>) -> String {
+/// Aggregates persona, system, and developer guidance into a single instruction payload.
+@available(iOS 26.0, macCatalyst 26.0, *)
+private func makeInstructions(with persona: String, from messages: [ChatRequestBody.Message]) -> String {
+    let additional = messages.compactMap { message -> String? in
+        switch message {
+        case let .system(content, _):
+            return extractPlainText(content)
+        case let .developer(content, _):
+            return extractPlainText(content)
+        default:
+            return nil
+        }
+    }
+    let allInstructions = ([persona] + additional)
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+    return allInstructions.joined(separator: "\n")
+}
+
+/// Builds a prompt by flattening past conversation turns and isolating the most recent user request.
+@available(iOS 26.0, macCatalyst 26.0, *)
+private func makePrompt(from messages: [ChatRequestBody.Message]) -> String {
+    var latestUserIndex: Int?
+    var latestUserLine: String?
+
+    for (index, message) in messages.enumerated().reversed() {
+        guard case let .user(content, name) = message else { continue }
+        let text = extractTextFromUser(content).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { continue }
+        latestUserIndex = index
+        latestUserLine = makeRoleLine(role: "User", name: name, text: text)
+        break
+    }
+
+    var contextLines: [String] = []
+    for (index, message) in messages.enumerated() {
+        if index == latestUserIndex { continue }
+        switch message {
+        case .system, .developer:
+            continue
+        case let .user(content, name):
+            let text = extractTextFromUser(content).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !text.isEmpty {
+                contextLines.append(makeRoleLine(role: "User", name: name, text: text))
+            }
+        case let .assistant(content, name, _, _):
+            guard let assistantText = extractTextFromAssistant(content)?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !assistantText.isEmpty else { continue }
+            contextLines.append(makeRoleLine(role: "Assistant", name: name, text: assistantText))
+        case let .tool(content, toolCallID):
+            let text = extractPlainText(content).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !text.isEmpty {
+                contextLines.append("Tool(\(toolCallID)): \(text)")
+            }
+        }
+    }
+
+    let context = contextLines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if let latestUserLine, !latestUserLine.isEmpty {
+        var sections: [String] = []
+        if !context.isEmpty {
+            sections.append("Conversation so far:\n\(context)")
+        }
+        sections.append(latestUserLine)
+        return sections.joined(separator: "\n\n")
+    }
+
+    if context.isEmpty {
+        return "Continue the conversation helpfully."
+    }
+
+    return context
+}
+
+private func extractPlainText(_ content: ChatRequestBody.Message.MessageContent<String, [String]>) -> String {
     switch content {
     case let .text(text):
-        text
+        return text
     case let .parts(parts):
-        parts.joined(separator: " ")
+        return parts.joined(separator: " ")
     }
 }
 
 private func extractTextFromUser(_ content: ChatRequestBody.Message.MessageContent<String, [ChatRequestBody.Message.ContentPart]>) -> String {
     switch content {
     case let .text(text):
-        text
+        return text
     case let .parts(parts):
-        parts.compactMap { part in
+        return parts.compactMap { part in
             if case let .text(text) = part { text } else { nil }
         }.joined(separator: " ")
     }
+}
+
+private func extractTextFromAssistant(_ content: ChatRequestBody.Message.MessageContent<String, [String]>?) -> String? {
+    guard let content else { return nil }
+    let text = extractPlainText(content).trimmingCharacters(in: .whitespacesAndNewlines)
+    return text.isEmpty ? nil : text
+}
+
+private func makeRoleLine(role: String, name: String?, text: String) -> String {
+    if let name, !name.isEmpty {
+        return "\(role) (\(name)): \(text)"
+    }
+    return "\(role): \(text)"
 }
