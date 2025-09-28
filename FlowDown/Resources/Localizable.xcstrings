@@ -441,6 +441,106 @@
         }
       }
     },
+    "Apple Intelligence" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能"
+          }
+        }
+      }
+    },
+    "Apple Intelligence is available and ready to use on this device." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能对此设备可用。"
+          }
+        }
+      }
+    },
+    "Apple Intelligence is not available: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能不可用：%@"
+          }
+        }
+      }
+    },
+    "Apple Intelligence is not enabled. Check your device settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能未启用。请检查设备的设置。"
+          }
+        }
+      }
+    },
+    "Apple Intelligence is unavailable: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能不可用：%@"
+          }
+        }
+      }
+    },
+    "Apple Intelligence model is not ready. Try again later." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能的模型尚未就绪，请稍后再查看。"
+          }
+        }
+      }
+    },
+    "Apple Intelligence Not Enabled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能未启用。"
+          }
+        }
+      }
+    },
+    "Apple Intelligence provides on-device AI capabilities when available." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能在设备上提供离线可用的模型。"
+          }
+        }
+      }
+    },
+    "Apple Intelligence requires iOS 26 or later." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能需要 iOS 26 或更新的系统版本。"
+          }
+        }
+      }
+    },
+    "Apple Intelligence Unavailable" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 智能不可用"
+          }
+        }
+      }
+    },
     "Application Prompt Behavior" : {
       "localizations" : {
         "zh-Hans" : {
@@ -567,6 +667,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "视觉辅助模型"
+          }
+        }
+      }
+    },
+    "Available" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用"
           }
         }
       }
@@ -1744,6 +1854,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "开发者角色"
+          }
+        }
+      }
+    },
+    "Device Not Eligible" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备不可用"
           }
         }
       }
@@ -4139,6 +4259,16 @@
         }
       }
     },
+    "Model Not Ready" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型未就绪"
+          }
+        }
+      }
+    },
     "Model Selector" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5163,6 +5293,16 @@
         }
       }
     },
+    "Requires iOS 26+" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要 iOS 26+"
+          }
+        }
+      }
+    },
     "Reset" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5692,6 +5832,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "省：%@"
+          }
+        }
+      }
+    },
+    "Status: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态：%@"
           }
         }
       }
@@ -6245,6 +6395,16 @@
         }
       }
     },
+    "This device is not eligible for Apple Intelligence. Requires compatible hardware." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此设备不支持 Apple 智能，因为硬件不兼容。"
+          }
+        }
+      }
+    },
     "This document is provided by system or tool call, please cite the id with [^%lld] format if used." : {
       "localizations" : {
         "zh-Hans" : {
@@ -6683,6 +6843,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法处理工具调用：%@"
+          }
+        }
+      }
+    },
+    "Unavailable: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不可用：%@"
           }
         }
       }

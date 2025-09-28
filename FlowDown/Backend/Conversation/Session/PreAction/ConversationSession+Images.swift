@@ -27,7 +27,7 @@ private let languageIdentifiers: [String] = {
 extension ConversationSession {
     func processImageToText(
         image: UIImage,
-        _ currentMessageListView: MessageListView,
+        _ currentMessageListView: MessageListView
 
     ) async throws -> String {
         try checkCancellation()

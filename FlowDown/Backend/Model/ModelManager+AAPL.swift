@@ -37,23 +37,43 @@ final class AppleIntelligenceModel {
             let model = SystemLanguageModel.default
             switch model.availability {
             case .available:
-                return "Available"
+                return String(localized: "Available")
             case .unavailable(.deviceNotEligible):
-                return "Device Not Eligible"
+                return String(localized: "Device Not Eligible")
             case .unavailable(.appleIntelligenceNotEnabled):
-                return "Apple Intelligence Not Enabled"
+                return String(localized: "Apple Intelligence Not Enabled")
             case .unavailable(.modelNotReady):
-                return "Model Not Ready"
+                return String(localized: "Model Not Ready")
             case let .unavailable(other):
-                return "Unavailable: \(other)"
+                return String(localized: "Unavailable: \(String(describing: other))")
             }
         } else {
-            return "Requires iOS 26+"
+            return String(localized: "Requires iOS 26+")
+        }
+    }
+
+    var availabilityDescription: String {
+        if #available(iOS 26.0, macCatalyst 26.0, *) {
+            let model = SystemLanguageModel.default
+            switch model.availability {
+            case .available:
+                return String(localized: "Apple Intelligence is available and ready to use on this device.")
+            case .unavailable(.deviceNotEligible):
+                return String(localized: "This device is not eligible for Apple Intelligence. Requires compatible hardware.")
+            case .unavailable(.appleIntelligenceNotEnabled):
+                return String(localized: "Apple Intelligence is not enabled. Check your device settings.")
+            case .unavailable(.modelNotReady):
+                return String(localized: "Apple Intelligence model is not ready. Try again later.")
+            case let .unavailable(other):
+                return String(localized: "Apple Intelligence is unavailable: \(String(describing: other))")
+            }
+        } else {
+            return String(localized: "Apple Intelligence requires iOS 26 or later.")
         }
     }
 
     var modelDisplayName: String {
-        "Apple Intelligence"
+        String(localized: "Apple Intelligence")
     }
 
     var modelIdentifier: String {
@@ -239,18 +259,18 @@ private func makePrompt(from messages: [ChatRequestBody.Message]) -> String {
 private func extractPlainText(_ content: ChatRequestBody.Message.MessageContent<String, [String]>) -> String {
     switch content {
     case let .text(text):
-        return text
+        text
     case let .parts(parts):
-        return parts.joined(separator: " ")
+        parts.joined(separator: " ")
     }
 }
 
 private func extractTextFromUser(_ content: ChatRequestBody.Message.MessageContent<String, [ChatRequestBody.Message.ContentPart]>) -> String {
     switch content {
     case let .text(text):
-        return text
+        text
     case let .parts(parts):
-        return parts.compactMap { part in
+        parts.compactMap { part in
             if case let .text(text) = part { text } else { nil }
         }.joined(separator: " ")
     }

@@ -23,7 +23,7 @@ class BrandingLabel: UILabel {
                 placeholder: String(localized: "FlowDown"),
                 text: BrandingLabel.readBrandingValue(),
                 cancelButtonText: String(localized: "Cancel"),
-                doneButtonText: String(localized: "Set"),
+                doneButtonText: String(localized: "Set")
             ) { text in
                 BrandingLabel.setBrandingValue(text)
                 NotificationCenter.default.post(name: .brandingLabelNeedsUpdate, object: nil)

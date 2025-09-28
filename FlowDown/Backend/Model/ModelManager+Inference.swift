@@ -223,7 +223,7 @@ extension ModelManager {
     func testAppleIntelligenceModel(completion: @escaping (Result<Void, Error>) -> Void) {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
             guard AppleIntelligenceModel.shared.isAvailable else {
-                completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence not available on this device."])))
+                completion(.failure(NSError(domain: "AppleIntelligence", code: -1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Apple Intelligence is not available: \(AppleIntelligenceModel.shared.availabilityStatus)")])))
                 return
             }
             Task {

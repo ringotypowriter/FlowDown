@@ -111,7 +111,7 @@ class UpdateManager: NSObject {
     private func presentUpdateAlert(controller: UIViewController, package: DistributionChannel.RemotePackage) {
         let alert = AlertViewController(
             title: String(localized: "Update Available"),
-            message: String(localized: "A new version \(package.tag) is available. Would you like to download it?"),
+            message: String(localized: "A new version \(package.tag) is available. Would you like to download it?")
         ) { context in
             context.addAction(title: String(localized: "Cancel")) {
                 context.dispose()

@@ -263,7 +263,7 @@ extension MessageListView: ListViewAdapter {
         _ listView: ListViewKit.ListView,
         anchor point: CGPoint,
         for item: ItemType,
-        at index: Int,
+        at index: Int
     ) {
         let hasActivateEvent = hasActivatedEventOnLabel(listView: listView, location: point)
         print("[*] context menu checking event \(hasActivateEvent)")

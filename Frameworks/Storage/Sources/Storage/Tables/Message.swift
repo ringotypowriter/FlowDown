@@ -224,7 +224,7 @@ extension Message: Hashable {
     }
 }
 
-extension MarkdownBlockNode: ColumnCodable {
+extension MarkdownBlockNode: @retroactive ColumnCodable {
     static let encoder = JSONEncoder()
     static let decoder = JSONDecoder()
     public init?(with value: WCDBSwift.Value) {

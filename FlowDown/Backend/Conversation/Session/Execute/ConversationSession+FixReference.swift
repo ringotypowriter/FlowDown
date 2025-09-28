@@ -66,7 +66,7 @@ private let prevent: [MarkdownNodeType] = [
 extension ConversationSession {
     func fixWebReferenceIfPossible(
         in content: String,
-        with contentLink: [Int: String],
+        with contentLink: [Int: String]
     ) -> String {
         if content.isEmpty || contentLink.isEmpty { return content }
 

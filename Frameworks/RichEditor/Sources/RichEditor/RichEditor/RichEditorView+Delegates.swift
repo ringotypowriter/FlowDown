@@ -109,7 +109,7 @@ extension RichEditorView {
 
         let alert = AlertViewController(
             title: String(localized: "Import PDF", bundle: .module),
-            message: String(localized: "This PDF has \(pageCount) page(s). You can select whether to import it as text or convert it to images.", bundle: .module),
+            message: String(localized: "This PDF has \(pageCount) page(s). You can select whether to import it as text or convert it to images.", bundle: .module)
         ) { [weak self] context in
             context.addAction(title: String(localized: "Cancel", bundle: .module)) {
                 context.dispose()

@@ -153,6 +153,32 @@ extension SettingController.SettingContent {
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
+            // Apple Intelligence Availability Section
+            if #available(iOS 26.0, macCatalyst 26.0, *) {
+                stackView.addArrangedSubviewWithMargin(
+                    ConfigurableSectionHeaderView().with(
+                        header: String(localized: "Apple Intelligence")
+                    )
+                ) { $0.bottom /= 2 }
+                stackView.addArrangedSubview(SeparatorView())
+
+                let appleIntelligenceStatusView = ConfigurableInfoView().with {
+                    $0.configure(icon: UIImage(systemName: "apple.intelligence"))
+                    $0.configure(title: String(localized: "Apple Intelligence"))
+                    $0.configure(description: AppleIntelligenceModel.shared.availabilityDescription)
+                    $0.configure(value: AppleIntelligenceModel.shared.availabilityStatus)
+                }
+                stackView.addArrangedSubviewWithMargin(appleIntelligenceStatusView)
+                stackView.addArrangedSubview(SeparatorView())
+
+                stackView.addArrangedSubviewWithMargin(
+                    ConfigurableSectionFooterView().with(
+                        footer: String(localized: "Apple Intelligence provides on-device AI capabilities when available.")
+                    )
+                ) { $0.top /= 2 }
+                stackView.addArrangedSubview(SeparatorView())
+            }
+
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
                     header: "MLX"
@@ -183,6 +209,10 @@ extension SettingController.SettingContent {
             var handledConvModel = false
             if #available(iOS 26.0, macCatalyst 26.0, *), defConvId == AppleIntelligenceModel.shared.modelIdentifier {
                 defaultConversationModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
+                // Add availability status as subtitle when Apple Intelligence is selected
+                if !AppleIntelligenceModel.shared.isAvailable {
+                    defaultConversationModel.configure(description: String(localized: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)"))
+                }
                 defaultConversationModel.setTapBlock { [weak self] view in
                     ModelManager.shared.presentModelSelectionMenu(
                         anchoringView: view.valueLabel,
@@ -219,6 +249,10 @@ extension SettingController.SettingContent {
             var handledAuxModel = false
             if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
                 defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
+                // Add availability status as subtitle when Apple Intelligence is selected
+                if !AppleIntelligenceModel.shared.isAvailable {
+                    defaultAuxiliaryModel.configure(description: String(localized: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)"))
+                }
                 handledAuxModel = true
             }
             if !handledAuxModel {

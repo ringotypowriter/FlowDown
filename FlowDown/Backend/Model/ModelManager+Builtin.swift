@@ -22,7 +22,7 @@ extension CloudModel {
                     endpoint: "https://text.pollinations.ai/openai/v1/chat/completions",
                     context: .medium_64k,
                     capabilities: [.tool, .visual],
-                    comment: String(localized: "This model is provided by pollinations.ai free of charge. Rate limit applies."),
+                    comment: String(localized: "This model is provided by pollinations.ai free of charge. Rate limit applies.")
                 )
             case .qwen_coder:
                 CloudModel(
@@ -31,7 +31,7 @@ extension CloudModel {
                     endpoint: "https://text.pollinations.ai/openai/v1/chat/completions",
                     context: .medium_64k,
                     capabilities: [.tool, .visual],
-                    comment: String(localized: "This model is provided by pollinations.ai free of charge. Rate limit applies."),
+                    comment: String(localized: "This model is provided by pollinations.ai free of charge. Rate limit applies.")
                 )
             }
         }

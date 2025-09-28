@@ -70,3 +70,8 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Group related work per commit and avoid bundling unrelated refactors.
 - Pull requests must include a summary, testing checklist, and before/after visuals for UI changes. Mention localization or asset updates when relevant.
 - Tag reviewers responsible for the affected modules and outline any follow-up tasks or risks.
+
+## Localization Guidelines
+- Always use `String(localized: "text")` for user-facing strings instead of hardcoded text
+- Add new localized strings to `Resources/CommunityEdition/FlowDown/Resources/Localizable.xcstrings` when introducing new UI text
+- Follow existing localization patterns and maintain consistency with the codebase
