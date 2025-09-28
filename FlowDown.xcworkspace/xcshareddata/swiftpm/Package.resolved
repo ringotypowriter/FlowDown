@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ChidoriMenu",
       "state" : {
-        "revision" : "d52b4ffde7f3af94491edb4ae825fb36a056ed80",
-        "version" : "3.0.3"
+        "revision" : "6311d90e5b4262f1243405ad163c6c5e80e6f463",
+        "version" : "3.2.1"
       }
     },
     {

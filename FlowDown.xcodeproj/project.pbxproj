@@ -1082,7 +1082,7 @@
 			repositoryURL = "https://github.com/Lakr233/ChidoriMenu";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.3;
+				minimumVersion = 3.2.1;
 			};
 		};
 		5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
