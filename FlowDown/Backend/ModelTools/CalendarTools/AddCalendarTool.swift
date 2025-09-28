@@ -128,7 +128,7 @@ class MTAddCalendarTool: ModelTool {
         dateFormatter.timeStyle = .short
 
         var eventDetails = [
-            String(localized: "Event: \(event.title)"),
+            String(localized: "Event: \(String(describing: event.title))"),
             "",
         ]
 
