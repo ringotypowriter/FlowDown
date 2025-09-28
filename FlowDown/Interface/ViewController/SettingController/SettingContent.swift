@@ -10,7 +10,11 @@ import UIKit
 
 extension SettingController {
     class SettingContent: StackScrollController {
-        let closeButton = ImageCircleButton(name: "xmark", distinctStyle: .border, inset: 8)
+        let closeButton: ImageCircleButton = if #available(iOS 26, macCatalyst 26, *) {
+            .init(name: "xmark", distinctStyle: .none, inset: 8)
+        } else {
+            .init(name: "xmark", distinctStyle: .border, inset: 8)
+        }
 
         let objects: [ConfigurableObject] = [
             .init(
