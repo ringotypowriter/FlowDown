@@ -1,17 +1,18 @@
-# Repository Guidelines
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Overview
-FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a privacy-first mindset. The Xcode workspace hosts the app plus several Swift Package Manager frameworks that power storage, editing, and model integrations. Treat this document as the definitive playbook for any coding agent collaborating on the project.
+FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a privacy-first mindset. The Xcode workspace hosts the app plus several Swift Package Manager frameworks that power storage, editing, and model integrations.
 
 ## Environment & Tooling
 - Prefer working through `FlowDown.xcworkspace` so app and frameworks build together with the correct schemes.
 - Use `make` for release archives; clean artifacts with `make clean` (see `Resources/DevKit/scripts/archive.all.sh`).
 - Reach for `xcbeautify -qq` when running `xcodebuild` locally to keep logs concise.
-- Always consult Context7 before drafting changes: `/websites/developer_apple` for Apple documentation, `/tencent/wcdb` for WCDB details, and `/ml-explore/mlx-swift` for MLX-Swift guidance. Resolve library IDs and keep notes on the sources you cite.
 
 ## Platform Requirements & Dependencies
-- Target platforms reflect framework minimums: iOS 16.0+, macCatalyst 16.0+, macOS 13.3+ (ChatClientKit). Validate targets whenever you introduce new packages or adjust deployment settings.
-- Toolchain: Swift 5.9+ is required to satisfy package manifests (`swift-tools-version: 5.9`). Align Xcode project `SWIFT_VERSION` settings with this toolchain when updating build configurations.
+- Target platforms reflect framework minimums: iOS 16.0+, macCatalyst 16.0+, macOS 13.3+ (ChatClientKit).
+- Toolchain: Swift 5.9+ is required to satisfy package manifests (`swift-tools-version: 5.9`).
 - Core dependencies (via SwiftPM): MLX/MLX-examples for on-device models, WCDB for storage, MarkdownView for rendering, and dedicated UI/editor libraries like RichEditor and RunestoneEditor.
 
 ## Project Structure
@@ -24,21 +25,21 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 ## Build & Run Commands
 - Open the workspace: `open FlowDown.xcworkspace`.
 - Debug builds:
-  - iOS: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 15'`.
-  - macOS Catalyst: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown-Catalyst -configuration Debug -destination 'platform=macOS'`.
+  - iOS: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 15'`
+  - macOS Catalyst: `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown-Catalyst -configuration Debug -destination 'platform=macOS'`
 - Release archive (both platforms):
-  - `make` to archive.
-  - `make clean` to reset build artifacts.
-- Package-only verification: `swift build --package-path Frameworks/<Package>`.
-- When running CI-style builds, prefer `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug build`.
+  - `make` to archive
+  - `make clean` to reset build artifacts
+- Package-only verification: `swift build --package-path Frameworks/<Package>`
+- When running CI-style builds, prefer `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug build`
 
 ## Development Guidelines
 ### Swift Style
-- 4-space indentation with opening braces on the same line.
-- Single spaces around operators and after commas.
-- PascalCase types; camelCase properties, methods, and file names.
-- Organize extensions into targeted files (`Type+Feature.swift`) and keep each file focused on one responsibility.
-- Lean on modern Swift patterns: `@Observable`, structured concurrency (`async`/`await`), result builders, and protocol-oriented design.
+- 4-space indentation with opening braces on the same line
+- Single spaces around operators and after commas
+- PascalCase types; camelCase properties, methods, and file names
+- Organize extensions into targeted files (`Type+Feature.swift`) and keep each file focused on one responsibility
+- Lean on modern Swift patterns: `@Observable`, structured concurrency (`async`/`await`), result builders, and protocol-oriented design
 
 ### Architecture & Key Services
 - Respect the established managers: `ModelManager`, `ModelToolsManager`, `ConversationManager`, `MCPService`, and `UpdateManager`. Consult them before adding new singletons.
@@ -50,7 +51,7 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Add or update unit/UI tests alongside behavioural changes. No `FlowDownTests` target ships today; introduce new suites under sensible targets (e.g., create an app test target or add tests within `Frameworks/<Package>/Tests`) when expanding coverage.
 - Name tests using `testFeatureScenario_expectation`.
 - Run `xcodebuild test -workspace FlowDown.xcworkspace -scheme FlowDown` for end-to-end coverage once a test target exists, or `swift test --package-path Frameworks/<Package>` for package scope.
-- Document manual verification steps whenever UI or integration flows lack automation. Regression notes are essential where automated coverage is absent.
+- Document manual verification steps whenever UI or integration flows lack automation.
 
 ## Security & Privacy
 - Never hardcode secrets; rely on user-supplied keys and platform keychains.
