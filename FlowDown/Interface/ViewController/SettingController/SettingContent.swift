@@ -238,7 +238,7 @@ extension SettingController.SettingContent {
                 make.width.height.equalTo(64)
                 make.centerX.equalToSuperview()
             }
-            
+
             if #available(iOS 26, macCatalyst 26, *) {
                 // nope we have nav bar header title
             } else {
