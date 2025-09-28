@@ -85,16 +85,21 @@ extension SettingController {
         override func setupContentViews() {
             super.setupContentViews()
 
-            let closeView = UIView()
-            closeView.addSubview(closeButton)
-            closeButton.snp.makeConstraints { make in
-                make.top.right.bottom.equalToSuperview()
-                make.width.height.equalTo(32)
+            if #available(iOS 26, macCatalyst 26, *) {
+                navigationItem.rightBarButtonItem = .init(customView: closeButton)
+            } else {
+                let closeView = UIView()
+                closeView.addSubview(closeButton)
+                closeButton.snp.makeConstraints { make in
+                    make.top.right.bottom.equalToSuperview()
+                    make.width.height.equalTo(32)
+                }
+                closeButton.actionBlock = { [weak self] in
+                    self?.navigationController?.dismiss(animated: true, completion: nil)
+                }
+                stackView.addArrangedSubviewWithMargin(closeView)
             }
-            closeButton.actionBlock = { [weak self] in
-                self?.navigationController?.dismiss(animated: true, completion: nil)
-            }
-            stackView.addArrangedSubviewWithMargin(closeView)
+
             stackView.addArrangedSubviewWithMargin(SettingHeaderView())
             stackView.addArrangedSubview(SeparatorView())
 
@@ -116,8 +121,14 @@ extension SettingController {
 
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            if let nav = navigationController, nav.viewControllers.count > 1 {
-                nav.setNavigationBarHidden(false, animated: animated)
+            if #available(iOS 26, macCatalyst 26, *) {
+                if let nav = navigationController {
+                    nav.setNavigationBarHidden(false, animated: animated)
+                }
+            } else {
+                if let nav = navigationController, nav.viewControllers.count > 1 {
+                    nav.setNavigationBarHidden(false, animated: animated)
+                }
             }
         }
 
