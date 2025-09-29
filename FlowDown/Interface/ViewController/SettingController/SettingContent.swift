@@ -98,10 +98,10 @@ extension SettingController {
                     make.top.right.bottom.equalToSuperview()
                     make.width.height.equalTo(32)
                 }
-                closeButton.actionBlock = { [weak self] in
-                    self?.navigationController?.dismiss(animated: true, completion: nil)
-                }
                 stackView.addArrangedSubviewWithMargin(closeView)
+            }
+            closeButton.actionBlock = { [weak self] in
+                self?.navigationController?.dismiss(animated: true, completion: nil)
             }
 
             stackView.addArrangedSubviewWithMargin(SettingHeaderView())
