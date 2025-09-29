@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         ChidoriMenuConfiguration.accentColor = UIColor.accent
         ChidoriMenuConfiguration.backgroundColor = UIColor.background
-        ChidoriMenuConfiguration.suggestedWidth = 350
+        ChidoriMenuConfiguration.suggestedWidth = nil // auto width
 
         templateMenuCancellable = ChatTemplateManager.shared.$templates
             .receive(on: DispatchQueue.main)
