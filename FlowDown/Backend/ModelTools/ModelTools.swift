@@ -40,7 +40,8 @@ class ModelTool: NSObject {
     }
 
     var isEnabled: Bool {
-        ConfigurableKit.value(forKey: Self.controlObject.key) ?? true
+        get { ConfigurableKit.value(forKey: Self.controlObject.key) ?? true }
+        set { ConfigurableKit.set(value: newValue, forKey: Self.controlObject.key) }
     }
 
     nonisolated func execute(with input: String, anchorTo _: UIView) async throws -> String {

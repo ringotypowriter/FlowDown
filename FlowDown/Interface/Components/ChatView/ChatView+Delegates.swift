@@ -7,6 +7,7 @@
 
 import AlertController
 import ChatClientKit
+import ConfigurableKit
 import RegexBuilder
 import RichEditor
 import ScrubberKit
@@ -233,18 +234,74 @@ extension ChatView: RichEditorView.Delegate {
     }
 
     func onRichEditorShowAlternativeToolsMenu(anchor: UIView) {
-        let menu = UIMenu(title: String(localized: "Shortcuts"), children: [
-            UIAction(title: String(localized: "MCP Settings")) { [weak self] _ in
-                SettingController.setNextEntryPage(.mcp)
-                let settingController = SettingController()
-                self?.parentViewController?.present(settingController, animated: true)
-            },
-            UIAction(title: String(localized: "Tools Settings")) { [weak self] _ in
-                SettingController.setNextEntryPage(.tools)
-                let settingController = SettingController()
-                self?.parentViewController?.present(settingController, animated: true)
-            },
-        ])
+        let tools = ModelToolsManager.shared.configurableTools
+        let mcpServers = MCPService.shared.servers.value
+
+        var toolMenuItems: [UIMenuElement] = []
+
+        // Add built-in tools with enable/disable toggle
+        if !tools.isEmpty {
+            let builtinToolsMenu = UIMenu(
+                title: String(localized: "Built-in Tools"),
+                options: [.displayInline],
+                children: tools.map { tool in
+                    UIAction(
+                        title: tool.interfaceName,
+                        image: UIImage(systemName: "hammer"),
+                        attributes: [.keepsMenuPresented],
+                        state: tool.isEnabled ? .on : .off
+                    ) { action in
+                        tool.isEnabled.toggle()
+                        action.state = tool.isEnabled ? .on : .off
+                    }
+                }
+            )
+            toolMenuItems.append(builtinToolsMenu)
+        }
+
+        // Add MCP servers with enable/disable toggle
+        if !mcpServers.isEmpty {
+            let mcpServersMenu = UIMenu(
+                title: String(localized: "MCP Servers"),
+                options: [.displayInline],
+                children: mcpServers.map { server in
+                    UIAction(
+                        title: server.name.isEmpty ? "Unnamed Server" : server.name,
+                        image: UIImage(systemName: "server.rack"),
+                        attributes: [.keepsMenuPresented],
+                        state: server.isEnabled ? .on : .off
+                    ) { action in
+                        // Toggle server enabled state and update the action state
+                        MCPService.shared.edit(identifier: server.id) { server in
+                            server.isEnabled.toggle()
+                        }
+                        action.state = server.isEnabled ? .off : .on
+                    }
+                }
+            )
+            toolMenuItems.append(mcpServersMenu)
+        }
+
+        // Add settings shortcuts
+        let settingsMenu = UIMenu(
+            title: String(localized: "Settings"),
+            options: [.displayInline],
+            children: [
+                UIAction(title: String(localized: "MCP Settings")) { [weak self] _ in
+                    SettingController.setNextEntryPage(.mcp)
+                    let settingController = SettingController()
+                    self?.parentViewController?.present(settingController, animated: true)
+                },
+                UIAction(title: String(localized: "Tools Settings")) { [weak self] _ in
+                    SettingController.setNextEntryPage(.tools)
+                    let settingController = SettingController()
+                    self?.parentViewController?.present(settingController, animated: true)
+                },
+            ]
+        )
+        toolMenuItems.append(settingsMenu)
+
+        let menu = UIMenu(title: String(localized: "Tools"), children: toolMenuItems)
         anchor.present(menu: menu)
     }
 
