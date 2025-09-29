@@ -239,15 +239,14 @@ extension SettingController.SettingContent {
                 make.centerX.equalToSuperview()
             }
 
+            addSubview(label)
+            label.snp.makeConstraints { make in
+                make.top.equalTo(iconImageView.snp.bottom).offset(16)
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview()
+            }
             if #available(iOS 26, macCatalyst 26, *) {
-                // nope we have nav bar header title
-            } else {
-                addSubview(label)
-                label.snp.makeConstraints { make in
-                    make.top.equalTo(iconImageView.snp.bottom).offset(16)
-                    make.centerX.equalToSuperview()
-                    make.width.equalToSuperview()
-                }
+                label.isHidden = true
             }
 
             addSubview(descriptionLabel)
