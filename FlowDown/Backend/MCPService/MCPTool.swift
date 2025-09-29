@@ -51,7 +51,8 @@ class MCPTool: ModelTool {
     }
 
     override var isEnabled: Bool {
-        true
+        get { true }
+        set { assertionFailure() }
     }
 
     override class var controlObject: ConfigurableObject {
