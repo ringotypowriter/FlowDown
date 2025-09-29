@@ -245,9 +245,6 @@ extension SettingController.SettingContent {
                 make.centerX.equalToSuperview()
                 make.width.equalToSuperview()
             }
-            if #available(iOS 26, macCatalyst 26, *) {
-                label.isHidden = true
-            }
 
             addSubview(descriptionLabel)
             descriptionLabel.snp.makeConstraints { make in
