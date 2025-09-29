@@ -742,6 +742,16 @@
         }
       }
     },
+    "Built-in Tools" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内建工具"
+          }
+        }
+      }
+    },
     "Cache" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6916,6 +6926,9 @@
           }
         }
       }
+    },
+    "Unknown Server" : {
+
     },
     "Unlimited Pages" : {
       "localizations" : {

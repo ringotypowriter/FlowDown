@@ -27,6 +27,10 @@ class ModelTool: NSObject {
         fatalError("must be overriden")
     }
 
+    var interfaceIcon: String {
+        Self.controlObject.icon
+    }
+
     var definition: ChatRequestBody.Tool {
         fatalError("must be overridden")
     }
