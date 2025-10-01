@@ -9,19 +9,6 @@ import Foundation
 import Security
 
 enum Security {
-    static let requirementText =
-        #"""
-        anchor apple generic
-        and identifier "wiki.qaq.flow"
-        and (
-            certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */
-            or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */
-                and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */
-                and certificate leaf[subject.OU] = "964G86XT2P"
-        )
-        """#
-        .trimmingCharacters(in: .whitespacesAndNewlines)
-
     private static func secCall<T>(_ exec: (_ input: UnsafeMutablePointer<T?>) -> (OSStatus)) throws -> T {
         let pointer = UnsafeMutablePointer<T?>.allocate(capacity: 1)
         let err = exec(pointer)
@@ -36,20 +23,7 @@ enum Security {
 
     @inline(__always)
     static func validateAppSignature() -> Bool {
-        #if DEBUG || !targetEnvironment(macCatalyst) // just let them use it when jailbroken :)
-            return true
-        #else
-            do {
-                let req = try secCall { SecRequirementCreateWithString(requirementText as NSString, [], $0) }
-                let url = URL(fileURLWithPath: CommandLine.arguments.first!)
-                let code = try secCall { SecStaticCodeCreateWithPath(url as NSURL, [], $0) }
-
-                var errorQ: Unmanaged<CFError>?
-                let err = SecStaticCodeCheckValidityWithErrors(code, [], req, &errorQ)
-                if err == errSecSuccess { return true }
-            } catch {}
-            return false
-        #endif
+        true
     }
 
     static func removeDebugger() {
