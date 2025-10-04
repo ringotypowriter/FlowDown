@@ -7,7 +7,7 @@
 
 FlowDown is a blazing fast and smooth client app for using AI/LLM with full protection of your privacy.
 
-To celebrate our national holiday, FlowDown is currently on sale until 2025.10.06.
+To celebrate our national holiday, FlowDown is currently on sale, 100% off, until 2025.10.06.
 
 ![Preview](./Resources/SCR-PREVIEW.png)
 
