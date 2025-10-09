@@ -14,6 +14,10 @@ public class Storage {
     public let databaseDir: URL
     public let databaseLocation: URL
 
+    private let migrations: [DBMigration] = [
+        MigrationV0ToV1(),
+    ]
+
     init() throws {
         databaseDir = FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
@@ -30,16 +34,17 @@ public class Storage {
 
         print("[*] database location: \(databaseLocation)")
 
+        checkMigration()
+
         try setup(db: db)
     }
 
     func setup(db: Database) throws {
-        try db.create(table: CloudModel.table, of: CloudModel.self)
-        try db.create(table: Attachment.table, of: Attachment.self)
-        try db.create(table: Message.table, of: Message.self)
-        try db.create(table: Conversation.table, of: Conversation.self)
-        try db.create(table: ModelContextServer.table, of: ModelContextServer.self)
-        try db.create(table: Memory.table, of: Memory.self)
+        var version = try currentVersion()
+        while let migration = migrations.first(where: { $0.fromVersion == version }) {
+            try migration.migrate(db: db)
+            version = migration.toVersion
+        }
     }
 
     public func reset() {
@@ -58,6 +63,33 @@ public class Storage {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             exit(0)
         }
+    }
+}
+
+private extension Storage {
+    func checkMigration() {
+        for migration in migrations {
+            guard migration.validate(allowedVersions: DBVersion.allCases) else {
+                fatalError("Invalid migration: \(migration) crosses multiple versions or uses unknown version")
+            }
+        }
+    }
+
+    func currentVersion() throws -> DBVersion {
+        // 初始化版本
+        let initVersion: DBVersion = .Version0
+
+        let statement = StatementPragma().pragma(.userVersion)
+        let result = try db.getValue(from: statement)
+        if let result {
+            return DBVersion(rawValue: result.intValue) ?? initVersion
+        }
+        return initVersion
+    }
+
+    func setVersion(_ version: DBVersion) throws {
+        let statement = StatementPragma().pragma(.userVersion).to(version.rawValue)
+        try db.exec(statement)
     }
 }
 
