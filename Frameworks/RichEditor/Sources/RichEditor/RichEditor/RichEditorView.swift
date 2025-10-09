@@ -1,7 +1,7 @@
 import UIKit
 
 public class RichEditorView: EditorSectionView {
-    var storage: TemporaryStorage = .init(id: -1)
+    var storage: TemporaryStorage = .init(id: "-1")
 
     public required init() {
         super.init()
@@ -178,12 +178,12 @@ public class RichEditorView: EditorSectionView {
     }
 
     public func prepareForReuse() {
-        storage = .init(id: -1)
+        storage = .init(id: "-1")
         resetValues()
         updateModelName()
     }
 
-    public func use(identifier: Int64) {
+    public func use(identifier: String) {
         storage = .init(id: identifier)
         updateModelInfo(postUpdate: false)
         restoreEditorStatusIfPossible()

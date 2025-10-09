@@ -67,7 +67,7 @@ extension MainController {
     }
 
     func load(_ conv: Conversation.ID?) {
-        print("[MainController] sidebarDidSelectNewChat: \(conv ?? -1)")
+        print("[MainController] sidebarDidSelectNewChat: \(conv ?? "-1")")
         chatView.prepareForReuse()
         guard let identifier = conv else { return }
 

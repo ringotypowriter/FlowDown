@@ -7,30 +7,87 @@ import Foundation
 import WCDBSwift
 
 public extension Storage {
-    func attachment(for messageID: Message.ID) -> [Attachment] {
+    func attachment(for messageID: String) -> [Attachment] {
         (
             try? db.getObjects(
                 fromTable: Attachment.table,
-                where: Attachment.Properties.messageId == messageID,
+                where: Attachment.Properties.messageId == messageID && Attachment.Properties.removed == false,
                 orderBy: [
-                    Attachment.Properties.id
+                    Attachment.Properties.creation
                         .order(.ascending),
                 ]
             )
         ) ?? []
     }
 
-    func attachmentMake(with messageID: Message.ID) -> Attachment {
+    func attachmentMake(with messageID: String) -> Attachment {
         let attachment = Attachment()
         attachment.messageId = messageID
-        attachment.isAutoIncrement = true
         try? db.insert([attachment], intoTable: Attachment.table)
-        attachment.id = attachment.lastInsertedRowID
-        attachment.isAutoIncrement = false
         return attachment
     }
 
     func attachmentsUpdate(_ attachments: [Attachment]) {
+        attachments.forEach { $0.markModified() }
         try? db.insertOrReplace(attachments, intoTable: Attachment.table)
+    }
+
+    func attachmentsMarkDelete(messageId: Message.ID, handle: Handle? = nil) throws {
+        guard !messageId.isEmpty else {
+            return
+        }
+
+        let update = StatementUpdate().update(table: Attachment.table)
+            .set(Attachment.Properties.version)
+            .to(Attachment.Properties.version + 1)
+            .set(Attachment.Properties.removed)
+            .to(true)
+            .set(Attachment.Properties.modified)
+            .to(Date.now)
+            .where(Attachment.Properties.messageId == messageId)
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    func attachmentsMarkDelete(messageIds: [Message.ID], handle: Handle? = nil) throws {
+        guard !messageIds.isEmpty else {
+            return
+        }
+
+        let update = StatementUpdate().update(table: Attachment.table)
+            .set(Attachment.Properties.version)
+            .to(Attachment.Properties.version + 1)
+            .set(Attachment.Properties.removed)
+            .to(true)
+            .set(Attachment.Properties.modified)
+            .to(Date.now)
+            .where(Attachment.Properties.messageId.in(messageIds))
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    func attachmentsMarkDelete(handle: Handle? = nil) throws {
+        let update = StatementUpdate().update(table: Attachment.table)
+            .set(Attachment.Properties.version)
+            .to(Attachment.Properties.version + 1)
+            .set(Attachment.Properties.removed)
+            .to(true)
+            .set(Attachment.Properties.modified)
+            .to(Date.now)
+            .where(Attachment.Properties.removed == false)
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
     }
 }

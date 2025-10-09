@@ -33,6 +33,8 @@ public struct StringArrayCodable: ColumnCodable {
 }
 
 public final class ModelContextServer: Identifiable, Codable, TableCodable {
+    static var table: String { String(describing: self) }
+
     public var id: String = UUID().uuidString
     public var name: String = ""
     public var comment: String = ""
@@ -48,10 +50,18 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     public var connectionStatus: ConnectionStatus = .disconnected
     public var capabilities: StringArrayCodable = .init([])
 
+    public var version: Int = 0
+    public var removed: Bool = false
+    public var creation: Date = .now
+    public var modified: Date = .now
+
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = ModelContextServer
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindColumnConstraint(id, isPrimary: true, defaultTo: UUID().uuidString)
+            BindColumnConstraint(id, isPrimary: true, isNotNull: true, isUnique: true, defaultTo: UUID().uuidString)
+            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date.now)
+            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
+
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
             BindColumnConstraint(type, isNotNull: true, defaultTo: ServerType.http.rawValue)
@@ -65,6 +75,12 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
             BindColumnConstraint(lastConnected, isNotNull: false)
             BindColumnConstraint(connectionStatus, isNotNull: true, defaultTo: ConnectionStatus.disconnected.rawValue)
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: StringArrayCodable([]))
+
+            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
+            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
+
+            BindIndex(creation, namedWith: "_creationIndex")
+            BindIndex(modified, namedWith: "_modifiedIndex")
         }
 
         case id
@@ -81,6 +97,11 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         case lastConnected
         case connectionStatus
         case capabilities
+
+        case version
+        case removed
+        case creation
+        case modified
     }
 
     public init(
@@ -113,6 +134,11 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         self.lastConnected = lastConnected
         self.connectionStatus = connectionStatus
         self.capabilities = capabilities
+    }
+
+    func markModified() {
+        version += 1
+        modified = .now
     }
 
     public func hash(into hasher: inout Hasher) {

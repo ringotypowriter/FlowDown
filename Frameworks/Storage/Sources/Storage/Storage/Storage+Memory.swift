@@ -34,6 +34,7 @@ public extension Storage {
 
     func insertMemory(_ memory: Memory) throws {
         do {
+            memory.markModified()
             try db.insertOrReplace([memory], intoTable: Memory.table)
         } catch {
             throw MemoryError.insertFailed(error.localizedDescription)
@@ -44,6 +45,7 @@ public extension Storage {
         do {
             return try db.getObjects(
                 fromTable: Memory.table,
+                where: Memory.Properties.removed == false,
                 orderBy: [
                     Memory.Properties.timestamp.order(.descending),
                 ]
@@ -57,6 +59,7 @@ public extension Storage {
         do {
             return try db.getObjects(
                 fromTable: Memory.table,
+                where: Memory.Properties.removed == false,
                 orderBy: [
                     Memory.Properties.timestamp.order(.descending),
                 ],
@@ -71,7 +74,7 @@ public extension Storage {
         do {
             return try db.getObject(
                 fromTable: Memory.table,
-                where: Memory.Properties.id == id
+                where: Memory.Properties.id == id && Memory.Properties.removed == false
             )
         } catch {
             throw MemoryError.retrieveFailed(error.localizedDescription)
@@ -82,7 +85,7 @@ public extension Storage {
         do {
             return try db.getObjects(
                 fromTable: Memory.table,
-                where: Memory.Properties.content.like("%\(query)%"),
+                where: Memory.Properties.removed == false && Memory.Properties.content.like("%\(query)%"),
                 orderBy: [
                     Memory.Properties.timestamp.order(.descending),
                 ],
@@ -95,7 +98,7 @@ public extension Storage {
 
     func getMemoryCount() throws -> Int {
         do {
-            let objects: [Memory] = try db.getObjects(fromTable: Memory.table)
+            let objects: [Memory] = try db.getObjects(fromTable: Memory.table, where: Memory.Properties.removed == false)
             return objects.count
         } catch {
             throw MemoryError.retrieveFailed(error.localizedDescription)
@@ -113,6 +116,7 @@ public extension Storage {
                 throw MemoryError.memoryNotFound(memory.id)
             }
 
+            memory.markModified()
             try db.insertOrReplace([memory], intoTable: Memory.table)
         } catch let error as MemoryError {
             throw error
@@ -121,21 +125,38 @@ public extension Storage {
         }
     }
 
-    func deleteMemory(id: String) throws {
+    func deleteMemory(id: String, handle: Handle? = nil) throws {
         do {
-            let existingMemory = try db.getObject(
-                fromTable: Memory.table,
-                where: Memory.Properties.id == id
-            ) as Memory?
+            let existingMemory = if let handle {
+                try handle.getObject(
+                    fromTable: Memory.table,
+                    where: Memory.Properties.id == id
+                ) as Memory?
+            } else {
+                try db.getObject(
+                    fromTable: Memory.table,
+                    where: Memory.Properties.id == id
+                ) as Memory?
+            }
 
             guard existingMemory != nil else {
                 throw MemoryError.memoryNotFound(id)
             }
 
-            try db.delete(
-                fromTable: Memory.table,
-                where: Memory.Properties.id == id
-            )
+            let update = StatementUpdate().update(table: Memory.table)
+                .set(Memory.Properties.version)
+                .to(Memory.Properties.version + 1)
+                .set(Memory.Properties.removed)
+                .to(true)
+                .set(Memory.Properties.modified)
+                .to(Date.now)
+                .where(Memory.Properties.id == id)
+
+            if let handle {
+                try handle.exec(update)
+            } else {
+                try db.exec(update)
+            }
         } catch let error as MemoryError {
             throw error
         } catch {
@@ -143,9 +164,21 @@ public extension Storage {
         }
     }
 
-    func deleteAllMemories() throws {
+    func deleteAllMemories(handle: Handle? = nil) throws {
         do {
-            try db.delete(fromTable: Memory.table)
+            let update = StatementUpdate().update(table: Memory.table)
+                .set(Memory.Properties.version)
+                .to(Memory.Properties.version + 1)
+                .set(Memory.Properties.removed)
+                .to(true)
+                .set(Memory.Properties.modified)
+                .to(Date.now)
+
+            if let handle {
+                try handle.exec(update)
+            } else {
+                try db.exec(update)
+            }
         } catch {
             throw MemoryError.deleteFailed(error.localizedDescription)
         }
@@ -153,23 +186,36 @@ public extension Storage {
 
     func deleteOldMemories(keepCount: Int) throws {
         do {
-            let allMemories: [Memory] = try db.getObjects(fromTable: Memory.table)
+            let allMemories: [Memory] = try db.getObjects(fromTable: Memory.table, where: Memory.Properties.removed == false)
+
             let totalCount = allMemories.count
             guard totalCount > keepCount else { return }
 
             let memoriesToDelete = try db.getObjects(
                 fromTable: Memory.table,
+                where: Memory.Properties.removed == false,
                 orderBy: [
                     Memory.Properties.timestamp.order(.ascending),
                 ],
                 limit: totalCount - keepCount
             ) as [Memory]
 
+            guard !memoriesToDelete.isEmpty else {
+                return
+            }
+
             let idsToDelete = memoriesToDelete.map(\.id)
-            try db.delete(
-                fromTable: Memory.table,
-                where: Memory.Properties.id.in(idsToDelete)
-            )
+
+            let update = StatementUpdate().update(table: Memory.table)
+                .set(Memory.Properties.version)
+                .to(Memory.Properties.version + 1)
+                .set(Memory.Properties.removed)
+                .to(true)
+                .set(Memory.Properties.modified)
+                .to(Date.now)
+                .where(Memory.Properties.id.in(idsToDelete))
+
+            try db.exec(update)
         } catch {
             throw MemoryError.deleteFailed(error.localizedDescription)
         }

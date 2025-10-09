@@ -12,10 +12,7 @@ public extension Storage {
     func makeMessage(with conversationID: Conversation.ID) -> Message {
         let message = Message()
         message.conversationId = conversationID
-        message.isAutoIncrement = true
         try? db.insert([message], intoTable: Message.table)
-        message.id = message.lastInsertedRowID
-        message.isAutoIncrement = false
         return message
     }
 
@@ -23,8 +20,9 @@ public extension Storage {
         (
             try? db.getObjects(
                 fromTable: Message.table,
+                where: Message.Properties.removed == false,
                 orderBy: [
-                    Message.Properties.id
+                    Message.Properties.creation
                         .order(.ascending),
                 ]
             )
@@ -35,9 +33,9 @@ public extension Storage {
         (
             try? db.getObjects(
                 fromTable: Message.table,
-                where: Message.Properties.conversationId == conv,
+                where: Message.Properties.conversationId == conv && Message.Properties.removed == false,
                 orderBy: [
-                    Message.Properties.id
+                    Message.Properties.creation
                         .order(.ascending),
                 ]
             )
@@ -45,6 +43,7 @@ public extension Storage {
     }
 
     func insertOrReplace(object: Message) {
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: Message.table
@@ -52,16 +51,18 @@ public extension Storage {
     }
 
     func insertOrReplace(messages: [Message]) {
+        messages.forEach { $0.markModified() }
         try? db.insertOrReplace(messages, intoTable: Message.table)
     }
 
     func insertOrReplace(identifier: Message.ID, _ block: @escaping (inout Message) -> Void) {
         let read: Message? = try? db.getObject(
             fromTable: Message.table,
-            where: Message.Properties.id == identifier
+            where: Message.Properties.objectId == identifier
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: Message.table
@@ -69,9 +70,13 @@ public extension Storage {
     }
 
     func conversationIdentifierLookup(identifier: Message.ID) -> Conversation.ID? {
+        guard !identifier.isEmpty else {
+            return nil
+        }
+
         let message: Message? = try? db.getObject(
             fromTable: Message.table,
-            where: Message.Properties.id == identifier
+            where: Message.Properties.objectId == identifier && Message.Properties.removed == false
         )
         guard let identifier = message?.conversationId else {
             assertionFailure()
@@ -82,49 +87,132 @@ public extension Storage {
 
     // rollback forward to delete cell kind WebSearchState and AttachmentHint
     func deleteSupplementMessage(nextTo messageIdentifier: Message.ID) {
+        guard !messageIdentifier.isEmpty else {
+            return
+        }
+
         // list all messages in the same conversation
         guard let message: Message = try? db.getObject(
             fromTable: Message.table,
-            where: Message.Properties.id == messageIdentifier
+            where: Message.Properties.objectId == messageIdentifier
         ) else {
             assertionFailure()
             return
         }
-        var rollback = messageIdentifier - 1
-        while rollback >= 0 {
-            defer { rollback -= 1 }
-            guard let matcher: Message = try? db.getObject(
-                fromTable: Message.table,
-                where: Message.Properties.id == rollback
-            ) else { continue }
-            guard matcher.conversationId == message.conversationId else {
-                continue
-            }
-            guard matcher.role.isSupplementKind else {
-                break
-            }
-            try? db.delete(fromTable: Message.table, where: Message.Properties.id == rollback)
-            // continue to delete the previous message if required
+
+        guard let messages: [Message] = try? db.getObjects(
+            fromTable: Message.table,
+            where: Message.Properties.objectId != messageIdentifier && Message.Properties.creation <= message.creation,
+            orderBy: [
+                Message.Properties.creation.order(.ascending),
+            ]
+        ), !messages.isEmpty else {
+            return
         }
+
+        let deletetMessages = messages.filter { $0.conversationId == message.conversationId && $0.role.isSupplementKind }
+        guard !deletetMessages.isEmpty else {
+            return
+        }
+
+        try? messageMarkDelete(messageIds: deletetMessages.compactMap(\.objectId))
     }
 
     func delete(messageIdentifier: Message.ID) {
-        try? db.delete(fromTable: Message.table, where: Message.Properties.id == messageIdentifier)
+        try? messageMarkDelete(messageId: messageIdentifier)
     }
 
     func deleteAfter(messageIdentifier: Message.ID) {
+        try? messageMarkDeleteAfter(messageId: messageIdentifier)
+    }
+
+    func messageMarkDelete(messageId: Message.ID, handle: Handle? = nil) throws {
+        guard !messageId.isEmpty else {
+            return
+        }
+
+        let update = StatementUpdate().update(table: Message.table)
+            .set(Message.Properties.version)
+            .to(Message.Properties.version + 1)
+            .set(Message.Properties.removed)
+            .to(true)
+            .set(Message.Properties.modified)
+            .to(Date.now)
+            .where(Message.Properties.objectId == messageId)
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    func messageMarkDelete(messageIds: [Message.ID], handle: Handle? = nil) throws {
+        guard !messageIds.isEmpty else {
+            return
+        }
+
+        let update = StatementUpdate().update(table: Message.table)
+            .set(Message.Properties.version)
+            .to(Message.Properties.version + 1)
+            .set(Message.Properties.removed)
+            .to(true)
+            .set(Message.Properties.modified)
+            .to(Date.now)
+            .where(Message.Properties.objectId.in(messageIds))
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    func messageMarkDeleteAfter(messageId: Message.ID, handle: Handle? = nil) throws {
+        guard !messageId.isEmpty else {
+            return
+        }
+
         guard let message: Message = try? db.getObject(
             fromTable: Message.table,
-            where: Message.Properties.id == messageIdentifier
+            where: Message.Properties.objectId == messageId
         ) else {
             assertionFailure()
             return
         }
-        try? db.delete(
-            fromTable: Message.table,
-            where: Message.Properties.id > messageIdentifier &&
+
+        let update = StatementUpdate().update(table: Message.table)
+            .set(Message.Properties.version)
+            .to(Message.Properties.version + 1)
+            .set(Message.Properties.removed)
+            .to(true)
+            .set(Message.Properties.modified)
+            .to(Date.now)
+            .where(Message.Properties.objectId != messageId &&
                 Message.Properties.creation >= message.creation &&
-                Message.Properties.conversationId == message.conversationId
-        )
+                Message.Properties.conversationId == message.conversationId)
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    func messageMarkDelete(handle: Handle? = nil) throws {
+        let update = StatementUpdate().update(table: Message.table)
+            .set(Message.Properties.version)
+            .to(Message.Properties.version + 1)
+            .set(Message.Properties.removed)
+            .to(true)
+            .set(Message.Properties.modified)
+            .to(Date.now)
+            .where(Message.Properties.removed == false)
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
     }
 }

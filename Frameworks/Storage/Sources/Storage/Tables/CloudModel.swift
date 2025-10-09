@@ -9,10 +9,12 @@ import Foundation
 import WCDBSwift
 
 public final class CloudModel: Identifiable, Codable, Equatable, Hashable, TableCodable {
-    public var id: String = .init()
+    static var table: String { String(describing: self) }
+
+    public var id: String = UUID().uuidString
     public var model_identifier: String = ""
     public var model_list_endpoint: String = ""
-    public var creation: Date = .init()
+    public var creation: Date = .now
     public var endpoint: String = ""
     public var token: String = ""
     public var headers: [String: String] = [:] // additional headers
@@ -25,13 +27,20 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     // present to user on the top of the editor page
     public var comment: String = ""
 
+    public var version: Int = 0
+    public var removed: Bool = false
+    public var modified: Date = .now
+
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = CloudModel
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindColumnConstraint(id, isPrimary: true, isUnique: true, defaultTo: "")
+            BindColumnConstraint(id, isPrimary: true, isUnique: true, defaultTo: UUID().uuidString)
+
+            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date.now)
+            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
+
             BindColumnConstraint(model_identifier, isNotNull: true, defaultTo: "")
             BindColumnConstraint(model_list_endpoint, isNotNull: true, defaultTo: "")
-            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date(timeIntervalSince1970: 0))
             BindColumnConstraint(endpoint, isNotNull: true, defaultTo: "")
             BindColumnConstraint(token, isNotNull: true, defaultTo: "")
             BindColumnConstraint(headers, isNotNull: true, defaultTo: [String: String]())
@@ -40,6 +49,12 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
             BindColumnConstraint(temperature_preference, isNotNull: true, defaultTo: ModelTemperaturePreference.inherit)
             BindColumnConstraint(temperature_override, isNotNull: false)
+
+            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
+            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
+
+            BindIndex(creation, namedWith: "_creationIndex")
+            BindIndex(modified, namedWith: "_modifiedIndex")
         }
 
         case id
@@ -54,6 +69,10 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case comment
         case temperature_preference
         case temperature_override
+
+        case version
+        case removed
+        case modified
     }
 
     public init(
@@ -74,6 +93,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.model_identifier = model_identifier
         self.model_list_endpoint = model_list_endpoint
         self.creation = creation
+        modified = creation
         self.endpoint = endpoint
         self.token = token
         self.headers = headers
@@ -89,6 +109,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         model_identifier = try container.decodeIfPresent(String.self, forKey: .model_identifier) ?? ""
         model_list_endpoint = try container.decodeIfPresent(String.self, forKey: .model_list_endpoint) ?? ""
         creation = try container.decodeIfPresent(Date.self, forKey: .creation) ?? Date()
+        modified = try container.decodeIfPresent(Date.self, forKey: .modified) ?? Date()
         endpoint = try container.decodeIfPresent(String.self, forKey: .endpoint) ?? ""
         token = try container.decodeIfPresent(String.self, forKey: .token) ?? ""
         headers = try container.decodeIfPresent([String: String].self, forKey: .headers) ?? [:]
@@ -97,6 +118,14 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
         temperature_preference = try container.decodeIfPresent(ModelTemperaturePreference.self, forKey: .temperature_preference) ?? .inherit
         temperature_override = try container.decodeIfPresent(Double.self, forKey: .temperature_override)
+
+        version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 0
+        removed = try container.decodeIfPresent(Bool.self, forKey: .removed) ?? false
+    }
+
+    func markModified() {
+        version += 1
+        modified = .now
     }
 
     public static func == (lhs: CloudModel, rhs: CloudModel) -> Bool {
@@ -108,6 +137,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(model_identifier)
         hasher.combine(model_list_endpoint)
         hasher.combine(creation)
+        hasher.combine(modified)
         hasher.combine(endpoint)
         hasher.combine(token)
         hasher.combine(headers)
@@ -116,6 +146,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(comment)
         hasher.combine(temperature_preference)
         hasher.combine(temperature_override)
+        hasher.combine(version)
+        hasher.combine(removed)
     }
 }
 

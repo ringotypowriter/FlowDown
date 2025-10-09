@@ -13,6 +13,7 @@ public extension Storage {
         (
             try? db.getObjects(
                 fromTable: CloudModel.table,
+                where: CloudModel.Properties.removed == false,
                 orderBy: [
                     CloudModel.Properties.model_identifier
                         .order(.ascending),
@@ -22,6 +23,7 @@ public extension Storage {
     }
 
     func cloudModelPut(_ object: CloudModel) {
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: CloudModel.table
@@ -31,7 +33,7 @@ public extension Storage {
     func cloudModel(with identifier: CloudModel.ID) -> CloudModel? {
         try? db.getObject(
             fromTable: CloudModel.table,
-            where: CloudModel.Properties.id == identifier
+            where: CloudModel.Properties.id == identifier && CloudModel.Properties.removed == false
         )
     }
 
@@ -42,16 +44,26 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: CloudModel.table
         )
     }
 
-    func cluodModelRemove(identifier: CloudModel.ID) {
-        try? db.delete(
-            fromTable: CloudModel.table,
-            where: CloudModel.Properties.id == identifier
-        )
+    func cluodModelRemove(identifier _: CloudModel.ID, handle: Handle? = nil) {
+        let update = StatementUpdate().update(table: CloudModel.table)
+            .set(CloudModel.Properties.version)
+            .to(CloudModel.Properties.version + 1)
+            .set(CloudModel.Properties.removed)
+            .to(true)
+            .set(CloudModel.Properties.modified)
+            .to(Date.now)
+
+        if let handle {
+            try? handle.exec(update)
+        } else {
+            try? db.exec(update)
+        }
     }
 }

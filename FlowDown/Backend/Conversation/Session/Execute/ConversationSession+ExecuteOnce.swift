@@ -36,7 +36,7 @@ extension ConversationSession {
             tools: tools,
             additionalBodyField: additionalBodyField
         )
-        defer { self.stopThinking(for: message.id) }
+        defer { self.stopThinking(for: message.objectId) }
 
         var pendingToolCalls: [ToolCallRequest] = []
 
@@ -49,14 +49,14 @@ extension ConversationSession {
             message.reasoningContent = reasoningContent
             message.document = content
             if !content.isEmpty {
-                stopThinking(for: message.id)
+                stopThinking(for: message.objectId)
                 if collapseAfterReasoningComplete { message.isThinkingFold = true }
             } else if !reasoningContent.isEmpty {
-                startThinking(for: message.id)
+                startThinking(for: message.objectId)
             }
             await requestUpdate(view: currentMessageListView)
         }
-        stopThinking(for: message.id)
+        stopThinking(for: message.objectId)
         await requestUpdate(view: currentMessageListView)
 
         if collapseAfterReasoningComplete {
