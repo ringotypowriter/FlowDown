@@ -1,0 +1,25 @@
+//
+//  BaseConfig.xcconfig
+//  FlowDown
+//
+//  Created by king on 2025/10/9.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+CODE_SIGN_IDENTITY = Apple Development
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM = 964G86XT2P
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug][sdk=*][arch=*] = wiki.qaq.fdp
+PRODUCT_BUNDLE_IDENTIFIER[config=Release][sdk=*][arch=*] = wiki.qaq.flow
+
+
+ENABLE_SANDBOX_CHECK = 1
+ENABLE_SANDBOX_CHECK_0 =
+ENABLE_SANDBOX_CHECK_1 = ENABLE_SANDBOX_CHECK
+ENABLE_SANDBOX_CHECK_COMPILATION_CONDITIONS = $(ENABLE_SANDBOX_CHECK_$(ENABLE_SANDBOX_CHECK))
+
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(ENABLE_SANDBOX_CHECK_COMPILATION_CONDITIONS)
+
+#include? "Developer.xcconfig"

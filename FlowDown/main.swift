@@ -20,7 +20,7 @@
     }
 #endif
 
-#if os(macOS) || targetEnvironment(macCatalyst)
+#if (os(macOS) || targetEnvironment(macCatalyst)) && ENABLE_SANDBOX_CHECK
     do {
         // make sure sandbox is enabled otherwise panic the app
         let sandboxTestDir = URL(fileURLWithPath: "/tmp/sandbox.test.\(UUID().uuidString)")
