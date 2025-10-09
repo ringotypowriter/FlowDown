@@ -14,6 +14,7 @@ else
 fi
 
 PROJECT_ROOT=$(pwd)
+DEVELOPER_LOCAL_XCCONFIG=$PROJECT_ROOT/FlowDown/Configuration/Developer.xcconfig
 
 if [[ -n $(git status --porcelain) ]]; then
     echo "[!] git is not clean"
@@ -25,6 +26,11 @@ git add -A
 git commit -m "Archive Commit $(date)"
 
 ./Resources/DevKit/scripts/scan.license.sh
+
+if [[ ! -f "${DEVELOPER_LOCAL_XCCONFIG}" ]]; then
+    echo "[*] create empty Developer.xcconfig"
+    echo "" >> $DEVELOPER_LOCAL_XCCONFIG
+fi
 
 xcodebuild -workspace FlowDown.xcworkspace \
     -scheme FlowDown \
