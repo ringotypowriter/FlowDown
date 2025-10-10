@@ -10,12 +10,17 @@ import WCDBSwift
 
 public class Storage {
     let db: Database
+    let initVersion: DBVersion
+
+    // 标记为删除的数据在多长时间后，执行物理删除， 默认为： 30天
+    let deleteAfterDuration: TimeInterval = 60 * 60 * 24 * 30
 
     public let databaseDir: URL
     public let databaseLocation: URL
 
     private let migrations: [DBMigration] = [
         MigrationV0ToV1(),
+        MigrationV1ToV2(),
     ]
 
     init() throws {
@@ -26,6 +31,13 @@ public class Storage {
         databaseLocation = databaseDir
             .appendingPathComponent("database")
             .appendingPathExtension("db")
+
+        initVersion = if FileManager.default.fileExists(atPath: databaseLocation.path) {
+            .Version0
+        } else {
+            .Version1
+        }
+
         db = Database(at: databaseLocation.path)
 
         db.setAutoBackup(enable: true)
@@ -36,7 +48,14 @@ public class Storage {
 
         checkMigration()
 
+        #if DEBUG
+            db.traceSQL { _, _, _, sql, _ in
+                print("[sql]: \(sql)")
+            }
+        #endif
+
         try setup(db: db)
+        try clearDeletedRecords(db: db)
     }
 
     func setup(db: Database) throws {
@@ -48,15 +67,16 @@ public class Storage {
     }
 
     public func reset() {
-        try? db.run { handler in
-            try handler.drop(table: CloudModel.table)
-            try handler.drop(table: Attachment.table)
-            try handler.drop(table: Message.table)
-            try handler.drop(table: Conversation.table)
-            try handler.drop(table: ModelContextServer.table)
-            try handler.drop(table: Memory.table)
-            return ()
-        }
+        // 这里不需要执行 drop 吧？
+//        try? db.run { handler in
+//            try handler.drop(table: CloudModel.table)
+//            try handler.drop(table: Attachment.table)
+//            try handler.drop(table: Message.table)
+//            try handler.drop(table: Conversation.table)
+//            try handler.drop(table: ModelContextServer.table)
+//            try handler.drop(table: Memory.table)
+//            return ()
+//        }
         db.blockade()
         db.close()
         try? FileManager.default.removeItem(at: databaseDir)
@@ -76,9 +96,6 @@ private extension Storage {
     }
 
     func currentVersion() throws -> DBVersion {
-        // 初始化版本
-        let initVersion: DBVersion = .Version0
-
         let statement = StatementPragma().pragma(.userVersion)
         let result = try db.getValue(from: statement)
         if let result {
@@ -90,6 +107,16 @@ private extension Storage {
     func setVersion(_ version: DBVersion) throws {
         let statement = StatementPragma().pragma(.userVersion).to(version.rawValue)
         try db.exec(statement)
+    }
+
+    func clearDeletedRecords(db: Database) throws {
+        let deleteAt = Date.now.addingTimeInterval(-deleteAfterDuration)
+        try db.delete(fromTable: Attachment.table, where: Attachment.Properties.modified <= deleteAt && Attachment.Properties.removed == true)
+        try db.delete(fromTable: Message.table, where: Message.Properties.modified <= deleteAt && Message.Properties.removed == true)
+        try db.delete(fromTable: Conversation.table, where: Conversation.Properties.modified <= deleteAt && Conversation.Properties.removed == true)
+        try db.delete(fromTable: CloudModel.table, where: CloudModel.Properties.modified <= deleteAt && CloudModel.Properties.removed == true)
+        try db.delete(fromTable: Memory.table, where: Memory.Properties.modified <= deleteAt && Memory.Properties.removed == true)
+        try db.delete(fromTable: ModelContextServer.table, where: ModelContextServer.Properties.modified <= deleteAt && ModelContextServer.Properties.removed == true)
     }
 }
 

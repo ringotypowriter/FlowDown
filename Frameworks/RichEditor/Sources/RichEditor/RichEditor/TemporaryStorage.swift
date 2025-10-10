@@ -10,9 +10,9 @@ import Foundation
 class TemporaryStorage {
     let storageDir: URL
 
-    init(id: Int64) {
+    init(id: String) {
         storageDir = RichEditorView.temporaryStorage
-            .appendingPathComponent(String(id))
+            .appendingPathComponent(id)
         try? FileManager.default.createDirectory(
             at: storageDir,
             withIntermediateDirectories: true

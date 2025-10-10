@@ -183,7 +183,7 @@ extension MessageListView: ListViewAdapter {
                 reasoningContentView.text = message.content
                 reasoningContentView.thinkingTileTapHandler = { [unowned self] newValue in
                     guard let thinkingMessage = session.messages.filter({
-                        $0.id == -message.id
+                        $0.combinationID == message.id
                     }).first else {
                         return
                     }

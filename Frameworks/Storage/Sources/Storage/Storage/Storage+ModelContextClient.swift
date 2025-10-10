@@ -13,6 +13,7 @@ public extension Storage {
         (
             try? db.getObjects(
                 fromTable: ModelContextServer.table,
+                where: ModelContextServer.Properties.removed == false,
                 orderBy: [
                     ModelContextServer.Properties.id.order(.ascending),
                 ]
@@ -27,6 +28,7 @@ public extension Storage {
     }
 
     func modelContextServerPut(object: ModelContextServer) {
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: ModelContextServer.table
@@ -36,7 +38,7 @@ public extension Storage {
     func modelContextServerWith(_ identifier: ModelContextServer.ID) -> ModelContextServer? {
         try? db.getObject(
             fromTable: ModelContextServer.table,
-            where: ModelContextServer.Properties.id == identifier
+            where: ModelContextServer.Properties.id == identifier && ModelContextServer.Properties.removed == false
         )
     }
 
@@ -47,16 +49,27 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: ModelContextServer.table
         )
     }
 
-    func modelContextServerRemove(identifier: ModelContextServer.ID) {
-        try? db.delete(
-            fromTable: ModelContextServer.table,
-            where: ModelContextServer.Properties.id == identifier
-        )
+    func modelContextServerRemove(identifier: ModelContextServer.ID, handle: Handle? = nil) {
+        let update = StatementUpdate().update(table: ModelContextServer.table)
+            .set(ModelContextServer.Properties.version)
+            .to(ModelContextServer.Properties.version + 1)
+            .set(ModelContextServer.Properties.removed)
+            .to(true)
+            .set(ModelContextServer.Properties.modified)
+            .to(Date.now)
+            .where(ModelContextServer.Properties.id == identifier)
+
+        if let handle {
+            try? handle.exec(update)
+        } else {
+            try? db.exec(update)
+        }
     }
 }

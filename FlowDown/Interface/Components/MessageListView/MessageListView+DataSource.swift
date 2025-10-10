@@ -50,7 +50,7 @@ extension MessageListView {
         var thinkingDuration: TimeInterval
 
         init(from message: Message) {
-            id = message.id
+            id = message.objectId
             createAt = message.creation
             role = message.role
             content = message.document.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -101,8 +101,8 @@ extension MessageListView {
             // MARK: - User Message
 
             case .user:
-                let attachmentItems: [Attachments.Item] = session.attachments(for: message.id).compactMap {
-                    guard let uuid = UUID(uuidString: $0.objectIdentifier) else {
+                let attachmentItems: [Attachments.Item] = session.attachments(for: message.objectId).compactMap {
+                    guard let uuid = UUID(uuidString: $0.id) else {
                         return nil
                     }
                     guard let type = RichEditorView.Object.Attachment.AttachmentType(rawValue: $0.type) else {
@@ -120,11 +120,11 @@ extension MessageListView {
                 }
                 if !attachmentItems.isEmpty {
                     checkAddDateHint(message.creation)
-                    entries.append(.userAttachment(message.id, .init(items: attachmentItems)))
+                    entries.append(.userAttachment(message.objectId, .init(items: attachmentItems)))
                 }
                 if !message.document.isEmpty {
                     checkAddDateHint(message.creation)
-                    entries.append(.userContent(message.id, .init(from: message)))
+                    entries.append(.userContent(message.objectId, .init(from: message)))
                 }
                 assert(message.reasoningContent.isEmpty)
 
@@ -136,19 +136,16 @@ extension MessageListView {
                 if !reasoningContent.isEmpty {
                     checkAddDateHint(message.creation)
                     var representation = MessageRepresentation(from: message)
-                    // Requires a unique ID associated with the message.
-                    // Since the message ID is a integer, auto-incrementing primary key,
-                    // simply negating it provides the simplest approach to generate a related ID.
-                    representation.id = -representation.id
+                    representation.id = message.combinationID
                     representation.content = reasoningContent
                     representation.isRevealed = !message.isThinkingFold
                     representation.isThinking = messageContent.isEmpty
                     representation.thinkingDuration = message.thinkingDuration
-                    entries.append(.reasoningContent(message.id, representation))
+                    entries.append(.reasoningContent(message.objectId, representation))
                 }
                 if !messageContent.isEmpty {
                     checkAddDateHint(message.creation)
-                    entries.append(.aiContent(message.id, .init(from: message)))
+                    entries.append(.aiContent(message.objectId, .init(from: message)))
                 }
 
             // MARK: - Web Search
@@ -161,7 +158,7 @@ extension MessageListView {
 
             case .hint:
                 checkAddDateHint(message.creation)
-                entries.append(.hint(.init(message.id), message.document))
+                entries.append(.hint(Int(message.creation.timeIntervalSince1970), message.document))
 
             // MARK: - Tool Call Status
 

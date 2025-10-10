@@ -13,6 +13,7 @@ public extension Storage {
         (
             try? db.getObjects(
                 fromTable: Conversation.table,
+                where: Conversation.Properties.removed == false,
                 orderBy: [
                     Conversation.Properties.creation
                         .order(.descending),
@@ -23,23 +24,22 @@ public extension Storage {
 
     func conversationListAllIdentifiers() -> Set<Conversation.ID> {
         let identifiers = try? db.getColumn(
-            on: Conversation.Properties.id,
-            fromTable: Conversation.table
+            on: Conversation.Properties.objectId,
+            fromTable: Conversation.table,
+            where: Conversation.Properties.removed == false
         )
-        let items = identifiers?.map(\.int64Value) ?? []
+        let items = identifiers?.map(\.stringValue) ?? []
         return .init(items)
     }
 
     func conversationMake() -> Conversation {
         let object = Conversation()
-        object.isAutoIncrement = true
         try? db.insert([object], intoTable: Conversation.table)
-        object.isAutoIncrement = false
-        object.id = object.lastInsertedRowID
         return object
     }
 
     func conversationUpdate(object: Conversation) {
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: Conversation.table
@@ -49,17 +49,18 @@ public extension Storage {
     func conversationWith(identifier: Conversation.ID) -> Conversation? {
         try? db.getObject(
             fromTable: Conversation.table,
-            where: Conversation.Properties.id == identifier
+            where: Conversation.Properties.objectId == identifier && Conversation.Properties.removed == false
         )
     }
 
     func conversationEdit(identifier: Conversation.ID, _ block: @escaping (inout Conversation) -> Void) {
         let read: Conversation? = try? db.getObject(
             fromTable: Conversation.table,
-            where: Conversation.Properties.id == identifier
+            where: Conversation.Properties.objectId == identifier && Conversation.Properties.removed == false
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         try? db.insertOrReplace(
             [object],
             intoTable: Conversation.table
@@ -67,25 +68,27 @@ public extension Storage {
     }
 
     func conversationRemove(conversationWith identifier: Conversation.ID) {
-        let messages = listMessages(within: identifier)
-        for message in messages {
-            try? db.delete(
-                fromTable: Attachment.table,
-                where: Attachment.Properties.messageId == message.id
-            )
+        guard !identifier.isEmpty else {
+            return
         }
-        try? db.delete(
-            fromTable: Message.table,
-            where: Message.Properties.conversationId == identifier
-        )
-        try? db.delete(
-            fromTable: Conversation.table,
-            where: Conversation.Properties.id == identifier
-        )
+
+        try? db.run(transaction: { [weak self] in
+            guard let self else { return }
+            let messages = listMessages(within: identifier)
+            let messagesIds = messages.compactMap(\.objectId)
+
+            try attachmentsMarkDelete(messageIds: messagesIds, handle: $0)
+            try messageMarkDelete(messageIds: messagesIds, handle: $0)
+            try conversationMarkDelete(conversationId: identifier, handle: $0)
+        })
     }
 
     @discardableResult
     func conversationDuplicate(identifier: Conversation.ID, customize: @escaping (Conversation) -> Void) -> Conversation.ID? {
+        guard !identifier.isEmpty else {
+            return nil
+        }
+
         var ans: Conversation.ID?
         try? db.run { handler -> Bool in
             do {
@@ -111,16 +114,19 @@ public extension Storage {
     ) throws -> Conversation.ID {
         let conv: Conversation? = try db.getObject(
             fromTable: Conversation.table,
-            where: Conversation.Properties.id == identifier
+            where: Conversation.Properties.objectId == identifier
         )
         guard let conv else { throw NSError() }
 
-        conv.isAutoIncrement = true
+        // new objectId
+        conv.objectId = UUID().uuidString
+        conv.creation = .now
+        conv.modified = .now
+
         customize(conv)
         try db.insert([conv], intoTable: Conversation.table)
-        conv.isAutoIncrement = false
 
-        let newIdentifier = conv.lastInsertedRowID
+        let newIdentifier = conv.objectId
         guard newIdentifier != identifier else {
             assertionFailure()
             throw NSError()
@@ -134,29 +140,36 @@ public extension Storage {
             ]
         )
 
-        var oldMessageIdentifierSet = Set<Int64>()
+        var oldMessageIdentifierSet = Set<String>()
         for message in messages {
-            message.isAutoIncrement = true
+            let oldMessageId = message.objectId
+            oldMessageIdentifierSet.insert(oldMessageId)
+
+            // new objectId
+            message.objectId = UUID().uuidString
             message.conversationId = newIdentifier
-            oldMessageIdentifierSet.insert(message.id)
+
             try db.insert(message, intoTable: Message.table)
-            message.isAutoIncrement = false
-            var oldAttachmentIdentifierSet = Set<Int64>()
+            let newMessageId = message.objectId
+
+            var oldAttachmentIdentifierSet = Set<String>()
             let attachments: [Attachment] = try db.getObjects(
                 fromTable: Attachment.table,
-                where: Attachment.Properties.messageId == message.id
+                where: Attachment.Properties.messageId == oldMessageId
             )
             for attachment in attachments {
-                attachment.isAutoIncrement = true
-                attachment.messageId = message.lastInsertedRowID
                 oldAttachmentIdentifierSet.insert(attachment.id)
+
+                // new objectId
+                attachment.objectId = UUID().uuidString
+                attachment.messageId = message.objectId
                 try db.insert(attachment, intoTable: Attachment.table)
-                attachment.isAutoIncrement = false
             }
             let newAttachments: [Attachment] = try db.getObjects(
                 fromTable: Attachment.table,
-                where: Attachment.Properties.messageId == message.lastInsertedRowID
+                where: Attachment.Properties.messageId == newMessageId
             )
+
             for attachment in newAttachments {
                 guard !oldAttachmentIdentifierSet.contains(attachment.id) else {
                     assertionFailure()
@@ -173,7 +186,7 @@ public extension Storage {
             ]
         )
         for message in newMessages {
-            guard !oldMessageIdentifierSet.contains(message.id) else {
+            guard !oldMessageIdentifierSet.contains(message.objectId) else {
                 assertionFailure()
                 throw NSError()
             }
@@ -183,9 +196,9 @@ public extension Storage {
     }
 
     func conversationsDrop() {
-        try? db.run { db -> Bool in
+        try? db.run { handle -> Bool in
             do {
-                try self.executeEraseAllConversations(db: db)
+                try self.executeEraseAllConversations(handle: handle)
                 return true
             } catch {
                 assertionFailure(error.localizedDescription)
@@ -194,9 +207,46 @@ public extension Storage {
         }
     }
 
-    private func executeEraseAllConversations(db: Handle) throws {
-        try db.delete(fromTable: Conversation.table)
-        try db.delete(fromTable: Message.table)
-        try db.delete(fromTable: Attachment.table)
+    func conversationMarkDelete(conversationId: Conversation.ID, handle: Handle? = nil) throws {
+        guard !conversationId.isEmpty else {
+            return
+        }
+
+        let update = StatementUpdate().update(table: Conversation.table)
+            .set(Conversation.Properties.version)
+            .to(Conversation.Properties.version + 1)
+            .set(Conversation.Properties.removed)
+            .to(true)
+            .set(Conversation.Properties.modified)
+            .to(Date.now)
+            .where(Conversation.Properties.objectId == conversationId)
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    func conversationMarkDelete(handle: Handle? = nil) throws {
+        let update = StatementUpdate().update(table: Conversation.table)
+            .set(Conversation.Properties.version)
+            .to(Conversation.Properties.version + 1)
+            .set(Conversation.Properties.removed)
+            .to(true)
+            .set(Conversation.Properties.modified)
+            .to(Date.now)
+            .where(Conversation.Properties.removed == false)
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+    }
+
+    private func executeEraseAllConversations(handle: Handle) throws {
+        try conversationMarkDelete(handle: handle)
+        try messageMarkDelete(handle: handle)
+        try attachmentsMarkDelete(handle: handle)
     }
 }

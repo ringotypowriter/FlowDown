@@ -21,7 +21,7 @@ extension ConversationSession {
                 guard !message.document.isEmpty else { continue }
                 requestMessages.append(.system(content: .text(message.document)))
             case .user:
-                let attachments: [RichEditorView.Object.Attachment] = attachments(for: message.id).compactMap {
+                let attachments: [RichEditorView.Object.Attachment] = attachments(for: message.objectId).compactMap {
                     guard let type = RichEditorView.Object.Attachment.AttachmentType(rawValue: $0.type) else {
                         return nil
                     }

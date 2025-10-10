@@ -101,7 +101,7 @@ final class ConversationSession: Identifiable {
     }
 
     private func updateAttachment(_ attachment: Attachment, using object: RichEditorView.Object.Attachment) {
-        attachment.objectIdentifier = object.id.uuidString
+        attachment.objectId = object.id.uuidString
         attachment.type = object.type.rawValue
         attachment.name = object.name
         attachment.previewImageData = object.previewImage
@@ -111,7 +111,7 @@ final class ConversationSession: Identifiable {
     }
 
     func addAttachments(_ attachments: [RichEditorView.Object.Attachment], to message: Message) {
-        let messageID = message.id
+        let messageID = message.objectId
         let mapped = attachments.map { attachment in
             let newAttachment = sdb.attachmentMake(with: messageID)
             updateAttachment(newAttachment, using: attachment)
@@ -121,15 +121,15 @@ final class ConversationSession: Identifiable {
 
         var current = self.attachments[messageID] ?? []
         current.append(contentsOf: mapped)
-        self.attachments[message.id] = current
+        self.attachments[message.objectId] = current
     }
 
     func updateAttachments(_ attachments: [RichEditorView.Object.Attachment], for message: Message) {
-        let currentAttachments = self.attachments[message.id] ?? []
+        let currentAttachments = self.attachments[message.objectId] ?? []
         for attachment in attachments {
             guard
                 let current = currentAttachments.first(where: {
-                    $0.objectIdentifier == attachment.id.uuidString
+                    $0.objectId == attachment.id.uuidString
                 })
             else {
                 // If the attachment is not found, ignore it.
@@ -151,7 +151,7 @@ final class ConversationSession: Identifiable {
         messages = sdb.listMessages(within: id)
         linkedContents.removeAll()
         for message in messages {
-            let id = message.id
+            let id = message.objectId
             let attachments = sdb.attachment(for: id)
             if !attachments.isEmpty { self.attachments[id] = attachments }
             if !message.reasoningContent.isEmpty,
@@ -173,7 +173,7 @@ final class ConversationSession: Identifiable {
 
     @inlinable
     func message(for id: Message.ID) -> Message? {
-        messages.first { $0.id == id }
+        messages.first { $0.objectId == id }
     }
 
     @inlinable
@@ -205,7 +205,7 @@ final class ConversationSession: Identifiable {
     // 更新单独的一条消息
     func update(messageIdentifier: Message.ID, content: String) {
         cancelCurrentTask { [self] in
-            guard let message = messages.first(where: { $0.id == messageIdentifier }) else {
+            guard let message = messages.first(where: { $0.objectId == messageIdentifier }) else {
                 return
             }
             message.document = content
@@ -219,7 +219,7 @@ final class ConversationSession: Identifiable {
     }
 
     func update(messageIdentifier: Message.ID, reasoningContent: String) {
-        guard let message = messages.first(where: { $0.id == messageIdentifier }) else {
+        guard let message = messages.first(where: { $0.objectId == messageIdentifier }) else {
             return
         }
         message.reasoningContent = reasoningContent
@@ -230,7 +230,7 @@ final class ConversationSession: Identifiable {
     /// Starts a timer to calculate the thinking duration of the message.
     func startThinking(for id: Message.ID) {
         if thinkingDurationTimer[id] != nil { return }
-        guard let message = messages.first(where: { $0.id == id }) else {
+        guard let message = messages.first(where: { $0.objectId == id }) else {
             assertionFailure()
             return
         }
@@ -279,7 +279,11 @@ final class ConversationSession: Identifiable {
     }
 
     func nearestUserMessage(beforeOrEqual messageIdentifier: Message.ID) -> Message? {
-        for idx in messages.indices.reversed() where messages[idx].id <= messageIdentifier {
+        guard let message = messages.first(where: { $0.objectId == messageIdentifier }) else {
+            return nil
+        }
+
+        for idx in messages.indices.reversed() where messages[idx].creation <= message.creation {
             let message = messages[idx]
             // check if is user message
             if message.role == .user {
@@ -296,7 +300,7 @@ final class ConversationSession: Identifiable {
         }
 
         let messageContent = nearestUserMessage.document
-        let messageAttachments = attachments(for: nearestUserMessage.id)
+        let messageAttachments = attachments(for: nearestUserMessage.objectId)
 
         var editorObject = ConversationManager.shared.getRichEditorObject(identifier: id) ?? .init()
         editorObject.text = messageContent
@@ -310,7 +314,7 @@ final class ConversationSession: Identifiable {
             else { return nil }
 
             return RichEditorView.Object.Attachment(
-                id: UUID(uuidString: attachment.objectIdentifier) ?? UUID(),
+                id: UUID(uuidString: attachment.id) ?? UUID(),
                 type: type,
                 name: attachment.name,
                 previewImage: attachment.previewImageData,
@@ -325,7 +329,7 @@ final class ConversationSession: Identifiable {
             return
         }
 
-        deleteCurrentAndAfter(messageIdentifier: nearestUserMessage.id) {
+        deleteCurrentAndAfter(messageIdentifier: nearestUserMessage.objectId) {
             self.doInfere(
                 modelID: modelID,
                 currentMessageListView: currentMessageListView,

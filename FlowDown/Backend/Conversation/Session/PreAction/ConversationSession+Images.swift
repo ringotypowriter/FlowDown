@@ -81,7 +81,7 @@ extension ConversationSession {
             additionalBodyField: [:]
         ) {
             await requestUpdate(view: currentMessageListView)
-            startThinking(for: message.id)
+            startThinking(for: message.objectId)
             llmText = resp.content
             message.reasoningContent = llmText
             await requestUpdate(view: currentMessageListView)
@@ -91,7 +91,7 @@ extension ConversationSession {
         }
         let collapseAfterReasoningComplete = ModelManager.shared.collapseReasoningSectionWhenComplete
         if collapseAfterReasoningComplete { message.isThinkingFold = true }
-        stopThinking(for: message.id)
+        stopThinking(for: message.objectId)
         await requestUpdate(view: currentMessageListView)
         await currentMessageListView.loading()
 

@@ -100,7 +100,7 @@ class ChatTemplateManager {
             if !template.inheritApplicationPrompt {
                 let systemMessages = session.messages.filter { $0.role == .system }
                 for message in systemMessages {
-                    session.delete(messageIdentifier: message.id)
+                    session.delete(messageIdentifier: message.objectId)
                 }
             }
             let templateMessage = session.appendNewMessage(role: .system)
