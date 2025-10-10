@@ -1129,10 +1129,10 @@
 		};
 		5050EB7A2D4789A300634B81 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Lakr233/swift-transformers";
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
+				minimumVersion = 1.1.1;
 			};
 		};
 		505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */ = {
