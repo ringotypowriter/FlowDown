@@ -236,7 +236,7 @@ class MemoryCell: UITableViewCell {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
-        let timestamp = formatter.string(from: memory.timestamp)
+        let timestamp = formatter.string(from: memory.creation)
 
         var descriptions: [String] = [timestamp]
 

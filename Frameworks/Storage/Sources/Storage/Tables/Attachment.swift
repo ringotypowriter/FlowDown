@@ -34,9 +34,13 @@ public final class Attachment: Identifiable, Codable, TableCodable {
         public typealias Root = Attachment
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+
+            BindColumnConstraint(creation, isNotNull: true)
+            BindColumnConstraint(modified, isNotNull: true)
+            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
+            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
+
             BindColumnConstraint(messageId, isNotNull: true, defaultTo: "")
-            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date.now)
-            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
 
             BindColumnConstraint(data, isNotNull: true, defaultTo: Data())
             BindColumnConstraint(previewImageData, isNotNull: true, defaultTo: Data())
@@ -45,9 +49,6 @@ public final class Attachment: Identifiable, Codable, TableCodable {
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(storageSuffix, isNotNull: true, defaultTo: "")
             BindColumnConstraint(imageRepresentation, isNotNull: true, defaultTo: Data())
-
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
-            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindIndex(creation, namedWith: "_creationIndex")
             BindIndex(modified, namedWith: "_modifiedIndex")

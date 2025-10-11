@@ -28,17 +28,16 @@ public final class Conversation: Identifiable, Codable, TableCodable {
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
 
-            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date.now)
-            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
+            BindColumnConstraint(creation, isNotNull: true)
+            BindColumnConstraint(modified, isNotNull: true)
+            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
+            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(title, isNotNull: true, defaultTo: "")
             BindColumnConstraint(icon, isNotNull: true, defaultTo: Data())
             BindColumnConstraint(isFavorite, isNotNull: true, defaultTo: false)
             BindColumnConstraint(shouldAutoRename, isNotNull: true, defaultTo: true)
             BindColumnConstraint(modelId, isNotNull: false, defaultTo: nil)
-
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
-            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindIndex(creation, namedWith: "_creationIndex")
             BindIndex(modified, namedWith: "_modifiedIndex")

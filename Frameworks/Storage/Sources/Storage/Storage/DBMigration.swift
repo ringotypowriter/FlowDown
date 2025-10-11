@@ -46,9 +46,9 @@ struct MigrationV0ToV1: DBMigration {
             try $0.create(table: MessageV1.table, of: MessageV1.self)
             try $0.create(table: ConversationV1.table, of: ConversationV1.self)
 
-            try $0.create(table: CloudModel.table, of: CloudModel.self)
-            try $0.create(table: ModelContextServer.table, of: ModelContextServer.self)
-            try $0.create(table: Memory.table, of: Memory.self)
+            try $0.create(table: CloudModelV1.table, of: CloudModelV1.self)
+            try $0.create(table: ModelContextServerV1.table, of: ModelContextServerV1.self)
+            try $0.create(table: MemoryV1.table, of: MemoryV1.self)
 
             try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
@@ -68,10 +68,18 @@ struct MigrationV1ToV2: DBMigration {
             try $0.create(table: Message.table, of: Message.self)
             try $0.create(table: Conversation.table, of: Conversation.self)
 
-            // 这里需要保留，因为有可能是是首次安装或者主动清除后。会直接从当前版本开始
             try $0.create(table: CloudModel.table, of: CloudModel.self)
             try $0.create(table: ModelContextServer.table, of: ModelContextServer.self)
             try $0.create(table: Memory.table, of: Memory.self)
+
+            let cloudModelCount = try migrateCloudModels(handle: $0)
+            print("[*] migrate \(fromVersion) -> \(toVersion) cloudModels \(cloudModelCount)")
+
+            let modelContextServerCount = try migrateModelContextServers(handle: $0)
+            print("[*] migrate \(fromVersion) -> \(toVersion) modelContextServers \(modelContextServerCount)")
+
+            let memoryCount = try migrateMemorys(handle: $0)
+            print("[*] migrate \(fromVersion) -> \(toVersion) memorys \(memoryCount)")
 
             // 需要按顺序迁移表数据
             let conversationsMap = try migrateConversations(handle: $0)
@@ -91,6 +99,10 @@ struct MigrationV1ToV2: DBMigration {
             try $0.drop(table: AttachmentV1.table)
             try $0.drop(table: MessageV1.table)
             try $0.drop(table: ConversationV1.table)
+
+            try $0.drop(table: CloudModelV1.table)
+            try $0.drop(table: ModelContextServerV1.table)
+            try $0.drop(table: MemoryV1.table)
 
             try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
@@ -210,5 +222,115 @@ struct MigrationV1ToV2: DBMigration {
         try handle.insertOrReplace(migrateAttachment, intoTable: Attachment.table)
 
         return migrateAttachment.count
+    }
+
+    private func migrateCloudModels(handle: Handle) throws -> Int {
+        let hasTable = try handle.isTableExists(CloudModelV1.table)
+        guard hasTable else {
+            return 0
+        }
+
+        let cloudModels: [CloudModelV1] = try handle.getObjects(fromTable: CloudModelV1.table)
+        guard !cloudModels.isEmpty else {
+            return 0
+        }
+
+        var migrateCloudModels: [CloudModel] = []
+
+        for cloudModel in cloudModels {
+            let update = CloudModel()
+            update.objectId = cloudModel.id
+            update.model_identifier = cloudModel.model_identifier
+            update.model_list_endpoint = cloudModel.model_list_endpoint
+            update.creation = cloudModel.creation
+            update.modified = cloudModel.creation
+            update.token = cloudModel.token
+            update.headers = cloudModel.headers
+            update.capabilities = cloudModel.capabilities
+            update.context = cloudModel.context
+            update.temperature_preference = cloudModel.temperature_preference
+            update.temperature_override = cloudModel.temperature_override
+            update.comment = cloudModel.comment
+
+            migrateCloudModels.append(update)
+        }
+
+        guard !migrateCloudModels.isEmpty else {
+            return 0
+        }
+
+        try handle.insertOrReplace(migrateCloudModels, intoTable: CloudModel.table)
+        return migrateCloudModels.count
+    }
+
+    private func migrateModelContextServers(handle: Handle) throws -> Int {
+        let hasTable = try handle.isTableExists(ModelContextServerV1.table)
+        guard hasTable else {
+            return 0
+        }
+
+        let mcss: [ModelContextServerV1] = try handle.getObjects(fromTable: ModelContextServerV1.table)
+        guard !mcss.isEmpty else {
+            return 0
+        }
+
+        var migrateMCSs: [ModelContextServer] = []
+        for mcs in mcss {
+            let update = ModelContextServer()
+            update.objectId = mcs.id
+            update.name = mcs.name
+            update.comment = mcs.comment
+            update.type = mcs.type
+            update.endpoint = mcs.endpoint
+            update.header = mcs.header
+            update.timeout = mcs.timeout
+            update.isEnabled = mcs.isEnabled
+            update.toolsEnabled = mcs.toolsEnabled
+            update.resourcesEnabled = mcs.resourcesEnabled
+            update.templateEnabled = mcs.templateEnabled
+            update.lastConnected = mcs.lastConnected
+            update.connectionStatus = mcs.connectionStatus
+            update.capabilities = mcs.capabilities
+
+            migrateMCSs.append(update)
+        }
+
+        guard !migrateMCSs.isEmpty else {
+            return 0
+        }
+
+        try handle.insertOrReplace(migrateMCSs, intoTable: ModelContextServer.table)
+        return migrateMCSs.count
+    }
+
+    private func migrateMemorys(handle: Handle) throws -> Int {
+        let hasTable = try handle.isTableExists(MemoryV1.table)
+        guard hasTable else {
+            return 0
+        }
+
+        let memorys: [MemoryV1] = try handle.getObjects(fromTable: MemoryV1.table)
+        guard !memorys.isEmpty else {
+            return 0
+        }
+
+        var migrateMemorys: [Memory] = []
+        for memory in memorys {
+            let update = Memory()
+            update.objectId = memory.id
+            update.content = memory.content
+            update.conversationId = memory.conversationId
+            update.creation = memory.timestamp
+            update.modified = memory.timestamp
+
+            migrateMemorys.append(update)
+        }
+
+        guard !migrateMemorys.isEmpty else {
+            return 0
+        }
+
+        try handle.insertOrReplace(migrateMemorys, intoTable: Memory.table)
+        return migrateMemorys.count
     }
 }

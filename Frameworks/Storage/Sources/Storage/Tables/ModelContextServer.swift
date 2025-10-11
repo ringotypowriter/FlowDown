@@ -33,9 +33,13 @@ public struct StringArrayCodable: ColumnCodable {
 }
 
 public final class ModelContextServer: Identifiable, Codable, TableCodable {
-    static var table: String { String(describing: self) }
+    static var table: String = "ModelContextServerV2"
 
-    public var id: String = UUID().uuidString
+    public var id: String {
+        objectId
+    }
+
+    public var objectId: String = UUID().uuidString
     public var name: String = ""
     public var comment: String = ""
     public var type: ServerType = .http
@@ -58,9 +62,12 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = ModelContextServer
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindColumnConstraint(id, isPrimary: true, isNotNull: true, isUnique: true, defaultTo: UUID().uuidString)
-            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date.now)
-            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
+            BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+
+            BindColumnConstraint(creation, isNotNull: true)
+            BindColumnConstraint(modified, isNotNull: true)
+            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
+            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
@@ -76,14 +83,11 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
             BindColumnConstraint(connectionStatus, isNotNull: true, defaultTo: ConnectionStatus.disconnected.rawValue)
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: StringArrayCodable([]))
 
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
-            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
-
             BindIndex(creation, namedWith: "_creationIndex")
             BindIndex(modified, namedWith: "_modifiedIndex")
         }
 
-        case id
+        case objectId
         case name
         case comment
         case type
@@ -105,7 +109,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     }
 
     public init(
-        id: String = UUID().uuidString,
+        objectId: String = UUID().uuidString,
         name: String = "",
         comment: String = "",
         type: ServerType = .http,
@@ -120,7 +124,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         connectionStatus: ConnectionStatus = .disconnected,
         capabilities: StringArrayCodable = StringArrayCodable([])
     ) {
-        self.id = id
+        self.objectId = objectId
         self.name = name
         self.comment = comment
         self.type = type
@@ -148,7 +152,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
 
 extension ModelContextServer: Equatable {
     public static func == (lhs: ModelContextServer, rhs: ModelContextServer) -> Bool {
-        lhs.id == rhs.id
+        lhs.objectId == rhs.objectId
     }
 }
 

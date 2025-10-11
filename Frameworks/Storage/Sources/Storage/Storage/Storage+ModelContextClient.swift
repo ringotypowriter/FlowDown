@@ -15,7 +15,7 @@ public extension Storage {
                 fromTable: ModelContextServer.table,
                 where: ModelContextServer.Properties.removed == false,
                 orderBy: [
-                    ModelContextServer.Properties.id.order(.ascending),
+                    ModelContextServer.Properties.creation.order(.ascending),
                 ]
             )
         ) ?? []
@@ -38,14 +38,14 @@ public extension Storage {
     func modelContextServerWith(_ identifier: ModelContextServer.ID) -> ModelContextServer? {
         try? db.getObject(
             fromTable: ModelContextServer.table,
-            where: ModelContextServer.Properties.id == identifier && ModelContextServer.Properties.removed == false
+            where: ModelContextServer.Properties.objectId == identifier && ModelContextServer.Properties.removed == false
         )
     }
 
     func modelContextServerEdit(identifier: ModelContextServer.ID, _ block: @escaping (inout ModelContextServer) -> Void) {
         let read: ModelContextServer? = try? db.getObject(
             fromTable: ModelContextServer.table,
-            where: ModelContextServer.Properties.id == identifier
+            where: ModelContextServer.Properties.objectId == identifier
         )
         guard var object = read else { return }
         block(&object)
@@ -64,7 +64,7 @@ public extension Storage {
             .to(true)
             .set(ModelContextServer.Properties.modified)
             .to(Date.now)
-            .where(ModelContextServer.Properties.id == identifier)
+            .where(ModelContextServer.Properties.objectId == identifier)
 
         if let handle {
             try? handle.exec(update)
