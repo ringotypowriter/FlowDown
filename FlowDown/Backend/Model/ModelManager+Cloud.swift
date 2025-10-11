@@ -59,9 +59,9 @@ extension ModelManager {
         let models: [CloudModel] = sdb.cloudModelList()
         for model in models where model.id.isEmpty {
             // Ensure all models have a valid ID
-            model.id = UUID().uuidString
+            model.objectId = UUID().uuidString
             sdb.cluodModelRemove(identifier: "")
-            sdb.cloudModelEdit(identifier: model.id) { $0.id = model.id }
+            sdb.cloudModelEdit(identifier: model.objectId) { $0.objectId = model.objectId }
             return scanCloudModels()
         }
         return models
@@ -75,7 +75,7 @@ extension ModelManager {
     }
 
     func newCloudModel(profile: CloudModel) -> CloudModel {
-        profile.id = UUID().uuidString
+        profile.objectId = UUID().uuidString
         sdb.cloudModelPut(profile)
         defer { cloudModels.send(scanCloudModels()) }
         return profile
@@ -150,7 +150,7 @@ extension ModelManager {
         let decoder = PropertyListDecoder()
         let data = try Data(contentsOf: url)
         let model = try decoder.decode(CloudModel.self, from: data)
-        if model.id.isEmpty { model.id = UUID().uuidString }
+        if model.objectId.isEmpty { model.objectId = UUID().uuidString }
         insertCloudModel(model)
         return model
     }

@@ -33,14 +33,14 @@ public extension Storage {
     func cloudModel(with identifier: CloudModel.ID) -> CloudModel? {
         try? db.getObject(
             fromTable: CloudModel.table,
-            where: CloudModel.Properties.id == identifier && CloudModel.Properties.removed == false
+            where: CloudModel.Properties.objectId == identifier && CloudModel.Properties.removed == false
         )
     }
 
     func cloudModelEdit(identifier: CloudModel.ID, _ block: @escaping (inout CloudModel) -> Void) {
         let read: CloudModel? = try? db.getObject(
             fromTable: CloudModel.table,
-            where: CloudModel.Properties.id == identifier
+            where: CloudModel.Properties.objectId == identifier
         )
         guard var object = read else { return }
         block(&object)
@@ -51,7 +51,7 @@ public extension Storage {
         )
     }
 
-    func cluodModelRemove(identifier _: CloudModel.ID, handle: Handle? = nil) {
+    func cluodModelRemove(identifier: CloudModel.ID, handle: Handle? = nil) {
         let update = StatementUpdate().update(table: CloudModel.table)
             .set(CloudModel.Properties.version)
             .to(CloudModel.Properties.version + 1)
@@ -59,6 +59,7 @@ public extension Storage {
             .to(true)
             .set(CloudModel.Properties.modified)
             .to(Date.now)
+            .where(CloudModel.Properties.objectId == identifier)
 
         if let handle {
             try? handle.exec(update)

@@ -140,7 +140,7 @@ extension SettingController.SettingContent {
                     [
                         "id": memory.id,
                         "content": memory.content,
-                        "timestamp": ISO8601DateFormatter().string(from: memory.timestamp),
+                        "timestamp": ISO8601DateFormatter().string(from: memory.creation),
                         "conversationId": memory.conversationId as Any,
                     ]
                 }

@@ -9,11 +9,15 @@ import Foundation
 import WCDBSwift
 
 public final class Memory: Identifiable, Codable, TableCodable {
-    static var table: String { String(describing: self) }
+    static var table: String = "MemoryV2"
 
-    public var id: String = UUID().uuidString
+    public var id: String {
+        objectId
+    }
+
+    public var objectId: String = UUID().uuidString
     public var content: String = ""
-    public var timestamp: Date = .init()
+    public var creation: Date = .now
     public var conversationId: String? = nil
 
     public var version: Int = 0
@@ -23,23 +27,24 @@ public final class Memory: Identifiable, Codable, TableCodable {
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = Memory
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindColumnConstraint(id, isPrimary: true, isNotNull: true, isUnique: true, defaultTo: UUID().uuidString)
-            BindColumnConstraint(content, isNotNull: true, defaultTo: "")
-            BindColumnConstraint(timestamp, isNotNull: true, defaultTo: Date.now)
-            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
-            BindColumnConstraint(conversationId, isNotNull: false, defaultTo: nil)
+            BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
 
+            BindColumnConstraint(creation, isNotNull: true)
+            BindColumnConstraint(modified, isNotNull: true)
             BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
-            BindIndex(timestamp, namedWith: "_timestampIndex")
+            BindColumnConstraint(content, isNotNull: true, defaultTo: "")
+            BindColumnConstraint(conversationId, isNotNull: false, defaultTo: nil)
+
+            BindIndex(creation, namedWith: "_creationIndex")
             BindIndex(modified, namedWith: "_modifiedIndex")
             BindIndex(conversationId, namedWith: "_conversationIdIndex")
         }
 
-        case id
+        case objectId
         case content
-        case timestamp
+        case creation
         case conversationId
 
         case version
@@ -52,7 +57,6 @@ public final class Memory: Identifiable, Codable, TableCodable {
     public init(content: String, conversationId: String? = nil) {
         self.content = content
         self.conversationId = conversationId
-        timestamp = Date()
     }
 
     func markModified() {
@@ -63,9 +67,9 @@ public final class Memory: Identifiable, Codable, TableCodable {
 
 extension Memory: Equatable {
     public static func == (lhs: Memory, rhs: Memory) -> Bool {
-        lhs.id == rhs.id &&
+        lhs.objectId == rhs.objectId &&
             lhs.content == rhs.content &&
-            lhs.timestamp == rhs.timestamp &&
+            lhs.creation == rhs.creation &&
             lhs.modified == rhs.modified &&
             lhs.conversationId == rhs.conversationId &&
             lhs.version == rhs.version &&
@@ -75,9 +79,9 @@ extension Memory: Equatable {
 
 extension Memory: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(objectId)
         hasher.combine(content)
-        hasher.combine(timestamp)
+        hasher.combine(creation)
         hasher.combine(modified)
         hasher.combine(conversationId)
         hasher.combine(version)

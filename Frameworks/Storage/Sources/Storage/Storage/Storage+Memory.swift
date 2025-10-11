@@ -47,7 +47,7 @@ public extension Storage {
                 fromTable: Memory.table,
                 where: Memory.Properties.removed == false,
                 orderBy: [
-                    Memory.Properties.timestamp.order(.descending),
+                    Memory.Properties.creation.order(.descending),
                 ]
             )
         } catch {
@@ -61,7 +61,7 @@ public extension Storage {
                 fromTable: Memory.table,
                 where: Memory.Properties.removed == false,
                 orderBy: [
-                    Memory.Properties.timestamp.order(.descending),
+                    Memory.Properties.creation.order(.descending),
                 ],
                 limit: limit
             )
@@ -74,7 +74,7 @@ public extension Storage {
         do {
             return try db.getObject(
                 fromTable: Memory.table,
-                where: Memory.Properties.id == id && Memory.Properties.removed == false
+                where: Memory.Properties.objectId == id && Memory.Properties.removed == false
             )
         } catch {
             throw MemoryError.retrieveFailed(error.localizedDescription)
@@ -87,7 +87,7 @@ public extension Storage {
                 fromTable: Memory.table,
                 where: Memory.Properties.removed == false && Memory.Properties.content.like("%\(query)%"),
                 orderBy: [
-                    Memory.Properties.timestamp.order(.descending),
+                    Memory.Properties.creation.order(.descending),
                 ],
                 limit: limit
             )
@@ -109,11 +109,11 @@ public extension Storage {
         do {
             let existingMemory = try db.getObject(
                 fromTable: Memory.table,
-                where: Memory.Properties.id == memory.id
+                where: Memory.Properties.objectId == memory.objectId
             ) as Memory?
 
             guard existingMemory != nil else {
-                throw MemoryError.memoryNotFound(memory.id)
+                throw MemoryError.memoryNotFound(memory.objectId)
             }
 
             memory.markModified()
@@ -125,17 +125,17 @@ public extension Storage {
         }
     }
 
-    func deleteMemory(id: String, handle: Handle? = nil) throws {
+    func deleteMemory(id: Memory.ID, handle: Handle? = nil) throws {
         do {
             let existingMemory = if let handle {
                 try handle.getObject(
                     fromTable: Memory.table,
-                    where: Memory.Properties.id == id
+                    where: Memory.Properties.objectId == id
                 ) as Memory?
             } else {
                 try db.getObject(
                     fromTable: Memory.table,
-                    where: Memory.Properties.id == id
+                    where: Memory.Properties.objectId == id
                 ) as Memory?
             }
 
@@ -150,7 +150,7 @@ public extension Storage {
                 .to(true)
                 .set(Memory.Properties.modified)
                 .to(Date.now)
-                .where(Memory.Properties.id == id)
+                .where(Memory.Properties.objectId == id)
 
             if let handle {
                 try handle.exec(update)
@@ -195,7 +195,7 @@ public extension Storage {
                 fromTable: Memory.table,
                 where: Memory.Properties.removed == false,
                 orderBy: [
-                    Memory.Properties.timestamp.order(.ascending),
+                    Memory.Properties.creation.order(.ascending),
                 ],
                 limit: totalCount - keepCount
             ) as [Memory]
@@ -213,7 +213,7 @@ public extension Storage {
                 .to(true)
                 .set(Memory.Properties.modified)
                 .to(Date.now)
-                .where(Memory.Properties.id.in(idsToDelete))
+                .where(Memory.Properties.objectId.in(idsToDelete))
 
             try db.exec(update)
         } catch {

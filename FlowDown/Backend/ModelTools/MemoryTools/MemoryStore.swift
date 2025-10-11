@@ -140,7 +140,7 @@ public class MemoryStore: ObservableObject {
                     }
 
                     existingMemory.content = trimmedContent
-                    existingMemory.timestamp = Date()
+                    existingMemory.creation = Date()
                     try storage.updateMemory(existingMemory)
 
                     continuation.resume()
@@ -218,7 +218,7 @@ public class MemoryStore: ObservableObject {
             } else {
                 var result = "Stored memories:\n\n"
                 for (index, memory) in memories.enumerated() {
-                    let timestamp = ISO8601DateFormatter().string(from: memory.timestamp)
+                    let timestamp = ISO8601DateFormatter().string(from: memory.creation)
                     result += "\(index + 1). [\(timestamp)] \(memory.content)\n"
                 }
                 return result
@@ -238,7 +238,7 @@ public class MemoryStore: ObservableObject {
             } else {
                 var result = "Stored memories:\n\n"
                 for (index, memory) in memories.enumerated() {
-                    let timestamp = ISO8601DateFormatter().string(from: memory.timestamp)
+                    let timestamp = ISO8601DateFormatter().string(from: memory.creation)
                     result += "\(index + 1). ID: \(memory.id)\n   [\(timestamp)] \(memory.content)\n\n"
                 }
                 return result
@@ -265,7 +265,7 @@ public class MemoryStore: ObservableObject {
             }
 
             existingMemory.content = trimmedContent
-            existingMemory.timestamp = Date()
+            existingMemory.creation = Date()
             try storage.updateMemory(existingMemory)
 
             return "Memory updated successfully."

@@ -557,11 +557,11 @@ class CloudModelEditorController: StackScrollController {
             guard let nav = self?.navigationController else { return }
             let newIdentifier = UUID().uuidString
             ModelManager.shared.editCloudModel(identifier: self?.identifier) {
-                $0.id = newIdentifier
+                $0.objectId = newIdentifier
                 $0.model_identifier = ""
             }
             guard let newModel = ModelManager.shared.cloudModel(identifier: newIdentifier) else { return }
-            assert(newModel.id == newIdentifier)
+            assert(newModel.objectId == newIdentifier)
             nav.popViewController(animated: true) {
                 let editor = CloudModelEditorController(identifier: newModel.id)
                 nav.pushViewController(editor, animated: true)

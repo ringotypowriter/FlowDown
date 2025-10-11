@@ -41,8 +41,10 @@ public final class Message: Identifiable, Codable, TableCodable {
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
 
-            BindColumnConstraint(creation, isNotNull: true, defaultTo: Date.now)
-            BindColumnConstraint(modified, isNotNull: true, defaultTo: Date.now)
+            BindColumnConstraint(creation, isNotNull: true)
+            BindColumnConstraint(modified, isNotNull: true)
+            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
+            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(conversationId, isNotNull: true)
 
@@ -54,9 +56,6 @@ public final class Message: Identifiable, Codable, TableCodable {
             BindColumnConstraint(documentNodes, isNotNull: true, defaultTo: [MarkdownBlockNode]())
             BindColumnConstraint(webSearchStatus, isNotNull: true, defaultTo: WebSearchStatus())
             BindColumnConstraint(toolStatus, isNotNull: true, defaultTo: ToolStatus())
-
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
-            BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindIndex(creation, namedWith: "_creationIndex")
             BindIndex(modified, namedWith: "_modifiedIndex")
