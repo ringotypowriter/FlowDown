@@ -33,9 +33,51 @@ public extension Storage {
     }
 
     func insertMemory(_ memory: Memory) throws {
+        try insertMemory(memorys: [memory])
+    }
+
+    func insertMemory(memorys: [Memory]) throws {
+        guard !memorys.isEmpty else {
+            return
+        }
+
+        let modified = Date.now
+        memorys.forEach { $0.markModified(modified) }
+
         do {
-            memory.markModified()
-            try db.insertOrReplace([memory], intoTable: Memory.table)
+            try runTransaction { [weak self] in
+                guard let self else { return }
+
+                let diff = try diffSyncable(objects: memorys, handle: $0)
+                guard !diff.isEmpty else {
+                    return
+                }
+
+                /// 恢复修改时间
+                diff.insert.forEach { $0.markModified($0.creation) }
+
+                try $0.insertOrReplace(diff.insertOrReplace(), intoTable: Memory.tableName)
+
+                if !diff.deleted.isEmpty {
+                    let deletedIds = diff.deleted.map(\.objectId)
+                    let update = StatementUpdate().update(table: Memory.tableName)
+                        .set(Memory.Properties.removed)
+                        .to(true)
+                        .set(Memory.Properties.modified)
+                        .to(modified)
+                        .where(Memory.Properties.objectId.in(deletedIds))
+
+                    try $0.exec(update)
+                }
+
+                var changes = diff.insert.map { ($0, UploadQueue.Changes.insert) }
+                    + diff.updated.map { ($0, UploadQueue.Changes.update) }
+                    + diff.deleted.map { ($0, UploadQueue.Changes.delete) }
+                // 按 modified 升序
+                changes.sort { $0.0.modified < $1.0.modified }
+
+                try pendingUploadEnqueue(sources: changes, handle: $0)
+            }
         } catch {
             throw MemoryError.insertFailed(error.localizedDescription)
         }
@@ -44,7 +86,7 @@ public extension Storage {
     func getAllMemories() throws -> [Memory] {
         do {
             return try db.getObjects(
-                fromTable: Memory.table,
+                fromTable: Memory.tableName,
                 where: Memory.Properties.removed == false,
                 orderBy: [
                     Memory.Properties.creation.order(.descending),
@@ -58,7 +100,7 @@ public extension Storage {
     func getMemoriesWithLimit(_ limit: Int) throws -> [Memory] {
         do {
             return try db.getObjects(
-                fromTable: Memory.table,
+                fromTable: Memory.tableName,
                 where: Memory.Properties.removed == false,
                 orderBy: [
                     Memory.Properties.creation.order(.descending),
@@ -73,7 +115,7 @@ public extension Storage {
     func getMemory(id: String) throws -> Memory? {
         do {
             return try db.getObject(
-                fromTable: Memory.table,
+                fromTable: Memory.tableName,
                 where: Memory.Properties.objectId == id && Memory.Properties.removed == false
             )
         } catch {
@@ -84,7 +126,7 @@ public extension Storage {
     func searchMemories(query: String, limit: Int = 20) throws -> [Memory] {
         do {
             return try db.getObjects(
-                fromTable: Memory.table,
+                fromTable: Memory.tableName,
                 where: Memory.Properties.removed == false && Memory.Properties.content.like("%\(query)%"),
                 orderBy: [
                     Memory.Properties.creation.order(.descending),
@@ -98,7 +140,7 @@ public extension Storage {
 
     func getMemoryCount() throws -> Int {
         do {
-            let objects: [Memory] = try db.getObjects(fromTable: Memory.table, where: Memory.Properties.removed == false)
+            let objects: [Memory] = try db.getObjects(fromTable: Memory.tableName, where: Memory.Properties.removed == false)
             return objects.count
         } catch {
             throw MemoryError.retrieveFailed(error.localizedDescription)
@@ -108,7 +150,7 @@ public extension Storage {
     func updateMemory(_ memory: Memory) throws {
         do {
             let existingMemory = try db.getObject(
-                fromTable: Memory.table,
+                fromTable: Memory.tableName,
                 where: Memory.Properties.objectId == memory.objectId
             ) as Memory?
 
@@ -117,7 +159,9 @@ public extension Storage {
             }
 
             memory.markModified()
-            try db.insertOrReplace([memory], intoTable: Memory.table)
+            try db.insertOrReplace([memory], intoTable: Memory.tableName)
+            try pendingUploadEnqueue(sources: [(memory, .update)])
+
         } catch let error as MemoryError {
             throw error
         } catch {
@@ -127,27 +171,29 @@ public extension Storage {
 
     func deleteMemory(id: Memory.ID, handle: Handle? = nil) throws {
         do {
-            let existingMemory = if let handle {
+            let existingMemory: Memory? = if let handle {
                 try handle.getObject(
-                    fromTable: Memory.table,
+                    fromTable: Memory.tableName,
                     where: Memory.Properties.objectId == id
-                ) as Memory?
+                )
             } else {
                 try db.getObject(
-                    fromTable: Memory.table,
+                    fromTable: Memory.tableName,
                     where: Memory.Properties.objectId == id
-                ) as Memory?
+                )
             }
 
-            guard existingMemory != nil else {
+            guard let existingMemory else {
                 throw MemoryError.memoryNotFound(id)
             }
 
-            let update = StatementUpdate().update(table: Memory.table)
+            existingMemory.markModified()
+
+            let update = StatementUpdate().update(table: Memory.tableName)
                 .set(Memory.Properties.removed)
                 .to(true)
                 .set(Memory.Properties.modified)
-                .to(Date.now)
+                .to(existingMemory.modified)
                 .where(Memory.Properties.objectId == id)
 
             if let handle {
@@ -155,6 +201,9 @@ public extension Storage {
             } else {
                 try db.exec(update)
             }
+
+            try pendingUploadEnqueue(sources: [(existingMemory, .delete)], handle: handle)
+
         } catch let error as MemoryError {
             throw error
         } catch {
@@ -164,17 +213,34 @@ public extension Storage {
 
     func deleteAllMemories(handle: Handle? = nil) throws {
         do {
-            let update = StatementUpdate().update(table: Memory.table)
+            let memorys: [Memory] = if let handle {
+                try handle.getObjects(fromTable: Memory.tableName, where: Memory.Properties.removed == false)
+            } else {
+                try db.getObjects(fromTable: Memory.tableName, where: Memory.Properties.removed == false)
+            }
+
+            guard !memorys.isEmpty else {
+                return
+            }
+
+            let deletedIds = memorys.map(\.objectId)
+            let modified = Date.now
+            memorys.forEach { $0.markModified(modified) }
+
+            let update = StatementUpdate().update(table: Memory.tableName)
                 .set(Memory.Properties.removed)
                 .to(true)
                 .set(Memory.Properties.modified)
-                .to(Date.now)
+                .to(modified)
+                .where(Memory.Properties.objectId.in(deletedIds))
 
             if let handle {
                 try handle.exec(update)
             } else {
                 try db.exec(update)
             }
+
+            try pendingUploadEnqueue(sources: memorys.map { ($0, .delete) }, handle: handle)
         } catch {
             throw MemoryError.deleteFailed(error.localizedDescription)
         }
@@ -182,34 +248,39 @@ public extension Storage {
 
     func deleteOldMemories(keepCount: Int) throws {
         do {
-            let allMemories: [Memory] = try db.getObjects(fromTable: Memory.table, where: Memory.Properties.removed == false)
+            let allMemories: [Memory] = try db.getObjects(fromTable: Memory.tableName, where: Memory.Properties.removed == false)
 
             let totalCount = allMemories.count
             guard totalCount > keepCount else { return }
 
-            let memoriesToDelete = try db.getObjects(
-                fromTable: Memory.table,
+            let memoriesToDelete: [Memory] = try db.getObjects(
+                fromTable: Memory.tableName,
                 where: Memory.Properties.removed == false,
                 orderBy: [
                     Memory.Properties.creation.order(.ascending),
                 ],
                 limit: totalCount - keepCount
-            ) as [Memory]
+            )
 
             guard !memoriesToDelete.isEmpty else {
                 return
             }
 
-            let idsToDelete = memoriesToDelete.map(\.id)
+            let deletedIds = memoriesToDelete.map(\.objectId)
+            let modified = Date.now
+            memoriesToDelete.forEach { $0.markModified(modified) }
 
-            let update = StatementUpdate().update(table: Memory.table)
+            let update = StatementUpdate().update(table: Memory.tableName)
                 .set(Memory.Properties.removed)
                 .to(true)
                 .set(Memory.Properties.modified)
-                .to(Date.now)
-                .where(Memory.Properties.objectId.in(idsToDelete))
+                .to(modified)
+                .where(Memory.Properties.objectId.in(deletedIds))
 
             try db.exec(update)
+
+            try pendingUploadEnqueue(sources: memoriesToDelete.map { ($0, .delete) })
+
         } catch {
             throw MemoryError.deleteFailed(error.localizedDescription)
         }

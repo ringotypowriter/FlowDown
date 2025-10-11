@@ -32,13 +32,13 @@ extension ConversationManager {
     }
 
     func createNewConversation() -> Conversation {
-        let tempObject = sdb.conversationMake()
-        sdb.conversationEdit(identifier: tempObject.id) { conv in
-            conv.title = String(localized: "Conversation")
-            if conv.modelId?.isEmpty ?? true {
-                conv.modelId = ModelManager.ModelIdentifier.defaultModelForConversation
+        let tempObject = sdb.conversationMake {
+            $0.title = String(localized: "Conversation")
+            if $0.modelId?.isEmpty ?? true {
+                $0.modelId = ModelManager.ModelIdentifier.defaultModelForConversation
             }
         }
+
         scanAll()
         guard let object = sdb.conversationWith(identifier: tempObject.id) else {
             preconditionFailure()
@@ -71,7 +71,6 @@ extension ConversationManager {
                 let message = session.appendNewMessage(role: .assistant)
                 message.document = guide
                 session.save()
-                sdb.insertOrReplace(object: message)
                 session.notifyMessagesDidChange()
 
                 editConversation(identifier: object.id) { conversation in

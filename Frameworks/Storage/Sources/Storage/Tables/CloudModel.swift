@@ -8,8 +8,8 @@
 import Foundation
 import WCDBSwift
 
-public final class CloudModel: Identifiable, Codable, Equatable, Hashable, DeviceOwned, TableCodable {
-    static var table: String = "CloudModelV2"
+public final class CloudModel: Identifiable, Codable, Equatable, Hashable, TableNamed, DeviceOwned, TableCodable {
+    public static let tableName: String = "CloudModelV2"
 
     public var id: String {
         objectId
@@ -128,8 +128,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Devic
         removed = try container.decodeIfPresent(Bool.self, forKey: .removed) ?? false
     }
 
-    func markModified() {
-        modified = .now
+    func markModified(_ date: Date = .now) {
+        modified = date
     }
 
     public static func == (lhs: CloudModel, rhs: CloudModel) -> Bool {

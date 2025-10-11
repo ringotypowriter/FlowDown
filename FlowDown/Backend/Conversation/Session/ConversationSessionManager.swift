@@ -26,7 +26,6 @@ final class ConversationSessionManager {
         let session = Session(id: id)
         if session.messages.isEmpty {
             session.prepareSystemPrompt()
-            session.save()
         }
         sessions[id] = session
         return session

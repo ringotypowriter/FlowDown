@@ -9,8 +9,8 @@ import Foundation
 import MarkdownParser
 import WCDBSwift
 
-public final class MessageV1: Identifiable, Codable, TableCodable {
-    static let table: String = "Message"
+public final class MessageV1: Identifiable, Codable, TableNamed, TableCodable {
+    public static let tableName: String = "Message"
 
     public var id: Int64 = .init()
     public var conversationId: ConversationV1.ID = .init()
@@ -42,7 +42,7 @@ public final class MessageV1: Identifiable, Codable, TableCodable {
             BindForeginKey(
                 conversationId,
                 foreignKey: ForeignKey()
-                    .references(with: ConversationV1.table)
+                    .references(with: ConversationV1.tableName)
                     .columns(ConversationV1.CodingKeys.id)
                     .onDelete(.cascade)
             )

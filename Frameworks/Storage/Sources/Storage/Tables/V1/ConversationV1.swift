@@ -4,8 +4,8 @@
 import Foundation
 import WCDBSwift
 
-public final class ConversationV1: Identifiable, Codable, TableCodable {
-    static let table: String = "Conversation"
+public final class ConversationV1: Identifiable, Codable, TableNamed, TableCodable {
+    public static let tableName: String = "Conversation"
 
     public var id: Int64 = .init()
     public var title: String = ""

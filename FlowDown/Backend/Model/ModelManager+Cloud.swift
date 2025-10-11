@@ -60,7 +60,7 @@ extension ModelManager {
         for model in models where model.id.isEmpty {
             // Ensure all models have a valid ID
             model.objectId = UUID().uuidString
-            sdb.cluodModelRemove(identifier: "")
+            sdb.cloudModelRemove(identifier: "")
             sdb.cloudModelEdit(identifier: model.objectId) { $0.objectId = model.objectId }
             return scanCloudModels()
         }
@@ -69,20 +69,20 @@ extension ModelManager {
 
     func newCloudModel() -> CloudModel {
         let object = CloudModel(deviceId: Storage.deviceId)
-        sdb.cloudModelPut(object)
+        try? sdb.cloudModelPut(object)
         defer { cloudModels.send(scanCloudModels()) }
         return object
     }
 
     func newCloudModel(profile: CloudModel) -> CloudModel {
         profile.objectId = UUID().uuidString
-        sdb.cloudModelPut(profile)
+        try? sdb.cloudModelPut(profile)
         defer { cloudModels.send(scanCloudModels()) }
         return profile
     }
 
     func insertCloudModel(_ model: CloudModel) {
-        sdb.cloudModelPut(model)
+        try? sdb.cloudModelPut(model)
         cloudModels.send(scanCloudModels())
     }
 
@@ -92,7 +92,7 @@ extension ModelManager {
     }
 
     func removeCloudModel(identifier: CloudModelIdentifier) {
-        sdb.cluodModelRemove(identifier: identifier)
+        sdb.cloudModelRemove(identifier: identifier)
         cloudModels.send(scanCloudModels())
     }
 

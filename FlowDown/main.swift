@@ -10,6 +10,8 @@
 @_exported import SwifterSwift
 @_exported import UIKit
 
+import Storage
+
 #if !DEBUG
     fclose(stdout)
     fclose(stderr)
