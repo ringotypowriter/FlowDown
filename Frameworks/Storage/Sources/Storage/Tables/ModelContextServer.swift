@@ -54,7 +54,6 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     public var connectionStatus: ConnectionStatus = .disconnected
     public var capabilities: StringArrayCodable = .init([])
 
-    public var version: Int = 0
     public var removed: Bool = false
     public var creation: Date = .now
     public var modified: Date = .now
@@ -66,7 +65,6 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
@@ -102,7 +100,6 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         case connectionStatus
         case capabilities
 
-        case version
         case removed
         case creation
         case modified
@@ -141,7 +138,6 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     }
 
     func markModified() {
-        version += 1
         modified = .now
     }
 

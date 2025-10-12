@@ -38,8 +38,6 @@ public extension Storage {
         }
 
         let update = StatementUpdate().update(table: Attachment.table)
-            .set(Attachment.Properties.version)
-            .to(Attachment.Properties.version + 1)
             .set(Attachment.Properties.removed)
             .to(true)
             .set(Attachment.Properties.modified)
@@ -59,8 +57,6 @@ public extension Storage {
         }
 
         let update = StatementUpdate().update(table: Attachment.table)
-            .set(Attachment.Properties.version)
-            .to(Attachment.Properties.version + 1)
             .set(Attachment.Properties.removed)
             .to(true)
             .set(Attachment.Properties.modified)
@@ -76,8 +72,6 @@ public extension Storage {
 
     func attachmentsMarkDelete(handle: Handle? = nil) throws {
         let update = StatementUpdate().update(table: Attachment.table)
-            .set(Attachment.Properties.version)
-            .to(Attachment.Properties.version + 1)
             .set(Attachment.Properties.removed)
             .to(true)
             .set(Attachment.Properties.modified)

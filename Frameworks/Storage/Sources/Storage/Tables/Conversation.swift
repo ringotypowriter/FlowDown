@@ -19,7 +19,6 @@ public final class Conversation: Identifiable, Codable, TableCodable {
     public var modelId: String? = nil
 
     public var objectId: String = UUID().uuidString
-    public var version: Int = 0
     public var removed: Bool = false
     public var modified: Date = .init()
 
@@ -30,7 +29,6 @@ public final class Conversation: Identifiable, Codable, TableCodable {
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(title, isNotNull: true, defaultTo: "")
@@ -51,13 +49,11 @@ public final class Conversation: Identifiable, Codable, TableCodable {
         case shouldAutoRename
         case modelId
 
-        case version
         case removed
         case modified
     }
 
     func markModified() {
-        version += 1
         modified = .now
     }
 }
@@ -72,7 +68,6 @@ extension Conversation: Equatable {
             lhs.shouldAutoRename == rhs.shouldAutoRename &&
             lhs.modelId == rhs.modelId &&
             lhs.objectId == rhs.objectId &&
-            lhs.version == rhs.version &&
             lhs.removed == rhs.removed &&
             lhs.modified == rhs.modified
     }
@@ -88,7 +83,6 @@ extension Conversation: Hashable {
         hasher.combine(shouldAutoRename)
         hasher.combine(modelId)
 
-        hasher.combine(version)
         hasher.combine(removed)
         hasher.combine(modified)
     }

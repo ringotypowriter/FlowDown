@@ -25,7 +25,6 @@ public final class Attachment: Identifiable, Codable, TableCodable {
     public var name: String = ""
     public var storageSuffix: String = ""
 
-    public var version: Int = 0
     public var removed: Bool = false
     public var creation: Date = .now
     public var modified: Date = .now
@@ -37,7 +36,6 @@ public final class Attachment: Identifiable, Codable, TableCodable {
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(messageId, isNotNull: true, defaultTo: "")
@@ -65,14 +63,12 @@ public final class Attachment: Identifiable, Codable, TableCodable {
         case name
         case storageSuffix
 
-        case version
         case removed
         case creation
         case modified
     }
 
     func markModified() {
-        version += 1
         modified = .now
     }
 }

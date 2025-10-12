@@ -58,8 +58,6 @@ public extension Storage {
 
     func modelContextServerRemove(identifier: ModelContextServer.ID, handle: Handle? = nil) {
         let update = StatementUpdate().update(table: ModelContextServer.table)
-            .set(ModelContextServer.Properties.version)
-            .to(ModelContextServer.Properties.version + 1)
             .set(ModelContextServer.Properties.removed)
             .to(true)
             .set(ModelContextServer.Properties.modified)

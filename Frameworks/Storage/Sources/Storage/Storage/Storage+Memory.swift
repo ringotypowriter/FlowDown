@@ -144,8 +144,6 @@ public extension Storage {
             }
 
             let update = StatementUpdate().update(table: Memory.table)
-                .set(Memory.Properties.version)
-                .to(Memory.Properties.version + 1)
                 .set(Memory.Properties.removed)
                 .to(true)
                 .set(Memory.Properties.modified)
@@ -167,8 +165,6 @@ public extension Storage {
     func deleteAllMemories(handle: Handle? = nil) throws {
         do {
             let update = StatementUpdate().update(table: Memory.table)
-                .set(Memory.Properties.version)
-                .to(Memory.Properties.version + 1)
                 .set(Memory.Properties.removed)
                 .to(true)
                 .set(Memory.Properties.modified)
@@ -207,8 +203,6 @@ public extension Storage {
             let idsToDelete = memoriesToDelete.map(\.id)
 
             let update = StatementUpdate().update(table: Memory.table)
-                .set(Memory.Properties.version)
-                .to(Memory.Properties.version + 1)
                 .set(Memory.Properties.removed)
                 .to(true)
                 .set(Memory.Properties.modified)

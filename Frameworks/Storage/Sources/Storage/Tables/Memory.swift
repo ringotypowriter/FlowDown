@@ -20,7 +20,6 @@ public final class Memory: Identifiable, Codable, TableCodable {
     public var creation: Date = .now
     public var conversationId: String? = nil
 
-    public var version: Int = 0
     public var removed: Bool = false
     public var modified: Date = .now
 
@@ -31,7 +30,6 @@ public final class Memory: Identifiable, Codable, TableCodable {
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(content, isNotNull: true, defaultTo: "")
@@ -47,7 +45,6 @@ public final class Memory: Identifiable, Codable, TableCodable {
         case creation
         case conversationId
 
-        case version
         case removed
         case modified
     }
@@ -60,7 +57,6 @@ public final class Memory: Identifiable, Codable, TableCodable {
     }
 
     func markModified() {
-        version += 1
         modified = .now
     }
 }
@@ -72,7 +68,6 @@ extension Memory: Equatable {
             lhs.creation == rhs.creation &&
             lhs.modified == rhs.modified &&
             lhs.conversationId == rhs.conversationId &&
-            lhs.version == rhs.version &&
             lhs.removed == rhs.removed
     }
 }
@@ -84,7 +79,6 @@ extension Memory: Hashable {
         hasher.combine(creation)
         hasher.combine(modified)
         hasher.combine(conversationId)
-        hasher.combine(version)
         hasher.combine(removed)
     }
 }

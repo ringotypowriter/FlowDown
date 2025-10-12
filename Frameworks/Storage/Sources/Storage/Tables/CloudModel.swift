@@ -31,7 +31,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     // present to user on the top of the editor page
     public var comment: String = ""
 
-    public var version: Int = 0
     public var removed: Bool = false
     public var modified: Date = .now
 
@@ -42,7 +41,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(model_identifier, isNotNull: true, defaultTo: "")
@@ -73,7 +71,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case temperature_preference
         case temperature_override
 
-        case version
         case removed
         case modified
     }
@@ -122,12 +119,10 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         temperature_preference = try container.decodeIfPresent(ModelTemperaturePreference.self, forKey: .temperature_preference) ?? .inherit
         temperature_override = try container.decodeIfPresent(Double.self, forKey: .temperature_override)
 
-        version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 0
         removed = try container.decodeIfPresent(Bool.self, forKey: .removed) ?? false
     }
 
     func markModified() {
-        version += 1
         modified = .now
     }
 
@@ -149,7 +144,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(comment)
         hasher.combine(temperature_preference)
         hasher.combine(temperature_override)
-        hasher.combine(version)
         hasher.combine(removed)
     }
 }
