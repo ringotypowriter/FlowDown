@@ -132,8 +132,6 @@ public extension Storage {
         }
 
         let update = StatementUpdate().update(table: Message.table)
-            .set(Message.Properties.version)
-            .to(Message.Properties.version + 1)
             .set(Message.Properties.removed)
             .to(true)
             .set(Message.Properties.modified)
@@ -153,8 +151,6 @@ public extension Storage {
         }
 
         let update = StatementUpdate().update(table: Message.table)
-            .set(Message.Properties.version)
-            .to(Message.Properties.version + 1)
             .set(Message.Properties.removed)
             .to(true)
             .set(Message.Properties.modified)
@@ -182,8 +178,6 @@ public extension Storage {
         }
 
         let update = StatementUpdate().update(table: Message.table)
-            .set(Message.Properties.version)
-            .to(Message.Properties.version + 1)
             .set(Message.Properties.removed)
             .to(true)
             .set(Message.Properties.modified)
@@ -201,8 +195,6 @@ public extension Storage {
 
     func messageMarkDelete(handle: Handle? = nil) throws {
         let update = StatementUpdate().update(table: Message.table)
-            .set(Message.Properties.version)
-            .to(Message.Properties.version + 1)
             .set(Message.Properties.removed)
             .to(true)
             .set(Message.Properties.modified)

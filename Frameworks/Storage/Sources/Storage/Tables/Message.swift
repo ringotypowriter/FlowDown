@@ -32,7 +32,6 @@ public final class Message: Identifiable, Codable, TableCodable {
     public var webSearchStatus: WebSearchStatus = .init()
     public var toolStatus: ToolStatus = .init()
 
-    public var version: Int = 0
     public var removed: Bool = false
     public var modified: Date = .now
 
@@ -43,7 +42,6 @@ public final class Message: Identifiable, Codable, TableCodable {
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
-            BindColumnConstraint(version, isNotNull: false, defaultTo: 0)
             BindColumnConstraint(removed, isNotNull: false, defaultTo: false)
 
             BindColumnConstraint(conversationId, isNotNull: true)
@@ -74,13 +72,11 @@ public final class Message: Identifiable, Codable, TableCodable {
         case webSearchStatus
         case toolStatus
 
-        case version
         case removed
         case modified
     }
 
     func markModified() {
-        version += 1
         modified = .now
     }
 }
@@ -229,7 +225,6 @@ extension Message: Equatable {
             lhs.isThinkingFold == rhs.isThinkingFold &&
             lhs.document == rhs.document &&
             lhs.webSearchStatus == rhs.webSearchStatus &&
-            lhs.version == rhs.version &&
             lhs.removed == rhs.removed &&
             lhs.modified == rhs.modified
     }
@@ -247,7 +242,6 @@ extension Message: Hashable {
         hasher.combine(document)
         hasher.combine(webSearchStatus)
 
-        hasher.combine(version)
         hasher.combine(removed)
         hasher.combine(modified)
     }

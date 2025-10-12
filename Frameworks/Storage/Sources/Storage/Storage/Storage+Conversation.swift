@@ -213,8 +213,6 @@ public extension Storage {
         }
 
         let update = StatementUpdate().update(table: Conversation.table)
-            .set(Conversation.Properties.version)
-            .to(Conversation.Properties.version + 1)
             .set(Conversation.Properties.removed)
             .to(true)
             .set(Conversation.Properties.modified)
@@ -229,8 +227,6 @@ public extension Storage {
 
     func conversationMarkDelete(handle: Handle? = nil) throws {
         let update = StatementUpdate().update(table: Conversation.table)
-            .set(Conversation.Properties.version)
-            .to(Conversation.Properties.version + 1)
             .set(Conversation.Properties.removed)
             .to(true)
             .set(Conversation.Properties.modified)

@@ -53,8 +53,6 @@ public extension Storage {
 
     func cluodModelRemove(identifier: CloudModel.ID, handle: Handle? = nil) {
         let update = StatementUpdate().update(table: CloudModel.table)
-            .set(CloudModel.Properties.version)
-            .to(CloudModel.Properties.version + 1)
             .set(CloudModel.Properties.removed)
             .to(true)
             .set(CloudModel.Properties.modified)
