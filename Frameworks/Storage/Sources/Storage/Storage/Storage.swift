@@ -9,10 +9,11 @@ import Foundation
 import WCDBSwift
 
 public class Storage {
+    private static let deviceIdKey = "com.flowdown.storage.deviceId"
+
     let db: Database
     let initVersion: DBVersion
-
-    // 标记为删除的数据在多长时间后，执行物理删除， 默认为： 30天
+    /// 标记为删除的数据在多长时间后，执行物理删除， 默认为： 30天
     let deleteAfterDuration: TimeInterval = 60 * 60 * 24 * 30
 
     public let databaseDir: URL
@@ -20,8 +21,28 @@ public class Storage {
 
     private let migrations: [DBMigration] = [
         MigrationV0ToV1(),
-        MigrationV1ToV2(),
+        MigrationV1ToV2(deviceId: Storage.deviceId),
     ]
+
+    private static var _deviceId: String?
+
+    /// 设备ID，应用卸载重置
+    public static var deviceId: String {
+        if let _deviceId {
+            return _deviceId
+        }
+
+        let defaults = UserDefaults.standard
+        if let id = defaults.string(forKey: deviceIdKey) {
+            _deviceId = id
+            return id
+        }
+
+        let id = UUID().uuidString
+        defaults.set(id, forKey: deviceIdKey)
+        _deviceId = id
+        return id
+    }
 
     init() throws {
         databaseDir = FileManager.default

@@ -60,6 +60,7 @@ struct MigrationV0ToV1: DBMigration {
 struct MigrationV1ToV2: DBMigration {
     let fromVersion: DBVersion = .Version1
     let toVersion: DBVersion = .Version2
+    let deviceId: String
 
     func migrate(db: Database) throws {
         try db.run(transaction: {
@@ -124,7 +125,7 @@ struct MigrationV1ToV2: DBMigration {
         var migrateConversations: [Conversation] = []
         var migrateConversationsMap: [ConversationV1.ID: Conversation] = [:]
         for conversation in conversations {
-            let update = Conversation()
+            let update = Conversation(deviceId: deviceId)
             update.title = conversation.title
             update.creation = conversation.creation
             update.modified = conversation.creation
@@ -158,7 +159,7 @@ struct MigrationV1ToV2: DBMigration {
         for message in messages {
             guard let conv = conversationsMap[message.conversationId] else { continue }
 
-            let update = Message()
+            let update = Message(deviceId: deviceId)
             update.conversationId = conv.objectId
             update.creation = message.creation
             update.modified = message.creation
@@ -199,7 +200,7 @@ struct MigrationV1ToV2: DBMigration {
 
             var createat = message.creation
             for attachment in sortedAttachments {
-                let update = Attachment()
+                let update = Attachment(deviceId: deviceId)
                 update.messageId = message.objectId
                 update.creation = createat
                 update.modified = createat
@@ -238,7 +239,7 @@ struct MigrationV1ToV2: DBMigration {
         var migrateCloudModels: [CloudModel] = []
 
         for cloudModel in cloudModels {
-            let update = CloudModel()
+            let update = CloudModel(deviceId: deviceId)
             update.objectId = cloudModel.id
             update.model_identifier = cloudModel.model_identifier
             update.model_list_endpoint = cloudModel.model_list_endpoint
@@ -276,7 +277,7 @@ struct MigrationV1ToV2: DBMigration {
 
         var migrateMCSs: [ModelContextServer] = []
         for mcs in mcss {
-            let update = ModelContextServer()
+            let update = ModelContextServer(deviceId: deviceId)
             update.objectId = mcs.id
             update.name = mcs.name
             update.comment = mcs.comment
@@ -316,10 +317,8 @@ struct MigrationV1ToV2: DBMigration {
 
         var migrateMemorys: [Memory] = []
         for memory in memorys {
-            let update = Memory()
+            let update = Memory(deviceId: deviceId, content: memory.content, conversationId: memory.conversationId)
             update.objectId = memory.id
-            update.content = memory.content
-            update.conversationId = memory.conversationId
             update.creation = memory.timestamp
             update.modified = memory.timestamp
 

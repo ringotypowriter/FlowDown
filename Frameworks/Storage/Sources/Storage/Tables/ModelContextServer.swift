@@ -32,7 +32,7 @@ public struct StringArrayCodable: ColumnCodable {
     }
 }
 
-public final class ModelContextServer: Identifiable, Codable, TableCodable {
+public final class ModelContextServer: Identifiable, Codable, DeviceOwned, TableCodable {
     static var table: String = "ModelContextServerV2"
 
     public var id: String {
@@ -40,6 +40,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     }
 
     public var objectId: String = UUID().uuidString
+    public var deviceId: String = ""
     public var name: String = ""
     public var comment: String = ""
     public var type: ServerType = .http
@@ -62,6 +63,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         public typealias Root = ModelContextServer
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
@@ -86,6 +88,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         }
 
         case objectId
+        case deviceId
         case name
         case comment
         case type
@@ -106,6 +109,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
     }
 
     public init(
+        deviceId: String,
         objectId: String = UUID().uuidString,
         name: String = "",
         comment: String = "",
@@ -121,6 +125,7 @@ public final class ModelContextServer: Identifiable, Codable, TableCodable {
         connectionStatus: ConnectionStatus = .disconnected,
         capabilities: StringArrayCodable = StringArrayCodable([])
     ) {
+        self.deviceId = deviceId
         self.objectId = objectId
         self.name = name
         self.comment = comment

@@ -21,7 +21,7 @@ public extension Storage {
     }
 
     func attachmentMake(with messageID: String) -> Attachment {
-        let attachment = Attachment()
+        let attachment = Attachment(deviceId: Self.deviceId)
         attachment.messageId = messageID
         try? db.insert([attachment], intoTable: Attachment.table)
         return attachment

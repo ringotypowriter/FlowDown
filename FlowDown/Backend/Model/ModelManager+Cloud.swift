@@ -68,7 +68,7 @@ extension ModelManager {
     }
 
     func newCloudModel() -> CloudModel {
-        let object = CloudModel()
+        let object = CloudModel(deviceId: Storage.deviceId)
         sdb.cloudModelPut(object)
         defer { cloudModels.send(scanCloudModels()) }
         return object

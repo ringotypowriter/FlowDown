@@ -8,7 +8,7 @@
 import Foundation
 import WCDBSwift
 
-public final class Attachment: Identifiable, Codable, TableCodable {
+public final class Attachment: Identifiable, Codable, DeviceOwned, TableCodable {
     static let table: String = "AttachmentV2"
 
     public var id: String {
@@ -16,6 +16,7 @@ public final class Attachment: Identifiable, Codable, TableCodable {
     }
 
     public var objectId: String = UUID().uuidString
+    public var deviceId: String = ""
     public var messageId: String = .init()
     public var data: Data = .init()
     public var previewImageData: Data = .init()
@@ -33,6 +34,7 @@ public final class Attachment: Identifiable, Codable, TableCodable {
         public typealias Root = Attachment
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
@@ -54,6 +56,7 @@ public final class Attachment: Identifiable, Codable, TableCodable {
         }
 
         case objectId
+        case deviceId
         case messageId
         case data
         case previewImageData
@@ -66,6 +69,10 @@ public final class Attachment: Identifiable, Codable, TableCodable {
         case removed
         case creation
         case modified
+    }
+
+    public init(deviceId: String) {
+        self.deviceId = deviceId
     }
 
     func markModified() {

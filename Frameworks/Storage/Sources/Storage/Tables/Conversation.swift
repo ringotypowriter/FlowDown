@@ -4,7 +4,7 @@
 import Foundation
 import WCDBSwift
 
-public final class Conversation: Identifiable, Codable, TableCodable {
+public final class Conversation: Identifiable, Codable, DeviceOwned, TableCodable {
     static let table: String = "ConversationV2"
 
     public var id: String {
@@ -19,6 +19,7 @@ public final class Conversation: Identifiable, Codable, TableCodable {
     public var modelId: String? = nil
 
     public var objectId: String = UUID().uuidString
+    public var deviceId: String = ""
     public var removed: Bool = false
     public var modified: Date = .init()
 
@@ -26,6 +27,7 @@ public final class Conversation: Identifiable, Codable, TableCodable {
         public typealias Root = Conversation
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
@@ -42,6 +44,7 @@ public final class Conversation: Identifiable, Codable, TableCodable {
         }
 
         case objectId
+        case deviceId
         case title
         case creation
         case icon
@@ -53,6 +56,10 @@ public final class Conversation: Identifiable, Codable, TableCodable {
         case modified
     }
 
+    public init(deviceId: String) {
+        self.deviceId = deviceId
+    }
+
     func markModified() {
         modified = .now
     }
@@ -61,6 +68,7 @@ public final class Conversation: Identifiable, Codable, TableCodable {
 extension Conversation: Equatable {
     public static func == (lhs: Conversation, rhs: Conversation) -> Bool {
         lhs.objectId == rhs.objectId &&
+            lhs.deviceId == rhs.deviceId &&
             lhs.title == rhs.title &&
             lhs.creation == rhs.creation &&
             lhs.icon == rhs.icon &&
@@ -76,6 +84,7 @@ extension Conversation: Equatable {
 extension Conversation: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(objectId)
+        hasher.combine(deviceId)
         hasher.combine(title)
         hasher.combine(creation)
         hasher.combine(icon)
