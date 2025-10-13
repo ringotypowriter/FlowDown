@@ -39,7 +39,7 @@ extension SettingController.SettingContent.ModelController {
                 image: .init(systemName: "square.dashed")
             ) { [weak self] _ in
                 guard let self else { return }
-                let profile = CloudModel()
+                let profile = CloudModel(deviceId: Storage.deviceId)
                 _ = ModelManager.shared.newCloudModel(profile: profile)
                 let controller = CloudModelEditorController(identifier: profile.id)
                 navigationController?.pushViewController(controller, animated: true)
@@ -72,7 +72,7 @@ extension SettingController.SettingContent.ModelController {
                 title: String(localized: "Connect @ OLLAMA"),
                 image: .init(systemName: "cable.connector.horizontal")
             ) { [weak self] _ in
-                let profile = CloudModel()
+                let profile = CloudModel(deviceId: Storage.deviceId)
                 _ = ModelManager.shared.newCloudModel(profile: profile)
                 let controller = CloudModelEditorController(identifier: profile.id)
                 self?.navigationController?.pushViewController(controller, animated: true)
@@ -81,7 +81,7 @@ extension SettingController.SettingContent.ModelController {
                 title: String(localized: "Connect @ LM Studio"),
                 image: .init(systemName: "cable.connector.horizontal")
             ) { [weak self] _ in
-                let profile = CloudModel()
+                let profile = CloudModel(deviceId: Storage.deviceId)
                 _ = ModelManager.shared.newCloudModel(profile: profile)
                 let controller = CloudModelEditorController(identifier: profile.id)
                 self?.navigationController?.pushViewController(controller, animated: true)

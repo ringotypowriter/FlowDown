@@ -22,7 +22,7 @@ public extension Storage {
     }
 
     func modelContextServerMake() -> ModelContextServer {
-        let object = ModelContextServer()
+        let object = ModelContextServer(deviceId: Self.deviceId)
         try? db.insert([object], intoTable: ModelContextServer.table)
         return object
     }

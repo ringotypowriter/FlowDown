@@ -8,7 +8,7 @@
 import Foundation
 import WCDBSwift
 
-public final class CloudModel: Identifiable, Codable, Equatable, Hashable, TableCodable {
+public final class CloudModel: Identifiable, Codable, Equatable, Hashable, DeviceOwned, TableCodable {
     static var table: String = "CloudModelV2"
 
     public var id: String {
@@ -16,6 +16,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     }
 
     public var objectId: String = UUID().uuidString
+    public var deviceId: String = ""
     public var model_identifier: String = ""
     public var model_list_endpoint: String = ""
     public var creation: Date = .now
@@ -38,6 +39,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         public typealias Root = CloudModel
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
@@ -59,6 +61,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         }
 
         case objectId
+        case deviceId
         case model_identifier
         case model_list_endpoint
         case creation
@@ -76,6 +79,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     }
 
     public init(
+        deviceId: String,
         objectId: String = UUID().uuidString,
         model_identifier: String = "",
         model_list_endpoint: String = "$INFERENCE_ENDPOINT$/../../models",
@@ -89,6 +93,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         temperature_preference: ModelTemperaturePreference = .inherit,
         temperature_override: Double? = nil
     ) {
+        self.deviceId = deviceId
         self.objectId = objectId
         self.model_identifier = model_identifier
         self.model_list_endpoint = model_list_endpoint
@@ -106,6 +111,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         objectId = try container.decodeIfPresent(String.self, forKey: .objectId) ?? UUID().uuidString
+        deviceId = try container.decode(String.self, forKey: .deviceId)
         model_identifier = try container.decodeIfPresent(String.self, forKey: .model_identifier) ?? ""
         model_list_endpoint = try container.decodeIfPresent(String.self, forKey: .model_list_endpoint) ?? ""
         creation = try container.decodeIfPresent(Date.self, forKey: .creation) ?? Date()
@@ -132,6 +138,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(objectId)
+        hasher.combine(deviceId)
         hasher.combine(model_identifier)
         hasher.combine(model_list_endpoint)
         hasher.combine(creation)

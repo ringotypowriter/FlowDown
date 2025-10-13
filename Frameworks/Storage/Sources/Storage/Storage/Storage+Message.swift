@@ -10,7 +10,7 @@ import WCDBSwift
 
 public extension Storage {
     func makeMessage(with conversationID: Conversation.ID) -> Message {
-        let message = Message()
+        let message = Message(deviceId: Self.deviceId)
         message.conversationId = conversationID
         try? db.insert([message], intoTable: Message.table)
         return message

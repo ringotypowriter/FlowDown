@@ -33,7 +33,7 @@ public extension Storage {
     }
 
     func conversationMake() -> Conversation {
-        let object = Conversation()
+        let object = Conversation(deviceId: Self.deviceId)
         try? db.insert([object], intoTable: Conversation.table)
         return object
     }

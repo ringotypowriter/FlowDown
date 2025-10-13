@@ -8,7 +8,7 @@
 import Foundation
 import WCDBSwift
 
-public final class Memory: Identifiable, Codable, TableCodable {
+public final class Memory: Identifiable, Codable, DeviceOwned, TableCodable {
     static var table: String = "MemoryV2"
 
     public var id: String {
@@ -16,6 +16,7 @@ public final class Memory: Identifiable, Codable, TableCodable {
     }
 
     public var objectId: String = UUID().uuidString
+    public var deviceId: String = ""
     public var content: String = ""
     public var creation: Date = .now
     public var conversationId: String? = nil
@@ -27,6 +28,7 @@ public final class Memory: Identifiable, Codable, TableCodable {
         public typealias Root = Memory
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
@@ -41,6 +43,7 @@ public final class Memory: Identifiable, Codable, TableCodable {
         }
 
         case objectId
+        case deviceId
         case content
         case creation
         case conversationId
@@ -49,9 +52,8 @@ public final class Memory: Identifiable, Codable, TableCodable {
         case modified
     }
 
-    public init() {}
-
-    public init(content: String, conversationId: String? = nil) {
+    public init(deviceId: String, content: String, conversationId: String? = nil) {
+        self.deviceId = deviceId
         self.content = content
         self.conversationId = conversationId
     }
@@ -64,6 +66,7 @@ public final class Memory: Identifiable, Codable, TableCodable {
 extension Memory: Equatable {
     public static func == (lhs: Memory, rhs: Memory) -> Bool {
         lhs.objectId == rhs.objectId &&
+            lhs.deviceId == rhs.deviceId &&
             lhs.content == rhs.content &&
             lhs.creation == rhs.creation &&
             lhs.modified == rhs.modified &&
@@ -75,6 +78,7 @@ extension Memory: Equatable {
 extension Memory: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(objectId)
+        hasher.combine(deviceId)
         hasher.combine(content)
         hasher.combine(creation)
         hasher.combine(modified)

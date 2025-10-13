@@ -52,7 +52,7 @@ public class MemoryStore: ObservableObject {
             queue.async {
                 do {
                     let storage = try Storage.db()
-                    let memory = Memory(content: trimmedContent, conversationId: contextId)
+                    let memory = Memory(deviceId: Storage.deviceId, content: trimmedContent, conversationId: contextId)
                     try storage.insertMemory(memory)
 
                     try storage.deleteOldMemories(keepCount: self.maxMemoryCount)
@@ -307,7 +307,7 @@ public class MemoryStore: ObservableObject {
         queue.async {
             do {
                 let storage = try Storage.db()
-                let memory = Memory(content: trimmedContent, conversationId: contextId)
+                let memory = Memory(deviceId: Storage.deviceId, content: trimmedContent, conversationId: contextId)
                 try storage.insertMemory(memory)
                 try storage.deleteOldMemories(keepCount: self.maxMemoryCount)
 

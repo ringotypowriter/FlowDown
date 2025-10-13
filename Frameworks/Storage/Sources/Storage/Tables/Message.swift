@@ -9,7 +9,7 @@ import Foundation
 import MarkdownParser
 import WCDBSwift
 
-public final class Message: Identifiable, Codable, TableCodable {
+public final class Message: Identifiable, Codable, DeviceOwned, TableCodable {
     static var table: String = "MessageV2"
 
     public var id: String {
@@ -21,6 +21,7 @@ public final class Message: Identifiable, Codable, TableCodable {
     }
 
     public var objectId: String = UUID().uuidString
+    public var deviceId: String = ""
     public var conversationId: Conversation.ID = .init()
     public var creation: Date = .now
     public var role: Role = .system
@@ -39,6 +40,7 @@ public final class Message: Identifiable, Codable, TableCodable {
         public typealias Root = Message
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(objectId, isPrimary: true, isNotNull: true, isUnique: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
 
             BindColumnConstraint(creation, isNotNull: true)
             BindColumnConstraint(modified, isNotNull: true)
@@ -61,6 +63,7 @@ public final class Message: Identifiable, Codable, TableCodable {
         }
 
         case objectId
+        case deviceId
         case conversationId
         case creation
         case role
@@ -74,6 +77,10 @@ public final class Message: Identifiable, Codable, TableCodable {
 
         case removed
         case modified
+    }
+
+    public init(deviceId: String) {
+        self.deviceId = deviceId
     }
 
     func markModified() {
@@ -217,6 +224,7 @@ public extension Message {
 extension Message: Equatable {
     public static func == (lhs: Message, rhs: Message) -> Bool {
         lhs.objectId == rhs.objectId &&
+            lhs.deviceId == rhs.deviceId &&
             lhs.conversationId == rhs.conversationId &&
             lhs.creation == rhs.creation &&
             lhs.role == rhs.role &&
@@ -233,6 +241,7 @@ extension Message: Equatable {
 extension Message: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(objectId)
+        hasher.combine(deviceId)
         hasher.combine(conversationId)
         hasher.combine(creation)
         hasher.combine(role)
