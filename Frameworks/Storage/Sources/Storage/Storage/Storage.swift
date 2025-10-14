@@ -21,17 +21,19 @@ public class Storage {
     public let databaseDir: URL
     public let databaseLocation: URL
 
+    /// UploadQueue enqueue 事件回调类型
+    public typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
+    public var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
+
     /// 是否已经执行过首次同步初始化
     public package(set) var hasPerformedFirstSync: Bool {
         get { UserDefaults.standard.bool(forKey: Self.SyncFirstTimeSetupKey) }
         set { UserDefaults.standard.set(newValue, forKey: Self.SyncFirstTimeSetupKey) }
     }
 
-    static let logger: Logger = .init(subsystem: Bundle.main.bundleIdentifier ?? "com.flowdown.storage", category: "Storage")
-
     private let migrations: [DBMigration] = [
-        MigrationV0ToV1(logger: Storage.logger),
-        MigrationV1ToV2(deviceId: Storage.deviceId, logger: Storage.logger),
+        MigrationV0ToV1(),
+        MigrationV1ToV2(deviceId: Storage.deviceId),
     ]
 
     private static var _deviceId: String?
@@ -77,7 +79,7 @@ public class Storage {
 
         self.databaseLocation = databaseLocation
 
-        Self.logger.info("[*] database location: \(databaseLocation)")
+        Logger.database.info("[*] database location: \(databaseLocation)")
 
         checkMigration()
 
@@ -133,6 +135,19 @@ public class Storage {
         } else {
             try db.run(transaction: transaction)
         }
+    }
+
+    /// 清除本地所有数据
+    func clearLocalData() throws {
+        try db.run(transaction: {
+            try $0.delete(fromTable: CloudModel.tableName)
+            try $0.delete(fromTable: Attachment.tableName)
+            try $0.delete(fromTable: Message.tableName)
+            try $0.delete(fromTable: Conversation.tableName)
+            try $0.delete(fromTable: ModelContextServer.tableName)
+            try $0.delete(fromTable: Memory.tableName)
+            try $0.delete(fromTable: UploadQueue.tableName)
+        })
     }
 }
 

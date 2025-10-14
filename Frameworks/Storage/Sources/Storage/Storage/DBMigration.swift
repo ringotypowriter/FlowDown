@@ -38,10 +38,9 @@ extension DBMigration {
 struct MigrationV0ToV1: DBMigration {
     let fromVersion: DBVersion = .Version0
     let toVersion: DBVersion = .Version1
-    let logger: Logger
     func migrate(db: Database) throws {
         try db.run(transaction: {
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
 
             try $0.create(table: AttachmentV1.tableName, of: AttachmentV1.self)
             try $0.create(table: MessageV1.tableName, of: MessageV1.self)
@@ -53,7 +52,7 @@ struct MigrationV0ToV1: DBMigration {
 
             try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
         })
     }
 }
@@ -62,11 +61,10 @@ struct MigrationV1ToV2: DBMigration {
     let fromVersion: DBVersion = .Version1
     let toVersion: DBVersion = .Version2
     let deviceId: String
-    let logger: Logger
 
     func migrate(db: Database) throws {
         try db.run(transaction: {
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
             try $0.create(table: Attachment.tableName, of: Attachment.self)
             try $0.create(table: Message.tableName, of: Message.self)
             try $0.create(table: Conversation.tableName, of: Conversation.self)
@@ -78,25 +76,25 @@ struct MigrationV1ToV2: DBMigration {
             try $0.create(table: UploadQueue.tableName, of: UploadQueue.self)
 
             let cloudModelCount = try migrateCloudModels(handle: $0)
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) cloudModels \(cloudModelCount)")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) cloudModels \(cloudModelCount)")
 
             let modelContextServerCount = try migrateModelContextServers(handle: $0)
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) modelContextServers \(modelContextServerCount)")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) modelContextServers \(modelContextServerCount)")
 
             let memoryCount = try migrateMemorys(handle: $0)
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) memorys \(memoryCount)")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) memorys \(memoryCount)")
 
             // 需要按顺序迁移表数据
             let conversationsMap = try migrateConversations(handle: $0)
 
             if !conversationsMap.isEmpty {
-                logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) conversations \(conversationsMap.count)")
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) conversations \(conversationsMap.count)")
                 let messagesMap = try migrateMessages(handle: $0, conversationsMap: conversationsMap)
 
                 if !messagesMap.isEmpty {
-                    logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) messages \(messagesMap.count)")
+                    Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) messages \(messagesMap.count)")
                     let attachments = try migrateAttachments(handle: $0, messagesMap: messagesMap)
-                    logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) attachments \(attachments.count)")
+                    Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) attachments \(attachments.count)")
                 }
             }
 
@@ -111,7 +109,7 @@ struct MigrationV1ToV2: DBMigration {
 
             try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
-            logger.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
         })
     }
 

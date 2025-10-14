@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "Storage",
     platforms: [
-        .iOS(.v15),
-        .macCatalyst(.v15),
-        .macOS(.v11),
+        .iOS(.v17),
+        .macCatalyst(.v17),
+        .macOS(.v14),
     ],
     products: [
         .library(name: "Storage", targets: ["Storage"]),

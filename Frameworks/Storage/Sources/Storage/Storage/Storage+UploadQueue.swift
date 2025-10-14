@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os.log
 import WCDBSwift
 
 // MARK: - Sync
@@ -173,6 +174,8 @@ public extension Storage {
         } else {
             try db.insert(queues, intoTable: UploadQueue.tableName)
         }
+
+        uploadQueueEnqueueHandler?(queues)
     }
 
     func pendingUploadDequeue(by ids: [UploadQueue.ID], handle: Handle? = nil) throws {
@@ -219,7 +222,7 @@ public extension Storage {
         let update = StatementUpdate().update(table: UploadQueue.tableName)
         update.set(UploadQueue.Properties.state)
             .to(UploadQueue.State.pending)
-            .where(UploadQueue.Properties.state.in([UploadQueue.State.uploading, UploadQueue.State.failed]))
+            .where(UploadQueue.Properties.state == UploadQueue.State.failed)
 
         if let handle {
             try handle.exec(update)
@@ -250,6 +253,24 @@ public extension Storage {
         return objects
     }
 
+    func pendingUploadList(queueIds: [UploadQueue.ID], handle: Handle? = nil) -> [UploadQueue] {
+        guard let select = if let handle {
+            try? handle.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
+        } else {
+            try? db.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
+        } else {
+            return []
+        }
+
+        select.where(UploadQueue.Properties.id.in(queueIds))
+            .order(by: [
+                UploadQueue.Properties.id.order(.ascending),
+            ])
+
+        guard let objects = try? select.allObjects() as? [UploadQueue] else { return [] }
+        return objects
+    }
+
     func performSyncFirstTimeSetup() async throws {
         guard !hasPerformedFirstSync else { return }
 
@@ -258,7 +279,7 @@ public extension Storage {
         try handle.run(transaction: { [weak self] in
             guard let self else { return }
 
-            Storage.logger.info("[*] performSyncFirstTimeSetup begin")
+            Logger.database.info("[*] performSyncFirstTimeSetup begin")
             let tables: [any Syncable.Type] = [
                 CloudModel.self,
                 ModelContextServer.self,
@@ -277,7 +298,9 @@ public extension Storage {
 
         hasPerformedFirstSync = true
 
-        Storage.logger.info("[*] performSyncFirstTimeSetup end")
+        Logger.database.info("[*] performSyncFirstTimeSetup end")
+
+        uploadQueueEnqueueHandler?([])
     }
 
     private func firstMigrationUploadQueue<T: Syncable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {
@@ -305,7 +328,7 @@ public extension Storage {
         try handle.insert(queues, intoTable: UploadQueue.tableName)
         let lastInsertedRowID = handle.lastInsertedRowID
 
-        Storage.logger.info("[*] firstMigrationUploadQueue \(T.tableName) -> \(queues.count)")
+        Logger.database.info("[*] firstMigrationUploadQueue \(T.tableName) -> \(queues.count)")
 
         return lastInsertedRowID
     }
