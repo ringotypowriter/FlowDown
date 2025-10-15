@@ -10,6 +10,11 @@ import Foundation
 import os.log
 
 public final actor SyncEngine: Sendable, ObservableObject {
+    public enum Mode {
+        case live
+        case mock
+    }
+
     private static let zoneID: CKRecordZone.ID = .init(zoneName: "FlowDownSync", ownerName: CKCurrentUserDefaultName)
     private static let recordType: CKRecord.RecordType = "SyncObject"
 
@@ -18,20 +23,21 @@ public final actor SyncEngine: Sendable, ObservableObject {
 
     /// The sync engine being used to sync.
     /// This is lazily initialized. You can re-initialize the sync engine by setting `_syncEngine` to nil then calling `self.syncEngine`.
-    private var syncEngine: CKSyncEngine {
+    private var syncEngine: any SyncEngineProtocol {
         if _syncEngine == nil {
             initializeSyncEngine()
         }
         return _syncEngine!
     }
 
-    private var _syncEngine: CKSyncEngine?
+    private let createSyncEngine: (SyncEngine) -> any SyncEngineProtocol
+    private var _syncEngine: (any SyncEngineProtocol)?
 
     private let storage: Storage
-    private let container: CKContainer
+    package let container: any CloudContainer
     private let automaticallySync: Bool
 
-    private var stateSerialization: CKSyncEngine.State.Serialization? {
+    private static var stateSerialization: CKSyncEngine.State.Serialization? {
         get {
             guard let data = UserDefaults.standard.data(forKey: SyncEngine.SyncEngineStateKey) else { return nil }
             do {
@@ -58,22 +64,39 @@ public final actor SyncEngine: Sendable, ObservableObject {
         }
     }
 
-    public init(storage: Storage, container: CKContainer, automaticallySync: Bool = true) {
+    public init(storage: Storage, containerIdentifier: String, mode: Mode, automaticallySync: Bool = true) {
+        guard case .live = mode else {
+            let container = MockCloudContainer.createContainer(identifier: containerIdentifier)
+            let privateDatabase = container.privateCloudDatabase
+            self.init(storage: storage, container: container, automaticallySync: automaticallySync) { syncEngine in
+                let mockSyncEngine = MockSyncEngine(database: privateDatabase, parentSyncEngine: syncEngine, state: MockSyncEngineState())
+                return mockSyncEngine
+            }
+            return
+        }
+
+        let container = CKContainer(identifier: containerIdentifier)
+        self.init(
+            storage: storage,
+            container: container,
+            automaticallySync: automaticallySync
+        ) { syncEngine in
+            var configuration = CKSyncEngine.Configuration(
+                database: container.privateCloudDatabase,
+                stateSerialization: SyncEngine.stateSerialization,
+                delegate: syncEngine
+            )
+            configuration.automaticallySync = syncEngine.automaticallySync
+            let ckSyncEngine = CKSyncEngine(configuration)
+            return ckSyncEngine
+        }
+    }
+
+    package init(storage: Storage, container: any CloudContainer, automaticallySync: Bool, createSyncEngine: @escaping (SyncEngine) -> any SyncEngineProtocol) {
         self.storage = storage
         self.container = container
         self.automaticallySync = automaticallySync
-
-        storage.uploadQueueEnqueueHandler = { [weak self] _ in
-            guard let self else { return }
-            Task {
-                try await self.scheduleUploadIfNeeded()
-            }
-        }
-
-        Task {
-            await self.initializeSyncEngine()
-            await self.createCustomZoneIfNeeded()
-        }
+        self.createSyncEngine = createSyncEngine
     }
 }
 
@@ -83,15 +106,9 @@ public extension SyncEngine {
 
 private extension SyncEngine {
     func initializeSyncEngine() {
-        var configuration = CKSyncEngine.Configuration(
-            database: container.privateCloudDatabase,
-            stateSerialization: stateSerialization,
-            delegate: self
-        )
-        configuration.automaticallySync = automaticallySync
-        let syncEngine = CKSyncEngine(configuration)
+        let syncEngine = createSyncEngine(self)
         _syncEngine = syncEngine
-        Logger.syncEngine.log("Initialized sync engine: \(syncEngine)")
+        Logger.syncEngine.log("Initialized sync engine: \(syncEngine.description)")
     }
 
     func createCustomZoneIfNeeded() async {
@@ -102,7 +119,7 @@ private extension SyncEngine {
             } else {
                 let zone = CKRecordZone(zoneID: SyncEngine.zoneID)
                 syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])
-                try await syncEngine.sendChanges()
+                try await syncEngine.sendChanges(CKSyncEngine.SendChangesOptions())
             }
         } catch {
             Logger.syncEngine.fault("Failed to createCustomZoneIfNeeded: \(error)")
@@ -141,7 +158,7 @@ private extension SyncEngine {
                 /// 更新为 uploading
                 try storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) }, handle: handle)
 
-                try await syncEngine.sendChanges()
+                try await syncEngine.sendChanges(CKSyncEngine.SendChangesOptions())
             }
 
             if objects.count < batchSize {
@@ -150,26 +167,41 @@ private extension SyncEngine {
         }
     }
 
-    // MARK: - CKSyncEngine Events
+    // MARK: - SyncEngine Events
 
-    func handleFetchedRecordZoneChanges(_ event: CKSyncEngine.Event.FetchedRecordZoneChanges) {
-        for modification in event.modifications {
-            let record = modification.record
+    func handleAccountChange(changeType _: CKSyncEngine.Event.AccountChange.ChangeType,
+                             syncEngine _: any SyncEngineProtocol) async {}
+
+    func handleStateUpdate(
+        stateSerialization: CKSyncEngine.State.Serialization,
+        syncEngine _: any SyncEngineProtocol
+    ) async {
+        SyncEngine.stateSerialization = stateSerialization
+    }
+
+    func handleFetchedRecordZoneChanges(modifications: [CKRecord] = [],
+                                        deletions: [(recordID: CKRecord.ID, recordType: CKRecord.RecordType)] = [],
+                                        syncEngine _: any SyncEngineProtocol) async
+    {
+        for record in modifications {
             let id = record.recordID.recordName
             Logger.database.log("Received contact modification: \(record.recordID)")
 
             // TODO: 更新到本地
         }
 
-        for deletion in event.deletions {
+        for deletion in deletions {
             Logger.database.log("Received contact deletion: \(deletion.recordID)")
             // TODO: 删除本地
         }
     }
 
-    func handleFetchedDatabaseChanges(_ event: CKSyncEngine.Event.FetchedDatabaseChanges) {
+    func handleFetchedDatabaseChanges(modifications _: [CKRecordZone.ID],
+                                      deletions: [(zoneID: CKRecordZone.ID, reason: CKDatabase.DatabaseChange.Deletion.Reason)],
+                                      syncEngine _: any SyncEngineProtocol) async
+    {
         var resetLocalData = false
-        for deletion in event.deletions {
+        for deletion in deletions {
             switch deletion.zoneID.zoneName {
             case SyncEngine.zoneID.zoneName:
                 resetLocalData = true
@@ -184,17 +216,22 @@ private extension SyncEngine {
         }
     }
 
-    func handleSentRecordZoneChanges(_ event: CKSyncEngine.Event.SentRecordZoneChanges) {
+    func handleSentRecordZoneChanges(savedRecords _: [CKRecord] = [],
+                                     failedRecordSaves: [(record: CKRecord, error: CKError)] = [],
+                                     deletedRecordIDs _: [CKRecord.ID] = [],
+                                     failedRecordDeletes _: [CKRecord.ID: CKError] = [:],
+                                     syncEngine: any SyncEngineProtocol) async
+    {
         var newPendingRecordZoneChanges = [CKSyncEngine.PendingRecordZoneChange]()
         var newPendingDatabaseChanges = [CKSyncEngine.PendingDatabaseChange]()
 
         // TODO: 发送成功的，需要更新本地UploadQueue 状态
-        //        for savedRecord in event.savedRecords {
+        //        for savedRecord in savedRecords {
         //
         //        }
 
         // TODO: 发送失败
-        for failedRecordSave in event.failedRecordSaves {
+        for failedRecordSave in failedRecordSaves {
             let failedRecord = failedRecordSave.record
             switch failedRecordSave.error.code {
             case .serverRecordChanged:
@@ -224,40 +261,87 @@ private extension SyncEngine {
         syncEngine.state.add(pendingDatabaseChanges: newPendingDatabaseChanges)
         syncEngine.state.add(pendingRecordZoneChanges: newPendingRecordZoneChanges)
     }
-
-    func handleAccountChange(_: CKSyncEngine.Event.AccountChange) {}
 }
 
 private extension UploadQueue {
     var CKRecordName: String {
         "\(id)\(SyncEngine.CKRecordIdSeparator)\(objectId)"
     }
+
+    static func parseCKRecordName(_ recordName: String) -> (queueId: UploadQueue.ID, objectId: String)? {
+        let splits = recordName.split(separator: SyncEngine.CKRecordIdSeparator)
+        guard splits.count == 2, let queueId = UploadQueue.ID(splits[0]) else {
+            return nil
+        }
+        return (queueId, String(splits[1]))
+    }
 }
 
 // MARK: - CKSyncEngineDelegate
 
 extension SyncEngine: CKSyncEngineDelegate {
-    public func handleEvent(_ event: CKSyncEngine.Event, syncEngine _: CKSyncEngine) async {
+    public func handleEvent(_ event: CKSyncEngine.Event, syncEngine: CKSyncEngine) async {
+        guard let event = SyncEngine.Event(event) else {
+            return
+        }
+
+        await handleEvent(event, syncEngine: syncEngine)
+    }
+
+    public func nextRecordZoneChangeBatch(_ context: CKSyncEngine.SendChangesContext, syncEngine: CKSyncEngine) async -> CKSyncEngine.RecordZoneChangeBatch? {
+        await nextRecordZoneChangeBatch(reason: context.reason, options: context.options, syncEngine: syncEngine)
+    }
+
+    public func nextFetchChangesOptions(_ context: CKSyncEngine.FetchChangesContext, syncEngine _: CKSyncEngine) async -> CKSyncEngine.FetchChangesOptions {
+        let options = context.options
+        Logger.syncEngine.info("Next fetch by reason: \(context.reason)")
+        return options
+    }
+}
+
+// MARK: - SyncEngineDelegate
+
+extension SyncEngine: SyncEngineDelegate {
+    package func handleEvent(_ event: SyncEngine.Event, syncEngine _: any SyncEngineProtocol) async {
         Logger.syncEngine.debug("Handling event \(event)")
 
         switch event {
-        case let .stateUpdate(event):
-            stateSerialization = event.stateSerialization
+        case let .accountChange(changeType):
+            await handleAccountChange(changeType: changeType, syncEngine: syncEngine)
 
-        case let .accountChange(event):
-            handleAccountChange(event)
+        case let .stateUpdate(stateSerialization):
+            await handleStateUpdate(stateSerialization: stateSerialization, syncEngine: syncEngine)
 
-        case let .fetchedDatabaseChanges(event):
-            handleFetchedDatabaseChanges(event)
-
-        case let .fetchedRecordZoneChanges(event):
-            handleFetchedRecordZoneChanges(event)
-
-        case let .sentRecordZoneChanges(event):
-            handleSentRecordZoneChanges(event)
+        case let .fetchedDatabaseChanges(modifications, deletions):
+            await handleFetchedDatabaseChanges(
+                modifications: modifications,
+                deletions: deletions,
+                syncEngine: syncEngine
+            )
 
         case .sentDatabaseChanges:
             break
+
+        case let .fetchedRecordZoneChanges(modifications, deletions):
+            await handleFetchedRecordZoneChanges(
+                modifications: modifications,
+                deletions: deletions,
+                syncEngine: syncEngine
+            )
+
+        case let .sentRecordZoneChanges(
+            savedRecords,
+            failedRecordSaves,
+            deletedRecordIDs,
+            failedRecordDeletes
+        ):
+            await handleSentRecordZoneChanges(
+                savedRecords: savedRecords,
+                failedRecordSaves: failedRecordSaves,
+                deletedRecordIDs: deletedRecordIDs,
+                failedRecordDeletes: failedRecordDeletes,
+                syncEngine: syncEngine
+            )
 
         case .willFetchChanges, .willFetchRecordZoneChanges, .didFetchRecordZoneChanges, .didFetchChanges, .willSendChanges, .didSendChanges:
             break
@@ -267,13 +351,17 @@ extension SyncEngine: CKSyncEngineDelegate {
         }
     }
 
-    public func nextRecordZoneChangeBatch(_ context: CKSyncEngine.SendChangesContext, syncEngine: CKSyncEngine) async -> CKSyncEngine.RecordZoneChangeBatch? {
-        Logger.syncEngine.info("Next push by reason: \(context.reason)")
+    package func nextRecordZoneChangeBatch(
+        reason: CKSyncEngine.SyncReason,
+        options: CKSyncEngine.SendChangesOptions,
+        syncEngine: any SyncEngineProtocol
+    ) async -> CKSyncEngine.RecordZoneChangeBatch? {
+        Logger.syncEngine.info("Next push by reason: \(reason)")
         guard let handle = try? storage.getHandle() else {
             return nil
         }
 
-        let scope = context.options.scope
+        let scope = options.scope
         let changes = syncEngine.state.pendingRecordZoneChanges.filter { scope.contains($0) }
 
         // 根据changes 的 CKRecord.ID 从 UploadQueue 中取出数据
@@ -283,20 +371,19 @@ extension SyncEngine: CKSyncEngineDelegate {
         for change in changes {
             switch change {
             case let .saveRecord(recordId):
-                let splits = recordId.recordName.split(separator: SyncEngine.CKRecordIdSeparator)
-                guard splits.count == 2, let queueId = UploadQueue.ID(splits[0]) else {
+                guard let (queueId, _) = UploadQueue.parseCKRecordName(recordId.recordName) else {
                     syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordId)])
                     continue
                 }
+
                 recordsToSaveQueueIds.append((queueId, recordId))
             case let .deleteRecord(recordId):
-                let splits = recordId.recordName.split(separator: SyncEngine.CKRecordIdSeparator)
-
-                guard splits.count == 2 else {
+                guard let (_, objectId) = UploadQueue.parseCKRecordName(recordId.recordName) else {
                     syncEngine.state.remove(pendingRecordZoneChanges: [.deleteRecord(recordId)])
                     continue
                 }
-                realRecordIDsToDelete.append(CKRecord.ID(recordName: String(splits[1]), zoneID: SyncEngine.zoneID))
+
+                realRecordIDsToDelete.append(CKRecord.ID(recordName: objectId, zoneID: SyncEngine.zoneID))
             @unknown default:
                 continue
             }
@@ -325,12 +412,5 @@ extension SyncEngine: CKSyncEngineDelegate {
 
         let batch = CKSyncEngine.RecordZoneChangeBatch(recordsToSave: recordsToSave, recordIDsToDelete: realRecordIDsToDelete, atomicByZone: true)
         return batch
-    }
-
-    public func nextFetchChangesOptions(_ context: CKSyncEngine.FetchChangesContext, syncEngine _: CKSyncEngine) async -> CKSyncEngine.FetchChangesOptions {
-        let options = context.options
-//        options.scope = .zoneIDs([SyncEngine.zoneID])
-        Logger.syncEngine.info("Next fetch by reason: \(context.reason)")
-        return options
     }
 }

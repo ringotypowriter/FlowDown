@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Lakr233/MarkdownView", from: "3.4.2"),
         .package(url: "https://github.com/Tencent/wcdb", from: "2.1.11"),
+        .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     ],
     targets: [
         .target(name: "Storage", dependencies: [
