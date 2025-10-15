@@ -24,7 +24,7 @@ public protocol Syncable: TableDecodable {
     /// 用于标识来源设备
     var deviceId: String { get }
 
-    /// 该对象所属的表名（可默认实现）
+    /// 该对象所属的表名
     static var tableName: String { get }
 
     /// 序列化为上传 payload

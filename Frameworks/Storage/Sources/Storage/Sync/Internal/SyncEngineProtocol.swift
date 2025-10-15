@@ -15,6 +15,22 @@ package protocol SyncEngineDelegate: AnyObject, Sendable {
         options: CKSyncEngine.SendChangesOptions,
         syncEngine: any SyncEngineProtocol
     ) async -> CKSyncEngine.RecordZoneChangeBatch?
+
+    func nextFetchChangesOptions(
+        reason: CKSyncEngine.SyncReason,
+        options: CKSyncEngine.FetchChangesOptions,
+        syncEngine: any SyncEngineProtocol
+    ) async -> CKSyncEngine.FetchChangesOptions
+}
+
+extension SyncEngineDelegate {
+    func nextFetchChangesOptions(
+        reason _: CKSyncEngine.SyncReason,
+        options _: CKSyncEngine.FetchChangesOptions,
+        syncEngine _: any SyncEngineProtocol
+    ) async -> CKSyncEngine.FetchChangesOptions {
+        CKSyncEngine.FetchChangesOptions()
+    }
 }
 
 @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
@@ -26,15 +42,10 @@ package protocol SyncEngineProtocol<Database, State>: AnyObject, Sendable, Custo
     var state: State { get }
 
     func cancelOperations() async
-    func fetchChanges(_ options: CKSyncEngine.FetchChangesOptions) async throws
-    func nextRecordZoneChangeBatch(
-        recordsToSave: [CKRecord],
-        recordIDsToDelete: [CKRecord.ID],
-        atomicByZone: Bool,
-        syncEngine: any SyncEngineProtocol
-    ) async -> CKSyncEngine.RecordZoneChangeBatch?
-
-    func sendChanges(_ options: CKSyncEngine.SendChangesOptions) async throws
+    func performingFetchChanges() async throws
+    func performingFetchChanges(_ options: CKSyncEngine.FetchChangesOptions) async throws
+    func performingSendChanges() async throws
+    func performingSendChanges(_ options: CKSyncEngine.SendChangesOptions) async throws
 }
 
 @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
@@ -48,13 +59,20 @@ package protocol CKSyncEngineStateProtocol: Sendable {
 }
 
 extension CKSyncEngine: SyncEngineProtocol {
-    package func nextRecordZoneChangeBatch(
-        recordsToSave: [CKRecord],
-        recordIDsToDelete: [CKRecord.ID],
-        atomicByZone: Bool,
-        syncEngine _: any SyncEngineProtocol
-    ) async -> CKSyncEngine.RecordZoneChangeBatch? {
-        CKSyncEngine.RecordZoneChangeBatch(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, atomicByZone: atomicByZone)
+    package func performingFetchChanges() async throws {
+        try await fetchChanges()
+    }
+
+    package func performingFetchChanges(_ options: FetchChangesOptions) async throws {
+        try await fetchChanges(options)
+    }
+
+    package func performingSendChanges() async throws {
+        try await sendChanges()
+    }
+
+    package func performingSendChanges(_ options: SendChangesOptions) async throws {
+        try await sendChanges(options)
     }
 }
 

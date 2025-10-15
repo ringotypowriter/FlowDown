@@ -52,7 +52,7 @@ package final class MockCloudContainer: CloudContainer {
                 container = MockCloudContainer(
                     accountStatus: .available,
                     containerIdentifier: containerIdentifier,
-                    privateCloudDatabase: MockCloudDatabase(databaseScope: .private)
+                    privateCloudDatabase: MockCloudDatabase(databaseScope: .private, dataManager: MockDataManager(temporaryDirectory: FileManager.default.temporaryDirectory.appending(component: UUID().uuidString)))
                 )
                 container.privateCloudDatabase.set(container: container)
             }

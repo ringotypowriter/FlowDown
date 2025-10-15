@@ -19,7 +19,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
     private static let recordType: CKRecord.RecordType = "SyncObject"
 
     private static let SyncEngineStateKey: String = "FlowDownSyncEngineState"
-    package static let CKRecordIdSeparator: String = "##"
+    package static let CKRecordSentQueueIdSeparator: String = "##"
 
     /// The sync engine being used to sync.
     /// This is lazily initialized. You can re-initialize the sync engine by setting `_syncEngine` to nil then calling `self.syncEngine`.
@@ -36,6 +36,8 @@ public final actor SyncEngine: Sendable, ObservableObject {
     private let storage: Storage
     package let container: any CloudContainer
     private let automaticallySync: Bool
+
+    private var debounceEnqueueTask: Task<Void, Error>?
 
     private static var stateSerialization: CKSyncEngine.State.Serialization? {
         get {
@@ -69,7 +71,8 @@ public final actor SyncEngine: Sendable, ObservableObject {
             let container = MockCloudContainer.createContainer(identifier: containerIdentifier)
             let privateDatabase = container.privateCloudDatabase
             self.init(storage: storage, container: container, automaticallySync: automaticallySync) { syncEngine in
-                let mockSyncEngine = MockSyncEngine(database: privateDatabase, parentSyncEngine: syncEngine, state: MockSyncEngineState())
+                let mockSyncEngine = MockSyncEngine(database: privateDatabase, parentSyncEngine: syncEngine, state: MockSyncEngineState(), delegate: syncEngine)
+                mockSyncEngine.automaticallySync = syncEngine.automaticallySync
                 return mockSyncEngine
             }
             return
@@ -97,6 +100,18 @@ public final actor SyncEngine: Sendable, ObservableObject {
         self.container = container
         self.automaticallySync = automaticallySync
         self.createSyncEngine = createSyncEngine
+
+        storage.uploadQueueEnqueueHandler = { [weak self] _ in
+            guard let self else { return }
+            Task {
+                await self.onUploadQueueEnqueue()
+            }
+        }
+
+        Task {
+            await createCustomZoneIfNeeded()
+            try await scheduleUploadIfNeeded()
+        }
     }
 }
 
@@ -119,14 +134,32 @@ private extension SyncEngine {
             } else {
                 let zone = CKRecordZone(zoneID: SyncEngine.zoneID)
                 syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])
-                try await syncEngine.sendChanges(CKSyncEngine.SendChangesOptions())
+                if !automaticallySync {
+                    try await syncEngine.performingSendChanges()
+                }
             }
         } catch {
             Logger.syncEngine.fault("Failed to createCustomZoneIfNeeded: \(error)")
         }
     }
 
+    func onUploadQueueEnqueue() async {
+        debounceEnqueueTask?.cancel()
+
+        debounceEnqueueTask = Task { [weak self] in
+            guard let self else { return }
+
+            try await Task.sleep(nanoseconds: 5_000_000_000)
+
+            try Task.checkCancellation()
+
+            try await scheduleUploadIfNeeded()
+        }
+    }
+
     func scheduleUploadIfNeeded() async throws {
+        try Task.checkCancellation()
+
         // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
         guard let handle = try? storage.getHandle() else {
             return
@@ -134,6 +167,8 @@ private extension SyncEngine {
 
         let batchSize = 100
         while true {
+            try Task.checkCancellation()
+
             let objects = storage.pendingUploadList(batchSize: batchSize, handle: handle)
             guard !objects.isEmpty else {
                 break
@@ -141,24 +176,30 @@ private extension SyncEngine {
 
             var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] = []
 
+            let deviceId = Storage.deviceId
             /// CKSyncEngine 需要的是数据对应的ID。
             /// UploadQueue 中是记录了所有的历史操作
             /// 所以这里对于recordName 额外处理
             /// 始终按照本地的历史操作时序进行同步
             for object in objects {
                 if case .delete = object.changes {
-                    pendingRecordZoneChanges.append(.deleteRecord(CKRecord.ID(recordName: object.CKRecordName, zoneID: SyncEngine.zoneID)))
+                    pendingRecordZoneChanges.append(.deleteRecord(CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID)))
                 } else {
-                    pendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: object.CKRecordName, zoneID: SyncEngine.zoneID)))
+                    let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
+                    pendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: sentQueueId, zoneID: SyncEngine.zoneID)))
                 }
             }
+
+            try Task.checkCancellation()
 
             if !pendingRecordZoneChanges.isEmpty {
                 syncEngine.state.add(pendingRecordZoneChanges: pendingRecordZoneChanges)
                 /// 更新为 uploading
                 try storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) }, handle: handle)
 
-                try await syncEngine.sendChanges(CKSyncEngine.SendChangesOptions())
+                if !automaticallySync {
+                    try await syncEngine.performingSendChanges()
+                }
             }
 
             if objects.count < batchSize {
@@ -184,7 +225,6 @@ private extension SyncEngine {
                                         syncEngine _: any SyncEngineProtocol) async
     {
         for record in modifications {
-            let id = record.recordID.recordName
             Logger.database.log("Received contact modification: \(record.recordID)")
 
             // TODO: 更新到本地
@@ -216,21 +256,46 @@ private extension SyncEngine {
         }
     }
 
-    func handleSentRecordZoneChanges(savedRecords _: [CKRecord] = [],
+    func handleSentDatabaseChanges(savedRecordZones: [CKRecordZone] = [],
+                                   failedRecordZoneSaves _: [(zone: CKRecordZone, error: CKError)] = [],
+                                   deletedRecordZoneIDs _: [CKRecordZone.ID] = [],
+                                   failedRecordZoneDeletes _: [CKRecordZone.ID: CKError] = [:],
+                                   syncEngine _: any SyncEngineProtocol) async
+    {
+        for savedRecordZone in savedRecordZones {
+            Logger.syncEngine.info("savedRecordZone: \(savedRecordZone.zoneID)")
+        }
+    }
+
+    func handleSentRecordZoneChanges(savedRecords: [CKRecord] = [],
                                      failedRecordSaves: [(record: CKRecord, error: CKError)] = [],
-                                     deletedRecordIDs _: [CKRecord.ID] = [],
+                                     deletedRecordIDs: [CKRecord.ID] = [],
                                      failedRecordDeletes _: [CKRecord.ID: CKError] = [:],
                                      syncEngine: any SyncEngineProtocol) async
     {
+        guard let handle = try? storage.getHandle() else {
+            return
+        }
+
         var newPendingRecordZoneChanges = [CKSyncEngine.PendingRecordZoneChange]()
         var newPendingDatabaseChanges = [CKSyncEngine.PendingDatabaseChange]()
 
-        // TODO: 发送成功的，需要更新本地UploadQueue 状态
-        //        for savedRecord in savedRecords {
-        //
-        //        }
+        let deviceId = Storage.deviceId
+        // 发送成功的，需要更新本地UploadQueue 状态
+        if !savedRecords.isEmpty {
+            var savedLocalQueueIds: [(UploadQueue.ID, String)] = []
+            for savedRecord in savedRecords {
+                guard let value = savedRecord.sentQueueId, let (localQueueId, _, sentDeviceId) = SyncEngine.parseCKRecordSentQueueId(value) else { continue }
+                if sentDeviceId == deviceId {
+                    savedLocalQueueIds.append((localQueueId, savedRecord.recordID.recordName))
+                }
+            }
 
-        // TODO: 发送失败
+            Logger.syncEngine.info("Sent save success record zone: \(savedLocalQueueIds)")
+            try? storage.pendingUploadDequeue(by: savedLocalQueueIds, handle: handle)
+        }
+
+        //  发送失败
         for failedRecordSave in failedRecordSaves {
             let failedRecord = failedRecordSave.record
             switch failedRecordSave.error.code {
@@ -240,15 +305,21 @@ private extension SyncEngine {
                     continue
                 }
                 // 处理冲突
-                newPendingRecordZoneChanges.append(.saveRecord(failedRecord.recordID))
+//                if let sentQueueId = failedRecord.sentQueueId {
+//                    newPendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: sentQueueId, zoneID: failedRecord.recordID.zoneID)))
+//                }
 
             case .zoneNotFound:
                 let zone = CKRecordZone(zoneID: failedRecord.recordID.zoneID)
                 newPendingDatabaseChanges.append(.saveZone(zone))
-                newPendingRecordZoneChanges.append(.saveRecord(failedRecord.recordID))
+                if let sentQueueId = failedRecord.sentQueueId {
+                    newPendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: sentQueueId, zoneID: failedRecord.recordID.zoneID)))
+                }
 
             case .unknownItem:
-                newPendingRecordZoneChanges.append(.saveRecord(failedRecord.recordID))
+                if let sentQueueId = failedRecord.sentQueueId {
+                    newPendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: sentQueueId, zoneID: failedRecord.recordID.zoneID)))
+                }
 
             case .networkFailure, .networkUnavailable, .zoneBusy, .serviceUnavailable, .notAuthenticated, .operationCancelled:
                 Logger.database.debug("Retryable error saving \(failedRecord.recordID): \(failedRecordSave.error)")
@@ -258,22 +329,36 @@ private extension SyncEngine {
             }
         }
 
+        // 删除成功的
+        if !deletedRecordIDs.isEmpty {
+            let deletedQueueObjectIds = deletedRecordIDs.compactMap { UploadQueue.parseCKRecordID($0.recordName) }
+            Logger.syncEngine.info("Sent deleted success record zone: \(deletedQueueObjectIds)")
+            try? storage.pendingUploadDequeueDeleted(by: deletedQueueObjectIds, handle: handle)
+        }
+
         syncEngine.state.add(pendingDatabaseChanges: newPendingDatabaseChanges)
         syncEngine.state.add(pendingRecordZoneChanges: newPendingRecordZoneChanges)
     }
 }
 
-private extension UploadQueue {
-    var CKRecordName: String {
-        "\(id)\(SyncEngine.CKRecordIdSeparator)\(objectId)"
+private extension SyncEngine {
+    static func makeCKRecordSentQueueId(queueId: UploadQueue.ID, objectId: String, deviceId: String) -> String {
+        "\(queueId)\(SyncEngine.CKRecordSentQueueIdSeparator)\(objectId)\(SyncEngine.CKRecordSentQueueIdSeparator)\(deviceId)"
     }
 
-    static func parseCKRecordName(_ recordName: String) -> (queueId: UploadQueue.ID, objectId: String)? {
-        let splits = recordName.split(separator: SyncEngine.CKRecordIdSeparator)
-        guard splits.count == 2, let queueId = UploadQueue.ID(splits[0]) else {
+    static func parseCKRecordSentQueueId(_ value: String) -> (queueId: UploadQueue.ID, objectId: String, deviceId: String)? {
+        let splits = value.split(separator: SyncEngine.CKRecordSentQueueIdSeparator)
+        guard splits.count == 3, let queueId = UploadQueue.ID(splits[0]) else {
             return nil
         }
-        return (queueId, String(splits[1]))
+        return (queueId, String(splits[1]), String(splits[2]))
+    }
+}
+
+private extension UploadQueue {
+    func populateRecord(_ record: CKRecord) {
+        record[.tableName] = tableName
+        record.encryptedValues[.payload] = payload
     }
 }
 
@@ -319,8 +404,19 @@ extension SyncEngine: SyncEngineDelegate {
                 syncEngine: syncEngine
             )
 
-        case .sentDatabaseChanges:
-            break
+        case let .sentDatabaseChanges(
+            savedRecordZones,
+            failedRecordZoneSaves,
+            deletedRecordZoneIDs,
+            failedRecordZoneDeletes
+        ):
+            await handleSentDatabaseChanges(
+                savedRecordZones: savedRecordZones,
+                failedRecordZoneSaves: failedRecordZoneSaves,
+                deletedRecordZoneIDs: deletedRecordZoneIDs,
+                failedRecordZoneDeletes: failedRecordZoneDeletes,
+                syncEngine: syncEngine
+            )
 
         case let .fetchedRecordZoneChanges(modifications, deletions):
             await handleFetchedRecordZoneChanges(
@@ -367,23 +463,18 @@ extension SyncEngine: SyncEngineDelegate {
         // 根据changes 的 CKRecord.ID 从 UploadQueue 中取出数据
         var recordsToSave: [CKRecord] = []
         var realRecordIDsToDelete: [CKRecord.ID] = []
-        var recordsToSaveQueueIds: [(UploadQueue.ID, CKRecord.ID)] = []
+        var recordsToSaveQueueIds: [(queueId: UploadQueue.ID, recordId: CKRecord.ID)] = []
         for change in changes {
             switch change {
             case let .saveRecord(recordId):
-                guard let (queueId, _) = UploadQueue.parseCKRecordName(recordId.recordName) else {
+                guard let (queueId, _, _) = SyncEngine.parseCKRecordSentQueueId(recordId.recordName) else {
                     syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordId)])
                     continue
                 }
 
                 recordsToSaveQueueIds.append((queueId, recordId))
             case let .deleteRecord(recordId):
-                guard let (_, objectId) = UploadQueue.parseCKRecordName(recordId.recordName) else {
-                    syncEngine.state.remove(pendingRecordZoneChanges: [.deleteRecord(recordId)])
-                    continue
-                }
-
-                realRecordIDsToDelete.append(CKRecord.ID(recordName: objectId, zoneID: SyncEngine.zoneID))
+                realRecordIDsToDelete.append(recordId)
             @unknown default:
                 continue
             }
@@ -395,15 +486,19 @@ extension SyncEngine: SyncEngineDelegate {
 
         let objects = storage.pendingUploadList(queueIds: recordsToSaveQueueIds.map(\.0), handle: handle)
 
+        let deviceId = Storage.deviceId
         for object in objects {
-            let record = CKRecord(recordType: SyncEngine.recordType, recordID: CKRecord.ID(recordName: object.objectId, zoneID: SyncEngine.zoneID))
+            let record = CKRecord(recordType: SyncEngine.recordType, recordID: CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID))
+            let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
+            record.sentQueueId = sentQueueId
+            object.populateRecord(record)
             recordsToSave.append(record)
 
-            recordsToSaveQueueIds.removeAll(where: { $0.1.recordName == object.CKRecordName })
+            recordsToSaveQueueIds.removeAll(where: { $0.1.recordName == SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId) })
         }
 
         if !recordsToSaveQueueIds.isEmpty {
-            syncEngine.state.remove(pendingRecordZoneChanges: recordsToSaveQueueIds.map { .saveRecord($0.1) })
+            syncEngine.state.remove(pendingRecordZoneChanges: recordsToSaveQueueIds.map { .saveRecord($0.recordId) })
         }
 
         if recordsToSave.isEmpty, realRecordIDsToDelete.isEmpty {
@@ -412,5 +507,15 @@ extension SyncEngine: SyncEngineDelegate {
 
         let batch = CKSyncEngine.RecordZoneChangeBatch(recordsToSave: recordsToSave, recordIDsToDelete: realRecordIDsToDelete, atomicByZone: true)
         return batch
+    }
+
+    package func nextFetchChangesOptions(
+        reason: CKSyncEngine.SyncReason,
+        options _: CKSyncEngine.FetchChangesOptions,
+        syncEngine _: any SyncEngineProtocol
+    ) async -> CKSyncEngine.FetchChangesOptions {
+        Logger.syncEngine.info("Next fetch by reason: \(reason)")
+        let options = CKSyncEngine.FetchChangesOptions()
+        return options
     }
 }

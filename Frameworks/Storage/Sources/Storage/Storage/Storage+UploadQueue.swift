@@ -178,14 +178,27 @@ public extension Storage {
         uploadQueueEnqueueHandler?(queues)
     }
 
-    func pendingUploadDequeue(by ids: [UploadQueue.ID], handle: Handle? = nil) throws {
-        guard !ids.isEmpty else {
+    func pendingUploadDequeue(by deleteting: [(queueId: UploadQueue.ID, objectId: String)], handle: Handle? = nil) throws {
+        guard !deleteting.isEmpty else {
             return
         }
-        if let handle {
-            try handle.delete(fromTable: UploadQueue.tableName, where: UploadQueue.Properties.id.in(ids))
-        } else {
-            try db.delete(fromTable: UploadQueue.tableName, where: UploadQueue.Properties.id.in(ids))
+
+        try runTransaction(handle: handle) {
+            for item in deleteting {
+                try $0.update(table: UploadQueue.tableName, on: [UploadQueue.Properties.state], with: [UploadQueue.State.finish], where: UploadQueue.Properties.id <= item.queueId && UploadQueue.Properties.objectId == item.objectId)
+            }
+        }
+    }
+
+    func pendingUploadDequeueDeleted(by objectIds: [(objectId: String, tableName: String)], handle: Handle? = nil) throws {
+        guard !objectIds.isEmpty else {
+            return
+        }
+
+        try runTransaction(handle: handle) {
+            for item in objectIds {
+                try $0.update(table: UploadQueue.tableName, on: [UploadQueue.Properties.state], with: [UploadQueue.State.finish], where: UploadQueue.Properties.objectId == item.objectId && UploadQueue.Properties.tableName == item.tableName)
+            }
         }
     }
 
@@ -240,17 +253,47 @@ public extension Storage {
             return []
         }
 
-        select.where(UploadQueue.Properties.state == UploadQueue.State.pending)
-            .order(by: [
-                UploadQueue.Properties.id.order(.ascending),
-            ])
+        // UploadQueue 是本地的修改历史，理论上只取最新的修改记录为准
+        let subSelect = StatementSelect()
+            .select(UploadQueue.Properties.id.max())
+            .from(UploadQueue.tableName)
+            .where(UploadQueue.Properties.state == UploadQueue.State.pending)
+            .group(by: UploadQueue.Properties.objectId)
+            .order(by: UploadQueue.Properties.creation.order(.ascending))
 
         if batchSize > 0 {
-            select.limit(batchSize)
+            subSelect.limit(batchSize)
         }
 
-        guard let objects = try? select.allObjects() as? [UploadQueue] else { return [] }
-        return objects
+        guard let rows = if let handle {
+            try? handle.getRows(from: subSelect)
+        } else {
+            try? db.getRows(from: subSelect)
+        } else {
+            return []
+        }
+
+        guard !rows.isEmpty else {
+            return []
+        }
+
+        let ids = rows.map { $0[0].int64Value }
+
+        select.where(
+            //            UploadQueue.Properties.id.in(subSelect.asExpression())
+            UploadQueue.Properties.id.in(ids)
+        )
+        .order(by: [
+            UploadQueue.Properties.id.order(.ascending),
+        ])
+
+        do {
+            let objects = try select.allObjects()
+            return objects as! [UploadQueue]
+        } catch {
+            Logger.database.error("query pending upload error: \(error)")
+            return []
+        }
     }
 
     func pendingUploadList(queueIds: [UploadQueue.ID], handle: Handle? = nil) -> [UploadQueue] {
