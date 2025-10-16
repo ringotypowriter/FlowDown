@@ -194,8 +194,6 @@ private extension SyncEngine {
 
             if !pendingRecordZoneChanges.isEmpty {
                 syncEngine.state.add(pendingRecordZoneChanges: pendingRecordZoneChanges)
-                /// 更新为 uploading
-                try storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) }, handle: handle)
 
                 if !automaticallySync {
                     try await syncEngine.performingSendChanges()
@@ -358,6 +356,10 @@ private extension SyncEngine {
 private extension UploadQueue {
     func populateRecord(_ record: CKRecord) {
         record[.tableName] = tableName
+        record[.createByDeviceId] = deviceId
+        // 设置无效
+//        record[CKRecord.SystemFieldKey.creationDate] = creation
+//        record[CKRecord.SystemFieldKey.modificationDate] = modified
         record.encryptedValues[.payload] = payload
     }
 }
@@ -491,13 +493,18 @@ extension SyncEngine: SyncEngineDelegate {
             let record = CKRecord(recordType: SyncEngine.recordType, recordID: CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID))
             let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
             record.sentQueueId = sentQueueId
+            record.lastModifiedByDeviceId = deviceId
             object.populateRecord(record)
             recordsToSave.append(record)
 
             recordsToSaveQueueIds.removeAll(where: { $0.1.recordName == SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId) })
         }
 
+        /// 更新为 uploading
+        try? storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) }, handle: handle)
+
         if !recordsToSaveQueueIds.isEmpty {
+            // 对于本地找不到的数据，从SyncEngine 中删除
             syncEngine.state.remove(pendingRecordZoneChanges: recordsToSaveQueueIds.map { .saveRecord($0.recordId) })
         }
 

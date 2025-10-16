@@ -201,6 +201,11 @@ package final class MockCloudDatabase: CloudDatabase {
                         }
 
                         // TODO: This should merge copy's values to more accurately reflect reality
+                        let nowDate = Date.now
+                        if copy.creationDate == nil {
+                            copy[CKRecord.SystemFieldKey.creationDate] = nowDate
+                        }
+                        copy[CKRecord.SystemFieldKey.modificationDate] = nowDate
                         storage[recordToSave.recordID.zoneID]?[recordToSave.recordID] = copy
                         saveResults[recordToSave.recordID] = .success(copy)
                     }

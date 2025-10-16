@@ -79,8 +79,11 @@ extension Attachment: Syncable, SyncQueryable {
 
 public extension Storage {
     struct DiffSyncableResult<T: Syncable> {
+        /// 新增的
         public let insert: [T]
+        /// 更新的
         public let updated: [T]
+        /// 删除度
         public let deleted: [T]
 
         public var isEmpty: Bool {
@@ -178,72 +181,99 @@ public extension Storage {
         uploadQueueEnqueueHandler?(queues)
     }
 
-    func pendingUploadDequeue(by deleteting: [(queueId: UploadQueue.ID, objectId: String)], handle: Handle? = nil) throws {
-        guard !deleteting.isEmpty else {
+    /// 从上传队列中删除记录，内部采用软删除。在空闲时执行物理删除
+    /// - Parameters:
+    ///   - deleting: 待删除集合
+    ///   - handle: 数据库句柄，传入 nil 时使用主句柄
+    func pendingUploadDequeue(by deleting: [(queueId: UploadQueue.ID, objectId: String)], handle: Handle? = nil) throws {
+        guard !deleting.isEmpty else {
             return
         }
 
         try runTransaction(handle: handle) {
-            for item in deleteting {
-                try $0.update(table: UploadQueue.tableName, on: [UploadQueue.Properties.state], with: [UploadQueue.State.finish], where: UploadQueue.Properties.id <= item.queueId && UploadQueue.Properties.objectId == item.objectId)
+            for item in deleting {
+                try $0.update(
+                    table: UploadQueue.tableName,
+                    on: [UploadQueue.Properties.state],
+                    with: [UploadQueue.State.finish],
+                    where: UploadQueue.Properties.id <= item.queueId
+                        && UploadQueue.Properties.objectId == item.objectId
+                )
             }
         }
     }
 
-    func pendingUploadDequeueDeleted(by objectIds: [(objectId: String, tableName: String)], handle: Handle? = nil) throws {
-        guard !objectIds.isEmpty else {
+    /// 从上传队列中删除记录，内部采用软删除。在空闲时执行物理删除
+    /// - Parameters:
+    ///   - deleting: 待删除集合
+    ///   - handle: 数据库句柄，传入 nil 时使用主句柄
+    func pendingUploadDequeueDeleted(by deleting: [(objectId: String, tableName: String)], handle: Handle? = nil) throws {
+        guard !deleting.isEmpty else {
             return
         }
 
         try runTransaction(handle: handle) {
-            for item in objectIds {
-                try $0.update(table: UploadQueue.tableName, on: [UploadQueue.Properties.state], with: [UploadQueue.State.finish], where: UploadQueue.Properties.objectId == item.objectId && UploadQueue.Properties.tableName == item.tableName)
+            for item in deleting {
+                try $0.update(
+                    table: UploadQueue.tableName,
+                    on: [UploadQueue.Properties.state],
+                    with: [UploadQueue.State.finish],
+                    where: UploadQueue.Properties.objectId == item.objectId
+                        && UploadQueue.Properties.tableName == item.tableName
+                )
             }
         }
     }
 
-    func pendingUploadChangeState(by ids: [(id: UploadQueue.ID, state: UploadQueue.State)], handle: Handle? = nil) throws {
-        guard !ids.isEmpty else {
+    /// 批量更新状态
+    /// - Parameters:
+    ///   - changes: 待更新集合
+    ///   - handle: 数据库句柄，传入 nil 时使用主句柄
+    func pendingUploadChangeState(by changes: [(queueId: UploadQueue.ID, state: UploadQueue.State)], handle: Handle? = nil) throws {
+        guard !changes.isEmpty else {
             return
         }
 
-        let grouped = Dictionary(grouping: ids, by: { $0.state })
+        try runTransaction(handle: handle) {
+            let grouped = Dictionary(grouping: changes, by: { $0.state })
 
-        for (state, group) in grouped {
-            let ids = group.map(\.id)
+            for (state, group) in grouped {
+                let queueIds = group.map(\.queueId)
 
-            let update = StatementUpdate().update(table: UploadQueue.tableName)
-            if case .failed = state {
-                update.set(UploadQueue.Properties.failCount)
-                    .to(UploadQueue.Properties.failCount + 1)
-                    .where(UploadQueue.Properties.id.in(ids))
-            } else {
-                update.set(UploadQueue.Properties.state)
-                    .to(state)
-                    .where(UploadQueue.Properties.id.in(ids))
-            }
+                let update = StatementUpdate().update(table: UploadQueue.tableName)
+                if case .failed = state {
+                    update.set(UploadQueue.Properties.failCount)
+                        .to(UploadQueue.Properties.failCount + 1)
+                        .where(UploadQueue.Properties.id.in(queueIds))
+                } else {
+                    update.set(UploadQueue.Properties.state)
+                        .to(state)
+                        .where(UploadQueue.Properties.id.in(queueIds))
+                }
 
-            if let handle {
-                try handle.exec(update)
-            } else {
-                try db.exec(update)
+                try $0.exec(update)
             }
         }
     }
 
+    /// 将状态为failed的记录更为状态为pending
+    /// - Parameter handle: 数据库句柄，传入 nil 时使用主句柄
     func pendingUploadRestToPendingState(handle: Handle? = nil) throws {
-        let update = StatementUpdate().update(table: UploadQueue.tableName)
-        update.set(UploadQueue.Properties.state)
-            .to(UploadQueue.State.pending)
-            .where(UploadQueue.Properties.state == UploadQueue.State.failed)
+        try runTransaction(handle: handle) {
+            let update = StatementUpdate().update(table: UploadQueue.tableName)
+            update.set(UploadQueue.Properties.state)
+                .to(UploadQueue.State.pending)
+                .where(UploadQueue.Properties.state == UploadQueue.State.failed)
 
-        if let handle {
-            try handle.exec(update)
-        } else {
-            try db.exec(update)
+            try $0.exec(update)
         }
     }
 
+    /// 查询状态为pending 的集合
+    /// - Parameters:
+    ///   - batchSize: 批次大小
+    ///   - handle: 数据库句柄，传入 nil 时使用主句柄
+    /// - Returns: 队列信息， 已按ID进行ascending排序
     func pendingUploadList(batchSize: Int = 0, handle: Handle? = nil) -> [UploadQueue] {
         guard let select = if let handle {
             try? handle.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
@@ -296,6 +326,11 @@ public extension Storage {
         }
     }
 
+    /// 查询状态为pending的指定队列ID集合
+    /// - Parameters:
+    ///   - queueIds: 队列ID
+    ///   - handle: 数据库句柄，传入 nil 时使用主句柄
+    /// - Returns: 队列信息， 已按ID进行ascending排序
     func pendingUploadList(queueIds: [UploadQueue.ID], handle: Handle? = nil) -> [UploadQueue] {
         guard let select = if let handle {
             try? handle.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
@@ -305,10 +340,13 @@ public extension Storage {
             return []
         }
 
-        select.where(UploadQueue.Properties.id.in(queueIds))
-            .order(by: [
-                UploadQueue.Properties.id.order(.ascending),
-            ])
+        select.where(
+            UploadQueue.Properties.id.in(queueIds)
+                && UploadQueue.Properties.state == UploadQueue.State.pending
+        )
+        .order(by: [
+            UploadQueue.Properties.id.order(.ascending),
+        ])
 
         guard let objects = try? select.allObjects() as? [UploadQueue] else { return [] }
         return objects
