@@ -9,12 +9,14 @@ import Foundation
 import WCDBSwift
 
 public final class UploadQueue: Identifiable, Codable, TableNamed, TableCodable {
-    public static let tableName: String = "UploadQueueV1"
+    public static let tableName: String = "UploadQueue"
 
     public var id: Int64 = .init()
     public var tableName: String = .init()
     public var objectId: String = .init()
+    public var deviceId: String = .init()
     public var creation: Date = .now
+    public var modified: Date = .now
     public var changes: UploadQueue.Changes = .insert
     public var state: UploadQueue.State = .pending
     public var failCount: Int = 0
@@ -27,17 +29,30 @@ public final class UploadQueue: Identifiable, Codable, TableNamed, TableCodable 
 
             BindColumnConstraint(tableName, isNotNull: true)
             BindColumnConstraint(objectId, isNotNull: true)
+            BindColumnConstraint(deviceId, isNotNull: true)
             BindColumnConstraint(creation, isNotNull: true)
+            BindColumnConstraint(modified, isNotNull: true)
             BindColumnConstraint(changes, isNotNull: true)
             BindColumnConstraint(state, isNotNull: true)
             BindColumnConstraint(failCount, isNotNull: true)
             BindColumnConstraint(payload, isNotNull: false)
+
+            // 本地查询
+            BindIndex(state, namedWith: "_stateIndex")
+
+//            BindIndex(tableName, namedWith: "_tableNameIndex")
+//            BindIndex(objectId, namedWith: "_objectIdIndex")
+
+            // 收到云端更新
+            BindIndex(objectId, tableName, namedWith: "_objectIdAndTableNameIndex")
         }
 
         case id
         case tableName
         case objectId
+        case deviceId
         case creation
+        case modified
         case changes
         case state
         case failCount
@@ -101,8 +116,10 @@ public extension UploadQueue {
     convenience init<T: Syncable>(source: T, changes: Changes) throws {
         self.init()
         objectId = source.objectId
+        deviceId = source.deviceId
         tableName = T.tableName
-        creation = source.modified
+        creation = source.creation
+        modified = source.modified
         self.changes = changes
         payload = try source.encodePayload()
     }

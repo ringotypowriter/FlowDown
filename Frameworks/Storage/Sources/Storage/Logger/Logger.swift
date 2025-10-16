@@ -8,7 +8,7 @@
 import os.log
 
 extension Logger {
-    static let loggingSubsystem: String = "com.flowdown.storage"
+    static let loggingSubsystem: String = "wiki.qaq.flowdown"
     static let database = Logger(subsystem: Self.loggingSubsystem, category: "Database")
     static let syncEngine = Logger(subsystem: Self.loggingSubsystem, category: "SyncEngine")
 }

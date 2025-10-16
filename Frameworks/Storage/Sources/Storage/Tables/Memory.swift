@@ -9,7 +9,7 @@ import Foundation
 import WCDBSwift
 
 public final class Memory: Identifiable, Codable, TableNamed, DeviceOwned, TableCodable {
-    public static let tableName: String = "MemoryV2"
+    public static let tableName: String = "Memory"
 
     public var id: String {
         objectId

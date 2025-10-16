@@ -12,6 +12,7 @@ import WCDBSwift
 protocol DBMigration {
     var fromVersion: DBVersion { get }
     var toVersion: DBVersion { get }
+    var requiresDataMigration: Bool { get }
     func migrate(db: Database) throws
 }
 
@@ -38,6 +39,8 @@ extension DBMigration {
 struct MigrationV0ToV1: DBMigration {
     let fromVersion: DBVersion = .Version0
     let toVersion: DBVersion = .Version1
+    let requiresDataMigration: Bool = false
+
     func migrate(db: Database) throws {
         try db.run(transaction: {
             Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
@@ -61,51 +64,17 @@ struct MigrationV1ToV2: DBMigration {
     let fromVersion: DBVersion = .Version1
     let toVersion: DBVersion = .Version2
     let deviceId: String
+    let requiresDataMigration: Bool
 
     func migrate(db: Database) throws {
         try db.run(transaction: {
             Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
-            try $0.create(table: Attachment.tableName, of: Attachment.self)
-            try $0.create(table: Message.tableName, of: Message.self)
-            try $0.create(table: Conversation.tableName, of: Conversation.self)
 
-            try $0.create(table: CloudModel.tableName, of: CloudModel.self)
-            try $0.create(table: ModelContextServer.tableName, of: ModelContextServer.self)
-            try $0.create(table: Memory.tableName, of: Memory.self)
-
-            try $0.create(table: UploadQueue.tableName, of: UploadQueue.self)
-
-            let cloudModelCount = try migrateCloudModels(handle: $0)
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) cloudModels \(cloudModelCount)")
-
-            let modelContextServerCount = try migrateModelContextServers(handle: $0)
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) modelContextServers \(modelContextServerCount)")
-
-            let memoryCount = try migrateMemorys(handle: $0)
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) memorys \(memoryCount)")
-
-            // 需要按顺序迁移表数据
-            let conversationsMap = try migrateConversations(handle: $0)
-
-            if !conversationsMap.isEmpty {
-                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) conversations \(conversationsMap.count)")
-                let messagesMap = try migrateMessages(handle: $0, conversationsMap: conversationsMap)
-
-                if !messagesMap.isEmpty {
-                    Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) messages \(messagesMap.count)")
-                    let attachments = try migrateAttachments(handle: $0, messagesMap: messagesMap)
-                    Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) attachments \(attachments.count)")
-                }
+            if requiresDataMigration {
+                try performDataMigration(handle: $0)
+            } else {
+                try performSchemaMigration(handle: $0)
             }
-
-            // 不再需要了
-            try $0.drop(table: AttachmentV1.tableName)
-            try $0.drop(table: MessageV1.tableName)
-            try $0.drop(table: ConversationV1.tableName)
-
-            try $0.drop(table: CloudModelV1.tableName)
-            try $0.drop(table: ModelContextServerV1.tableName)
-            try $0.drop(table: MemoryV1.tableName)
 
             try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
@@ -113,13 +82,194 @@ struct MigrationV1ToV2: DBMigration {
         })
     }
 
-    private func migrateConversations(handle: Handle) throws -> [ConversationV1.ID: Conversation] {
-        let hasTable = try handle.isTableExists(ConversationV1.tableName)
-        guard hasTable else {
-            return [:]
+    private func performSchemaMigration(handle: Handle) throws {
+        try handle.create(table: Attachment.tableName, of: Attachment.self)
+        try handle.create(table: Message.tableName, of: Message.self)
+        try handle.create(table: Conversation.tableName, of: Conversation.self)
+
+        try handle.create(table: CloudModel.tableName, of: CloudModel.self)
+        try handle.create(table: ModelContextServer.tableName, of: ModelContextServer.self)
+        try handle.create(table: Memory.tableName, of: Memory.self)
+
+        try handle.create(table: UploadQueue.tableName, of: UploadQueue.self)
+    }
+
+    private func performDataMigration(handle: Handle) throws {
+        // 重命名旧表
+        let oldTableSuffix = "_old"
+        let oldTables: [TableNamed.Type] = [
+            CloudModelV1.self,
+            ModelContextServerV1.self,
+            MemoryV1.self,
+            ConversationV1.self,
+            MessageV1.self,
+            AttachmentV1.self,
+        ]
+
+        var tableExists: [String: String] = [:]
+        for table in oldTables {
+            if try handle.isTableExists(table.tableName) {
+                let oldTabelName = "\(table.tableName)\(oldTableSuffix)"
+                let alter = StatementAlterTable().alter(table: table.tableName).rename(to: oldTabelName)
+                try handle.exec(alter)
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) rename \(table.tableName) -> \(oldTabelName)")
+                tableExists[table.tableName] = oldTabelName
+            }
         }
 
-        let conversations: [ConversationV1] = try handle.getObjects(fromTable: ConversationV1.tableName)
+        // 创建新表
+        try performSchemaMigration(handle: handle)
+
+        if let oldTableName = tableExists[CloudModelV1.tableName] {
+            let cloudModelCount = try migrateCloudModels(handle: handle, oldTableName: oldTableName)
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) cloudModels \(cloudModelCount)")
+        }
+
+        if let oldTableName = tableExists[ModelContextServerV1.tableName] {
+            let modelContextServerCount = try migrateModelContextServers(handle: handle, oldTableName: oldTableName)
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) modelContextServers \(modelContextServerCount)")
+        }
+
+        if let oldTableName = tableExists[MemoryV1.tableName] {
+            let memoryCount = try migrateMemorys(handle: handle, oldTableName: oldTableName)
+            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) memorys \(memoryCount)")
+        }
+
+        while true {
+            var conversationsMap: [ConversationV1.ID: Conversation] = [:]
+            var messagesMap: [MessageV1.ID: Message] = [:]
+
+            // 迁移会话
+            if let oldTableName = tableExists[ConversationV1.tableName] {
+                conversationsMap = try migrateConversations(handle: handle, oldTableName: oldTableName)
+                guard !conversationsMap.isEmpty else {
+                    break
+                }
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) conversations \(conversationsMap.count)")
+            }
+
+            // 迁移消息
+            if let oldTableName = tableExists[MessageV1.tableName] {
+                messagesMap = try migrateMessages(handle: handle, conversationsMap: conversationsMap, oldTableName: oldTableName)
+                guard !messagesMap.isEmpty else {
+                    break
+                }
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) messages \(messagesMap.count)")
+            }
+
+            // 迁移附件
+            if let oldTableName = tableExists[AttachmentV1.tableName] {
+                let attachments = try migrateAttachments(handle: handle, messagesMap: messagesMap, oldTableName: oldTableName)
+                guard !attachments.isEmpty else {
+                    break
+                }
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) attachments \(attachments.count)")
+            }
+
+            break
+        }
+
+        // 删除旧表
+        for (_, oldTable) in tableExists {
+            try handle.drop(table: oldTable)
+        }
+    }
+
+    private func migrateCloudModels(handle: Handle, oldTableName: String) throws -> Int {
+        let cloudModels: [CloudModelV1] = try handle.getObjects(fromTable: oldTableName)
+        guard !cloudModels.isEmpty else {
+            return 0
+        }
+
+        var migrateCloudModels: [CloudModel] = []
+
+        for cloudModel in cloudModels {
+            let update = CloudModel(deviceId: deviceId)
+            update.objectId = cloudModel.id
+            update.model_identifier = cloudModel.model_identifier
+            update.model_list_endpoint = cloudModel.model_list_endpoint
+            update.creation = cloudModel.creation
+            update.modified = cloudModel.creation
+            update.token = cloudModel.token
+            update.headers = cloudModel.headers
+            update.capabilities = cloudModel.capabilities
+            update.context = cloudModel.context
+            update.temperature_preference = cloudModel.temperature_preference
+            update.temperature_override = cloudModel.temperature_override
+            update.comment = cloudModel.comment
+
+            migrateCloudModels.append(update)
+        }
+
+        guard !migrateCloudModels.isEmpty else {
+            return 0
+        }
+
+        try handle.insertOrReplace(migrateCloudModels, intoTable: CloudModel.tableName)
+        return migrateCloudModels.count
+    }
+
+    private func migrateModelContextServers(handle: Handle, oldTableName: String) throws -> Int {
+        let mcss: [ModelContextServerV1] = try handle.getObjects(fromTable: oldTableName)
+        guard !mcss.isEmpty else {
+            return 0
+        }
+
+        var migrateMCSs: [ModelContextServer] = []
+        for mcs in mcss {
+            let update = ModelContextServer(deviceId: deviceId)
+            update.objectId = mcs.id
+            update.name = mcs.name
+            update.comment = mcs.comment
+            update.type = mcs.type
+            update.endpoint = mcs.endpoint
+            update.header = mcs.header
+            update.timeout = mcs.timeout
+            update.isEnabled = mcs.isEnabled
+            update.toolsEnabled = mcs.toolsEnabled
+            update.resourcesEnabled = mcs.resourcesEnabled
+            update.templateEnabled = mcs.templateEnabled
+            update.lastConnected = mcs.lastConnected
+            update.connectionStatus = mcs.connectionStatus
+            update.capabilities = mcs.capabilities
+
+            migrateMCSs.append(update)
+        }
+
+        guard !migrateMCSs.isEmpty else {
+            return 0
+        }
+
+        try handle.insertOrReplace(migrateMCSs, intoTable: ModelContextServer.tableName)
+        return migrateMCSs.count
+    }
+
+    private func migrateMemorys(handle: Handle, oldTableName: String) throws -> Int {
+        let memorys: [MemoryV1] = try handle.getObjects(fromTable: oldTableName)
+        guard !memorys.isEmpty else {
+            return 0
+        }
+
+        var migrateMemorys: [Memory] = []
+        for memory in memorys {
+            let update = Memory(deviceId: deviceId, content: memory.content, conversationId: memory.conversationId)
+            update.objectId = memory.id
+            update.creation = memory.timestamp
+            update.modified = memory.timestamp
+
+            migrateMemorys.append(update)
+        }
+
+        guard !migrateMemorys.isEmpty else {
+            return 0
+        }
+
+        try handle.insertOrReplace(migrateMemorys, intoTable: Memory.tableName)
+        return migrateMemorys.count
+    }
+
+    private func migrateConversations(handle: Handle, oldTableName: String) throws -> [ConversationV1.ID: Conversation] {
+        let conversations: [ConversationV1] = try handle.getObjects(fromTable: oldTableName)
         guard !conversations.isEmpty else {
             return [:]
         }
@@ -143,13 +293,8 @@ struct MigrationV1ToV2: DBMigration {
         return migrateConversationsMap
     }
 
-    private func migrateMessages(handle: Handle, conversationsMap: [ConversationV1.ID: Conversation]) throws -> [MessageV1.ID: Message] {
-        let hasTable = try handle.isTableExists(MessageV1.tableName)
-        guard hasTable else {
-            return [:]
-        }
-
-        let messages: [MessageV1] = try handle.getObjects(fromTable: MessageV1.tableName)
+    private func migrateMessages(handle: Handle, conversationsMap: [ConversationV1.ID: Conversation], oldTableName: String) throws -> [MessageV1.ID: Message] {
+        let messages: [MessageV1] = try handle.getObjects(fromTable: oldTableName)
 
         guard !messages.isEmpty else {
             return [:]
@@ -182,13 +327,8 @@ struct MigrationV1ToV2: DBMigration {
         return migrateMessagessMap
     }
 
-    private func migrateAttachments(handle: Handle, messagesMap: [MessageV1.ID: Message]) throws -> [Attachment] {
-        let hasTable = try handle.isTableExists(AttachmentV1.tableName)
-        guard hasTable else {
-            return []
-        }
-
-        let attachments: [AttachmentV1] = try handle.getObjects(fromTable: AttachmentV1.tableName)
+    private func migrateAttachments(handle: Handle, messagesMap: [MessageV1.ID: Message], oldTableName: String) throws -> [Attachment] {
+        let attachments: [AttachmentV1] = try handle.getObjects(fromTable: oldTableName)
         guard !attachments.isEmpty else {
             return []
         }
@@ -225,113 +365,5 @@ struct MigrationV1ToV2: DBMigration {
         try handle.insertOrReplace(migrateAttachment, intoTable: Attachment.tableName)
 
         return migrateAttachment
-    }
-
-    private func migrateCloudModels(handle: Handle) throws -> Int {
-        let hasTable = try handle.isTableExists(CloudModelV1.tableName)
-        guard hasTable else {
-            return 0
-        }
-
-        let cloudModels: [CloudModelV1] = try handle.getObjects(fromTable: CloudModelV1.tableName)
-        guard !cloudModels.isEmpty else {
-            return 0
-        }
-
-        var migrateCloudModels: [CloudModel] = []
-
-        for cloudModel in cloudModels {
-            let update = CloudModel(deviceId: deviceId)
-            update.objectId = cloudModel.id
-            update.model_identifier = cloudModel.model_identifier
-            update.model_list_endpoint = cloudModel.model_list_endpoint
-            update.creation = cloudModel.creation
-            update.modified = cloudModel.creation
-            update.token = cloudModel.token
-            update.headers = cloudModel.headers
-            update.capabilities = cloudModel.capabilities
-            update.context = cloudModel.context
-            update.temperature_preference = cloudModel.temperature_preference
-            update.temperature_override = cloudModel.temperature_override
-            update.comment = cloudModel.comment
-
-            migrateCloudModels.append(update)
-        }
-
-        guard !migrateCloudModels.isEmpty else {
-            return 0
-        }
-
-        try handle.insertOrReplace(migrateCloudModels, intoTable: CloudModel.tableName)
-        return migrateCloudModels.count
-    }
-
-    private func migrateModelContextServers(handle: Handle) throws -> Int {
-        let hasTable = try handle.isTableExists(ModelContextServerV1.tableName)
-        guard hasTable else {
-            return 0
-        }
-
-        let mcss: [ModelContextServerV1] = try handle.getObjects(fromTable: ModelContextServerV1.tableName)
-        guard !mcss.isEmpty else {
-            return 0
-        }
-
-        var migrateMCSs: [ModelContextServer] = []
-        for mcs in mcss {
-            let update = ModelContextServer(deviceId: deviceId)
-            update.objectId = mcs.id
-            update.name = mcs.name
-            update.comment = mcs.comment
-            update.type = mcs.type
-            update.endpoint = mcs.endpoint
-            update.header = mcs.header
-            update.timeout = mcs.timeout
-            update.isEnabled = mcs.isEnabled
-            update.toolsEnabled = mcs.toolsEnabled
-            update.resourcesEnabled = mcs.resourcesEnabled
-            update.templateEnabled = mcs.templateEnabled
-            update.lastConnected = mcs.lastConnected
-            update.connectionStatus = mcs.connectionStatus
-            update.capabilities = mcs.capabilities
-
-            migrateMCSs.append(update)
-        }
-
-        guard !migrateMCSs.isEmpty else {
-            return 0
-        }
-
-        try handle.insertOrReplace(migrateMCSs, intoTable: ModelContextServer.tableName)
-        return migrateMCSs.count
-    }
-
-    private func migrateMemorys(handle: Handle) throws -> Int {
-        let hasTable = try handle.isTableExists(MemoryV1.tableName)
-        guard hasTable else {
-            return 0
-        }
-
-        let memorys: [MemoryV1] = try handle.getObjects(fromTable: MemoryV1.tableName)
-        guard !memorys.isEmpty else {
-            return 0
-        }
-
-        var migrateMemorys: [Memory] = []
-        for memory in memorys {
-            let update = Memory(deviceId: deviceId, content: memory.content, conversationId: memory.conversationId)
-            update.objectId = memory.id
-            update.creation = memory.timestamp
-            update.modified = memory.timestamp
-
-            migrateMemorys.append(update)
-        }
-
-        guard !migrateMemorys.isEmpty else {
-            return 0
-        }
-
-        try handle.insertOrReplace(migrateMemorys, intoTable: Memory.tableName)
-        return migrateMemorys.count
     }
 }

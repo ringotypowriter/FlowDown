@@ -31,11 +31,8 @@ public class Storage {
         set { UserDefaults.standard.set(newValue, forKey: Self.SyncFirstTimeSetupKey) }
     }
 
-    private let migrations: [DBMigration] = [
-        MigrationV0ToV1(),
-        MigrationV1ToV2(deviceId: Storage.deviceId),
-    ]
-
+    private let existsDatabaseFile: Bool
+    private let migrations: [DBMigration]
     private static var _deviceId: String?
 
     /// 设备ID，应用卸载重置
@@ -65,10 +62,19 @@ public class Storage {
             .appendingPathComponent("database")
             .appendingPathExtension("db")
 
-        initVersion = if FileManager.default.fileExists(atPath: databaseLocation.path) {
-            .Version0
+        existsDatabaseFile = FileManager.default.fileExists(atPath: databaseLocation.path)
+
+        if existsDatabaseFile {
+            initVersion = .Version0
+            migrations = [
+                MigrationV0ToV1(),
+                MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: true),
+            ]
         } else {
-            .Version1
+            initVersion = .Version1
+            migrations = [
+                MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: false),
+            ]
         }
 
         db = Database(at: databaseLocation.path)
@@ -99,7 +105,12 @@ public class Storage {
     }
 
     func setup(db: Database) throws {
-        var version = try currentVersion()
+        var version = if existsDatabaseFile {
+            try currentVersion()
+        } else {
+            initVersion
+        }
+
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
             version = migration.toVersion

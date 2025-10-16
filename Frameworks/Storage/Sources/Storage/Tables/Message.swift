@@ -10,7 +10,7 @@ import MarkdownParser
 import WCDBSwift
 
 public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, TableCodable {
-    public static let tableName: String = "MessageV2"
+    public static let tableName: String = "Message"
 
     public var id: String {
         objectId
