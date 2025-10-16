@@ -83,7 +83,7 @@ public extension Storage {
         public let insert: [T]
         /// 更新的
         public let updated: [T]
-        /// 删除度
+        /// 删除的
         public let deleted: [T]
 
         public var isEmpty: Bool {

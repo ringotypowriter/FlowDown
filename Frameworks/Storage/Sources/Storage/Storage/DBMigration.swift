@@ -109,11 +109,11 @@ struct MigrationV1ToV2: DBMigration {
         var tableExists: [String: String] = [:]
         for table in oldTables {
             if try handle.isTableExists(table.tableName) {
-                let oldTabelName = "\(table.tableName)\(oldTableSuffix)"
-                let alter = StatementAlterTable().alter(table: table.tableName).rename(to: oldTabelName)
+                let oldTableName = "\(table.tableName)\(oldTableSuffix)"
+                let alter = StatementAlterTable().alter(table: table.tableName).rename(to: oldTableName)
                 try handle.exec(alter)
-                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) rename \(table.tableName) -> \(oldTabelName)")
-                tableExists[table.tableName] = oldTabelName
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) rename \(table.tableName) -> \(oldTableName)")
+                tableExists[table.tableName] = oldTableName
             }
         }
 
