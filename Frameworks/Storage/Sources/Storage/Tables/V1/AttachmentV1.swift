@@ -8,23 +8,23 @@
 import Foundation
 import WCDBSwift
 
-public final class AttachmentV1: Identifiable, Codable, TableNamed, TableCodable {
-    public static let tableName: String = "Attachment"
-    public var id: Int64 = .init()
-    public var messageId: MessageV1.ID = .init()
-    public var data: Data = .init()
-    public var previewImageData: Data = .init()
-    public var imageRepresentation: Data = .init()
-    public var representedDocument: String = ""
-    public var type: String = ""
-    public var name: String = ""
-    public var storageSuffix: String = ""
+package final class AttachmentV1: Identifiable, Codable, TableNamed, TableCodable {
+    package static let tableName: String = "Attachment"
+    package var id: Int64 = .init()
+    package var messageId: MessageV1.ID = .init()
+    package var data: Data = .init()
+    package var previewImageData: Data = .init()
+    package var imageRepresentation: Data = .init()
+    package var representedDocument: String = ""
+    package var type: String = ""
+    package var name: String = ""
+    package var storageSuffix: String = ""
     /// Records the UUID used when the object was created, for identification during modifications.
-    public var objectIdentifier: String = .init()
+    package var objectIdentifier: String = .init()
 
-    public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = AttachmentV1
-        public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
+    package enum CodingKeys: String, CodingTableKey {
+        package typealias Root = AttachmentV1
+        package static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true, isUnique: true)
             BindColumnConstraint(messageId, isNotNull: true, defaultTo: 0)
             BindColumnConstraint(data, isNotNull: true, defaultTo: Date(timeIntervalSince1970: 0))
@@ -57,6 +57,6 @@ public final class AttachmentV1: Identifiable, Codable, TableNamed, TableCodable
         case objectIdentifier
     }
 
-    public var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
-    public var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
+    package var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
+    package var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
 }

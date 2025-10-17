@@ -16,7 +16,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     }
 
     public var objectId: String = UUID().uuidString
-    public var deviceId: String = ""
+    public var deviceId: String = Storage.deviceId
     public var model_identifier: String = ""
     public var model_list_endpoint: String = ""
     public var creation: Date = .now
@@ -80,7 +80,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
 
     public init(
         deviceId: String,
-        objectId: String = UUID().uuidString,
+        objectId: String = Storage.deviceId,
         model_identifier: String = "",
         model_list_endpoint: String = "$INFERENCE_ENDPOINT$/../../models",
         creation: Date = .init(),
@@ -111,7 +111,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         objectId = try container.decodeIfPresent(String.self, forKey: .objectId) ?? UUID().uuidString
-        deviceId = try container.decode(String.self, forKey: .deviceId)
+        deviceId = try container.decodeIfPresent(String.self, forKey: .deviceId) ?? Storage.deviceId
         model_identifier = try container.decodeIfPresent(String.self, forKey: .model_identifier) ?? ""
         model_list_endpoint = try container.decodeIfPresent(String.self, forKey: .model_list_endpoint) ?? ""
         creation = try container.decodeIfPresent(Date.self, forKey: .creation) ?? Date()

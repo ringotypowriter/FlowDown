@@ -48,11 +48,9 @@ import os
 import Storage
 
 let sdb = try Storage.db()
-let logger = Logger(subsystem: "FlowDown", category: "general")
+let logger = Logger(subsystem: "wiki.qaq.flowdown", category: "general")
 
-#if DEBUG
-    let syncEngine = SyncEngine(storage: sdb, containerIdentifier: "iCloud.wiki.qaq.fdp.sync", mode: .mock, automaticallySync: false)
-#endif
+let syncEngine = SyncEngine(storage: sdb, containerIdentifier: CloudKitConfig.containerIdentifier, mode: .live, automaticallySync: true)
 
 _ = ModelManager.shared
 _ = ModelToolsManager.shared

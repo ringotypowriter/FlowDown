@@ -8,28 +8,28 @@
 import Foundation
 import WCDBSwift
 
-public final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, TableNamed, TableCodable {
-    public static let tableName: String = "CloudModel"
+package final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, TableNamed, TableCodable {
+    package static let tableName: String = "CloudModel"
 
-    public var id: String = .init()
-    public var model_identifier: String = ""
-    public var model_list_endpoint: String = ""
-    public var creation: Date = .init()
-    public var endpoint: String = ""
-    public var token: String = ""
-    public var headers: [String: String] = [:] // additional headers
-    public var capabilities: Set<ModelCapabilities> = []
-    public var context: ModelContextLength = .short_8k
-    public var temperature_preference: ModelTemperaturePreference = .inherit
-    public var temperature_override: Double?
+    package var id: String = .init()
+    package var model_identifier: String = ""
+    package var model_list_endpoint: String = ""
+    package var creation: Date = .init()
+    package var endpoint: String = ""
+    package var token: String = ""
+    package var headers: [String: String] = [:] // additional headers
+    package var capabilities: Set<ModelCapabilities> = []
+    package var context: ModelContextLength = .short_8k
+    package var temperature_preference: ModelTemperaturePreference = .inherit
+    package var temperature_override: Double?
 
     // can be used when loading model from our server
     // present to user on the top of the editor page
-    public var comment: String = ""
+    package var comment: String = ""
 
-    public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = CloudModelV1
-        public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
+    package enum CodingKeys: String, CodingTableKey {
+        package typealias Root = CloudModelV1
+        package static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isUnique: true, defaultTo: "")
             BindColumnConstraint(model_identifier, isNotNull: true, defaultTo: "")
             BindColumnConstraint(model_list_endpoint, isNotNull: true, defaultTo: "")
@@ -58,7 +58,7 @@ public final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, Tab
         case temperature_override
     }
 
-    public init(
+    package init(
         id: String = UUID().uuidString,
         model_identifier: String = "",
         model_list_endpoint: String = "$INFERENCE_ENDPOINT$/../../models",
@@ -85,7 +85,7 @@ public final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, Tab
         self.temperature_override = temperature_override
     }
 
-    public required init(from decoder: Decoder) throws {
+    package required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decodeIfPresent(String.self, forKey: .id) ?? UUID().uuidString
         model_identifier = try container.decodeIfPresent(String.self, forKey: .model_identifier) ?? ""
@@ -101,11 +101,11 @@ public final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, Tab
         temperature_override = try container.decodeIfPresent(Double.self, forKey: .temperature_override)
     }
 
-    public static func == (lhs: CloudModelV1, rhs: CloudModelV1) -> Bool {
+    package static func == (lhs: CloudModelV1, rhs: CloudModelV1) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
 
-    public func hash(into hasher: inout Hasher) {
+    package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(model_identifier)
         hasher.combine(model_list_endpoint)

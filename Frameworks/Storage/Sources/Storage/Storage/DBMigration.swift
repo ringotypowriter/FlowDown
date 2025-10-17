@@ -91,6 +91,7 @@ struct MigrationV1ToV2: DBMigration {
         try handle.create(table: ModelContextServer.tableName, of: ModelContextServer.self)
         try handle.create(table: Memory.tableName, of: Memory.self)
 
+        try handle.create(table: SyncMetadata.tableName, of: SyncMetadata.self)
         try handle.create(table: UploadQueue.tableName, of: UploadQueue.self)
     }
 
@@ -190,6 +191,7 @@ struct MigrationV1ToV2: DBMigration {
             update.model_list_endpoint = cloudModel.model_list_endpoint
             update.creation = cloudModel.creation
             update.modified = cloudModel.creation
+            update.endpoint = cloudModel.endpoint
             update.token = cloudModel.token
             update.headers = cloudModel.headers
             update.capabilities = cloudModel.capabilities

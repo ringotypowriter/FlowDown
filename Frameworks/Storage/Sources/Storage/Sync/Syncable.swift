@@ -8,7 +8,7 @@
 import Foundation
 import WCDBSwift
 
-public protocol Syncable: TableDecodable {
+package protocol Syncable: TableDecodable {
     /// 每条记录的唯一标识
     var objectId: String { get }
 

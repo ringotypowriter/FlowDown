@@ -111,6 +111,11 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		4B08A1AD2EA37A1F005B5ADF /* DerivedSources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DerivedSources;
+			sourceTree = "<group>";
+		};
 		5050EB812D478A5800634B81 /* Backend */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Backend;
@@ -264,6 +269,7 @@
 			children = (
 				3C2409992E97803B0055F162 /* Configuration */,
 				50B5146A2D2305F20092284C /* main.swift */,
+				4B08A1AD2EA37A1F005B5ADF /* DerivedSources */,
 				50B514652D2305C00092284C /* Application */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514922D2316700092284C /* Interface */,
@@ -292,6 +298,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				4B08A1AD2EA37A1F005B5ADF /* DerivedSources */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514652D2305C00092284C /* Application */,
 				50B514682D2305E30092284C /* Resources */,
@@ -348,6 +355,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				4B08A1AD2EA37A1F005B5ADF /* DerivedSources */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514652D2305C00092284C /* Application */,
 				50B514682D2305E30092284C /* Resources */,
@@ -576,6 +584,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
@@ -607,6 +616,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
+				SWIFT_INCLUDE_PATHS = "$(DERIVED_SOURCES_DIR)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -643,6 +653,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
@@ -676,6 +687,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
+				SWIFT_INCLUDE_PATHS = "$(DERIVED_SOURCES_DIR)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -119,6 +119,24 @@ class ModelManager: NSObject {
         }
         .store(in: &cancellables)
 
+        NotificationCenter.default.publisher(for: SyncEngine.CloudModelChanged)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                logger.info("Recived SyncEngine.CloudModelChanged")
+                guard let self else { return }
+                cloudModels.send(scanCloudModels())
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: SyncEngine.LocalDataDeleted)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                logger.info("Recived SyncEngine.LocalDataDeleted")
+                guard let self else { return }
+                cloudModels.send(scanCloudModels())
+            }
+            .store(in: &cancellables)
+
         Self.defaultPromptConfigurableObject.whenValueChange(type: PromptType.RawValue.self) { [weak self] output in
             guard let output, let value = PromptType(rawValue: output) else { return }
             self?.defaultPrompt = value
