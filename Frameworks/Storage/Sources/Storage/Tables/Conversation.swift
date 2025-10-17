@@ -4,8 +4,8 @@
 import Foundation
 import WCDBSwift
 
-public final class Conversation: Identifiable, Codable, DeviceOwned, TableCodable {
-    static let table: String = "ConversationV2"
+public final class Conversation: Identifiable, Codable, TableNamed, DeviceOwned, TableCodable {
+    public static let tableName: String = "Conversation"
 
     public var id: String {
         objectId
@@ -60,8 +60,8 @@ public final class Conversation: Identifiable, Codable, DeviceOwned, TableCodabl
         self.deviceId = deviceId
     }
 
-    func markModified() {
-        modified = .now
+    func markModified(_ date: Date = .now) {
+        modified = date
     }
 }
 

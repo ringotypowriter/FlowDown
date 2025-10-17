@@ -85,16 +85,23 @@ final class ConversationSession: Identifiable {
         if !extra.isEmpty {
             prompt += "\n" + extra
         }
-        let promptMessage = appendNewMessage(role: .system)
-        promptMessage.document = prompt
+        appendNewMessage(role: .system) {
+            $0.document = prompt
+        }
     }
 
     /// Appends a new message to the conversation.
     @discardableResult
-    func appendNewMessage(role: Message.Role) -> Message {
-        let message = sdb.makeMessage(with: id)
-        message.role = role
-        message.creation = .now
+    func appendNewMessage(role: Message.Role, _ block: Storage.MessageMakeInitDataBlock? = nil) -> Message {
+        let message = sdb.makeMessage(with: id) {
+            if let block {
+                block($0)
+            }
+
+            $0.role = role
+            $0.creation = .now
+        }
+
         messages.append(message)
         if role == .user { userDidSendMessageSubject.send(message) }
         return message
@@ -113,10 +120,13 @@ final class ConversationSession: Identifiable {
     func addAttachments(_ attachments: [RichEditorView.Object.Attachment], to message: Message) {
         let messageID = message.objectId
         let mapped = attachments.map { attachment in
-            let newAttachment = sdb.attachmentMake(with: messageID)
-            updateAttachment(newAttachment, using: attachment)
+            // 跳过插入，由后面的attachmentsUpdate 统一批量插入
+            let newAttachment = sdb.attachmentMake(with: messageID, skipSave: true) {
+                self.updateAttachment($0, using: attachment)
+            }
             return newAttachment
         }
+
         sdb.attachmentsUpdate(mapped)
 
         var current = self.attachments[messageID] ?? []
@@ -168,7 +178,7 @@ final class ConversationSession: Identifiable {
 
     @inlinable
     func save() {
-        sdb.insertOrReplace(messages: messages)
+        sdb.messagePut(messages: messages)
     }
 
     @inlinable
@@ -213,7 +223,7 @@ final class ConversationSession: Identifiable {
             if message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 message.document = String(localized: "Empty message.")
             }
-            sdb.insertOrReplace(messages: [message])
+            sdb.messagePut(messages: [message])
             notifyMessagesDidChange()
         }
     }
@@ -223,7 +233,7 @@ final class ConversationSession: Identifiable {
             return
         }
         message.reasoningContent = reasoningContent
-        sdb.insertOrReplace(messages: [message])
+        sdb.messagePut(messages: [message])
         notifyMessagesDidChange()
     }
 

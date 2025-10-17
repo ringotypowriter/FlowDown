@@ -7,8 +7,8 @@
 import Foundation
 import WCDBSwift
 
-public final class ModelContextServerV1: Identifiable, Codable, TableCodable {
-    static var table: String = "ModelContextServer"
+public final class ModelContextServerV1: Identifiable, Codable, TableNamed, TableCodable {
+    public static let tableName: String = "ModelContextServer"
 
     public var id: String = UUID().uuidString
     public var name: String = ""

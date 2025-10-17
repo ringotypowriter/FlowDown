@@ -197,9 +197,9 @@ class MCPService: NSObject {
         servers.send(sdb.modelContextServerList())
     }
 
-    func create() -> ModelContextServer {
+    func create(block: Storage.ModelContextServerMakeInitDataBlock? = nil) -> ModelContextServer {
         defer { updateFromDatabase() }
-        return sdb.modelContextServerMake()
+        return sdb.modelContextServerMake(block)
     }
 
     func server(with identifier: ModelContextServer.ID?) -> ModelContextServer? {

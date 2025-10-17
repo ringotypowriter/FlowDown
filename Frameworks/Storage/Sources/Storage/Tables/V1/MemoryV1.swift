@@ -8,8 +8,8 @@
 import Foundation
 import WCDBSwift
 
-public final class MemoryV1: Identifiable, Codable, TableCodable {
-    static var table: String = "Memory"
+public final class MemoryV1: Identifiable, Codable, TableNamed, TableCodable {
+    public static let tableName: String = "Memory"
 
     public var id: String = UUID().uuidString
     public var content: String = ""

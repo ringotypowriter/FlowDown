@@ -32,8 +32,8 @@ public struct StringArrayCodable: ColumnCodable {
     }
 }
 
-public final class ModelContextServer: Identifiable, Codable, DeviceOwned, TableCodable {
-    static var table: String = "ModelContextServerV2"
+public final class ModelContextServer: Identifiable, Codable, TableNamed, DeviceOwned, TableCodable {
+    public static let tableName: String = "ModelContextServer"
 
     public var id: String {
         objectId
@@ -142,8 +142,8 @@ public final class ModelContextServer: Identifiable, Codable, DeviceOwned, Table
         self.capabilities = capabilities
     }
 
-    func markModified() {
-        modified = .now
+    func markModified(_ date: Date = .now) {
+        modified = date
     }
 
     public func hash(into hasher: inout Hasher) {

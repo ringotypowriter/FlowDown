@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import OSLog
 import WCDBSwift
 
 public class Storage {
-    private static let deviceIdKey = "com.flowdown.storage.deviceId"
+    private static let DeviceIdKey = "com.flowdown.storage.deviceId"
+    private static let SyncFirstTimeSetupKey = "com.flowdown.storage.sync.first.time.setup"
 
     let db: Database
     let initVersion: DBVersion
@@ -19,11 +21,18 @@ public class Storage {
     public let databaseDir: URL
     public let databaseLocation: URL
 
-    private let migrations: [DBMigration] = [
-        MigrationV0ToV1(),
-        MigrationV1ToV2(deviceId: Storage.deviceId),
-    ]
+    /// UploadQueue enqueue 事件回调类型
+    public typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
+    public var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
 
+    /// 是否已经执行过首次同步初始化
+    public package(set) var hasPerformedFirstSync: Bool {
+        get { UserDefaults.standard.bool(forKey: Self.SyncFirstTimeSetupKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.SyncFirstTimeSetupKey) }
+    }
+
+    private let existsDatabaseFile: Bool
+    private let migrations: [DBMigration]
     private static var _deviceId: String?
 
     /// 设备ID，应用卸载重置
@@ -33,13 +42,13 @@ public class Storage {
         }
 
         let defaults = UserDefaults.standard
-        if let id = defaults.string(forKey: deviceIdKey) {
+        if let id = defaults.string(forKey: DeviceIdKey) {
             _deviceId = id
             return id
         }
 
         let id = UUID().uuidString
-        defaults.set(id, forKey: deviceIdKey)
+        defaults.set(id, forKey: DeviceIdKey)
         _deviceId = id
         return id
     }
@@ -49,14 +58,23 @@ public class Storage {
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("Objects.db")
-        databaseLocation = databaseDir
+        let databaseLocation = databaseDir
             .appendingPathComponent("database")
             .appendingPathExtension("db")
 
-        initVersion = if FileManager.default.fileExists(atPath: databaseLocation.path) {
-            .Version0
+        existsDatabaseFile = FileManager.default.fileExists(atPath: databaseLocation.path)
+
+        if existsDatabaseFile {
+            initVersion = .Version0
+            migrations = [
+                MigrationV0ToV1(),
+                MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: true),
+            ]
         } else {
-            .Version1
+            initVersion = .Version1
+            migrations = [
+                MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: false),
+            ]
         }
 
         db = Database(at: databaseLocation.path)
@@ -65,7 +83,9 @@ public class Storage {
         db.setAutoMigration(enable: true)
         db.enableAutoCompression(true)
 
-        print("[*] database location: \(databaseLocation)")
+        self.databaseLocation = databaseLocation
+
+        Logger.database.info("[*] database location: \(databaseLocation)")
 
         checkMigration()
 
@@ -76,11 +96,21 @@ public class Storage {
         #endif
 
         try setup(db: db)
+
+        // 清除无效数据
         try clearDeletedRecords(db: db)
+
+        // 将上传中/上传失败的同步记录重置为Pending
+        try pendingUploadRestToPendingState()
     }
 
     func setup(db: Database) throws {
-        var version = try currentVersion()
+        var version = if existsDatabaseFile {
+            try currentVersion()
+        } else {
+            initVersion
+        }
+
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
             version = migration.toVersion
@@ -104,6 +134,31 @@ public class Storage {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             exit(0)
         }
+    }
+
+    func getHandle() throws -> Handle {
+        try db.getHandle()
+    }
+
+    func runTransaction(handle: Handle? = nil, _ transaction: @escaping (Handle) throws -> Void) throws {
+        if let handle {
+            try handle.run(transaction: transaction)
+        } else {
+            try db.run(transaction: transaction)
+        }
+    }
+
+    /// 清除本地所有数据
+    func clearLocalData() throws {
+        try db.run(transaction: {
+            try $0.delete(fromTable: CloudModel.tableName)
+            try $0.delete(fromTable: Attachment.tableName)
+            try $0.delete(fromTable: Message.tableName)
+            try $0.delete(fromTable: Conversation.tableName)
+            try $0.delete(fromTable: ModelContextServer.tableName)
+            try $0.delete(fromTable: Memory.tableName)
+            try $0.delete(fromTable: UploadQueue.tableName)
+        })
     }
 }
 
@@ -132,12 +187,17 @@ private extension Storage {
 
     func clearDeletedRecords(db: Database) throws {
         let deleteAt = Date.now.addingTimeInterval(-deleteAfterDuration)
-        try db.delete(fromTable: Attachment.table, where: Attachment.Properties.modified <= deleteAt && Attachment.Properties.removed == true)
-        try db.delete(fromTable: Message.table, where: Message.Properties.modified <= deleteAt && Message.Properties.removed == true)
-        try db.delete(fromTable: Conversation.table, where: Conversation.Properties.modified <= deleteAt && Conversation.Properties.removed == true)
-        try db.delete(fromTable: CloudModel.table, where: CloudModel.Properties.modified <= deleteAt && CloudModel.Properties.removed == true)
-        try db.delete(fromTable: Memory.table, where: Memory.Properties.modified <= deleteAt && Memory.Properties.removed == true)
-        try db.delete(fromTable: ModelContextServer.table, where: ModelContextServer.Properties.modified <= deleteAt && ModelContextServer.Properties.removed == true)
+        try? db.delete(fromTable: Attachment.tableName, where: Attachment.Properties.modified <= deleteAt && Attachment.Properties.removed == true)
+        try? db.delete(fromTable: Message.tableName, where: Message.Properties.modified <= deleteAt && Message.Properties.removed == true)
+        try? db.delete(fromTable: Conversation.tableName, where: Conversation.Properties.modified <= deleteAt && Conversation.Properties.removed == true)
+        try? db.delete(fromTable: CloudModel.tableName, where: CloudModel.Properties.modified <= deleteAt && CloudModel.Properties.removed == true)
+        try? db.delete(fromTable: Memory.tableName, where: Memory.Properties.modified <= deleteAt && Memory.Properties.removed == true)
+        try? db.delete(fromTable: ModelContextServer.tableName, where: ModelContextServer.Properties.modified <= deleteAt && ModelContextServer.Properties.removed == true)
+
+        cloudModelRemoveInvalid()
+
+        // 删除上传成功的，或者超过最大失败次数的
+        try? db.delete(fromTable: UploadQueue.tableName, where: UploadQueue.Properties.state == UploadQueue.State.finish || UploadQueue.Properties.failCount >= 100)
     }
 }
 
@@ -159,16 +219,16 @@ public extension Storage {
             var getError: Error?
             try exportDatabase.run { [self] expdb in
                 do {
-                    let mods: [CloudModel] = try db.getObjects(fromTable: CloudModel.table)
-                    try expdb.insert(mods, intoTable: CloudModel.table)
-                    let cons: [Conversation] = try db.getObjects(fromTable: Conversation.table)
-                    try expdb.insert(cons, intoTable: Conversation.table)
-                    let msgs: [Message] = try db.getObjects(fromTable: Message.table)
-                    try expdb.insert(msgs, intoTable: Message.table)
-                    let atts: [Attachment] = try db.getObjects(fromTable: Attachment.table)
-                    try expdb.insert(atts, intoTable: Attachment.table)
-                    let mems: [Memory] = try db.getObjects(fromTable: Memory.table)
-                    try expdb.insert(mems, intoTable: Memory.table)
+                    let mods: [CloudModel] = try db.getObjects(fromTable: CloudModel.tableName)
+                    try expdb.insert(mods, intoTable: CloudModel.tableName)
+                    let cons: [Conversation] = try db.getObjects(fromTable: Conversation.tableName)
+                    try expdb.insert(cons, intoTable: Conversation.tableName)
+                    let msgs: [Message] = try db.getObjects(fromTable: Message.tableName)
+                    try expdb.insert(msgs, intoTable: Message.tableName)
+                    let atts: [Attachment] = try db.getObjects(fromTable: Attachment.tableName)
+                    try expdb.insert(atts, intoTable: Attachment.tableName)
+                    let mems: [Memory] = try db.getObjects(fromTable: Memory.tableName)
+                    try expdb.insert(mems, intoTable: Memory.tableName)
                     return true
                 } catch {
                     getError = error

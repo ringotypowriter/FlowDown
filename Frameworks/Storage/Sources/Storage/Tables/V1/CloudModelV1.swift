@@ -8,8 +8,8 @@
 import Foundation
 import WCDBSwift
 
-public final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, TableCodable {
-    static var table: String = "CloudModel"
+public final class CloudModelV1: Identifiable, Codable, Equatable, Hashable, TableNamed, TableCodable {
+    public static let tableName: String = "CloudModel"
 
     public var id: String = .init()
     public var model_identifier: String = ""

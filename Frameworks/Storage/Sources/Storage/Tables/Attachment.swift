@@ -8,8 +8,8 @@
 import Foundation
 import WCDBSwift
 
-public final class Attachment: Identifiable, Codable, DeviceOwned, TableCodable {
-    static let table: String = "AttachmentV2"
+public final class Attachment: Identifiable, Codable, TableNamed, DeviceOwned, TableCodable {
+    public static let tableName: String = "Attachment"
 
     public var id: String {
         objectId
@@ -75,7 +75,7 @@ public final class Attachment: Identifiable, Codable, DeviceOwned, TableCodable 
         self.deviceId = deviceId
     }
 
-    func markModified() {
-        modified = .now
+    func markModified(_ date: Date = .now) {
+        modified = date
     }
 }

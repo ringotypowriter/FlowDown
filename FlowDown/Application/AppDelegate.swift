@@ -50,6 +50,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .sink { _ in
                 UIMenuSystem.main.setNeedsRebuild()
             }
+
+        if !sdb.hasPerformedFirstSync {
+            Task {
+                try await sdb.performSyncFirstTimeSetup()
+            }
+        }
+
         return true
     }
 

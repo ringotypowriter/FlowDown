@@ -9,8 +9,8 @@ import Foundation
 import MarkdownParser
 import WCDBSwift
 
-public final class Message: Identifiable, Codable, DeviceOwned, TableCodable {
-    static var table: String = "MessageV2"
+public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, TableCodable {
+    public static let tableName: String = "Message"
 
     public var id: String {
         objectId
@@ -83,8 +83,8 @@ public final class Message: Identifiable, Codable, DeviceOwned, TableCodable {
         self.deviceId = deviceId
     }
 
-    func markModified() {
-        modified = .now
+    func markModified(_ date: Date = .now) {
+        modified = date
     }
 }
 

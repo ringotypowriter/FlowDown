@@ -8,8 +8,8 @@
 import Foundation
 import WCDBSwift
 
-public final class AttachmentV1: Identifiable, Codable, TableCodable {
-    static let table: String = "Attachment"
+public final class AttachmentV1: Identifiable, Codable, TableNamed, TableCodable {
+    public static let tableName: String = "Attachment"
     public var id: Int64 = .init()
     public var messageId: MessageV1.ID = .init()
     public var data: Data = .init()
@@ -39,7 +39,7 @@ public final class AttachmentV1: Identifiable, Codable, TableCodable {
             BindForeginKey(
                 messageId,
                 foreignKey: ForeignKey()
-                    .references(with: MessageV1.table)
+                    .references(with: MessageV1.tableName)
                     .columns(MessageV1.CodingKeys.id)
                     .onDelete(.cascade)
             )
