@@ -50,9 +50,12 @@ import Storage
 let sdb = try Storage.db()
 let logger = Logger(subsystem: "FlowDown", category: "general")
 
+let syncContainerIdentifier = Bundle.main.object(forInfoDictionaryKey: "CLOUDKIT_SYNC_CONTAINER_IDENTIFIER") as? String
+assert(syncContainerIdentifier != nil, "Missing CLOUDKIT_SYNC_CONTAINER_IDENTIFIER in Info.plist")
+
 _ = SyncEngine(
     storage: sdb,
-    containerIdentifier: "iCloud.\(Bundle.main.bundleIdentifier!).sync",
+    containerIdentifier: syncContainerIdentifier!,
     automaticallySync: false
 )
 
