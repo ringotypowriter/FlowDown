@@ -50,7 +50,11 @@ import Storage
 let sdb = try Storage.db()
 let logger = Logger(subsystem: "FlowDown", category: "general")
 
-let syncEngine = SyncEngine(storage: sdb, containerIdentifier: "iCloud.wiki.qaq.flow.sync", automaticallySync: false)
+_ = SyncEngine(
+    storage: sdb,
+    containerIdentifier: "iCloud.\(Bundle.main.bundleIdentifier!).sync",
+    automaticallySync: false
+)
 
 _ = ModelManager.shared
 _ = ModelToolsManager.shared

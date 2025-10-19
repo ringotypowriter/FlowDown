@@ -478,7 +478,7 @@ private extension SyncEngine {
         if let data = record.encryptedValues[.payload] as? Data {
             return data
         }
-        if let value = record.encryptedValues[.payload] as? CKRecordValue,
+        if let value = record.encryptedValues[.payload],
            let data = value as? Data
         {
             return data
