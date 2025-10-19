@@ -11,11 +11,6 @@ import os.log
 import WCDBSwift
 
 public final actor SyncEngine: Sendable, ObservableObject {
-    public enum Mode {
-        case live
-        case mock
-    }
-
     private static let zoneID: CKRecordZone.ID = .init(zoneName: "FlowDownSync", ownerName: CKCurrentUserDefaultName)
     private static let recordType: CKRecord.RecordType = "SyncObject"
 
@@ -67,18 +62,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
         }
     }
 
-    public init(storage: Storage, containerIdentifier: String, mode: Mode, automaticallySync: Bool = true) {
-        guard case .live = mode else {
-            let container = MockCloudContainer.createContainer(identifier: containerIdentifier)
-            let privateDatabase = container.privateCloudDatabase
-            self.init(storage: storage, container: container, automaticallySync: automaticallySync) { syncEngine in
-                let mockSyncEngine = MockSyncEngine(database: privateDatabase, parentSyncEngine: syncEngine, state: MockSyncEngineState(), delegate: syncEngine)
-                mockSyncEngine.automaticallySync = syncEngine.automaticallySync
-                return mockSyncEngine
-            }
-            return
-        }
-
+    public init(storage: Storage, containerIdentifier: String, automaticallySync: Bool = true) {
         let container = CKContainer(identifier: containerIdentifier)
         self.init(
             storage: storage,

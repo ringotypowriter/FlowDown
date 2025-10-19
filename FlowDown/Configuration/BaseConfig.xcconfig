@@ -11,7 +11,7 @@
 CODE_SIGN_IDENTITY = Apple Development
 CODE_SIGN_STYLE = Automatic
 DEVELOPMENT_TEAM = 964G86XT2P
-PRODUCT_BUNDLE_IDENTIFIER[config=Debug][sdk=*][arch=*] = wiki.qaq.fdp
+PRODUCT_BUNDLE_IDENTIFIER[config=Debug][sdk=*][arch=*] = wiki.qaq.flow
 PRODUCT_BUNDLE_IDENTIFIER[config=Release][sdk=*][arch=*] = wiki.qaq.flow
 
 CLOUDKIT_SYNC_CONTAINER_IDENTIFIER = iCloud.$(PRODUCT_BUNDLE_IDENTIFIER).sync
