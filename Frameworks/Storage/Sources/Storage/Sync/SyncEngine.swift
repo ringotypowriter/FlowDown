@@ -10,7 +10,79 @@ import Foundation
 import os.log
 import WCDBSwift
 
-public final actor SyncEngine: Sendable, ObservableObject {
+public final actor SyncEngine: ObservableObject {
+    private static let configurationLock = NSLock()
+    private static var sharedInstance: SyncEngine?
+
+    @discardableResult
+    public nonisolated static func configure(
+        storage: Storage,
+        containerIdentifier: String,
+        automaticallySync: Bool = true
+    ) -> SyncEngine {
+        configurationLock.lock()
+        defer { configurationLock.unlock() }
+
+        precondition(
+            sharedInstance == nil,
+            "SyncEngine.configure(_) called multiple times"
+        )
+
+        let engine = SyncEngine(
+            storage: storage,
+            containerIdentifier: containerIdentifier,
+            automaticallySync: automaticallySync
+        )
+        sharedInstance = engine
+        Logger.syncEngine.debug(
+            "Configured SyncEngine for container: \(containerIdentifier) autoSync=\(automaticallySync)"
+        )
+        return engine
+    }
+
+    package nonisolated static func configure(
+        storage: Storage,
+        container: any CloudContainer,
+        automaticallySync: Bool,
+        createSyncEngine: @escaping (SyncEngine) -> any SyncEngineProtocol
+    ) -> SyncEngine {
+        configurationLock.lock()
+        defer { configurationLock.unlock() }
+
+        precondition(
+            sharedInstance == nil,
+            "SyncEngine.configure(_) called multiple times"
+        )
+
+        let engine = SyncEngine(
+            storage: storage,
+            container: container,
+            automaticallySync: automaticallySync,
+            createSyncEngine: createSyncEngine
+        )
+        sharedInstance = engine
+        Logger.syncEngine.debug(
+            "Configured SyncEngine with custom container autoSync=\(automaticallySync)"
+        )
+        return engine
+    }
+
+    public nonisolated static var shared: SyncEngine {
+        configurationLock.lock()
+        defer { configurationLock.unlock() }
+
+        guard let sharedInstance else {
+            fatalError("SyncEngine shared instance is not configured. Call SyncEngine.configure first.")
+        }
+        return sharedInstance
+    }
+
+    package nonisolated static func resetForTesting() {
+        configurationLock.lock()
+        sharedInstance = nil
+        configurationLock.unlock()
+    }
+
     private static let zoneID: CKRecordZone.ID = .init(zoneName: "FlowDownSync", ownerName: CKCurrentUserDefaultName)
     private static let recordType: CKRecord.RecordType = "SyncObject"
 
@@ -62,7 +134,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
         }
     }
 
-    public init(storage: Storage, containerIdentifier: String, automaticallySync: Bool = true) {
+    private init(storage: Storage, containerIdentifier: String, automaticallySync: Bool = true) {
         let container = CKContainer(identifier: containerIdentifier)
         self.init(
             storage: storage,
@@ -80,7 +152,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
         }
     }
 
-    package init(storage: Storage, container: any CloudContainer, automaticallySync: Bool, createSyncEngine: @escaping (SyncEngine) -> any SyncEngineProtocol) {
+    private init(storage: Storage, container: any CloudContainer, automaticallySync: Bool, createSyncEngine: @escaping (SyncEngine) -> any SyncEngineProtocol) {
         self.storage = storage
         self.container = container
         self.automaticallySync = automaticallySync
