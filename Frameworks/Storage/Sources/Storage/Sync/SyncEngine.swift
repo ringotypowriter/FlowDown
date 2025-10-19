@@ -8,6 +8,7 @@
 import CloudKit
 import Foundation
 import os.log
+import WCDBSwift
 
 public final actor SyncEngine: Sendable, ObservableObject {
     public enum Mode {
@@ -222,15 +223,86 @@ private extension SyncEngine {
                                         deletions: [(recordID: CKRecord.ID, recordType: CKRecord.RecordType)] = [],
                                         syncEngine _: any SyncEngineProtocol) async
     {
-        for record in modifications {
-            Logger.database.log("Received contact modification: \(record.recordID)")
-
-            // TODO: 更新到本地
+        guard !modifications.isEmpty || !deletions.isEmpty else {
+            return
         }
 
-        for deletion in deletions {
-            Logger.database.log("Received contact deletion: \(deletion.recordID)")
-            // TODO: 删除本地
+        guard let handle = try? storage.getHandle() else {
+            Logger.database.error("Failed to get storage handle during sync apply.")
+            return
+        }
+
+        var queueCompletionKeys = Set<String>()
+        var queueCompletions: [(UploadQueue.ID, String)] = []
+        var queueDeletionKeys = Set<String>()
+        var queueDeletionPairs: [(objectId: String, tableName: String)] = []
+
+        do {
+            try storage.runTransaction(handle: handle) { [self] transactionHandle in
+                var recordsByTable: [String: [CKRecord]] = [:]
+                for record in modifications {
+                    guard let tableName = record[.tableName] as? String ?? UploadQueue.parseCKRecordID(record.recordID.recordName)?.tableName else {
+                        Logger.database.error("Fetched record missing tableName: \(record.recordID.recordName)")
+                        continue
+                    }
+                    recordsByTable[tableName, default: []].append(record)
+                }
+
+                for (tableName, records) in recordsByTable {
+                    switch tableName {
+                    case CloudModel.tableName:
+                        try processFetched(records, as: CloudModel.self, tableName: tableName, handle: transactionHandle, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys, queueDeletionPairs: &queueDeletionPairs, queueDeletionKeys: &queueDeletionKeys)
+                    case ModelContextServer.tableName:
+                        try processFetched(records, as: ModelContextServer.self, tableName: tableName, handle: transactionHandle, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys, queueDeletionPairs: &queueDeletionPairs, queueDeletionKeys: &queueDeletionKeys)
+                    case Conversation.tableName:
+                        try processFetched(records, as: Conversation.self, tableName: tableName, handle: transactionHandle, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys, queueDeletionPairs: &queueDeletionPairs, queueDeletionKeys: &queueDeletionKeys)
+                    case Message.tableName:
+                        try processFetched(records, as: Message.self, tableName: tableName, handle: transactionHandle, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys, queueDeletionPairs: &queueDeletionPairs, queueDeletionKeys: &queueDeletionKeys)
+                    case Attachment.tableName:
+                        try processFetched(records, as: Attachment.self, tableName: tableName, handle: transactionHandle, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys, queueDeletionPairs: &queueDeletionPairs, queueDeletionKeys: &queueDeletionKeys)
+                    case Memory.tableName:
+                        try processFetched(records, as: Memory.self, tableName: tableName, handle: transactionHandle, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys, queueDeletionPairs: &queueDeletionPairs, queueDeletionKeys: &queueDeletionKeys)
+                    default:
+                        Logger.database.error("Received modification for unknown table: \(tableName)")
+                    }
+                }
+
+                if !deletions.isEmpty {
+                    var deletionGroups: [String: [String]] = [:]
+
+                    for deletion in deletions where deletion.recordType == SyncEngine.recordType {
+                        guard let parsed = UploadQueue.parseCKRecordID(deletion.recordID.recordName) else {
+                            Logger.database.error("Unable to parse deletion recordID: \(deletion.recordID.recordName)")
+                            continue
+                        }
+
+                        deletionGroups[parsed.tableName, default: []].append(parsed.objectId)
+
+                        let key = "\(parsed.objectId)#\(parsed.tableName)"
+                        if queueDeletionKeys.insert(key).inserted {
+                            queueDeletionPairs.append((objectId: parsed.objectId, tableName: parsed.tableName))
+                        }
+                    }
+
+                    for (tableName, objectIds) in deletionGroups {
+                        do {
+                            try storage.reconcileRemoteDeletions(tableName: tableName, objectIds: objectIds, handle: transactionHandle)
+                        } catch {
+                            Logger.database.fault("Failed to reconcile deletions for \(tableName): \(error)")
+                        }
+                    }
+                }
+            }
+
+            if !queueCompletions.isEmpty {
+                try storage.pendingUploadDequeue(by: queueCompletions, handle: handle)
+            }
+
+            if !queueDeletionPairs.isEmpty {
+                try storage.pendingUploadDequeueDeleted(by: queueDeletionPairs, handle: handle)
+            }
+        } catch {
+            Logger.database.fault("Failed to apply fetched record zone changes: \(error)")
         }
     }
 
@@ -336,6 +408,107 @@ private extension SyncEngine {
 
         syncEngine.state.add(pendingDatabaseChanges: newPendingDatabaseChanges)
         syncEngine.state.add(pendingRecordZoneChanges: newPendingRecordZoneChanges)
+    }
+}
+
+private extension SyncEngine {
+    func processFetched<T: Syncable & SyncQueryable>(
+        _ records: [CKRecord],
+        as _: T.Type,
+        tableName: String,
+        handle: Handle,
+        queueCompletions: inout [(UploadQueue.ID, String)],
+        queueCompletionKeys: inout Set<String>,
+        queueDeletionPairs: inout [(objectId: String, tableName: String)],
+        queueDeletionKeys: inout Set<String>
+    ) throws {
+        let objects = decodeRecords(records, as: T.self, tableName: tableName, queueCompletions: &queueCompletions, queueCompletionKeys: &queueCompletionKeys)
+        guard !objects.isEmpty else {
+            return
+        }
+
+        let diff = try storage.applyRemoteSyncables(objects, handle: handle)
+
+        if !diff.deleted.isEmpty {
+            let deletedIds = diff.deleted.map(\.objectId)
+            try storage.reconcileRemoteDeletions(tableName: tableName, objectIds: deletedIds, handle: handle)
+
+            for objectId in deletedIds {
+                let key = "\(objectId)#\(tableName)"
+                if queueDeletionKeys.insert(key).inserted {
+                    queueDeletionPairs.append((objectId: objectId, tableName: tableName))
+                }
+            }
+        }
+    }
+
+    func decodeRecords<T: Syncable>(
+        _ records: [CKRecord],
+        as _: T.Type,
+        tableName: String,
+        queueCompletions: inout [(UploadQueue.ID, String)],
+        queueCompletionKeys: inout Set<String>
+    ) -> [T] {
+        var objects: [T] = []
+
+        for record in records {
+            guard let data = payloadData(from: record) else {
+                Logger.database.error("Missing payload for record \(record.recordID.recordName)")
+                continue
+            }
+
+            do {
+                var object = try T.decodePayload(data)
+                if let parsed = UploadQueue.parseCKRecordID(record.recordID.recordName), object.objectId != parsed.objectId {
+                    object.objectId = parsed.objectId
+                }
+
+                if object.deviceId.isEmpty, let creator = record.createByDeviceId {
+                    object.deviceId = creator
+                }
+
+                if let modifiedDate = record.modificationDate, object.modified < modifiedDate {
+                    object.modified = modifiedDate
+                }
+
+                objects.append(object)
+
+                if let sentQueueId = record.sentQueueId,
+                   let (queueId, objectId, deviceId) = SyncEngine.parseCKRecordSentQueueId(sentQueueId),
+                   deviceId == Storage.deviceId
+                {
+                    let key = "\(queueId)#\(objectId)"
+                    if queueCompletionKeys.insert(key).inserted {
+                        queueCompletions.append((queueId, objectId))
+                    }
+                }
+            } catch {
+                Logger.database.error("Failed to decode payload for \(tableName): \(error)")
+            }
+        }
+
+        return objects
+    }
+
+    func payloadData(from record: CKRecord) -> Data? {
+        if let data = record.encryptedValues[.payload] as? Data {
+            return data
+        }
+        if let value = record.encryptedValues[.payload] as? CKRecordValue,
+           let data = value as? Data
+        {
+            return data
+        }
+        if let data = record[.payload] as? Data {
+            return data
+        }
+        if let asset = record[.payload] as? CKAsset,
+           let url = asset.fileURL,
+           let data = try? Data(contentsOf: url)
+        {
+            return data
+        }
+        return nil
     }
 }
 

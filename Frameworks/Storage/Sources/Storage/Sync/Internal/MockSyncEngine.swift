@@ -228,7 +228,11 @@ package final class MockSyncEngine: SyncEngineProtocol {
         await parentSyncEngine.handleEvent(event, syncEngine: self)
     }
 
-    private func autoFetchChanges() async throws {}
+    private func autoFetchChanges() async throws {
+        guard let delegate else { return }
+        let options = await delegate.nextFetchChangesOptions(reason: .scheduled, options: .init(), syncEngine: self)
+        try await performingFetchChanges(options)
+    }
 
     private func autoSendChanges() async throws {
         try await processPendingDatabaseChanges(reason: .scheduled, options: .init())
@@ -247,7 +251,20 @@ package final class MockSyncEngine: SyncEngineProtocol {
         try await performingFetchChanges(options)
     }
 
-    package func performingFetchChanges(_: CKSyncEngine.FetchChangesOptions) async throws {}
+    package func performingFetchChanges(_: CKSyncEngine.FetchChangesOptions) async throws {
+        guard let delegate else { return }
+        let recordIDs = database.storage.withValue { storage -> [CKRecord.ID] in
+            storage.flatMap { zoneEntry in
+                zoneEntry.value.values.map(\.recordID)
+            }
+        }
+
+        let records = try await recordIDs.isEmpty ? [:] : (database.records(for: recordIDs))
+
+        let fetchedRecords = records.values.compactMap { try? $0.get() }
+        let event = SyncEngine.Event.fetchedRecordZoneChanges(modifications: fetchedRecords, deletions: [])
+        await parentSyncEngine.handleEvent(event, syncEngine: self)
+    }
 
     package func nextRecordZoneChangeBatch(recordsToSave _: [CKRecord], recordIDsToDelete _: [CKRecord.ID], atomicByZone _: Bool, syncEngine _: any SyncEngineProtocol) async -> CKSyncEngine.RecordZoneChangeBatch? {
         nil

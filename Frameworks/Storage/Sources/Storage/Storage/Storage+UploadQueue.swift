@@ -9,71 +9,87 @@ import Foundation
 import os.log
 import WCDBSwift
 
+private enum SyncPayloadCoder {
+    static let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.dataEncodingStrategy = .base64
+        return encoder
+    }()
+
+    static let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        decoder.dataDecodingStrategy = .base64
+        return decoder
+    }()
+}
+
 // MARK: - Sync
 
 extension CloudModel: Syncable, SyncQueryable {
     public static let SyncQuery: SyncQueryProperties = .init(objectId: CloudModel.Properties.objectId.asProperty(), modified: CloudModel.Properties.modified.asProperty(), removed: CloudModel.Properties.removed.asProperty())
     public func encodePayload() throws -> Data {
-        Data()
+        try SyncPayloadCoder.encoder.encode(self)
     }
 
-    public static func decodePayload(_: Data) throws -> Self {
-        fatalError("TODO")
+    public static func decodePayload(_ data: Data) throws -> Self {
+        try SyncPayloadCoder.decoder.decode(Self.self, from: data)
     }
 }
 
 extension ModelContextServer: Syncable, SyncQueryable {
     public static let SyncQuery: SyncQueryProperties = .init(objectId: ModelContextServer.Properties.objectId.asProperty(), modified: ModelContextServer.Properties.modified.asProperty(), removed: ModelContextServer.Properties.removed.asProperty())
     public func encodePayload() throws -> Data {
-        Data()
+        try SyncPayloadCoder.encoder.encode(self)
     }
 
-    public static func decodePayload(_: Data) throws -> Self {
-        fatalError("TODO")
+    public static func decodePayload(_ data: Data) throws -> Self {
+        try SyncPayloadCoder.decoder.decode(Self.self, from: data)
     }
 }
 
 extension Memory: Syncable, SyncQueryable {
     public static let SyncQuery: SyncQueryProperties = .init(objectId: Memory.Properties.objectId.asProperty(), modified: Memory.Properties.modified.asProperty(), removed: Memory.Properties.removed.asProperty())
     public func encodePayload() throws -> Data {
-        Data()
+        try SyncPayloadCoder.encoder.encode(self)
     }
 
-    public static func decodePayload(_: Data) throws -> Self {
-        fatalError("TODO")
+    public static func decodePayload(_ data: Data) throws -> Self {
+        try SyncPayloadCoder.decoder.decode(Self.self, from: data)
     }
 }
 
 extension Conversation: Syncable, SyncQueryable {
     public static let SyncQuery: SyncQueryProperties = .init(objectId: Conversation.Properties.objectId.asProperty(), modified: Conversation.Properties.modified.asProperty(), removed: Conversation.Properties.removed.asProperty())
     public func encodePayload() throws -> Data {
-        Data()
+        try SyncPayloadCoder.encoder.encode(self)
     }
 
-    public static func decodePayload(_: Data) throws -> Self {
-        fatalError("TODO")
+    public static func decodePayload(_ data: Data) throws -> Self {
+        try SyncPayloadCoder.decoder.decode(Self.self, from: data)
     }
 }
 
 extension Message: Syncable, SyncQueryable {
     public static let SyncQuery: SyncQueryProperties = .init(objectId: Message.Properties.objectId.asProperty(), modified: Message.Properties.modified.asProperty(), removed: Message.Properties.removed.asProperty())
     public func encodePayload() throws -> Data {
-        Data()
+        try SyncPayloadCoder.encoder.encode(self)
     }
 
-    public static func decodePayload(_: Data) throws -> Self {
-        fatalError("TODO")
+    public static func decodePayload(_ data: Data) throws -> Self {
+        try SyncPayloadCoder.decoder.decode(Self.self, from: data)
     }
 }
 
 extension Attachment: Syncable, SyncQueryable {
     public static let SyncQuery: SyncQueryProperties = .init(objectId: Attachment.Properties.objectId.asProperty(), modified: Attachment.Properties.modified.asProperty(), removed: Attachment.Properties.removed.asProperty())
     public func encodePayload() throws -> Data {
-        Data()
+        try SyncPayloadCoder.encoder.encode(self)
     }
 
-    public static func decodePayload(_: Data) throws -> Self {
-        fatalError("TODO")
+    public static func decodePayload(_ data: Data) throws -> Self {
+        try SyncPayloadCoder.decoder.decode(Self.self, from: data)
     }
 }
 
@@ -99,6 +115,24 @@ public extension Storage {
         public func insertOrReplace() -> [T] {
             insert + updated
         }
+    }
+
+    @discardableResult
+    func applyRemoteSyncables<T: Syncable & SyncQueryable>(
+        _ objects: [T],
+        handle: Handle
+    ) throws -> DiffSyncableResult<T> {
+        guard !objects.isEmpty else {
+            return DiffSyncableResult()
+        }
+
+        let diff = try diffSyncable(objects: objects, handle: handle)
+        let toUpsert = diff.insertOrReplace()
+        if !toUpsert.isEmpty {
+            try handle.insertOrReplace(toUpsert, intoTable: T.tableName)
+        }
+
+        return diff
     }
 
     /// 根据本地数据库现有数据，区分新增/更新/删除对象
@@ -179,6 +213,32 @@ public extension Storage {
         }
 
         uploadQueueEnqueueHandler?(queues)
+    }
+
+    func reconcileRemoteDeletions(
+        tableName: String,
+        objectIds: [String],
+        handle: Handle? = nil
+    ) throws {
+        guard !objectIds.isEmpty else { return }
+        let modified = Date.now
+
+        let executeUpdate: (Handle) throws -> Void = { handle in
+            let update = StatementUpdate().update(table: tableName)
+                .set(SyncQueryProperties.removedColumn(for: tableName))
+                .to(true)
+                .set(SyncQueryProperties.modifiedColumn(for: tableName))
+                .to(modified)
+                .where(SyncQueryProperties.objectIdColumn(for: tableName).in(objectIds))
+
+            try handle.exec(update)
+        }
+
+        if let handle {
+            try executeUpdate(handle)
+        } else {
+            try runTransaction { try executeUpdate($0) }
+        }
     }
 
     /// 从上传队列中删除记录，内部采用软删除。在空闲时执行物理删除

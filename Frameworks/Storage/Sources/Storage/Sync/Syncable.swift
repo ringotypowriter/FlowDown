@@ -8,21 +8,21 @@
 import Foundation
 import WCDBSwift
 
-public protocol Syncable: TableDecodable {
+public protocol Syncable: TableCodable {
     /// 每条记录的唯一标识
-    var objectId: String { get }
+    var objectId: String { get set }
 
     /// 创建时间
     var creation: Date { get }
 
     /// 最后修改时间
-    var modified: Date { get }
+    var modified: Date { get set }
 
     /// 删除标记
-    var removed: Bool { get }
+    var removed: Bool { get set }
 
     /// 用于标识来源设备
-    var deviceId: String { get }
+    var deviceId: String { get set }
 
     /// 该对象所属的表名
     static var tableName: String { get }
