@@ -10,9 +10,15 @@ import ConfigurableKit
 import Digger
 import Storage
 import UIKit
+import UniformTypeIdentifiers
 
 extension SettingController.SettingContent {
     class DataControlController: StackScrollController {
+        #if targetEnvironment(macCatalyst)
+            var documentPickerExportTempItems: [URL] = []
+        #endif
+        private var documentPickerImportHandler: (([URL]) -> Void)?
+
         init() {
             super.init(nibName: nil, bundle: nil)
             title = String(localized: "Data Control")
@@ -28,17 +34,73 @@ extension SettingController.SettingContent {
             view.backgroundColor = .background
         }
 
-        #if targetEnvironment(macCatalyst)
-            var documentPickerExportTempItems: [URL] = []
-        #endif
-
         override func setupContentViews() {
             super.setupContentViews()
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
+                    header: String(localized: "iCloud Sync")
+                )
+            ) { $0.bottom /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            let syncToggle = ConfigurableToggleActionView()
+            syncToggle.configure(icon: UIImage(systemName: "icloud"))
+            syncToggle.configure(title: String(localized: "Enable iCloud Sync"))
+            syncToggle.configure(
+                description: String(localized: "Turn on to sync conversations and cloud model settings with iCloud across devices.")
+            )
+            syncToggle.boolValue = SyncEngine.isSyncEnabled
+            syncToggle.actionBlock = { [weak self] value in
+                guard let self else { return }
+                if value {
+                    SyncEngine.setSyncEnabled(true)
+                    resumeSyncIfNeeded()
+                } else {
+                    presentSyncDisableAlert { confirmed in
+                        if confirmed {
+                            SyncEngine.setSyncEnabled(false)
+                            Task { await self.pauseSync() }
+                            syncToggle.boolValue = false
+                        } else {
+                            syncToggle.boolValue = true
+                        }
+                    }
+                }
+            }
+            stackView.addArrangedSubviewWithMargin(syncToggle)
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionFooterView().with(
+                    footer: String(localized: "Disabling sync will stop new updates from being shared. Data already synced to iCloud will remain available on other devices.")
+                )
+            ) { $0.top /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionHeaderView().with(
                     header: String(localized: "Database")
+                )
+            ) { $0.bottom /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            let importDatabase = ConfigurableObject(
+                icon: "square.and.arrow.down",
+                title: String(localized: "Import Database"),
+                explain: String(localized: "Replace all local data with a previous database export."),
+                ephemeralAnnotation: .action { [weak self] controller in
+                    guard let controller else { return }
+                    self?.presentImportConfirmation(from: controller)
+                }
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(importDatabase)
+            stackView.addArrangedSubview(SeparatorView())
+
+            stackView.addArrangedSubviewWithMargin(
+                ConfigurableSectionHeaderView().with(
+                    header: String(localized: "Database Export")
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -243,6 +305,8 @@ extension SettingController.SettingContent {
                         }
                         context.addAction(title: String(localized: "Reset"), attribute: .dangerous) {
                             context.dispose {
+                                SyncEngine.resetCachedState()
+
                                 try? FileManager.default.removeItem(at: FileManager.default.temporaryDirectory)
                                 try? FileManager.default.removeItem(at: ModelManager.shared.localModelDir)
                                 sdb.reset()
@@ -268,16 +332,129 @@ extension SettingController.SettingContent {
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
         }
+
+        private func presentSyncDisableAlert(confirmHandler: @escaping (Bool) -> Void) {
+            let alert = AlertViewController(
+                title: String(localized: "Disable iCloud Sync"),
+                message: String(localized: "Turning off sync stops sharing new changes between devices. Data already synced will remain available in iCloud.")
+            ) { context in
+                context.addAction(title: String(localized: "Keep Enabled")) {
+                    context.dispose { confirmHandler(false) }
+                }
+                context.addAction(title: String(localized: "Disable"), attribute: .dangerous) {
+                    context.dispose { confirmHandler(true) }
+                }
+            }
+            present(alert, animated: true)
+        }
+
+        private func resumeSyncIfNeeded() {
+            Task {
+                if !sdb.hasPerformedFirstSync {
+                    try? await sdb.performSyncFirstTimeSetup()
+                }
+                try? await syncEngine.fetchChanges()
+            }
+        }
+
+        private func pauseSync() async {
+            await syncEngine.cancelAllOperations()
+        }
+
+        private func presentImportConfirmation(from controller: UIViewController) {
+            let alert = AlertViewController(
+                title: String(localized: "Import Database"),
+                message: String(localized: "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone.")
+            ) { [weak self] context in
+                context.addAction(title: String(localized: "Cancel")) {
+                    context.dispose()
+                }
+                context.addAction(title: String(localized: "Import"), attribute: .dangerous) {
+                    context.dispose { self?.presentImportPicker(from: controller) }
+                }
+            }
+            controller.present(alert, animated: true)
+        }
+
+        private func presentImportPicker(from controller: UIViewController) {
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.zip], asCopy: true)
+            picker.allowsMultipleSelection = false
+            picker.delegate = self
+            documentPickerImportHandler = { [weak self, weak controller] urls in
+                guard let url = urls.first, let controller else { return }
+                self?.performDatabaseImport(from: url, controller: controller)
+            }
+            controller.present(picker, animated: true)
+        }
+
+        private func performDatabaseImport(from url: URL, controller: UIViewController) {
+            Indicator.progress(
+                title: String(localized: "Importing..."),
+                controller: controller
+            ) { progressCompletion in
+                Task.detached(priority: .userInitiated) {
+                    let securityScoped = url.startAccessingSecurityScopedResource()
+                    defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
+                    await syncEngine.cancelAllOperations()
+                    let result = sdb.importDatabase(from: url)
+                    progressCompletion { [weak self] in
+                        switch result {
+                        case .success:
+                            Task {
+                                try await syncEngine.reloadDataForcefully()
+                            }
+
+                            let alert = AlertViewController(
+                                title: String(localized: "Import Complete"),
+                                message: String(localized: "FlowDown will restart to apply the imported database.")
+                            ) { context in
+                                context.addAction(title: String(localized: "OK")) {
+                                    context.dispose {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            exit(0)
+                                        }
+                                    }
+                                }
+                            }
+                            controller.present(alert, animated: true)
+                            self?.documentPickerImportHandler = nil
+                        case let .failure(error):
+                            let alert = AlertViewController(
+                                title: String(localized: "Error Occurred"),
+                                message: error.localizedDescription
+                            ) { context in
+                                context.addAction(title: String(localized: "OK")) {
+                                    context.dispose()
+                                }
+                            }
+                            controller.present(alert, animated: true)
+                            self?.documentPickerImportHandler = nil
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-#if targetEnvironment(macCatalyst)
-    extension SettingController.SettingContent.DataControlController: UIDocumentPickerDelegate {
-        func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt _: [URL]) {
+extension SettingController.SettingContent.DataControlController: UIDocumentPickerDelegate {
+    func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        documentPickerImportHandler?(urls)
+        documentPickerImportHandler = nil
+        cleanupExportTempItems()
+    }
+
+    func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
+        documentPickerImportHandler = nil
+        cleanupExportTempItems()
+    }
+
+    private func cleanupExportTempItems() {
+        #if targetEnvironment(macCatalyst)
             for cleanableURL in documentPickerExportTempItems {
                 try? FileManager.default.removeItem(at: cleanableURL)
             }
             documentPickerExportTempItems.removeAll()
-        }
+        #endif
     }
-#endif
+}

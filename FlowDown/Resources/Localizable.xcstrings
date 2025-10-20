@@ -1608,6 +1608,22 @@
         }
       }
     },
+    "Database Export" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Database Export"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据库导出"
+          }
+        }
+      }
+    },
     "Date range cannot exceed 7 days" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1868,12 +1884,60 @@
         }
       }
     },
+    "Disable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用"
+          }
+        }
+      }
+    },
+    "Disable iCloud Sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable iCloud Sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用 iCloud 同步"
+          }
+        }
+      }
+    },
     "Disabled" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "禁用"
+          }
+        }
+      }
+    },
+    "Disabling sync will stop new updates from being shared. Data already synced to iCloud will remain available on other devices." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disabling sync will stop new updates from being shared. Data already synced to iCloud will remain available on other devices."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭同步后，新更改将不会共享。已经同步到 iCloud 的数据仍会保留在其他设备上。"
           }
         }
       }
@@ -2257,6 +2321,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "空模型配置"
+          }
+        }
+      }
+    },
+    "Enable iCloud Sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable iCloud Sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用 iCloud 同步"
           }
         }
       }
@@ -3014,6 +3094,22 @@
         }
       }
     },
+    "FlowDown will restart to apply the imported database." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FlowDown will restart to apply the imported database."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FlowDown 将重新启动以应用导入的数据库。"
+          }
+        }
+      }
+    },
     "Font Size" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3246,6 +3342,22 @@
         }
       }
     },
+    "iCloud Sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Sync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 同步"
+          }
+        }
+      }
+    },
     "Identifier" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3342,6 +3454,38 @@
         }
       }
     },
+    "Import Complete" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Complete"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入完成"
+          }
+        }
+      }
+    },
+    "Import Database" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Database"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入数据库"
+          }
+        }
+      }
+    },
     "Import Failed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3402,6 +3546,22 @@
         }
       }
     },
+    "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入数据库备份将替换当前的所有对话、记忆以及云模型设置。此操作无法撤销。"
+          }
+        }
+      }
+    },
     "Importing MCP Servers" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3428,6 +3588,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在导入模版"
+          }
+        }
+      }
+    },
+    "Importing..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importing..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在导入..."
           }
         }
       }
@@ -3679,6 +3855,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加入我们的 Discord 服务器。"
+          }
+        }
+      }
+    },
+    "Keep Enabled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep Enabled"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持开启"
           }
         }
       }
@@ -5283,6 +5475,22 @@
         }
       }
     },
+    "Replace all local data with a previous database export." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace all local data with a previous database export."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用之前导出的数据库替换所有本地数据。"
+          }
+        }
+      }
+    },
     "Request User Input" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6717,6 +6925,38 @@
         }
       }
     },
+    "Turn on to sync conversations and cloud model settings with iCloud across devices." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on to sync conversations and cloud model settings with iCloud across devices."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启后，将通过 iCloud 在设备间同步对话和云模型设置。"
+          }
+        }
+      }
+    },
+    "Turning off sync stops sharing new changes between devices. Data already synced will remain available in iCloud." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turning off sync stops sharing new changes between devices. Data already synced will remain available in iCloud."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭同步后，设备之间将不再共享新更改。已同步的数据会继续保留在 iCloud 中。"
+          }
+        }
+      }
+    },
     "Unable to connect to the MCP server. Please check your network or server status." : {
       "localizations" : {
         "zh-Hans" : {
@@ -6928,7 +7168,14 @@
       }
     },
     "Unknown Server" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知服务器"
+          }
+        }
+      }
     },
     "Unlimited Pages" : {
       "localizations" : {

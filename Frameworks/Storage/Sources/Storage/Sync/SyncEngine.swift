@@ -58,6 +58,20 @@ public final actor SyncEngine: Sendable, ObservableObject {
     public static let MessageNotificationKey: String = " Conversation"
     public static let CloudModelNotificationKey: String = " CloudModel"
 
+    public nonisolated static let syncEnabledDefaultsKey = "com.flowdown.storage.sync.manually.enabled"
+
+    public nonisolated static var isSyncEnabled: Bool {
+        UserDefaults.standard.bool(forKey: syncEnabledDefaultsKey)
+    }
+
+    public nonisolated static func setSyncEnabled(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: syncEnabledDefaultsKey)
+    }
+
+    public nonisolated static func resetCachedState() {
+        stateSerialization = nil
+    }
+
     public enum Mode {
         case live
         case mock
@@ -166,8 +180,14 @@ public final actor SyncEngine: Sendable, ObservableObject {
 }
 
 public extension SyncEngine {
+    func cancelAllOperations() async {
+        await syncEngine.cancelOperations()
+    }
+
     /// 拉取变化
     func fetchChanges() async throws {
+        guard SyncEngine.isSyncEnabled else { return }
+
         var needDelay = false
         if _syncEngine == nil {
             initializeSyncEngine()
@@ -219,6 +239,8 @@ public extension SyncEngine {
 
     /// 强制重新从云端获取
     func reloadDataForcefully() async throws {
+        guard SyncEngine.isSyncEnabled else { return }
+
         Logger.syncEngine.info("reload data force fully")
         SyncEngine.stateSerialization = nil
         initializeSyncEngine()
@@ -236,6 +258,7 @@ private extension SyncEngine {
     /// 创建CKRecordZone
     /// - Parameter immediateSendChanges: 是否立即发送变化，仅在 automaticallySync = false 有效
     func createCustomZoneIfNeeded(_ immediateSendChanges: Bool = false) async {
+        guard SyncEngine.isSyncEnabled else { return }
         do {
             let existingZones = try await container.privateCloudDatabase.allRecordZones()
             if existingZones.contains(where: { $0.zoneID == SyncEngine.zoneID }) {
@@ -270,6 +293,8 @@ private extension SyncEngine {
     /// - Parameter immediateSendChanges: 是否立即发送变化，仅在 automaticallySync = false 有效
     func scheduleUploadIfNeeded(_ immediateSendChanges: Bool = false) async throws {
         try Task.checkCancellation()
+
+        guard SyncEngine.isSyncEnabled else { return }
 
         let accountStatus = try await container.accountStatus()
         guard accountStatus == .available else { return }
