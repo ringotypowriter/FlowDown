@@ -6,6 +6,7 @@
 //
 
 import AlertController
+import Combine
 import ConfigurableKit
 import Digger
 import Storage
@@ -34,6 +35,8 @@ extension SettingController.SettingContent {
             view.backgroundColor = .background
         }
 
+        var deletedSeverDataCancellable: AnyCancellable?
+        var deletedSeverDataCompletionHandler: Indicator.CompletionHandler?
         override func setupContentViews() {
             super.setupContentViews()
             stackView.addArrangedSubview(SeparatorView())
@@ -84,11 +87,23 @@ extension SettingController.SettingContent {
                 title: String(localized: "Delete iCloud Data"),
                 explain: String(localized: "Remove conversations and settings stored in iCloud."),
                 ephemeralAnnotation: .action { [weak self] controller in
-                    guard let controller else { return }
+                    guard let controller, let self else { return }
 
-                    // MARK: TODO
+                    deletedSeverDataCancellable = NotificationCenter.default.publisher(for: SyncEngine.ServerDataDeleted)
+                        .receive(on: RunLoop.main)
+                        .sink(receiveValue: { [weak self] _ in
+                            self?.deletedSeverDataCancellable = nil
+                            self?.deletedSeverDataCompletionHandler? {}
+                            self?.deletedSeverDataCompletionHandler = nil
+                        })
 
-                    _ = self
+                    Indicator.progress(title: "Delete iCloud Data ...", controller: controller) { [weak self] completionHandler in
+                        self?.deletedSeverDataCompletionHandler = completionHandler
+
+                        Task {
+                            try await syncEngine.deleteServerData()
+                        }
+                    }
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(icloudDelete)
@@ -101,9 +116,9 @@ extension SettingController.SettingContent {
                 ephemeralAnnotation: .action { [weak self] controller in
                     guard let controller else { return }
 
-                    // MARK: TODO
-
-                    _ = self
+                    Task {
+                        try await syncEngine.reloadDataForcefully()
+                    }
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(icloudForcePull)
