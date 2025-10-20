@@ -15,6 +15,7 @@ import MLX
 import MLXLMCommon
 import RichEditor
 import ScrubberKit
+import Storage
 import UIKit
 
 @objc(AppDelegate)
@@ -52,9 +53,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UIMenuSystem.main.setNeedsRebuild()
             }
 
-        if !sdb.hasPerformedFirstSync {
+        let hasPerformedFirstSync = sdb.hasPerformedFirstSync
+        let isSyncEnabled = SyncEngine.isSyncEnabled
+        if !hasPerformedFirstSync || isSyncEnabled {
             Task {
-                try await sdb.performSyncFirstTimeSetup()
+                if !hasPerformedFirstSync {
+                    try await sdb.performSyncFirstTimeSetup()
+                }
+
+                if isSyncEnabled {
+                    try await syncEngine.fetchChanges()
+                    try await syncEngine.scheduleUploadIfNeeded()
+                }
             }
         }
 
