@@ -54,11 +54,17 @@ public class Storage {
         return id
     }
 
-    init() throws {
-        databaseDir = FileManager.default
+    convenience init() throws {
+        let databaseDir = FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("Objects.db")
+        try self.init(databaseDir: databaseDir)
+    }
+
+    private init(databaseDir: URL) throws {
+        self.databaseDir = databaseDir
+
         databaseLocation = databaseDir
             .appendingPathComponent("database")
             .appendingPathExtension("db")
@@ -257,52 +263,70 @@ public extension Storage {
     }
 
     func importDatabase(from url: URL) -> Result<Void, Error> {
-        let tempDir = FileManager.default
+        let fm = FileManager.default
+
+        let tempDir = fm
             .temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
         let unzipTarget = tempDir.appendingPathComponent("imported")
-        var backupURL: URL?
+
+        var originPath = databaseDir.path()
+        originPath.removeLast()
+        let backupDatabaseDir = URL(filePath: "\(originPath).backup")
+
+        defer {
+            Logger.database.info("clear import database tempDir \(tempDir, privacy: .public)")
+            try? fm.removeItem(at: tempDir)
+        }
+
+        Logger.database.info("Import the database \(unzipTarget, privacy: .public)")
 
         do {
-            try FileManager.default.createDirectory(at: unzipTarget, withIntermediateDirectories: true)
-            try FileManager.default.unzipItem(at: url, to: unzipTarget)
+            try fm.createDirectory(at: unzipTarget, withIntermediateDirectories: true)
+            try fm.unzipItem(at: url, to: unzipTarget)
 
             let importedDB = unzipTarget.appendingPathComponent("database.db")
-            guard FileManager.default.fileExists(atPath: importedDB.path) else {
+            guard fm.fileExists(atPath: importedDB.path) else {
                 throw NSError(domain: "Storage", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing database.db in archive"])
             }
+
+            Logger.database.info("Import the database and execute the migration.")
+            /// 内部会按照数据迁移的流程走
+            let tempDB = try Storage(databaseDir: unzipTarget)
+            /// 初始化首次同步
+            try tempDB.internalPerformSyncFirstTimeSetup()
+
+            /// 关闭数据库
+            tempDB.db.blockade()
+            tempDB.db.close()
+
+            Logger.database.info("Database migration has been successfully imported.")
 
             db.blockade()
             db.close()
 
-            let candidateBackup = databaseLocation.appendingPathExtension("backup")
-            if FileManager.default.fileExists(atPath: candidateBackup.path) {
-                try FileManager.default.removeItem(at: candidateBackup)
+            if fm.fileExists(atPath: backupDatabaseDir.path()) {
+                try fm.removeItem(at: backupDatabaseDir)
             }
 
-            if FileManager.default.fileExists(atPath: databaseLocation.path) {
-                try FileManager.default.moveItem(at: databaseLocation, to: candidateBackup)
-                backupURL = candidateBackup
-            }
+            Logger.database.info("Back up the current database")
+            // 备份旧目录
+            try fm.moveItem(at: databaseDir, to: backupDatabaseDir)
+            Logger.database.info("Replace the new database")
+            // 移动新目录
+            try fm.moveItem(at: unzipTarget, to: databaseDir)
+            Logger.database.info("Delete the original database")
+            // 删除备份目录
+            try fm.removeItem(at: backupDatabaseDir)
 
-            if FileManager.default.fileExists(atPath: databaseLocation.path) {
-                try FileManager.default.removeItem(at: databaseLocation)
-            }
-
-            try FileManager.default.moveItem(at: importedDB, to: databaseLocation)
-
-            hasPerformedFirstSync = false
-
-            if let backupURL, FileManager.default.fileExists(atPath: backupURL.path) {
-                try FileManager.default.removeItem(at: backupURL)
-            }
-            try FileManager.default.removeItem(at: tempDir)
+            hasPerformedFirstSync = true
+            Logger.database.info("Database import successful")
             return .success(())
         } catch {
-            if let backupURL, FileManager.default.fileExists(atPath: backupURL.path) {
-                try? FileManager.default.moveItem(at: backupURL, to: databaseLocation)
+            Logger.database.error("imported database error: \(error, privacy: .public)")
+            if fm.fileExists(atPath: backupDatabaseDir.path) {
+                try? fm.moveItem(at: backupDatabaseDir, to: databaseDir)
             }
-            try? FileManager.default.removeItem(at: tempDir)
             return .failure(error)
         }
     }

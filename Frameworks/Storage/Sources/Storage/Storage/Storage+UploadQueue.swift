@@ -484,11 +484,9 @@ package extension Storage {
     }
 }
 
-public extension Storage {
+package extension Storage {
     /// 执行首次同步初始化，同一设备仅会执行一次。卸载后再次安装后会再次被执行
-    func performSyncFirstTimeSetup() async throws {
-        guard !hasPerformedFirstSync else { return }
-
+    func internalPerformSyncFirstTimeSetup() throws {
         let handle = try getHandle()
 
         try handle.run(transaction: { [weak self] in
@@ -511,11 +509,19 @@ public extension Storage {
 
         })
 
-        hasPerformedFirstSync = true
-
         Logger.database.info("[*] performSyncFirstTimeSetup end")
 
         uploadQueueEnqueueHandler?([])
+    }
+}
+
+public extension Storage {
+    /// 执行首次同步初始化，同一设备仅会执行一次。卸载后再次安装后会再次被执行
+    func performSyncFirstTimeSetup() async throws {
+        guard !hasPerformedFirstSync else { return }
+        try internalPerformSyncFirstTimeSetup()
+
+        hasPerformedFirstSync = true
     }
 
     private func firstMigrationUploadQueue<T: Syncable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {
