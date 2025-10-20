@@ -7,27 +7,27 @@
 import Foundation
 import WCDBSwift
 
-public final class ModelContextServerV1: Identifiable, Codable, TableNamed, TableCodable {
-    public static let tableName: String = "ModelContextServer"
+package final class ModelContextServerV1: Identifiable, Codable, TableNamed, TableCodable {
+    package static let tableName: String = "ModelContextServer"
 
-    public var id: String = UUID().uuidString
-    public var name: String = ""
-    public var comment: String = ""
-    public var type: ModelContextServer.ServerType = .http
-    public var endpoint: String = ""
-    public var header: String = ""
-    public var timeout: Int = 60
-    public var isEnabled: Bool = true
-    public var toolsEnabled: ModelContextServer.EnableCodable = .init()
-    public var resourcesEnabled: ModelContextServer.EnableCodable = .init()
-    public var templateEnabled: ModelContextServer.EnableCodable = .init()
-    public var lastConnected: Date?
-    public var connectionStatus: ModelContextServer.ConnectionStatus = .disconnected
-    public var capabilities: StringArrayCodable = .init([])
+    package var id: String = UUID().uuidString
+    package var name: String = ""
+    package var comment: String = ""
+    package var type: ModelContextServer.ServerType = .http
+    package var endpoint: String = ""
+    package var header: String = ""
+    package var timeout: Int = 60
+    package var isEnabled: Bool = true
+    package var toolsEnabled: ModelContextServer.EnableCodable = .init()
+    package var resourcesEnabled: ModelContextServer.EnableCodable = .init()
+    package var templateEnabled: ModelContextServer.EnableCodable = .init()
+    package var lastConnected: Date?
+    package var connectionStatus: ModelContextServer.ConnectionStatus = .disconnected
+    package var capabilities: StringArrayCodable = .init([])
 
-    public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = ModelContextServerV1
-        public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
+    package enum CodingKeys: String, CodingTableKey {
+        package typealias Root = ModelContextServerV1
+        package static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, defaultTo: UUID().uuidString)
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
@@ -60,7 +60,7 @@ public final class ModelContextServerV1: Identifiable, Codable, TableNamed, Tabl
         case capabilities
     }
 
-    public init(
+    package init(
         id: String = UUID().uuidString,
         name: String = "",
         comment: String = "",
@@ -92,13 +92,13 @@ public final class ModelContextServerV1: Identifiable, Codable, TableNamed, Tabl
         self.capabilities = capabilities
     }
 
-    public func hash(into hasher: inout Hasher) {
+    package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 }
 
 extension ModelContextServerV1: Equatable {
-    public static func == (lhs: ModelContextServerV1, rhs: ModelContextServerV1) -> Bool {
+    package static func == (lhs: ModelContextServerV1, rhs: ModelContextServerV1) -> Bool {
         lhs.id == rhs.id
     }
 }

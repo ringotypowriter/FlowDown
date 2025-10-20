@@ -9,24 +9,24 @@ import Foundation
 import MarkdownParser
 import WCDBSwift
 
-public final class MessageV1: Identifiable, Codable, TableNamed, TableCodable {
-    public static let tableName: String = "Message"
+package final class MessageV1: Identifiable, Codable, TableNamed, TableCodable {
+    package static let tableName: String = "Message"
 
-    public var id: Int64 = .init()
-    public var conversationId: ConversationV1.ID = .init()
-    public var creation: Date = .init()
-    public var role: Message.Role = .system
-    public var thinkingDuration: TimeInterval = 0
-    public var reasoningContent: String = ""
-    public var isThinkingFold: Bool = false
-    public var document: String = ""
-    public var documentNodes: [MarkdownBlockNode] = []
-    public var webSearchStatus: Message.WebSearchStatus = .init()
-    public var toolStatus: Message.ToolStatus = .init()
+    package var id: Int64 = .init()
+    package var conversationId: ConversationV1.ID = .init()
+    package var creation: Date = .init()
+    package var role: Message.Role = .system
+    package var thinkingDuration: TimeInterval = 0
+    package var reasoningContent: String = ""
+    package var isThinkingFold: Bool = false
+    package var document: String = ""
+    package var documentNodes: [MarkdownBlockNode] = []
+    package var webSearchStatus: Message.WebSearchStatus = .init()
+    package var toolStatus: Message.ToolStatus = .init()
 
-    public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = MessageV1
-        public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
+    package enum CodingKeys: String, CodingTableKey {
+        package typealias Root = MessageV1
+        package static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true, isUnique: true)
             BindColumnConstraint(conversationId, isNotNull: true)
             BindColumnConstraint(creation, isNotNull: true, defaultTo: Date(timeIntervalSince1970: 0))
@@ -61,12 +61,12 @@ public final class MessageV1: Identifiable, Codable, TableNamed, TableCodable {
         case toolStatus
     }
 
-    public var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
-    public var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
+    package var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
+    package var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
 }
 
 extension MessageV1: Equatable {
-    public static func == (lhs: MessageV1, rhs: MessageV1) -> Bool {
+    package static func == (lhs: MessageV1, rhs: MessageV1) -> Bool {
         lhs.id == rhs.id &&
             lhs.conversationId == rhs.conversationId &&
             lhs.creation == rhs.creation &&
@@ -80,7 +80,7 @@ extension MessageV1: Equatable {
 }
 
 extension MessageV1: Hashable {
-    public func hash(into hasher: inout Hasher) {
+    package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(conversationId)
         hasher.combine(creation)

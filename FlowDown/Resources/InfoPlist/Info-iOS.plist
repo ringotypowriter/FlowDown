@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -108,6 +106,10 @@
 	</dict>
 	<key>UIApplicationSupportsMultipleScenes</key>
 	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UISceneConfigurations</key>
 	<dict>
 		<key>UIWindowSceneSessionRoleApplication</key>

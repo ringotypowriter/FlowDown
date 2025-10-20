@@ -4,20 +4,20 @@
 import Foundation
 import WCDBSwift
 
-public final class ConversationV1: Identifiable, Codable, TableNamed, TableCodable {
-    public static let tableName: String = "Conversation"
+package final class ConversationV1: Identifiable, Codable, TableNamed, TableCodable {
+    package static let tableName: String = "Conversation"
 
-    public var id: Int64 = .init()
-    public var title: String = ""
-    public var creation: Date = .init()
-    public var icon: Data = .init()
-    public var isFavorite: Bool = false
-    public var shouldAutoRename: Bool = true
-    public var modelId: String? = nil
+    package var id: Int64 = .init()
+    package var title: String = ""
+    package var creation: Date = .init()
+    package var icon: Data = .init()
+    package var isFavorite: Bool = false
+    package var shouldAutoRename: Bool = true
+    package var modelId: String? = nil
 
-    public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = ConversationV1
-        public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
+    package enum CodingKeys: String, CodingTableKey {
+        package typealias Root = ConversationV1
+        package static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isAutoIncrement: true, isUnique: true)
             BindColumnConstraint(title, isNotNull: true, defaultTo: "")
             BindColumnConstraint(creation, isNotNull: true, defaultTo: Date(timeIntervalSince1970: 0))
@@ -36,12 +36,12 @@ public final class ConversationV1: Identifiable, Codable, TableNamed, TableCodab
         case modelId
     }
 
-    public var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
-    public var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
+    package var isAutoIncrement: Bool = false // 用于定义是否使用自增的方式插入
+    package var lastInsertedRowID: Int64 = 0 // 用于获取自增插入后的主键值
 }
 
 extension ConversationV1: Equatable {
-    public static func == (lhs: ConversationV1, rhs: ConversationV1) -> Bool {
+    package static func == (lhs: ConversationV1, rhs: ConversationV1) -> Bool {
         lhs.id == rhs.id &&
             lhs.title == rhs.title &&
             lhs.creation == rhs.creation &&
@@ -53,7 +53,7 @@ extension ConversationV1: Equatable {
 }
 
 extension ConversationV1: Hashable {
-    public func hash(into hasher: inout Hasher) {
+    package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(title)
         hasher.combine(creation)

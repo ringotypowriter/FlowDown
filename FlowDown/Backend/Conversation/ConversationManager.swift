@@ -34,11 +34,29 @@ class ConversationManager: NSObject {
 
     let conversations: CurrentValueSubject<OrderedDictionary<Conversation.ID, Conversation>, Never> = .init([:])
 
+    private var cancellables = Set<AnyCancellable>()
+
     override private init() {
         super.init()
         temporaryEditorObjects = _temporaryEditorObjects
         print("[*] \(temporaryEditorObjects.count) temporary editor objects loaded.")
         scanAll()
+
+        NotificationCenter.default.publisher(for: SyncEngine.ConversationChanged)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                logger.info("Recived SyncEngine.ConversationChanged")
+                self?.scanAll()
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: SyncEngine.LocalDataDeleted)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                logger.info("Recived SyncEngine.LocalDataDeleted")
+                self?.scanAll()
+            }
+            .store(in: &cancellables)
     }
 
     @objc private func saveObjects() {

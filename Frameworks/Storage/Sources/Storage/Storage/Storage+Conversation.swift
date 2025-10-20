@@ -114,6 +114,33 @@ public extension Storage {
         conversationUpdate(objects: [object])
     }
 
+    func conversationIds(by messageIds: [Message.ID], handle: Handle? = nil) -> [Conversation.ID: [Message.ID]] {
+        guard !messageIds.isEmpty else {
+            return [:]
+        }
+
+        let select = StatementSelect()
+            .select(Message.Properties.conversationId, Message.Properties.objectId)
+            .from(Message.tableName)
+            .where(Message.Properties.objectId.in(messageIds))
+
+        let rows = if let handle {
+            try? handle.getRows(from: select)
+        } else {
+            try? db.getRows(from: select)
+        }
+
+        guard let rows, !rows.isEmpty else { return [:] }
+
+        var result: [Conversation.ID: [Message.ID]] = [:]
+        for row in rows {
+            let conversationId = row[0].stringValue
+            let messageId = row[1].stringValue
+            result[conversationId, default: []].append(messageId)
+        }
+        return result
+    }
+
     func conversationRemove(conversationWith identifier: Conversation.ID) {
         guard !identifier.isEmpty else {
             return

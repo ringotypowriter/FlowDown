@@ -7,6 +7,7 @@
 
 import AlertController
 import ChidoriMenu
+import CloudKit
 import Combine
 import ConfigurableKit
 import MarkdownView
@@ -20,7 +21,7 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private var templateMenuCancellable: AnyCancellable?
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         UITableView.appearance().backgroundColor = .clear
@@ -57,7 +58,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
+        application.registerForRemoteNotifications()
+
         return true
+    }
+
+    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken _: Data) {
+        logger.info("Did register for remote notifications")
+    }
+
+    func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        logger.error("ERROR: Failed to register for notifications: \(error.localizedDescription)")
+    }
+
+    func application(_: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
+            completionHandler(.noData)
+            return
+        }
+        logger.info("Received cloudkit notification: \(notification)")
+
+        guard notification.containerIdentifier == CloudKitConfig.containerIdentifier else {
+            completionHandler(.noData)
+            return
+        }
+
+        Task {
+            do {
+                logger.info("cloudkit notification fetchChanges")
+                try await syncEngine.fetchChanges()
+                completionHandler(.newData)
+            } catch {
+                logger.error("cloudkit notification fetchLatestChanges: \(error)")
+                completionHandler(.failed)
+            }
+        }
     }
 
     func application(

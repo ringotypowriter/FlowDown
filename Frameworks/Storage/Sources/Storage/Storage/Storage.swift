@@ -11,8 +11,8 @@ import WCDBSwift
 import ZIPFoundation
 
 public class Storage {
-    private static let DeviceIdKey = "com.flowdown.storage.deviceId"
-    private static let SyncFirstTimeSetupKey = "com.flowdown.storage.sync.first.time.setup"
+    private static let DeviceIDKey = "FlowdownStorageDeviceId"
+    private static let SyncFirstSetupKey = "FlowdownSyncFirstSetup"
 
     let db: Database
     let initVersion: DBVersion
@@ -23,13 +23,13 @@ public class Storage {
     public let databaseLocation: URL
 
     /// UploadQueue enqueue 事件回调类型
-    public typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
-    public var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
+    package typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
+    package var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
 
     /// 是否已经执行过首次同步初始化
     public package(set) var hasPerformedFirstSync: Bool {
-        get { UserDefaults.standard.bool(forKey: Self.SyncFirstTimeSetupKey) }
-        set { UserDefaults.standard.set(newValue, forKey: Self.SyncFirstTimeSetupKey) }
+        get { UserDefaults.standard.bool(forKey: Self.SyncFirstSetupKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.SyncFirstSetupKey) }
     }
 
     private let existsDatabaseFile: Bool
@@ -43,13 +43,13 @@ public class Storage {
         }
 
         let defaults = UserDefaults.standard
-        if let id = defaults.string(forKey: DeviceIdKey) {
+        if let id = defaults.string(forKey: DeviceIDKey) {
             _deviceId = id
             return id
         }
 
         let id = UUID().uuidString
-        defaults.set(id, forKey: DeviceIdKey)
+        defaults.set(id, forKey: DeviceIDKey)
         _deviceId = id
         return id
     }
@@ -59,7 +59,7 @@ public class Storage {
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("Objects.db")
-        let databaseLocation = databaseDir
+        databaseLocation = databaseDir
             .appendingPathComponent("database")
             .appendingPathExtension("db")
 
@@ -84,9 +84,8 @@ public class Storage {
         db.setAutoMigration(enable: true)
         db.enableAutoCompression(true)
 
-        self.databaseLocation = databaseLocation
-
-        Logger.database.info("[*] database location: \(databaseLocation)")
+        // swiftformat:disable:next redundantSelf
+        Logger.database.info("[*] database location: \(self.databaseLocation)")
 
         checkMigration()
 
@@ -119,16 +118,6 @@ public class Storage {
     }
 
     public func reset() {
-        // 这里不需要执行 drop 吧？
-//        try? db.run { handler in
-//            try handler.drop(table: CloudModel.table)
-//            try handler.drop(table: Attachment.table)
-//            try handler.drop(table: Message.table)
-//            try handler.drop(table: Conversation.table)
-//            try handler.drop(table: ModelContextServer.table)
-//            try handler.drop(table: Memory.table)
-//            return ()
-//        }
         db.blockade()
         db.close()
         try? FileManager.default.removeItem(at: databaseDir)
@@ -150,16 +139,23 @@ public class Storage {
     }
 
     /// 清除本地所有数据
-    func clearLocalData() throws {
-        try db.run(transaction: {
+    func clearLocalData(handle: Handle? = nil) throws {
+        let transaction: (Handle) throws -> Void = {
             try $0.delete(fromTable: CloudModel.tableName)
             try $0.delete(fromTable: Attachment.tableName)
             try $0.delete(fromTable: Message.tableName)
             try $0.delete(fromTable: Conversation.tableName)
             try $0.delete(fromTable: ModelContextServer.tableName)
             try $0.delete(fromTable: Memory.tableName)
+            try $0.delete(fromTable: SyncMetadata.tableName)
             try $0.delete(fromTable: UploadQueue.tableName)
-        })
+        }
+
+        if let handle {
+            try handle.run(transaction: transaction)
+        } else {
+            try db.run(transaction: transaction)
+        }
     }
 }
 
@@ -197,8 +193,17 @@ private extension Storage {
 
         cloudModelRemoveInvalid()
 
-        // 删除上传成功的，或者超过最大失败次数的
-        try? db.delete(fromTable: UploadQueue.tableName, where: UploadQueue.Properties.state == UploadQueue.State.finish || UploadQueue.Properties.failCount >= 100)
+        // 上传队列
+        // 1. 上传成功的
+        // 2. 上传失败次数超过阈值的
+        // 3. 时间太过久远的
+        try? db.delete(
+            fromTable: UploadQueue.tableName,
+            where:
+            UploadQueue.Properties.state == UploadQueue.State.finish
+                || UploadQueue.Properties.failCount >= 100
+                || UploadQueue.Properties.modified <= deleteAt
+        )
     }
 }
 

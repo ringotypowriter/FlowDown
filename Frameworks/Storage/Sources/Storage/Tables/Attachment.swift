@@ -16,7 +16,7 @@ public final class Attachment: Identifiable, Codable, TableNamed, DeviceOwned, T
     }
 
     public var objectId: String = UUID().uuidString
-    public var deviceId: String = ""
+    public var deviceId: String = Storage.deviceId
     public var messageId: String = .init()
     public var data: Data = .init()
     public var previewImageData: Data = .init()

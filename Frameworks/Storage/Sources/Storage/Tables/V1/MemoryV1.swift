@@ -8,17 +8,17 @@
 import Foundation
 import WCDBSwift
 
-public final class MemoryV1: Identifiable, Codable, TableNamed, TableCodable {
-    public static let tableName: String = "Memory"
+package final class MemoryV1: Identifiable, Codable, TableNamed, TableCodable {
+    package static let tableName: String = "Memory"
 
-    public var id: String = UUID().uuidString
-    public var content: String = ""
-    public var timestamp: Date = .init()
-    public var conversationId: String? = nil
+    package var id: String = UUID().uuidString
+    package var content: String = ""
+    package var timestamp: Date = .init()
+    package var conversationId: String? = nil
 
-    public enum CodingKeys: String, CodingTableKey {
-        public typealias Root = MemoryV1
-        public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
+    package enum CodingKeys: String, CodingTableKey {
+        package typealias Root = MemoryV1
+        package static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(id, isPrimary: true, isUnique: true)
             BindColumnConstraint(content, isNotNull: true, defaultTo: "")
             BindColumnConstraint(timestamp, isNotNull: true, defaultTo: Date(timeIntervalSince1970: 0))
@@ -31,12 +31,12 @@ public final class MemoryV1: Identifiable, Codable, TableNamed, TableCodable {
         case conversationId
     }
 
-    public var isAutoIncrement: Bool = false
-    public var lastInsertedRowID: Int64 = 0
+    package var isAutoIncrement: Bool = false
+    package var lastInsertedRowID: Int64 = 0
 
-    public init() {}
+    package init() {}
 
-    public init(content: String, conversationId: String? = nil) {
+    package init(content: String, conversationId: String? = nil) {
         self.content = content
         self.conversationId = conversationId
         timestamp = Date()
@@ -44,7 +44,7 @@ public final class MemoryV1: Identifiable, Codable, TableNamed, TableCodable {
 }
 
 extension MemoryV1: Equatable {
-    public static func == (lhs: MemoryV1, rhs: MemoryV1) -> Bool {
+    package static func == (lhs: MemoryV1, rhs: MemoryV1) -> Bool {
         lhs.id == rhs.id &&
             lhs.content == rhs.content &&
             lhs.timestamp == rhs.timestamp &&
@@ -53,7 +53,7 @@ extension MemoryV1: Equatable {
 }
 
 extension MemoryV1: Hashable {
-    public func hash(into hasher: inout Hasher) {
+    package func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(content)
         hasher.combine(timestamp)

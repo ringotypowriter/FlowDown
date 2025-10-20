@@ -91,6 +91,7 @@ struct MigrationV1ToV2: DBMigration {
         try handle.create(table: ModelContextServer.tableName, of: ModelContextServer.self)
         try handle.create(table: Memory.tableName, of: Memory.self)
 
+        try handle.create(table: SyncMetadata.tableName, of: SyncMetadata.self)
         try handle.create(table: UploadQueue.tableName, of: UploadQueue.self)
     }
 

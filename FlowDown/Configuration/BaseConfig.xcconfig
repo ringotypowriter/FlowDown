@@ -16,6 +16,8 @@ PRODUCT_BUNDLE_IDENTIFIER[config=Release][sdk=*][arch=*] = wiki.qaq.flow
 
 CLOUDKIT_SYNC_CONTAINER_IDENTIFIER = iCloud.$(PRODUCT_BUNDLE_IDENTIFIER).sync
 
+INFOPLIST_KEY_UISupportsDocumentBrowser[config=Debug][sdk=*][arch=*] = YES
+
 INFOPLIST_FILE = FlowDown/Resources/InfoPlist/Info-iOS.plist
 INFOPLIST_FILE[sdk=macosx*] = FlowDown/Resources/InfoPlist/Info-Catalyst.plist
 

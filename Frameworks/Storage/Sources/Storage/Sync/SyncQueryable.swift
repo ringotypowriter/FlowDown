@@ -8,7 +8,7 @@
 import Foundation
 import WCDBSwift
 
-public struct SyncQueryProperties {
+package struct SyncQueryProperties {
     let objectId: WCDBSwift.Property
     let modified: WCDBSwift.Property
     let removed: WCDBSwift.Property
@@ -71,6 +71,6 @@ public struct SyncQueryProperties {
     }
 }
 
-public protocol SyncQueryable {
+package protocol SyncQueryable {
     static var SyncQuery: SyncQueryProperties { get }
 }

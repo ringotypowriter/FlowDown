@@ -110,7 +110,7 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
 
     public init(
         deviceId: String,
-        objectId: String = UUID().uuidString,
+        objectId: String = Storage.deviceId,
         name: String = "",
         comment: String = "",
         type: ServerType = .http,

@@ -48,17 +48,9 @@ import os
 import Storage
 
 let sdb = try Storage.db()
-let logger = Logger(subsystem: "FlowDown", category: "general")
+let logger = Logger(subsystem: "wiki.qaq.flowdown", category: "general")
 
-guard let syncContainerIdentifier = Bundle.main.object(forInfoDictionaryKey: "CLOUDKIT_SYNC_CONTAINER_IDENTIFIER") as? String else {
-    fatalError("Missing CLOUDKIT_SYNC_CONTAINER_IDENTIFIER in Info.plist")
-}
-
-SyncEngine.configure(
-    storage: sdb,
-    containerIdentifier: syncContainerIdentifier,
-    automaticallySync: false
-)
+let syncEngine = SyncEngine(storage: sdb, containerIdentifier: CloudKitConfig.containerIdentifier, mode: .live, automaticallySync: true)
 
 _ = ModelManager.shared
 _ = ModelToolsManager.shared

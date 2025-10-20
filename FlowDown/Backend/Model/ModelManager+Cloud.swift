@@ -150,6 +150,7 @@ extension ModelManager {
         let decoder = PropertyListDecoder()
         let data = try Data(contentsOf: url)
         let model = try decoder.decode(CloudModel.self, from: data)
+        model.deviceId = Storage.deviceId
         if model.objectId.isEmpty { model.objectId = UUID().uuidString }
         insertCloudModel(model)
         return model
