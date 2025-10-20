@@ -8,6 +8,7 @@
 import Foundation
 import OSLog
 import WCDBSwift
+import ZIPFoundation
 
 public class Storage {
     private static let DeviceIdKey = "com.flowdown.storage.deviceId"
@@ -248,5 +249,56 @@ public extension Storage {
         }
 
         return .success(exportDir)
+    }
+
+    func importDatabase(from url: URL) -> Result<Void, Error> {
+        let tempDir = FileManager.default
+            .temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+        let unzipTarget = tempDir.appendingPathComponent("imported")
+        var backupURL: URL?
+
+        do {
+            try FileManager.default.createDirectory(at: unzipTarget, withIntermediateDirectories: true)
+            try FileManager.default.unzipItem(at: url, to: unzipTarget)
+
+            let importedDB = unzipTarget.appendingPathComponent("database.db")
+            guard FileManager.default.fileExists(atPath: importedDB.path) else {
+                throw NSError(domain: "Storage", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing database.db in archive"])
+            }
+
+            db.blockade()
+            db.close()
+
+            let candidateBackup = databaseLocation.appendingPathExtension("backup")
+            if FileManager.default.fileExists(atPath: candidateBackup.path) {
+                try FileManager.default.removeItem(at: candidateBackup)
+            }
+
+            if FileManager.default.fileExists(atPath: databaseLocation.path) {
+                try FileManager.default.moveItem(at: databaseLocation, to: candidateBackup)
+                backupURL = candidateBackup
+            }
+
+            if FileManager.default.fileExists(atPath: databaseLocation.path) {
+                try FileManager.default.removeItem(at: databaseLocation)
+            }
+
+            try FileManager.default.moveItem(at: importedDB, to: databaseLocation)
+
+            hasPerformedFirstSync = false
+
+            if let backupURL, FileManager.default.fileExists(atPath: backupURL.path) {
+                try FileManager.default.removeItem(at: backupURL)
+            }
+            try FileManager.default.removeItem(at: tempDir)
+            return .success(())
+        } catch {
+            if let backupURL, FileManager.default.fileExists(atPath: backupURL.path) {
+                try? FileManager.default.moveItem(at: backupURL, to: databaseLocation)
+            }
+            try? FileManager.default.removeItem(at: tempDir)
+            return .failure(error)
+        }
     }
 }

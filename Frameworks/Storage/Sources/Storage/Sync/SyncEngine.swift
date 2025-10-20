@@ -11,6 +11,20 @@ import os.log
 import WCDBSwift
 
 public final actor SyncEngine: ObservableObject {
+    public nonisolated static let syncEnabledDefaultsKey = "com.flowdown.storage.sync.manually.enabled"
+
+    public nonisolated static var isSyncEnabled: Bool {
+        UserDefaults.standard.bool(forKey: syncEnabledDefaultsKey)
+    }
+
+    public nonisolated static func setSyncEnabled(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: syncEnabledDefaultsKey)
+    }
+
+    public nonisolated static func resetCachedState() {
+        stateSerialization = nil
+    }
+
     private static let configurationLock = NSLock()
     private static var sharedInstance: SyncEngine?
 
@@ -166,6 +180,7 @@ public final actor SyncEngine: ObservableObject {
         }
 
         Task {
+            guard SyncEngine.isSyncEnabled else { return }
             await createCustomZoneIfNeeded()
             try await scheduleUploadIfNeeded()
         }
@@ -174,6 +189,21 @@ public final actor SyncEngine: ObservableObject {
 
 public extension SyncEngine {
     func start() {}
+
+    func cancelAllOperations() async {
+        await syncEngine.cancelOperations()
+    }
+
+    func performManualSync() async {
+        guard SyncEngine.isSyncEnabled else { return }
+        await createCustomZoneIfNeeded()
+        do {
+            try await scheduleUploadIfNeeded()
+            try await syncEngine.performingFetchChanges()
+        } catch {
+            Logger.syncEngine.fault("Manual sync failed: \(error.localizedDescription)")
+        }
+    }
 }
 
 private extension SyncEngine {
@@ -184,6 +214,7 @@ private extension SyncEngine {
     }
 
     func createCustomZoneIfNeeded() async {
+        guard SyncEngine.isSyncEnabled else { return }
         do {
             let existingZones = try await container.privateCloudDatabase.allRecordZones()
             if existingZones.contains(where: { $0.zoneID == SyncEngine.zoneID }) {
@@ -201,6 +232,7 @@ private extension SyncEngine {
     }
 
     func onUploadQueueEnqueue() async {
+        guard SyncEngine.isSyncEnabled else { return }
         debounceEnqueueTask?.cancel()
 
         debounceEnqueueTask = Task { [weak self] in
@@ -215,6 +247,7 @@ private extension SyncEngine {
     }
 
     func scheduleUploadIfNeeded() async throws {
+        guard SyncEngine.isSyncEnabled else { return }
         try Task.checkCancellation()
 
         // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
@@ -366,6 +399,7 @@ private extension SyncEngine {
                                       deletions: [(zoneID: CKRecordZone.ID, reason: CKDatabase.DatabaseChange.Deletion.Reason)],
                                       syncEngine _: any SyncEngineProtocol) async
     {
+        guard SyncEngine.isSyncEnabled else { return }
         var resetLocalData = false
         for deletion in deletions {
             switch deletion.zoneID.zoneName {
@@ -388,6 +422,7 @@ private extension SyncEngine {
                                    failedRecordZoneDeletes _: [CKRecordZone.ID: CKError] = [:],
                                    syncEngine _: any SyncEngineProtocol) async
     {
+        guard SyncEngine.isSyncEnabled else { return }
         for savedRecordZone in savedRecordZones {
             Logger.syncEngine.info("savedRecordZone: \(savedRecordZone.zoneID)")
         }
@@ -399,6 +434,7 @@ private extension SyncEngine {
                                      failedRecordDeletes _: [CKRecord.ID: CKError] = [:],
                                      syncEngine: any SyncEngineProtocol) async
     {
+        guard SyncEngine.isSyncEnabled else { return }
         guard let handle = try? storage.getHandle() else {
             return
         }
@@ -619,6 +655,7 @@ extension SyncEngine: CKSyncEngineDelegate {
 
 extension SyncEngine: SyncEngineDelegate {
     package func handleEvent(_ event: SyncEngine.Event, syncEngine _: any SyncEngineProtocol) async {
+        guard SyncEngine.isSyncEnabled else { return }
         Logger.syncEngine.debug("Handling event \(event)")
 
         switch event {
@@ -683,6 +720,7 @@ extension SyncEngine: SyncEngineDelegate {
         options: CKSyncEngine.SendChangesOptions,
         syncEngine: any SyncEngineProtocol
     ) async -> CKSyncEngine.RecordZoneChangeBatch? {
+        guard SyncEngine.isSyncEnabled else { return nil }
         Logger.syncEngine.info("Next push by reason: \(reason)")
         guard let handle = try? storage.getHandle() else {
             return nil
@@ -750,6 +788,7 @@ extension SyncEngine: SyncEngineDelegate {
         options _: CKSyncEngine.FetchChangesOptions,
         syncEngine _: any SyncEngineProtocol
     ) async -> CKSyncEngine.FetchChangesOptions {
+        guard SyncEngine.isSyncEnabled else { return CKSyncEngine.FetchChangesOptions() }
         Logger.syncEngine.info("Next fetch by reason: \(reason)")
         let options = CKSyncEngine.FetchChangesOptions()
         return options
