@@ -188,6 +188,9 @@ public extension SyncEngine {
     func fetchChanges() async throws {
         guard SyncEngine.isSyncEnabled else { return }
 
+        let accountStatus = try await container.accountStatus()
+        guard accountStatus == .available else { return }
+
         var needDelay = false
         if _syncEngine == nil {
             initializeSyncEngine()
@@ -198,6 +201,54 @@ public extension SyncEngine {
             try await Task.sleep(nanoseconds: 1_000_000_000)
         }
         try await syncEngine.performingFetchChanges()
+    }
+
+    /// 调度上传队列
+    /// - Parameter immediateSendChanges: 是否立即发送变化，仅在 automaticallySync = false 有效
+    func scheduleUploadIfNeeded(_ immediateSendChanges: Bool = false) async throws {
+        try Task.checkCancellation()
+
+        guard SyncEngine.isSyncEnabled else { return }
+
+        let accountStatus = try await container.accountStatus()
+        guard accountStatus == .available else { return }
+
+        // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
+        guard let handle = try? storage.getHandle() else {
+            return
+        }
+
+        // 每次最多发送100条
+        let batchSize = 100
+        let objects = storage.pendingUploadList(batchSize: batchSize, handle: handle)
+        guard !objects.isEmpty else {
+            return
+        }
+
+        var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] = []
+
+        let deviceId = Storage.deviceId
+        /// CKSyncEngine 需要的是数据对应的ID。
+        /// UploadQueue 中是记录了所有的历史操作
+        /// 所以这里对于recordName 额外处理
+        for object in objects {
+            if case .delete = object.changes {
+                pendingRecordZoneChanges.append(.deleteRecord(CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID)))
+            } else {
+                let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
+                pendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: sentQueueId, zoneID: SyncEngine.zoneID)))
+            }
+        }
+
+        try Task.checkCancellation()
+
+        if !pendingRecordZoneChanges.isEmpty {
+            syncEngine.state.add(pendingRecordZoneChanges: pendingRecordZoneChanges)
+
+            if !automaticallySync, immediateSendChanges {
+                try await syncEngine.performingSendChanges()
+            }
+        }
     }
 
     /// 删除本地数据
@@ -286,54 +337,6 @@ private extension SyncEngine {
             try Task.checkCancellation()
 
             try await scheduleUploadIfNeeded()
-        }
-    }
-
-    /// 调度上传队列
-    /// - Parameter immediateSendChanges: 是否立即发送变化，仅在 automaticallySync = false 有效
-    func scheduleUploadIfNeeded(_ immediateSendChanges: Bool = false) async throws {
-        try Task.checkCancellation()
-
-        guard SyncEngine.isSyncEnabled else { return }
-
-        let accountStatus = try await container.accountStatus()
-        guard accountStatus == .available else { return }
-
-        // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
-        guard let handle = try? storage.getHandle() else {
-            return
-        }
-
-        // 每次最多发送100条
-        let batchSize = 100
-        let objects = storage.pendingUploadList(batchSize: batchSize, handle: handle)
-        guard !objects.isEmpty else {
-            return
-        }
-
-        var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] = []
-
-        let deviceId = Storage.deviceId
-        /// CKSyncEngine 需要的是数据对应的ID。
-        /// UploadQueue 中是记录了所有的历史操作
-        /// 所以这里对于recordName 额外处理
-        for object in objects {
-            if case .delete = object.changes {
-                pendingRecordZoneChanges.append(.deleteRecord(CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID)))
-            } else {
-                let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
-                pendingRecordZoneChanges.append(.saveRecord(CKRecord.ID(recordName: sentQueueId, zoneID: SyncEngine.zoneID)))
-            }
-        }
-
-        try Task.checkCancellation()
-
-        if !pendingRecordZoneChanges.isEmpty {
-            syncEngine.state.add(pendingRecordZoneChanges: pendingRecordZoneChanges)
-
-            if !automaticallySync, immediateSendChanges {
-                try await syncEngine.performingSendChanges()
-            }
         }
     }
 

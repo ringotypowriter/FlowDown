@@ -120,6 +120,9 @@ public class Storage {
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
             version = migration.toVersion
+            if version == .Version2, migration.requiresDataMigration {
+                hasPerformedFirstSync = false
+            }
         }
     }
 
