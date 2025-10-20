@@ -1724,6 +1724,16 @@
         }
       }
     },
+    "Delete iCloud Data" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除 iCloud 数据"
+          }
+        }
+      }
+    },
     "Delete Icon" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3127,6 +3137,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "食物 & 饮品"
+          }
+        }
+      }
+    },
+    "Force Pull from iCloud" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从 iCloud 中拉取数据"
           }
         }
       }
@@ -4992,6 +5012,16 @@
         }
       }
     },
+    "Overwrite local data with the latest content from iCloud." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 iCloud 中的数据覆盖本地数据。"
+          }
+        }
+      }
+    },
     "Pages that exceed the model’s context length will be ignored. Too many pages may increase network usage and slow down inference." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5451,6 +5481,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不论是否启用图片压缩，图片的 EXIF 信息都会被删除。这将删除包括拍摄日期、位置等信息。"
+          }
+        }
+      }
+    },
+    "Remove conversations and settings stored in iCloud." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除储存在 iCloud 中的数据。"
           }
         }
       }
