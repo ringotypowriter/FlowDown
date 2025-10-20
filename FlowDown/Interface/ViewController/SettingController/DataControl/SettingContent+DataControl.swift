@@ -79,6 +79,36 @@ extension SettingController.SettingContent {
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
+            let icloudDelete = ConfigurableObject(
+                icon: "icloud.slash",
+                title: String(localized: "Delete iCloud Data"),
+                explain: String(localized: "Remove conversations and settings stored in iCloud."),
+                ephemeralAnnotation: .action { [weak self] controller in
+                    guard let controller else { return }
+
+                    // MARK: TODO
+
+                    _ = self
+                }
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(icloudDelete)
+            stackView.addArrangedSubview(SeparatorView())
+
+            let icloudForcePull = ConfigurableObject(
+                icon: "icloud.and.arrow.down",
+                title: String(localized: "Force Pull from iCloud"),
+                explain: String(localized: "Overwrite local data with the latest content from iCloud."),
+                ephemeralAnnotation: .action { [weak self] controller in
+                    guard let controller else { return }
+
+                    // MARK: TODO
+
+                    _ = self
+                }
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(icloudForcePull)
+            stackView.addArrangedSubview(SeparatorView())
+
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
                     header: String(localized: "Database")
@@ -408,7 +438,7 @@ extension SettingController.SettingContent {
                                 title: String(localized: "Import Complete"),
                                 message: String(localized: "FlowDown will restart to apply the imported database.")
                             ) { context in
-                                context.addAction(title: String(localized: "OK")) {
+                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
                                     context.dispose {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                             exit(0)
@@ -423,7 +453,7 @@ extension SettingController.SettingContent {
                                 title: String(localized: "Error Occurred"),
                                 message: error.localizedDescription
                             ) { context in
-                                context.addAction(title: String(localized: "OK")) {
+                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
                                     context.dispose()
                                 }
                             }

@@ -40,7 +40,7 @@ enum Indicator {
         }
     }
 
-    typealias CompletionHandler = (_ dismissComplete: @escaping () -> Void) -> Void
+    typealias CompletionHandler = (_ dismissComplete: @escaping @MainActor () -> Void) -> Void
     typealias CompletionExecutor = (_ completionHandler: @escaping CompletionHandler) -> Void
     static func progress(
         title: String,
