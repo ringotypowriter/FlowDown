@@ -20,6 +20,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public var model_identifier: String = ""
     public var model_list_endpoint: String = ""
     public var creation: Date = .now
+    public var modified: Date = .now
+    public var removed: Bool = false
     public var endpoint: String = ""
     public var token: String = ""
     public var headers: [String: String] = [:] // additional headers
@@ -31,9 +33,6 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     // can be used when loading model from our server
     // present to user on the top of the editor page
     public var comment: String = ""
-
-    public var removed: Bool = false
-    public var modified: Date = .now
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = CloudModel
@@ -111,7 +110,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         objectId = try container.decodeIfPresent(String.self, forKey: .objectId) ?? UUID().uuidString
-        deviceId = try container.decode(String.self, forKey: .deviceId)
+        deviceId = try container.decodeIfPresent(String.self, forKey: .deviceId) ?? Storage.deviceId
         model_identifier = try container.decodeIfPresent(String.self, forKey: .model_identifier) ?? ""
         model_list_endpoint = try container.decodeIfPresent(String.self, forKey: .model_list_endpoint) ?? ""
         creation = try container.decodeIfPresent(Date.self, forKey: .creation) ?? Date()
