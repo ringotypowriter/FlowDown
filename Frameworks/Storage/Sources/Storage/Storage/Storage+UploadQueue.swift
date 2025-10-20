@@ -10,6 +10,22 @@ import Foundation
 import os.log
 import WCDBSwift
 
+private enum SyncPayloadCoder {
+    static let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.dataEncodingStrategy = .base64
+        return encoder
+    }()
+
+    static let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        decoder.dataDecodingStrategy = .base64
+        return decoder
+    }()
+}
+
 // MARK: - Sync
 
 struct FlowDownPayloadHeader {
@@ -72,9 +88,7 @@ struct FlowDownPayloadHeader {
 
 extension Storage {
     static func encodePayloadSyncable(_ value: some Codable) throws -> Data {
-        let encoder = PropertyListEncoder()
-        encoder.outputFormat = .binary
-        let plistData = try encoder.encode(value)
+        let plistData = try SyncPayloadCoder.encoder.encode(value)
 
         var header = FlowDownPayloadHeader(compressionAlgorithm: FlowDownPayloadHeader.Algorithm.none)
         if plistData.count >= FlowDownPayloadHeader.CompressionThreshold, let compressed = plistData.compressed(using: COMPRESSION_LZFSE) {
@@ -109,8 +123,7 @@ extension Storage {
             plistData = payload
         }
 
-        let decoder = PropertyListDecoder()
-        return try decoder.decode(T.self, from: plistData)
+        return try SyncPayloadCoder.decoder.decode(T.self, from: plistData)
     }
 }
 

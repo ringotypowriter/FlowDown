@@ -12,33 +12,6 @@
 		501C98E12D3E52CE00CD8E11 /* RichEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 501C98E02D3E52CE00CD8E11 /* RichEditor */; };
 		502B98062D535F25003200B6 /* Emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 502B98052D535F25003200B6 /* Emoji.json */; };
 		502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 502BCBD02D43DB2B00500180 /* ConfigurableKit */; };
-		50343FCD2DA2515C00CC6820 /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC02DA2515C00CC6820 /* Respring */; };
-		50343FCF2DA2515C00CC6820 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB72DA2515C00CC6820 /* Digger */; };
-		50343FD02DA2515C00CC6820 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAB2DA2515C00CC6820 /* Storage */; };
-		50343FD12DA2515C00CC6820 /* RichEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAA2DA2515C00CC6820 /* RichEditor */; };
-		50343FD22DA2515C00CC6820 /* SPIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB82DA2515C00CC6820 /* SPIndicator */; };
-		50343FD32DA2515C00CC6820 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB42DA2515C00CC6820 /* MLXLMCommon */; };
-		50343FD42DA2515C00CC6820 /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC22DA2515C00CC6820 /* GPTEncoder */; };
-		50343FD52DA2515C00CC6820 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB02DA2515C00CC6820 /* MLX */; };
-		50343FD62DA2515C00CC6820 /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBE2DA2515C00CC6820 /* ChatClientKit */; };
-		50343FD72DA2515C00CC6820 /* SwifterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA42DA2515C00CC6820 /* SwifterSwift */; };
-		50343FD82DA2515C00CC6820 /* GlyphixTextFx in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC62DA2515C00CC6820 /* GlyphixTextFx */; };
-		50343FD92DA2515C00CC6820 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBB2DA2515C00CC6820 /* ZIPFoundation */; };
-		50343FDA2DA2515C00CC6820 /* AlertController in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAC2DA2515C00CC6820 /* AlertController */; };
-		50343FDB2DA2515C00CC6820 /* ScrubberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBF2DA2515C00CC6820 /* ScrubberKit */; };
-		50343FDC2DA2515C00CC6820 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB52DA2515C00CC6820 /* Transformers */; };
-		50343FDD2DA2515C00CC6820 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAF2DA2515C00CC6820 /* ChidoriMenu */; };
-		50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA72DA2515C00CC6820 /* BetterCodable */; };
-		50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FAD2DA2515C00CC6820 /* ConfigurableKit */; };
-		50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FB22DA2515C00CC6820 /* MLXLLM */; };
-		50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FBA2DA2515C00CC6820 /* MLXVLM */; };
-		50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */; };
-		50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA62DA2515C00CC6820 /* MarkdownView */; };
-		50343FE52DA2515C00CC6820 /* RunestoneEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FC42DA2515C00CC6820 /* RunestoneEditor */; };
-		50343FE62DA2515C00CC6820 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50343FA22DA2515C00CC6820 /* SnapKit */; };
-		50343FE82DA2515C00CC6820 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
-		50343FE92DA2515C00CC6820 /* PrivacyPolicy.md in Resources */ = {isa = PBXBuildFile; fileRef = 505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */; };
-		50343FEA2DA2515C00CC6820 /* Emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 502B98052D535F25003200B6 /* Emoji.json */; };
 		50383CEA2D2E1E0D00426941 /* BetterCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 50383CE92D2E1E0D00426941 /* BetterCodable */; };
 		5050E8D82D466E5E00634B81 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 5050E8D72D466E5E00634B81 /* ChidoriMenu */; };
 		5050EACF2D46D41400634B81 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EACE2D46D41400634B81 /* MLX */; };
@@ -47,12 +20,10 @@
 		5050EB7C2D4789A300634B81 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB7B2D4789A300634B81 /* Transformers */; };
 		505535BC2D72F38900F54B28 /* AlignedCollectionViewFlowLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */; };
 		505535C12D72F7EF00F54B28 /* PrivacyPolicy.md in Resources */ = {isa = PBXBuildFile; fileRef = 505535C02D72F7EF00F54B28 /* PrivacyPolicy.md */; };
-		505742452E1B8B2A00A26090 /* DpkgVersion in Frameworks */ = {isa = PBXBuildFile; productRef = 505742442E1B8B2A00A26090 /* DpkgVersion */; };
 		505742472E1B8B8100A26090 /* DpkgVersion in Frameworks */ = {isa = PBXBuildFile; productRef = 505742462E1B8B8100A26090 /* DpkgVersion */; };
 		505BC6F92D42A73600894BB0 /* AlertController in Frameworks */ = {isa = PBXBuildFile; productRef = 505BC6F82D42A73600894BB0 /* AlertController */; };
 		505FC6192D4945E500F4CB17 /* SPIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 505FC6182D4945E500F4CB17 /* SPIndicator */; };
 		505FC65B2D4A754F00F4CB17 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 505FC65A2D4A754F00F4CB17 /* MLXVLM */; };
-		506C2E762DA252D800E370BE /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B5146A2D2305F20092284C /* main.swift */; };
 		5078496A2D285B5900B1F430 /* MarkdownView in Frameworks */ = {isa = PBXBuildFile; productRef = 507849692D285B5900B1F430 /* MarkdownView */; };
 		5081A0142D6DBBBA0079ECBE /* RunestoneEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 5081A0132D6DBBBA0079ECBE /* RunestoneEditor */; };
 		50B492942D4F609E00F4D2B3 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 50B492932D4F609E00F4D2B3 /* ZIPFoundation */; };
@@ -64,11 +35,8 @@
 		50CB4E752DE30A57009C58E1 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50CB4E742DE30A57009C58E1 /* Digger */; };
 		50D2848C2D72E8EE0048CE31 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
 		50DDB1712DDF16F200351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1702DDF16F200351E46 /* ListViewKit */; };
-		50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1722DDF170000351E46 /* ListViewKit */; };
 		50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50E3FA082D6D7FB8000405BD /* GPTEncoder */; };
 		50FBFC6C2DEA2E5400098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6B2DEA2E5400098EC4 /* XMLCoder */; };
-		50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */; };
-		86B4FDC02E1190AD00C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDBF2E1190AD00C6DC8F /* MCP */; };
 		86B4FDC22E1190C000C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDC12E1190C000C6DC8F /* MCP */; };
 		ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED16359B2D5C5BDA0081BD0B /* ChatClientKit */; };
 		EDF9A13E2D67788A001D183C /* Respring in Frameworks */ = {isa = PBXBuildFile; productRef = EDF9A13D2D67788A001D183C /* Respring */; };
@@ -76,7 +44,6 @@
 
 /* Begin PBXFileReference section */
 		502B98052D535F25003200B6 /* Emoji.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Emoji.json; sourceTree = "<group>"; };
-		50343FF02DA2515C00CC6820 /* FlowDown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlowDown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		503498BD2D23053D004672BD /* FlowDown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlowDown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		505535BF2D72F7EF00F54B28 /* en */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = en; path = en.lproj/PrivacyPolicy.md; sourceTree = "<group>"; };
 		505535C22D72F7F200F54B28 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "zh-Hans"; path = "zh-Hans.lproj/PrivacyPolicy.md"; sourceTree = "<group>"; };
@@ -95,25 +62,17 @@
 			);
 			target = 503498BC2D23053D004672BD /* FlowDown */;
 		};
-		506C2F762DA2565D00E370BE /* Exceptions for "Resources" folder in "FlowDown-Catalyst" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"InfoPlist/Info-Catalyst.plist",
-				"InfoPlist/Info-iOS.plist",
-			);
-			target = 50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3C1FC7A02EA5F3D800188CA2 /* DerivedSources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DerivedSources;
+			sourceTree = "<group>";
+		};
 		3C2409992E97803B0055F162 /* Configuration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Configuration;
-			sourceTree = "<group>";
-		};
-		4B08A1AD2EA37A1F005B5ADF /* DerivedSources */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DerivedSources;
 			sourceTree = "<group>";
 		};
 		5050EB812D478A5800634B81 /* Backend */ = {
@@ -130,7 +89,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				506C2E872DA2547F00E370BE /* Exceptions for "Resources" folder in "FlowDown" target */,
-				506C2F762DA2565D00E370BE /* Exceptions for "Resources" folder in "FlowDown-Catalyst" target */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -153,41 +111,6 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		50343FCC2DA2515C00CC6820 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				50343FCD2DA2515C00CC6820 /* Respring in Frameworks */,
-				50343FCF2DA2515C00CC6820 /* Digger in Frameworks */,
-				50343FD02DA2515C00CC6820 /* Storage in Frameworks */,
-				50343FD12DA2515C00CC6820 /* RichEditor in Frameworks */,
-				50343FD22DA2515C00CC6820 /* SPIndicator in Frameworks */,
-				50343FD32DA2515C00CC6820 /* MLXLMCommon in Frameworks */,
-				50343FD42DA2515C00CC6820 /* GPTEncoder in Frameworks */,
-				50343FD52DA2515C00CC6820 /* MLX in Frameworks */,
-				50343FD62DA2515C00CC6820 /* ChatClientKit in Frameworks */,
-				50343FD72DA2515C00CC6820 /* SwifterSwift in Frameworks */,
-				50343FD82DA2515C00CC6820 /* GlyphixTextFx in Frameworks */,
-				50343FD92DA2515C00CC6820 /* ZIPFoundation in Frameworks */,
-				50343FDA2DA2515C00CC6820 /* AlertController in Frameworks */,
-				50343FDB2DA2515C00CC6820 /* ScrubberKit in Frameworks */,
-				50343FDC2DA2515C00CC6820 /* Transformers in Frameworks */,
-				50343FDD2DA2515C00CC6820 /* ChidoriMenu in Frameworks */,
-				50343FDE2DA2515C00CC6820 /* BetterCodable in Frameworks */,
-				50343FDF2DA2515C00CC6820 /* ConfigurableKit in Frameworks */,
-				86B4FDC02E1190AD00C6DC8F /* MCP in Frameworks */,
-				50343FE02DA2515C00CC6820 /* MLXLLM in Frameworks */,
-				50343FE22DA2515C00CC6820 /* MLXVLM in Frameworks */,
-				50FBFC6E2DEA2E5D00098EC4 /* XMLCoder in Frameworks */,
-				50343FE32DA2515C00CC6820 /* AlignedCollectionViewFlowLayout in Frameworks */,
-				505742452E1B8B2A00A26090 /* DpkgVersion in Frameworks */,
-				50343FE42DA2515C00CC6820 /* MarkdownView in Frameworks */,
-				50DDB1732DDF170000351E46 /* ListViewKit in Frameworks */,
-				50343FE52DA2515C00CC6820 /* RunestoneEditor in Frameworks */,
-				50343FE62DA2515C00CC6820 /* SnapKit in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		503498BA2D23053D004672BD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -259,7 +182,6 @@
 			isa = PBXGroup;
 			children = (
 				503498BD2D23053D004672BD /* FlowDown.app */,
-				50343FF02DA2515C00CC6820 /* FlowDown.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -269,7 +191,7 @@
 			children = (
 				3C2409992E97803B0055F162 /* Configuration */,
 				50B5146A2D2305F20092284C /* main.swift */,
-				4B08A1AD2EA37A1F005B5ADF /* DerivedSources */,
+				3C1FC7A02EA5F3D800188CA2 /* DerivedSources */,
 				50B514652D2305C00092284C /* Application */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514922D2316700092284C /* Interface */,
@@ -284,63 +206,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 50343FED2DA2515C00CC6820 /* Build configuration list for PBXNativeTarget "FlowDown-Catalyst" */;
-			buildPhases = (
-				5082CB482E1E656F0024A0BC /* Swift Format */,
-				50343FCA2DA2515C00CC6820 /* Sources */,
-				50343FCC2DA2515C00CC6820 /* Frameworks */,
-				50343FE72DA2515C00CC6820 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				4B08A1AD2EA37A1F005B5ADF /* DerivedSources */,
-				5050EB812D478A5800634B81 /* Backend */,
-				50B514652D2305C00092284C /* Application */,
-				50B514682D2305E30092284C /* Resources */,
-				50B514732D23133F0092284C /* Extension */,
-				50B514922D2316700092284C /* Interface */,
-				50D148142D71F292008E9F03 /* PlatformSupport */,
-			);
-			name = "FlowDown-Catalyst";
-			packageProductDependencies = (
-				50343FA22DA2515C00CC6820 /* SnapKit */,
-				50343FA42DA2515C00CC6820 /* SwifterSwift */,
-				50343FA62DA2515C00CC6820 /* MarkdownView */,
-				50343FA72DA2515C00CC6820 /* BetterCodable */,
-				50343FAA2DA2515C00CC6820 /* RichEditor */,
-				50343FAB2DA2515C00CC6820 /* Storage */,
-				50343FAC2DA2515C00CC6820 /* AlertController */,
-				50343FAD2DA2515C00CC6820 /* ConfigurableKit */,
-				50343FAF2DA2515C00CC6820 /* ChidoriMenu */,
-				50343FB02DA2515C00CC6820 /* MLX */,
-				50343FB22DA2515C00CC6820 /* MLXLLM */,
-				50343FB42DA2515C00CC6820 /* MLXLMCommon */,
-				50343FB52DA2515C00CC6820 /* Transformers */,
-				50343FB72DA2515C00CC6820 /* Digger */,
-				50343FB82DA2515C00CC6820 /* SPIndicator */,
-				50343FBA2DA2515C00CC6820 /* MLXVLM */,
-				50343FBB2DA2515C00CC6820 /* ZIPFoundation */,
-				50343FBE2DA2515C00CC6820 /* ChatClientKit */,
-				50343FBF2DA2515C00CC6820 /* ScrubberKit */,
-				50343FC02DA2515C00CC6820 /* Respring */,
-				50343FC22DA2515C00CC6820 /* GPTEncoder */,
-				50343FC42DA2515C00CC6820 /* RunestoneEditor */,
-				50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */,
-				50343FC62DA2515C00CC6820 /* GlyphixTextFx */,
-				50DDB1722DDF170000351E46 /* ListViewKit */,
-				50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */,
-				86B4FDBF2E1190AD00C6DC8F /* MCP */,
-				505742442E1B8B2A00A26090 /* DpkgVersion */,
-			);
-			productName = FlowDown;
-			productReference = 50343FF02DA2515C00CC6820 /* FlowDown.app */;
-			productType = "com.apple.product-type.application";
-		};
 		503498BC2D23053D004672BD /* FlowDown */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 503498D02D23053E004672BD /* Build configuration list for PBXNativeTarget "FlowDown" */;
@@ -355,7 +220,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				4B08A1AD2EA37A1F005B5ADF /* DerivedSources */,
+				3C1FC7A02EA5F3D800188CA2 /* DerivedSources */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514652D2305C00092284C /* Application */,
 				50B514682D2305E30092284C /* Resources */,
@@ -452,22 +317,11 @@
 			projectRoot = "";
 			targets = (
 				503498BC2D23053D004672BD /* FlowDown */,
-				50343FA12DA2515C00CC6820 /* FlowDown-Catalyst */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		50343FE72DA2515C00CC6820 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				50343FE82DA2515C00CC6820 /* OpenSourceLicenses.md in Resources */,
-				50343FE92DA2515C00CC6820 /* PrivacyPolicy.md in Resources */,
-				50343FEA2DA2515C00CC6820 /* Emoji.json in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		503498BB2D23053D004672BD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -481,25 +335,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5082CB482E1E656F0024A0BC /* Swift Format */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Swift Format";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/zsh;
-			shellScript = "PATH=$PATH:/opt/homebrew/bin/\nswiftformat . --swiftversion 6.0\n";
-		};
 		5082D04F2E1E66FB0024A0BC /* Swift Format */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -522,14 +357,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		50343FCA2DA2515C00CC6820 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				506C2E762DA252D800E370BE /* main.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		503498B92D23053D004672BD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -553,146 +380,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		50343FEE2DA2515C00CC6820 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 3C2409992E97803B0055F162 /* Configuration */;
-			baseConfigurationReferenceRelativePath = BaseConfig.xcconfig;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				AUTOMATION_APPLE_EVENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
-				CODE_SIGN_IDENTITY = "$(inherited)";
-				CODE_SIGN_STYLE = "$(inherited)";
-				CURRENT_PROJECT_VERSION = 409;
-				DEVELOPMENT_TEAM = "$(inherited)";
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_ENHANCED_SECURITY = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_POINTER_AUTHENTICATION = NO;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = YES;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = YES;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
-				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				ENABLE_USER_SELECTED_FILES = readwrite;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-Catalyst.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
-				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 3.5;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
-				PRODUCT_NAME = FlowDown;
-				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
-				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
-				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
-				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
-				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
-				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
-				SWIFT_INCLUDE_PATHS = "$(DERIVED_SOURCES_DIR)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		50343FEF2DA2515C00CC6820 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 3C2409992E97803B0055F162 /* Configuration */;
-			baseConfigurationReferenceRelativePath = BaseConfig.xcconfig;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				AUTOMATION_APPLE_EVENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-Catalyst.entitlements";
-				CODE_SIGN_IDENTITY = "$(inherited)";
-				CODE_SIGN_STYLE = "$(inherited)";
-				CURRENT_PROJECT_VERSION = 409;
-				DEVELOPMENT_TEAM = "$(inherited)";
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_ENHANCED_SECURITY = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_POINTER_AUTHENTICATION = NO;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = YES;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = YES;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
-				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				ENABLE_USER_SELECTED_FILES = readwrite;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-Catalyst.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
-				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "FlowDown requires calendar permissions to access your schedule information for features like suggesting available meeting times, scheduling appointments with contacts, and sending reminders for upcoming events. For example, when you ask \"Find a time for a team meeting next week,\" FlowDown will check your calendar to identify free slots. Your calendar data is only processed temporarily while answering your queries and is not stored by FlowDown. If you're using a cloud-based AI model, this data may be sent to your chosen service provider during processing.";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 FlowDown Team. All rights reserved.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FlowDown requires LAN access for interact with local service providers. We do not collect any information from your LAN";
-				INFOPLIST_KEY_NSLocationUsageDescription = "FlowDown requires location permissions to provide location-based assistance when you request it. For example, when you ask \"Find coffee shops near me\" or \"How long will it take to get to my next meeting,\" FlowDown will access your current location to provide relevant recommendations or travel times. Your location is only accessed when needed for specific requests and is not stored by FlowDown. This data may be sent to your chosen service provider if using a cloud-based AI model.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FlowDown requires this permission to save image for you. Your data will be saved locally.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 3.5;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
-				PRODUCT_NAME = FlowDown;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
-				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
-				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
-				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
-				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
-				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
-				SWIFT_INCLUDE_PATHS = "$(DERIVED_SOURCES_DIR)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		503498D12D23053E004672BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = 3C2409992E97803B0055F162 /* Configuration */;
@@ -701,7 +388,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-iOS.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(CODE_SIGN_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "$(inherited)";
 				CODE_SIGN_STYLE = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 409;
@@ -718,7 +405,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
+				INFOPLIST_FILE = "$(INFOPLIST_FILE)";
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -744,7 +431,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -763,7 +450,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "FlowDown/Resources/Entitlements/Entitlements-iOS.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(CODE_SIGN_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "$(inherited)";
 				CODE_SIGN_STYLE = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 409;
@@ -780,7 +467,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "FlowDown/Resources/InfoPlist/Info-iOS.plist";
+				INFOPLIST_FILE = "$(INFOPLIST_FILE)";
 				INFOPLIST_KEY_CFBundleDisplayName = FlowDown;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -807,7 +494,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -949,15 +636,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		50343FED2DA2515C00CC6820 /* Build configuration list for PBXNativeTarget "FlowDown-Catalyst" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				50343FEE2DA2515C00CC6820 /* Debug */,
-				50343FEF2DA2515C00CC6820 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		503498B82D23053D004672BD /* Build configuration list for PBXProject "FlowDown" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1009,102 +687,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
-			};
-		};
-		50343FA32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.1;
-			};
-		};
-		50343FA52DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SwifterSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwifterSwift/SwifterSwift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.0.0;
-			};
-		};
-		50343FA82DA2515C00CC6820 /* XCRemoteSwiftPackageReference "BetterCodable" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/marksands/BetterCodable";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.0;
-			};
-		};
-		50343FAE2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ConfigurableKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Lakr233/ConfigurableKit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.3;
-			};
-		};
-		50343FB12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ml-explore/mlx-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.21.3;
-			};
-		};
-		50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		50343FB62DA2515C00CC6820 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/huggingface/swift-transformers";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.15;
-			};
-		};
-		50343FB92DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ivanvorobei/SPIndicator";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.6.5;
-			};
-		};
-		50343FBC2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.19;
-			};
-		};
-		50343FC12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "Respring" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ktiays/Respring";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		50343FC32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GPTEncoder" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/alfianlosari/GPTEncoder";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.4;
-			};
-		};
-		50343FC72DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ktiays/GlyphixTextFx/";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.1;
 			};
 		};
 		50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */ = {
@@ -1264,116 +846,6 @@
 			package = 502BCBCE2D43DADD00500180 /* XCRemoteSwiftPackageReference "ConfigurableKit" */;
 			productName = ConfigurableKit;
 		};
-		50343FA22DA2515C00CC6820 /* SnapKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FA32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
-		};
-		50343FA42DA2515C00CC6820 /* SwifterSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FA52DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SwifterSwift" */;
-			productName = SwifterSwift;
-		};
-		50343FA62DA2515C00CC6820 /* MarkdownView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MarkdownView;
-		};
-		50343FA72DA2515C00CC6820 /* BetterCodable */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FA82DA2515C00CC6820 /* XCRemoteSwiftPackageReference "BetterCodable" */;
-			productName = BetterCodable;
-		};
-		50343FAA2DA2515C00CC6820 /* RichEditor */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RichEditor;
-		};
-		50343FAB2DA2515C00CC6820 /* Storage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Storage;
-		};
-		50343FAC2DA2515C00CC6820 /* AlertController */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AlertController;
-		};
-		50343FAD2DA2515C00CC6820 /* ConfigurableKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FAE2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ConfigurableKit" */;
-			productName = ConfigurableKit;
-		};
-		50343FAF2DA2515C00CC6820 /* ChidoriMenu */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ChidoriMenu;
-		};
-		50343FB02DA2515C00CC6820 /* MLX */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FB12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift" */;
-			productName = MLX;
-		};
-		50343FB22DA2515C00CC6820 /* MLXLLM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXLLM;
-		};
-		50343FB42DA2515C00CC6820 /* MLXLMCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXLMCommon;
-		};
-		50343FB52DA2515C00CC6820 /* Transformers */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FB62DA2515C00CC6820 /* XCRemoteSwiftPackageReference "swift-transformers" */;
-			productName = Transformers;
-		};
-		50343FB72DA2515C00CC6820 /* Digger */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Digger;
-		};
-		50343FB82DA2515C00CC6820 /* SPIndicator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FB92DA2515C00CC6820 /* XCRemoteSwiftPackageReference "SPIndicator" */;
-			productName = SPIndicator;
-		};
-		50343FBA2DA2515C00CC6820 /* MLXVLM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FB32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXVLM;
-		};
-		50343FBB2DA2515C00CC6820 /* ZIPFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FBC2DA2515C00CC6820 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
-			productName = ZIPFoundation;
-		};
-		50343FBE2DA2515C00CC6820 /* ChatClientKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ChatClientKit;
-		};
-		50343FBF2DA2515C00CC6820 /* ScrubberKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ScrubberKit;
-		};
-		50343FC02DA2515C00CC6820 /* Respring */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FC12DA2515C00CC6820 /* XCRemoteSwiftPackageReference "Respring" */;
-			productName = Respring;
-		};
-		50343FC22DA2515C00CC6820 /* GPTEncoder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FC32DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GPTEncoder" */;
-			productName = GPTEncoder;
-		};
-		50343FC42DA2515C00CC6820 /* RunestoneEditor */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RunestoneEditor;
-		};
-		50343FC52DA2515C00CC6820 /* AlignedCollectionViewFlowLayout */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AlignedCollectionViewFlowLayout;
-		};
-		50343FC62DA2515C00CC6820 /* GlyphixTextFx */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50343FC72DA2515C00CC6820 /* XCRemoteSwiftPackageReference "GlyphixTextFx" */;
-			productName = GlyphixTextFx;
-		};
 		50383CE92D2E1E0D00426941 /* BetterCodable */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */;
@@ -1406,11 +878,6 @@
 		505535BB2D72F38900F54B28 /* AlignedCollectionViewFlowLayout */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AlignedCollectionViewFlowLayout;
-		};
-		505742442E1B8B2A00A26090 /* DpkgVersion */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */;
-			productName = DpkgVersion;
 		};
 		505742462E1B8B8100A26090 /* DpkgVersion */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1472,11 +939,6 @@
 			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */;
 			productName = ListViewKit;
 		};
-		50DDB1722DDF170000351E46 /* ListViewKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */;
-			productName = ListViewKit;
-		};
 		50E3FA082D6D7FB8000405BD /* GPTEncoder */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */;
@@ -1486,16 +948,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
-		};
-		50FBFC6D2DEA2E5D00098EC4 /* XMLCoder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */;
-			productName = XMLCoder;
-		};
-		86B4FDBF2E1190AD00C6DC8F /* MCP */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */;
-			productName = MCP;
 		};
 		86B4FDC12E1190C000C6DC8F /* MCP */ = {
 			isa = XCSwiftPackageProductDependency;
