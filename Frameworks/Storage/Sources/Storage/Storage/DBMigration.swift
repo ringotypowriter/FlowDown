@@ -190,6 +190,7 @@ struct MigrationV1ToV2: DBMigration {
             update.model_list_endpoint = cloudModel.model_list_endpoint
             update.creation = cloudModel.creation
             update.modified = cloudModel.creation
+            update.endpoint = cloudModel.endpoint
             update.token = cloudModel.token
             update.headers = cloudModel.headers
             update.capabilities = cloudModel.capabilities
