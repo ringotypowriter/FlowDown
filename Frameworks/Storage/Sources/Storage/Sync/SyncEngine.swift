@@ -550,7 +550,6 @@ private extension SyncEngine {
             return
         }
 
-//        var newPendingRecordZoneChanges = [CKSyncEngine.PendingRecordZoneChange]()
         var newPendingDatabaseChanges = [CKSyncEngine.PendingDatabaseChange]()
         var removePendingRecordZoneChanges = [CKSyncEngine.PendingRecordZoneChange]()
         let deviceId = Storage.deviceId
@@ -580,17 +579,32 @@ private extension SyncEngine {
             let failedRecord = failedRecordSave.record
             switch failedRecordSave.error.code {
             case .serverRecordChanged:
-//                guard let serverRecord = failedRecordSave.error.serverRecord else {
-//                    Logger.syncEngine.error("No server record for conflict \(failedRecordSave.error)")
-//                    continue
-//                }
-                // 处理冲突
                 guard let sentQueueId = failedRecord.sentQueueId, let (localQueueId, _, _) = SyncEngine.parseCKRecordSentQueueId(sentQueueId) else { continue }
+
+                guard let serverRecord = failedRecordSave.error.serverRecord else {
+                    Logger.syncEngine.error("No server record for conflict \(failedRecordSave.error)")
+
+                    pendingUploadChangeStates.append((localQueueId, .failed))
+                    continue
+                }
+
+                // 处理冲突
+                try? storage.syncMetadataUpdate([SyncMetadata(record: serverRecord)], handle: handle)
                 pendingUploadChangeStates.append((localQueueId, .failed))
 
             case .zoneNotFound:
                 let zone = CKRecordZone(zoneID: failedRecord.recordID.zoneID)
-                newPendingDatabaseChanges.append(.saveZone(zone))
+                if failedRecordSave.error.userInfo[CKErrorUserDidResetEncryptedDataKey] != nil {
+                    // CloudKit is unable to decrypt previously encrypted data. This occurs when a user
+                    // resets their iCloud Keychain and thus deletes the key material previously used
+                    // to encrypt and decrypt their encrypted fields stored via CloudKit.
+                    // In this case, it is recommended to delete the associated zone and re-upload any
+                    // locally cached data, which will be encrypted with the new key.
+
+                    newPendingDatabaseChanges.append(.deleteZone(zone.zoneID))
+                } else {
+                    newPendingDatabaseChanges.append(.saveZone(zone))
+                }
 
                 guard let sentQueueId = failedRecord.sentQueueId, let (localQueueId, _, _) = SyncEngine.parseCKRecordSentQueueId(sentQueueId) else { continue }
                 pendingUploadChangeStates.append((localQueueId, .failed))
@@ -632,7 +646,6 @@ private extension SyncEngine {
 
         syncEngine.state.remove(pendingRecordZoneChanges: removePendingRecordZoneChanges)
         syncEngine.state.add(pendingDatabaseChanges: newPendingDatabaseChanges)
-//        syncEngine.state.add(pendingRecordZoneChanges: newPendingRecordZoneChanges)
 
         // 调度下一批
         try? await scheduleUploadIfNeeded(false)
