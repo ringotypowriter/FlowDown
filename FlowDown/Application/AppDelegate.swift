@@ -63,7 +63,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 if isSyncEnabled {
                     try await syncEngine.fetchChanges()
-                    try await syncEngine.scheduleUploadIfNeeded()
                 }
             }
         }

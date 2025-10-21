@@ -141,11 +141,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillResignActive(_: UIScene) {}
 
-    func sceneWillEnterForeground(_: UIScene) {
-        Task {
-            try await syncEngine.scheduleUploadIfNeeded()
-        }
-    }
+    func sceneWillEnterForeground(_: UIScene) {}
 
     func sceneDidEnterBackground(_: UIScene) {}
 }

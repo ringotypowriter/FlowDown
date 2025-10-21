@@ -305,7 +305,7 @@ package extension Storage {
     /// - Parameters:
     ///   - deleting: 待删除集合
     ///   - handle: 数据库句柄，传入 nil 时使用主句柄
-    func pendingUploadDequeue(by deleting: [(queueId: UploadQueue.ID, objectId: String)], handle: Handle? = nil) throws {
+    func pendingUploadDequeue(by deleting: [(queueId: UploadQueue.ID, objectId: String, tableName: String)], handle: Handle? = nil) throws {
         guard !deleting.isEmpty else {
             return
         }
@@ -322,6 +322,7 @@ package extension Storage {
                     ],
                     where: UploadQueue.Properties.id <= item.queueId
                         && UploadQueue.Properties.objectId == item.objectId
+                        && UploadQueue.Properties.tableName == item.tableName
                 )
             }
         }
@@ -456,7 +457,7 @@ package extension Storage {
         }
     }
 
-    /// 查询状态为pending的指定队列ID集合
+    /// 查询的指定队列ID集合, state != finish && failCount < 100
     /// - Parameters:
     ///   - queueIds: 队列ID
     ///   - handle: 数据库句柄，传入 nil 时使用主句柄
@@ -472,7 +473,7 @@ package extension Storage {
 
         select.where(
             UploadQueue.Properties.id.in(queueIds)
-                && UploadQueue.Properties.state == UploadQueue.State.pending
+                && UploadQueue.Properties.state != UploadQueue.State.finish
                 && UploadQueue.Properties.failCount < 100
         )
         .order(by: [
@@ -502,7 +503,8 @@ package extension Storage {
                 Memory.self,
             ]
 
-            var startId: Int64 = -1
+            let row = try $0.getRow(on: UploadQueue.Properties.id.max(), fromTable: UploadQueue.tableName)
+            var startId = row[0].int64Value
             for table in tables {
                 startId = try firstMigrationUploadQueue(table: table, handle: $0, startId: startId + 1)
             }

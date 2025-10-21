@@ -13,6 +13,7 @@ package extension CKRecord.FieldKey {
     static let createByDeviceId = "createByDeviceId"
     static let lastModifiedByDeviceId = "lastModifiedByDeviceId"
     static let payload = "payload"
+    static let lastModifiedMilliseconds = "lastModifiedMilliseconds"
 }
 
 package extension CKRecord {
@@ -37,6 +38,12 @@ package extension CKRecord {
     var lastModifiedByDeviceId: String? {
         get { self[.lastModifiedByDeviceId] as? String }
         set { self[.lastModifiedByDeviceId] = newValue }
+    }
+
+    /// 记录最后一次修改时间戳，避免直接使用 Date 比较有精度问题
+    var lastModifiedMilliseconds: Int64 {
+        get { self[.lastModifiedMilliseconds] as? Int64 ?? 0 }
+        set { self[.lastModifiedMilliseconds] = newValue }
     }
 }
 
