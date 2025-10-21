@@ -29,12 +29,6 @@
     },
     "%d servers imported successfully, %d failed." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$d servers imported successfully, %2$d failed."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -45,12 +39,6 @@
     },
     "%d templates imported successfully, %d failed." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$d templates imported successfully, %2$d failed."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1354,12 +1342,6 @@
     },
     "Coordinates: %@, %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Coordinates: %1$@, %2$@"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1610,12 +1592,6 @@
     },
     "Database Export" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Database Export"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1735,7 +1711,14 @@
       }
     },
     "Delete iCloud Data ..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除 iCloud 数据..."
+          }
+        }
+      }
     },
     "Delete Icon" : {
       "localizations" : {
@@ -1899,12 +1882,6 @@
     },
     "Disable" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disable"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1915,12 +1892,6 @@
     },
     "Disable iCloud Sync" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disable iCloud Sync"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1941,12 +1912,6 @@
     },
     "Disabling sync will stop new updates from being shared. Data already synced to iCloud will remain available on other devices." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disabling sync will stop new updates from being shared. Data already synced to iCloud will remain available on other devices."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2340,12 +2305,6 @@
     },
     "Enable iCloud Sync" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enable iCloud Sync"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3109,12 +3068,6 @@
     },
     "FlowDown will restart to apply the imported database." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FlowDown will restart to apply the imported database."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3367,12 +3320,6 @@
     },
     "iCloud Sync" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iCloud Sync"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3393,12 +3340,6 @@
     },
     "Identifying an image: %lld/%lld" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Identifying an image: %1$lld/%2$lld"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3479,12 +3420,6 @@
     },
     "Import Complete" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import Complete"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3495,12 +3430,6 @@
     },
     "Import Database" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import Database"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3571,12 +3500,6 @@
     },
     "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3617,12 +3540,6 @@
     },
     "Importing..." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importing..."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3884,12 +3801,6 @@
     },
     "Keep Enabled" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep Enabled"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4640,12 +4551,6 @@
     },
     "No events found between %@ and %@." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "No events found between %1$@ and %2$@."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5389,7 +5294,14 @@
       }
     },
     "Pull from iCloud ..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从 iCloud 拉取..."
+          }
+        }
+      }
     },
     "Query Calendar" : {
       "localizations" : {
@@ -5523,12 +5435,6 @@
     },
     "Replace all local data with a previous database export." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Replace all local data with a previous database export."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6203,12 +6109,6 @@
     },
     "System is providing you up to date information about current query:\n\nModel/Your Name: %@\nCurrent Date: %@\nCurrent User Locale: %@\n\nPlease use up-to-date information and ensure compliance with the previously provided guidelines." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "System is providing you up to date information about current query:\n\nModel/Your Name: %1$@\nCurrent Date: %2$@\nCurrent User Locale: %3$@\n\nPlease use up-to-date information and ensure compliance with the previously provided guidelines."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6359,12 +6259,6 @@
     },
     "The AI assistant suggests opening this URL:\n\n%@\n\nReason: %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The AI assistant suggests opening this URL:\n\n%1$@\n\nReason: %2$@"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6475,12 +6369,6 @@
     },
     "The model wants to execute '%@' from %@. This tool can access external resources.\n\nDescription: %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The model wants to execute '%1$@' from %2$@. This tool can access external resources.\n\nDescription: %3$@"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6973,12 +6861,6 @@
     },
     "Turn on to sync conversations and cloud model settings with iCloud across devices." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn on to sync conversations and cloud model settings with iCloud across devices."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6989,12 +6871,6 @@
     },
     "Turning off sync stops sharing new changes between devices. Data already synced will remain available in iCloud." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turning off sync stops sharing new changes between devices. Data already synced will remain available in iCloud."
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7565,12 +7441,6 @@
     },
     "Version %@ (%@)" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Version %1$@ (%2$@)"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7781,12 +7651,6 @@
     },
     "Web Content from: %@\nTitle: %@\n\n%@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Web Content from: %1$@\nTitle: %2$@\n\n%3$@"
-          }
-        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",

@@ -65,11 +65,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3C1FC7A02EA5F3D800188CA2 /* DerivedSources */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DerivedSources;
-			sourceTree = "<group>";
-		};
 		3C2409992E97803B0055F162 /* Configuration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Configuration;
@@ -191,7 +186,6 @@
 			children = (
 				3C2409992E97803B0055F162 /* Configuration */,
 				50B5146A2D2305F20092284C /* main.swift */,
-				3C1FC7A02EA5F3D800188CA2 /* DerivedSources */,
 				50B514652D2305C00092284C /* Application */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514922D2316700092284C /* Interface */,
@@ -220,7 +214,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				3C1FC7A02EA5F3D800188CA2 /* DerivedSources */,
 				5050EB812D478A5800634B81 /* Backend */,
 				50B514652D2305C00092284C /* Application */,
 				50B514682D2305E30092284C /* Resources */,
