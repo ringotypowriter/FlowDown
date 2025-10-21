@@ -43,14 +43,14 @@ echo "[*] registering FlowDown.xcarchive in Xcode Organizer..."
 open "$PROJECT_ROOT/.build/FlowDown.xcarchive" -g
 
 xcodebuild -workspace FlowDown.xcworkspace \
-    -scheme FlowDown-Catalyst \
+    -scheme FlowDown \
     -configuration Release \
     -destination 'generic/platform=macOS' \
-    -archivePath "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" \
+    -archivePath "$PROJECT_ROOT/.build/FlowDown-macOS.xcarchive" \
     archive | xcbeautify
 
-echo "[*] registering FlowDown-Catalyst.xcarchive in Xcode Organizer..."
-open "$PROJECT_ROOT/.build/FlowDown-Catalyst.xcarchive" -g
+echo "[*] registering FlowDown-macOS.xcarchive in Xcode Organizer..."
+open "$PROJECT_ROOT/.build/FlowDown-macOS.xcarchive" -g
 
 echo "[*] done"
 
