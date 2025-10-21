@@ -86,11 +86,11 @@ extension ConversationManager {
     }
 
     func conversation(identifier: Conversation.ID?) -> Conversation? {
-        if let identifier {
-            sdb.conversationWith(identifier: identifier)
-        } else {
-            nil
+        guard let identifier else { return nil }
+        if let cached = conversations.value[identifier] {
+            return cached
         }
+        return sdb.conversationWith(identifier: identifier)
     }
 
     func editConversation(identifier: Conversation.ID, block: @escaping (inout Conversation) -> Void) {
