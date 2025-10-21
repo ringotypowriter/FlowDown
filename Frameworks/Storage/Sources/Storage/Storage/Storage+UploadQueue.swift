@@ -486,14 +486,12 @@ package extension Storage {
 }
 
 package extension Storage {
-    /// 执行首次同步初始化，同一设备仅会执行一次。卸载后再次安装后会再次被执行
-    func internalPerformSyncFirstTimeSetup() throws {
-        let handle = try getHandle()
-
-        try handle.run(transaction: { [weak self] in
+    /// 初始化上传队列，通常只在app升级数据迁移或者导入数据库需要执行
+    func initializeUploadQueue() throws {
+        try db.run(transaction: { [weak self] in
             guard let self else { return }
 
-            Logger.database.info("[*] performSyncFirstTimeSetup begin")
+            Logger.database.info("[*] initializeUploadQueue begin")
             let tables: [any Syncable.Type] = [
                 CloudModel.self,
                 ModelContextServer.self,
@@ -506,27 +504,15 @@ package extension Storage {
             let row = try $0.getRow(on: UploadQueue.Properties.id.max(), fromTable: UploadQueue.tableName)
             var startId = row[0].int64Value
             for table in tables {
-                startId = try firstMigrationUploadQueue(table: table, handle: $0, startId: startId + 1)
+                startId = try initializeMigrationUploadQueue(table: table, handle: $0, startId: startId + 1)
             }
 
         })
 
-        Logger.database.info("[*] performSyncFirstTimeSetup end")
-
-        uploadQueueEnqueueHandler?([])
-    }
-}
-
-public extension Storage {
-    /// 执行首次同步初始化，同一设备仅会执行一次。卸载后再次安装后会再次被执行
-    func performSyncFirstTimeSetup() async throws {
-        guard !hasPerformedFirstSync else { return }
-        try internalPerformSyncFirstTimeSetup()
-
-        hasPerformedFirstSync = true
+        Logger.database.info("[*] initializeUploadQueue end")
     }
 
-    private func firstMigrationUploadQueue<T: Syncable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {
+    private func initializeMigrationUploadQueue<T: Syncable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {
         var objects: [T] = try handle.getObjects(fromTable: T.tableName)
 
         guard !objects.isEmpty else {

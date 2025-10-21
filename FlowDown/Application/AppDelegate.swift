@@ -53,14 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UIMenuSystem.main.setNeedsRebuild()
             }
 
-        let hasPerformedFirstSync = sdb.hasPerformedFirstSync
         let isSyncEnabled = SyncEngine.isSyncEnabled
-        if !hasPerformedFirstSync || isSyncEnabled {
+        if isSyncEnabled {
             Task {
-                if !hasPerformedFirstSync {
-                    try await sdb.performSyncFirstTimeSetup()
-                }
-
                 if isSyncEnabled {
                     try await syncEngine.fetchChanges()
                 }

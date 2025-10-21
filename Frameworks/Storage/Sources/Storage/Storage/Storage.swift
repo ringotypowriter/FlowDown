@@ -26,12 +26,8 @@ public class Storage {
     package typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
     package var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
 
-    /// 是否已经执行过首次同步初始化
-    public package(set) var hasPerformedFirstSync: Bool {
-        get { UserDefaults.standard.bool(forKey: Self.SyncFirstSetupKey) }
-        set { UserDefaults.standard.set(newValue, forKey: Self.SyncFirstSetupKey) }
-    }
-
+    /// 是否需要初始化上传队列
+    private let shouldInitializeUploadQueue: Bool
     private let existsDatabaseFile: Bool
     private let migrations: [DBMigration]
     private static var _deviceId: String?
@@ -54,15 +50,15 @@ public class Storage {
         return id
     }
 
-    convenience init() throws {
+    convenience init(name: String) throws {
         let databaseDir = FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("Objects.db")
-        try self.init(databaseDir: databaseDir)
+        try self.init(name: name, databaseDir: databaseDir)
     }
 
-    private init(databaseDir: URL) throws {
+    private init(name: String, databaseDir: URL) throws {
         self.databaseDir = databaseDir
 
         databaseLocation = databaseDir
@@ -73,12 +69,14 @@ public class Storage {
 
         if existsDatabaseFile {
             initVersion = .Version0
+            shouldInitializeUploadQueue = true
             migrations = [
                 MigrationV0ToV1(),
                 MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: true),
             ]
         } else {
             initVersion = .Version1
+            shouldInitializeUploadQueue = false
             migrations = [
                 MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: false),
             ]
@@ -97,7 +95,7 @@ public class Storage {
 
         #if DEBUG
             db.traceSQL { _, _, _, sql, _ in
-                print("[sql]: \(sql)")
+                print("[\(name)-sql]: \(sql)")
             }
         #endif
 
@@ -117,23 +115,25 @@ public class Storage {
             initVersion
         }
 
+        var hasMigrate = false
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
+            hasMigrate = true
             version = migration.toVersion
+        }
+
+        if shouldInitializeUploadQueue, hasMigrate {
+            try initializeUploadQueue()
         }
     }
 
     public func reset() {
-        db.blockade()
+        db.purge()
         db.close()
         try? FileManager.default.removeItem(at: databaseDir)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             exit(0)
         }
-    }
-
-    func getHandle() throws -> Handle {
-        try db.getHandle()
     }
 
     func runTransaction(handle: Handle? = nil, _ transaction: @escaping (Handle) throws -> Void) throws {
@@ -145,8 +145,8 @@ public class Storage {
     }
 
     /// 清除本地所有数据
-    func clearLocalData(handle: Handle? = nil) throws {
-        let transaction: (Handle) throws -> Void = {
+    func clearLocalData() throws {
+        try db.run(transaction: {
             try $0.delete(fromTable: CloudModel.tableName)
             try $0.delete(fromTable: Attachment.tableName)
             try $0.delete(fromTable: Message.tableName)
@@ -165,13 +165,7 @@ public class Storage {
                 .where(nameColumn == UploadQueue.tableName)
 
             try $0.exec(updateTableSequence)
-        }
-
-        if let handle {
-            try handle.run(transaction: transaction)
-        } else {
-            try db.run(transaction: transaction)
-        }
+        })
     }
 }
 
@@ -230,14 +224,12 @@ public extension Storage {
             at: exportDir,
             withIntermediateDirectories: true
         )
-        let exportFile = exportDir.appendingPathComponent("database.db")
-        let exportDatabase = Database(at: exportFile.path)
 
         do {
-            try setup(db: exportDatabase)
-
+            /// 内部会按照数据迁移的流程走,确保相关表一定是存在的
+            let exportStorage = try Storage(name: "Export", databaseDir: exportDir)
             var getError: Error?
-            try exportDatabase.run { [self] expdb in
+            try exportStorage.db.run { [self] expdb in
                 do {
                     let mods: [CloudModel] = try db.getObjects(fromTable: CloudModel.tableName)
                     try expdb.insert(mods, intoTable: CloudModel.tableName)
@@ -258,7 +250,7 @@ public extension Storage {
             if let error = getError { throw error }
 
             let sem = DispatchSemaphore(value: 0)
-            try exportDatabase.close {
+            try exportStorage.db.close {
                 sem.signal()
             }
             sem.wait()
@@ -282,11 +274,6 @@ public extension Storage {
         originPath.removeLast()
         let backupDatabaseDir = URL(filePath: "\(originPath).backup")
 
-        defer {
-            Logger.database.info("clear import database tempDir \(tempDir, privacy: .public)")
-            try? fm.removeItem(at: tempDir)
-        }
-
         Logger.database.info("Import the database \(unzipTarget, privacy: .public)")
 
         do {
@@ -299,37 +286,50 @@ public extension Storage {
             }
 
             Logger.database.info("Import the database and execute the migration.")
-            /// 内部会按照数据迁移的流程走
-            let tempDB = try Storage(databaseDir: unzipTarget)
-            /// 初始化首次同步
-            try tempDB.internalPerformSyncFirstTimeSetup()
+            /// 内部会按照数据迁移的流程走,确保相关表一定是存在的
+            let tempDB = try Storage(name: "Import", databaseDir: unzipTarget)
 
             /// 关闭数据库
-            tempDB.db.blockade()
             tempDB.db.close()
 
             Logger.database.info("Database migration has been successfully imported.")
 
-            db.purge()
-            try db.close { [unowned self] in
-                if fm.fileExists(atPath: backupDatabaseDir.path()) {
-                    try fm.removeItem(at: backupDatabaseDir)
+            DispatchQueue.main.async { [unowned self] in
+                db.purge()
+                db.close()
+
+                defer {
+                    Logger.database.info("clear import database tempDir \(tempDir, privacy: .public)")
+                    try? fm.removeItem(at: tempDir)
                 }
 
-                Logger.database.info("Back up the current database")
-                // 备份旧目录
-                try fm.moveItem(at: databaseDir, to: backupDatabaseDir)
-                Logger.database.info("Replace the new database")
-                // 移动新目录
-                try fm.moveItem(at: unzipTarget, to: databaseDir)
-                Logger.database.info("Delete the original database")
-                // 删除备份目录
-                try fm.removeItem(at: backupDatabaseDir)
+                do {
+                    if fm.fileExists(atPath: backupDatabaseDir.path()) {
+                        try fm.removeItem(at: backupDatabaseDir)
+                    }
 
-                hasPerformedFirstSync = true
-                Logger.database.info("Database import successful")
+                    Logger.database.info("Back up the current database")
+                    // 备份旧目录
+                    try fm.moveItem(at: databaseDir, to: backupDatabaseDir)
+                    Logger.database.info("Replace the new database")
+                    // 移动新目录
+                    try fm.moveItem(at: unzipTarget, to: databaseDir)
+                    Logger.database.info("Delete the original database")
+                    // 删除备份目录
+                    try fm.removeItem(at: backupDatabaseDir)
 
-                completeHandler(.success(()))
+                    Logger.database.info("Database import successful")
+
+                    completeHandler(.success(()))
+                } catch {
+                    Logger.database.error("imported database error: \(error, privacy: .public)")
+                    if fm.fileExists(atPath: backupDatabaseDir.path) {
+                        try? fm.moveItem(at: backupDatabaseDir, to: databaseDir)
+                    }
+                    DispatchQueue.main.async {
+                        completeHandler(.failure(error))
+                    }
+                }
             }
 
         } catch {
@@ -337,7 +337,13 @@ public extension Storage {
             if fm.fileExists(atPath: backupDatabaseDir.path) {
                 try? fm.moveItem(at: backupDatabaseDir, to: databaseDir)
             }
-            completeHandler(.failure(error))
+
+            Logger.database.info("clear import database tempDir \(tempDir, privacy: .public)")
+            try? fm.removeItem(at: tempDir)
+
+            DispatchQueue.main.async {
+                completeHandler(.failure(error))
+            }
         }
     }
 }
