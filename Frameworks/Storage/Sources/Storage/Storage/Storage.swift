@@ -120,9 +120,6 @@ public class Storage {
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
             version = migration.toVersion
-            if version == .Version2, migration.requiresDataMigration {
-                hasPerformedFirstSync = false
-            }
         }
     }
 
@@ -158,6 +155,16 @@ public class Storage {
             try $0.delete(fromTable: Memory.tableName)
             try $0.delete(fromTable: SyncMetadata.tableName)
             try $0.delete(fromTable: UploadQueue.tableName)
+
+            let nameColumn = WCDBSwift.Column(named: "name")
+            let seqColumn = WCDBSwift.Column(named: "seq")
+            let updateTableSequence = StatementUpdate()
+                .update(table: "sqlite_sequence")
+                .set(seqColumn)
+                .to(0)
+                .where(nameColumn == UploadQueue.tableName)
+
+            try $0.exec(updateTableSequence)
         }
 
         if let handle {
@@ -202,16 +209,14 @@ private extension Storage {
 
         cloudModelRemoveInvalid()
 
-        // 上传队列
+        // 清理上传队列
         // 1. 上传成功的
         // 2. 上传失败次数超过阈值的
-        // 3. 时间太过久远的
         try? db.delete(
             fromTable: UploadQueue.tableName,
             where:
             UploadQueue.Properties.state == UploadQueue.State.finish
                 || UploadQueue.Properties.failCount >= 100
-                || UploadQueue.Properties.modified <= deleteAt
         )
     }
 }
@@ -305,6 +310,7 @@ public extension Storage {
 
             Logger.database.info("Database migration has been successfully imported.")
 
+            db.purge()
             try db.close { [unowned self] in
                 if fm.fileExists(atPath: backupDatabaseDir.path()) {
                     try fm.removeItem(at: backupDatabaseDir)

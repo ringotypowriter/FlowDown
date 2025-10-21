@@ -256,7 +256,13 @@ package extension Storage {
             return
         }
 
-        if localObject.modified > remoteObject.modified {
+        let localMilliseconds = localObject.modified.millisecondsSince1970
+        let lastModifiedMilliseconds = serverRecord.lastModifiedMilliseconds
+        if localMilliseconds == lastModifiedMilliseconds {
+            return
+        }
+
+        if localMilliseconds > lastModifiedMilliseconds {
             // 本地是最新的
             try pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
@@ -284,7 +290,13 @@ package extension Storage {
             return
         }
 
-        if localObject.modified > remoteObject.modified {
+        let localMilliseconds = localObject.modified.millisecondsSince1970
+        let lastModifiedMilliseconds = serverRecord.lastModifiedMilliseconds
+        if localMilliseconds == lastModifiedMilliseconds {
+            return
+        }
+
+        if localMilliseconds > lastModifiedMilliseconds {
             // 本地是最新的
             try? pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
@@ -312,7 +324,13 @@ package extension Storage {
             return
         }
 
-        if localObject.modified > remoteObject.modified {
+        let localMilliseconds = localObject.modified.millisecondsSince1970
+        let lastModifiedMilliseconds = serverRecord.lastModifiedMilliseconds
+        if localMilliseconds == lastModifiedMilliseconds {
+            return
+        }
+
+        if localMilliseconds > lastModifiedMilliseconds {
             // 本地是最新的
             try? pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
@@ -340,7 +358,13 @@ package extension Storage {
             return
         }
 
-        if localObject.modified > remoteObject.modified {
+        let localMilliseconds = localObject.modified.millisecondsSince1970
+        let lastModifiedMilliseconds = serverRecord.lastModifiedMilliseconds
+        if localMilliseconds == lastModifiedMilliseconds {
+            return
+        }
+
+        if localMilliseconds > lastModifiedMilliseconds {
             // 本地是最新的
             try? pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
@@ -368,7 +392,13 @@ package extension Storage {
             return
         }
 
-        if localObject.modified > remoteObject.modified {
+        let localMilliseconds = localObject.modified.millisecondsSince1970
+        let lastModifiedMilliseconds = serverRecord.lastModifiedMilliseconds
+        if localMilliseconds == lastModifiedMilliseconds {
+            return
+        }
+
+        if localMilliseconds > lastModifiedMilliseconds {
             // 本地是最新的
             try? pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
@@ -396,7 +426,13 @@ package extension Storage {
             return
         }
 
-        if localObject.modified > remoteObject.modified {
+        let localMilliseconds = localObject.modified.millisecondsSince1970
+        let lastModifiedMilliseconds = serverRecord.lastModifiedMilliseconds
+        if localMilliseconds == lastModifiedMilliseconds {
+            return
+        }
+
+        if localMilliseconds > lastModifiedMilliseconds {
             // 本地是最新的
             try? pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
