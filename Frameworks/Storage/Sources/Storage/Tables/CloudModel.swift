@@ -34,6 +34,9 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     // present to user on the top of the editor page
     public var comment: String = ""
 
+    // custom display name for the model
+    public var name: String = ""
+
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = CloudModel
         public static let objectRelationalMapping = TableBinding(CodingKeys.self) {
@@ -52,6 +55,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: Set<ModelCapabilities>())
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
+            BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(temperature_preference, isNotNull: true, defaultTo: ModelTemperaturePreference.inherit)
             BindColumnConstraint(temperature_override, isNotNull: false)
 
@@ -70,6 +74,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case capabilities
         case context
         case comment
+        case name
         case temperature_preference
         case temperature_override
 
@@ -89,6 +94,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         context _: ModelContextLength = .medium_64k,
         capabilities: Set<ModelCapabilities> = [],
         comment: String = "",
+        name: String = "",
         temperature_preference: ModelTemperaturePreference = .inherit,
         temperature_override: Double? = nil
     ) {
@@ -103,6 +109,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.headers = headers
         self.capabilities = capabilities
         self.comment = comment
+        self.name = name
         self.temperature_preference = temperature_preference
         self.temperature_override = temperature_override
     }
@@ -121,6 +128,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         capabilities = try container.decodeIfPresent(Set<ModelCapabilities>.self, forKey: .capabilities) ?? []
         context = try container.decodeIfPresent(ModelContextLength.self, forKey: .context) ?? .short_8k
         comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         temperature_preference = try container.decodeIfPresent(ModelTemperaturePreference.self, forKey: .temperature_preference) ?? .inherit
         temperature_override = try container.decodeIfPresent(Double.self, forKey: .temperature_override)
 
@@ -148,6 +156,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(capabilities)
         hasher.combine(context)
         hasher.combine(comment)
+        hasher.combine(name)
         hasher.combine(temperature_preference)
         hasher.combine(temperature_override)
         hasher.combine(removed)

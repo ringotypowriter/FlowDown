@@ -398,6 +398,32 @@ class CloudModelEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
+        let nameView = ConfigurableInfoView().setTapBlock { view in
+            guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
+            let input = AlertInputViewController(
+                title: String(localized: "Edit Model Name"),
+                message: String(localized: "Custom display name for this model."),
+                placeholder: String(localized: "Nickname (Optional)"),
+                text: model.name
+            ) { output in
+                ModelManager.shared.editCloudModel(identifier: model.id) { $0.name = output }
+                if output.isEmpty {
+                    view.configure(value: String(localized: "Not Configured"))
+                } else {
+                    view.configure(value: output)
+                }
+            }
+            view.parentViewController?.present(input, animated: true)
+        }
+        nameView.configure(icon: .init(systemName: "tag"))
+        nameView.configure(title: String(localized: "Nickname (Optional)"))
+        nameView.configure(description: String(localized: "Custom display name for this model."))
+        var nameValue = model?.name ?? ""
+        if nameValue.isEmpty { nameValue = String(localized: "Not Configured") }
+        nameView.configure(value: nameValue)
+        stackView.addArrangedSubviewWithMargin(nameView)
+        stackView.addArrangedSubview(SeparatorView())
+
         let temperatureView = ConfigurableInfoView().setTapBlock { [weak self] view in
             guard let self,
                   let model = ModelManager.shared.cloudModel(identifier: identifier)

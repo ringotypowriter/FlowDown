@@ -1540,6 +1540,16 @@
         }
       }
     },
+    "Custom display name for this model." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为此模型自定义显示名称。"
+          }
+        }
+      }
+    },
     "Custom Tag Color" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2182,6 +2192,16 @@
       }
     },
     "Edit Model Identifier" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑模型名称"
+          }
+        }
+      }
+    },
+    "Edit Model Name" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4525,6 +4545,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切换至下个对话"
+          }
+        }
+      }
+    },
+    "Nickname (Optional)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "昵称（可选）"
           }
         }
       }

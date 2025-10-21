@@ -11,6 +11,12 @@ import Storage
 
 extension CloudModel {
     var modelDisplayName: String {
+        // Use custom name if available
+        if !name.isEmpty {
+            return name
+        }
+
+        // Fall back to original logic
         var ret = model_identifier
         let scope = scopeIdentifier
         if !scope.isEmpty, ret.hasPrefix(scopeIdentifier + "/") {
