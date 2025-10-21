@@ -128,6 +128,7 @@ extension ModelManager {
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
         if !model.token.isEmpty { request.setValue("Bearer \(model.token)", forHTTPHeaderField: "Authorization") }
+        // model.headers can override default headers including Authorization
         for (key, value) in model.headers {
             request.setValue(value, forHTTPHeaderField: key)
         }

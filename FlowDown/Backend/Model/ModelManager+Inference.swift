@@ -186,10 +186,11 @@ extension ModelManager {
         var request = URLRequest(url: endpoint, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 60)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if !model.token.isEmpty { request.setValue("Bearer \(model.token)", forHTTPHeaderField: "Authorization") }
+        // model.headers can override default headers including Authorization
         for value in model.headers {
             request.setValue(value.value, forHTTPHeaderField: value.key)
         }
-        if !model.token.isEmpty { request.setValue("Bearer \(model.token)", forHTTPHeaderField: "Authorization") }
         request.httpBody = data
         URLSession.shared.dataTask(with: request) { _, resp, _ in
             guard let resp = resp as? HTTPURLResponse else {
