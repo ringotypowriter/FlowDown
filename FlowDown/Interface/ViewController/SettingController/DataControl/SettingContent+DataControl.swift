@@ -97,7 +97,7 @@ extension SettingController.SettingContent {
                             self?.deletedSeverDataCompletionHandler = nil
                         })
 
-                    Indicator.progress(title: "Delete iCloud Data ...", controller: controller) { [weak self] completionHandler in
+                    Indicator.progress(title: String(localized: "Delete iCloud Data ..."), controller: controller) { [weak self] completionHandler in
                         self?.deletedSeverDataCompletionHandler = completionHandler
 
                         Task {
@@ -115,6 +115,13 @@ extension SettingController.SettingContent {
                 explain: String(localized: "Overwrite local data with the latest content from iCloud."),
                 ephemeralAnnotation: .action { [weak self] controller in
                     guard let controller else { return }
+
+                    /// iCloud 同步有时比较慢，所以这里有意添加假的loading
+                    Indicator.progress(title: String(localized: "Pull from iCloud ..."), controller: controller) { completionHandler in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            completionHandler {}
+                        }
+                    }
 
                     Task {
                         try await syncEngine.reloadDataForcefully()
@@ -398,12 +405,12 @@ extension SettingController.SettingContent {
                 if !sdb.hasPerformedFirstSync {
                     try? await sdb.performSyncFirstTimeSetup()
                 }
-                try? await syncEngine.fetchChanges()
+                try? await syncEngine.resumeSyncIfNeeded()
             }
         }
 
         private func pauseSync() async {
-            await syncEngine.cancelAllOperations()
+            try? await syncEngine.stopSyncIfNeeded()
         }
 
         private func presentImportConfirmation(from controller: UIViewController) {
@@ -440,40 +447,41 @@ extension SettingController.SettingContent {
                 Task.detached(priority: .userInitiated) {
                     let securityScoped = url.startAccessingSecurityScopedResource()
                     defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
-                    await syncEngine.cancelAllOperations()
-                    let result = sdb.importDatabase(from: url)
-                    progressCompletion { [weak self] in
-                        switch result {
-                        case .success:
-                            Task {
-                                try await syncEngine.reloadDataForcefully()
-                            }
 
-                            let alert = AlertViewController(
-                                title: String(localized: "Import Complete"),
-                                message: String(localized: "FlowDown will restart to apply the imported database.")
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                    context.dispose {
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                            exit(0)
+                    // 停止同步
+                    try? await syncEngine.stopSyncIfNeeded()
+
+                    sdb.importDatabase(from: url) { result in
+                        progressCompletion { [weak self] in
+                            switch result {
+                            case .success:
+                                let alert = AlertViewController(
+                                    title: String(localized: "Import Complete"),
+                                    message: String(localized: "FlowDown will restart to apply the imported database.")
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        SyncEngine.resetCachedState()
+                                        context.dispose {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                                exit(0)
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            controller.present(alert, animated: true)
-                            self?.documentPickerImportHandler = nil
-                        case let .failure(error):
-                            let alert = AlertViewController(
-                                title: String(localized: "Error Occurred"),
-                                message: error.localizedDescription
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                    context.dispose()
+                                controller.present(alert, animated: true)
+                                self?.documentPickerImportHandler = nil
+                            case let .failure(error):
+                                let alert = AlertViewController(
+                                    title: String(localized: "Error Occurred"),
+                                    message: error.localizedDescription
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
+                                    }
                                 }
+                                controller.present(alert, animated: true)
+                                self?.documentPickerImportHandler = nil
                             }
-                            controller.present(alert, animated: true)
-                            self?.documentPickerImportHandler = nil
                         }
                     }
                 }

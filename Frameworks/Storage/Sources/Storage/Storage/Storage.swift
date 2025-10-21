@@ -265,7 +265,7 @@ public extension Storage {
         return .success(exportDir)
     }
 
-    func importDatabase(from url: URL) -> Result<Void, Error> {
+    func importDatabase(from url: URL, completeHandler: @escaping (Result<Void, Error>) -> Void) {
         let fm = FileManager.default
 
         let tempDir = fm
@@ -305,32 +305,33 @@ public extension Storage {
 
             Logger.database.info("Database migration has been successfully imported.")
 
-            db.blockade()
-            db.close()
+            try db.close { [unowned self] in
+                if fm.fileExists(atPath: backupDatabaseDir.path()) {
+                    try fm.removeItem(at: backupDatabaseDir)
+                }
 
-            if fm.fileExists(atPath: backupDatabaseDir.path()) {
+                Logger.database.info("Back up the current database")
+                // 备份旧目录
+                try fm.moveItem(at: databaseDir, to: backupDatabaseDir)
+                Logger.database.info("Replace the new database")
+                // 移动新目录
+                try fm.moveItem(at: unzipTarget, to: databaseDir)
+                Logger.database.info("Delete the original database")
+                // 删除备份目录
                 try fm.removeItem(at: backupDatabaseDir)
+
+                hasPerformedFirstSync = true
+                Logger.database.info("Database import successful")
+
+                completeHandler(.success(()))
             }
 
-            Logger.database.info("Back up the current database")
-            // 备份旧目录
-            try fm.moveItem(at: databaseDir, to: backupDatabaseDir)
-            Logger.database.info("Replace the new database")
-            // 移动新目录
-            try fm.moveItem(at: unzipTarget, to: databaseDir)
-            Logger.database.info("Delete the original database")
-            // 删除备份目录
-            try fm.removeItem(at: backupDatabaseDir)
-
-            hasPerformedFirstSync = true
-            Logger.database.info("Database import successful")
-            return .success(())
         } catch {
             Logger.database.error("imported database error: \(error, privacy: .public)")
             if fm.fileExists(atPath: backupDatabaseDir.path) {
                 try? fm.moveItem(at: backupDatabaseDir, to: databaseDir)
             }
-            return .failure(error)
+            completeHandler(.failure(error))
         }
     }
 }
