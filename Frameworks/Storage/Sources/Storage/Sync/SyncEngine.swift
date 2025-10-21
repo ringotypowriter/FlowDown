@@ -220,8 +220,7 @@ public extension SyncEngine {
     func deleteLocalData(_ resetSyncEngine: Bool = true) async throws {
         Logger.syncEngine.info("deleting local data")
 
-        let handle = try storage.getHandle()
-        try storage.clearLocalData(handle: handle)
+        try storage.clearLocalData()
 
         if resetSyncEngine {
             SyncEngine.stateSerialization = nil
@@ -315,13 +314,9 @@ private extension SyncEngine {
         guard accountStatus == .available else { return }
 
         // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
-        guard let handle = try? storage.getHandle() else {
-            return
-        }
-
         // 每次最多发送100条
         let batchSize = 100
-        let objects = storage.pendingUploadList(batchSize: batchSize, handle: handle)
+        let objects = storage.pendingUploadList(batchSize: batchSize)
         guard !objects.isEmpty else {
             return
         }
@@ -433,20 +428,16 @@ private extension SyncEngine {
         deletions: [(recordID: CKRecord.ID, recordType: CKRecord.RecordType)] = [],
         syncEngine _: any SyncEngineProtocol
     ) async {
-        guard let handle = try? storage.getHandle() else {
-            return
-        }
-
         Logger.syncEngine.log("Received RecordZoneChanges modifications: \(modifications.count) deletions: \(deletions.count)")
 
         do {
-            try storage.handleRemoteUpsert(modifications: modifications, handle: handle)
+            try storage.handleRemoteUpsert(modifications: modifications)
         } catch {
             Logger.syncEngine.error("handleRemoteUpsert error \(error)")
         }
 
         do {
-            try storage.handleRemoteDeleted(deletions: deletions, handle: handle)
+            try storage.handleRemoteDeleted(deletions: deletions)
         } catch {
             Logger.syncEngine.error("handleRemoteDeleted error \(error)")
         }
@@ -486,11 +477,11 @@ private extension SyncEngine {
         var modificationMessageMap: [Conversation.ID: [Message.ID]] = [:]
         var deletionMessageMap: [Conversation.ID: [Message.ID]] = [:]
         if !modificationMessages.isEmpty {
-            modificationMessageMap = storage.conversationIds(by: modificationMessages, handle: handle)
+            modificationMessageMap = storage.conversationIds(by: modificationMessages)
         }
 
         if !deletedMessages.isEmpty {
-            deletionMessageMap = storage.conversationIds(by: deletedMessages, handle: handle)
+            deletionMessageMap = storage.conversationIds(by: deletedMessages)
         }
 
         let conversationNotificationInfo = ConversationNotificationInfo(modifications: modificationConversations, deletions: deletedConversations)
@@ -547,10 +538,8 @@ private extension SyncEngine {
         for deletedRecordZoneId in deletedRecordZoneIDs {
             Logger.syncEngine.info("deletedRecordZone: \(deletedRecordZoneId)")
             if deletedRecordZoneId == SyncEngine.zoneID {
-                if let handle = try? storage.getHandle() {
-                    // 云端删除zone成功后，需要将本地保存的云端记录元数据删除
-                    try? storage.syncMetadataRemoveAll(handle: handle)
-                }
+                // 云端删除zone成功后，需要将本地保存的云端记录元数据删除
+                try? storage.syncMetadataRemoveAll()
 
                 await MainActor.run {
                     NotificationCenter.default.post(
@@ -573,10 +562,6 @@ private extension SyncEngine {
         failedRecordDeletes: [CKRecord.ID: CKError] = [:],
         syncEngine: any SyncEngineProtocol
     ) async {
-        guard let handle = try? storage.getHandle() else {
-            return
-        }
-
         var newPendingDatabaseChanges = [CKSyncEngine.PendingDatabaseChange]()
         var removePendingRecordZoneChanges = [CKSyncEngine.PendingRecordZoneChange]()
         let deviceId = Storage.deviceId
@@ -594,7 +579,7 @@ private extension SyncEngine {
             }
 
             Logger.syncEngine.info("Sent save success record zone: \(savedLocalQueueIds)")
-            try? storage.runTransaction(handle: handle) {
+            try? storage.runTransaction {
                 try self.storage.syncMetadataUpdate(metadatas, handle: $0)
                 try self.storage.pendingUploadDequeue(by: savedLocalQueueIds, handle: $0)
             }
@@ -619,7 +604,7 @@ private extension SyncEngine {
                 }
 
                 // 处理冲突
-                try? storage.syncMetadataUpdate([SyncMetadata(record: serverRecord)], handle: handle)
+                try? storage.syncMetadataUpdate([SyncMetadata(record: serverRecord)])
                 pendingUploadChangeStates.append((localQueueId, .pending))
 
             case .zoneNotFound:
@@ -643,7 +628,7 @@ private extension SyncEngine {
                 // 删除本地记录的云端记录
                 let recordID = failedRecord.recordID
                 let zoneID = recordID.zoneID
-                try? storage.syncMetadataRemove(zoneName: zoneID.zoneName, ownerName: zoneID.ownerName, recordName: recordID.recordName, handle: handle)
+                try? storage.syncMetadataRemove(zoneName: zoneID.zoneName, ownerName: zoneID.ownerName, recordName: recordID.recordName)
 
                 removePendingRecordZoneChanges.append(.saveRecord(recordID))
 
@@ -667,7 +652,7 @@ private extension SyncEngine {
             }
         }
 
-        try? storage.pendingUploadChangeState(by: pendingUploadChangeStates, handle: handle)
+        try? storage.pendingUploadChangeState(by: pendingUploadChangeStates)
 
         var finalDeletedRecordIDs = deletedRecordIDs
 
@@ -686,7 +671,7 @@ private extension SyncEngine {
         if !finalDeletedRecordIDs.isEmpty {
             let deletedQueueObjectIds = deletedRecordIDs.compactMap { UploadQueue.parseCKRecordID($0.recordName) }
             Logger.syncEngine.info("Sent deleted success record zone: \(deletedQueueObjectIds)")
-            try? storage.pendingUploadDequeueDeleted(by: deletedQueueObjectIds, handle: handle)
+            try? storage.pendingUploadDequeueDeleted(by: deletedQueueObjectIds)
         }
 
         syncEngine.state.remove(pendingRecordZoneChanges: removePendingRecordZoneChanges)
@@ -814,9 +799,6 @@ extension SyncEngine: SyncEngineDelegate {
         syncEngine: any SyncEngineProtocol
     ) async -> CKSyncEngine.RecordZoneChangeBatch? {
         Logger.syncEngine.info("Next push by reason: \(reason, privacy: .public)")
-        guard let handle = try? storage.getHandle() else {
-            return nil
-        }
 
         let scope = options.scope
         let changes = syncEngine.state.pendingRecordZoneChanges.filter { scope.contains($0) }
@@ -850,7 +832,7 @@ extension SyncEngine: SyncEngineDelegate {
         }
 
         // 实际从数据库中查出来的保存队列记录
-        let objects = storage.pendingUploadList(queueIds: recordsToSaveQueueIds.map(\.0), handle: handle)
+        let objects = storage.pendingUploadList(queueIds: recordsToSaveQueueIds.map(\.0))
 
         // 取出现存的 queueId 集合
         let existingQueueIds = Set(objects.map(\.id))
@@ -905,7 +887,7 @@ extension SyncEngine: SyncEngineDelegate {
 
         /// ✅ Step 4: 用最新对象生成 CKRecord
         for object in latestObjects {
-            let metadata: SyncMetadata? = try? storage.findSyncMetadata(zoneName: SyncEngine.zoneID.zoneName, ownerName: SyncEngine.zoneID.ownerName, recordName: object.ckRecordID, handle: handle)
+            let metadata: SyncMetadata? = try? storage.findSyncMetadata(zoneName: SyncEngine.zoneID.zoneName, ownerName: SyncEngine.zoneID.ownerName, recordName: object.ckRecordID)
 
             let record = metadata?.lastKnownRecord ?? CKRecord(recordType: SyncEngine.recordType, recordID: CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID))
 
@@ -917,7 +899,7 @@ extension SyncEngine: SyncEngineDelegate {
         }
 
         /// 更新为 uploading
-        try? storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) }, handle: handle)
+        try? storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) })
 
         if recordsToSave.isEmpty, realRecordIDsToDelete.isEmpty {
             return nil

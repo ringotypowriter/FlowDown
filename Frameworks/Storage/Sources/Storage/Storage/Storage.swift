@@ -136,10 +136,6 @@ public class Storage {
         }
     }
 
-    func getHandle() throws -> Handle {
-        try db.getHandle()
-    }
-
     func runTransaction(handle: Handle? = nil, _ transaction: @escaping (Handle) throws -> Void) throws {
         if let handle {
             try handle.run(transaction: transaction)
@@ -149,8 +145,8 @@ public class Storage {
     }
 
     /// 清除本地所有数据
-    func clearLocalData(handle: Handle? = nil) throws {
-        let transaction: (Handle) throws -> Void = {
+    func clearLocalData() throws {
+        try db.run(transaction: {
             try $0.delete(fromTable: CloudModel.tableName)
             try $0.delete(fromTable: Attachment.tableName)
             try $0.delete(fromTable: Message.tableName)
@@ -169,13 +165,7 @@ public class Storage {
                 .where(nameColumn == UploadQueue.tableName)
 
             try $0.exec(updateTableSequence)
-        }
-
-        if let handle {
-            try handle.run(transaction: transaction)
-        } else {
-            try db.run(transaction: transaction)
-        }
+        })
     }
 }
 
