@@ -50,15 +50,15 @@ public class Storage {
         return id
     }
 
-    convenience init() throws {
+    convenience init(name: String) throws {
         let databaseDir = FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("Objects.db")
-        try self.init(databaseDir: databaseDir)
+        try self.init(name: name, databaseDir: databaseDir)
     }
 
-    private init(databaseDir: URL) throws {
+    private init(name: String, databaseDir: URL) throws {
         self.databaseDir = databaseDir
 
         databaseLocation = databaseDir
@@ -95,7 +95,7 @@ public class Storage {
 
         #if DEBUG
             db.traceSQL { _, _, _, sql, _ in
-                print("[sql]: \(sql)")
+                print("[\(name)-sql]: \(sql)")
             }
         #endif
 
@@ -224,14 +224,12 @@ public extension Storage {
             at: exportDir,
             withIntermediateDirectories: true
         )
-        let exportFile = exportDir.appendingPathComponent("database.db")
-        let exportDatabase = Database(at: exportFile.path)
 
         do {
-            try setup(db: exportDatabase)
-
+            /// 内部会按照数据迁移的流程走,确保相关表一定是存在的
+            let exportStorage = try Storage(name: "Export", databaseDir: exportDir)
             var getError: Error?
-            try exportDatabase.run { [self] expdb in
+            try exportStorage.db.run { [self] expdb in
                 do {
                     let mods: [CloudModel] = try db.getObjects(fromTable: CloudModel.tableName)
                     try expdb.insert(mods, intoTable: CloudModel.tableName)
@@ -252,7 +250,7 @@ public extension Storage {
             if let error = getError { throw error }
 
             let sem = DispatchSemaphore(value: 0)
-            try exportDatabase.close {
+            try exportStorage.db.close {
                 sem.signal()
             }
             sem.wait()
@@ -288,8 +286,8 @@ public extension Storage {
             }
 
             Logger.database.info("Import the database and execute the migration.")
-            /// 内部会按照数据迁移的流程走
-            let tempDB = try Storage(databaseDir: unzipTarget)
+            /// 内部会按照数据迁移的流程走,确保相关表一定是存在的
+            let tempDB = try Storage(name: "Import", databaseDir: unzipTarget)
 
             /// 关闭数据库
             tempDB.db.close()

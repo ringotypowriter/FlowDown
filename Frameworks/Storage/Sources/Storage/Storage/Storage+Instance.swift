@@ -11,7 +11,7 @@ import WCDBSwift
 public extension Storage {
     static func db() throws -> Storage {
         if let instance { return instance }
-        let new = try Storage()
+        let new = try Storage(name: "Main")
         instance = new
         return new
     }
