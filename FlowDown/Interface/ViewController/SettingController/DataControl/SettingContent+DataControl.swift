@@ -115,6 +115,7 @@ extension SettingController.SettingContent {
                 explain: String(localized: "Overwrite local data with the latest content from iCloud."),
                 ephemeralAnnotation: .action { [weak self] controller in
                     guard let controller else { return }
+                    _ = self // dismiss the warning
 
                     /// iCloud 同步有时比较慢，所以这里有意添加假的loading
                     Indicator.progress(title: String(localized: "Pull from iCloud ..."), controller: controller) { completionHandler in
