@@ -1734,6 +1734,9 @@
         }
       }
     },
+    "Delete iCloud Data ..." : {
+
+    },
     "Delete Icon" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5384,6 +5387,9 @@
           }
         }
       }
+    },
+    "Pull from iCloud ..." : {
+
     },
     "Query Calendar" : {
       "localizations" : {

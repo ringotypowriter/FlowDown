@@ -180,8 +180,22 @@ public final actor SyncEngine: Sendable, ObservableObject {
 }
 
 public extension SyncEngine {
-    func cancelAllOperations() async {
+    /// 停止同步
+    func stopSyncIfNeeded() async throws {
+        if _syncEngine == nil {
+            return
+        }
+
         await syncEngine.cancelOperations()
+        _syncEngine = nil
+        Logger.syncEngine.info("stopSyncIfNeeded")
+    }
+
+    /// 恢复同步
+    func resumeSyncIfNeeded() async throws {
+        Logger.syncEngine.info("resumeSyncIfNeeded")
+        try await fetchChanges()
+        try await scheduleUploadIfNeeded()
     }
 
     /// 拉取变化
@@ -225,6 +239,10 @@ public extension SyncEngine {
             return
         }
 
+        if _syncEngine == nil {
+            return
+        }
+
         var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] = []
 
         let deviceId = Storage.deviceId
@@ -241,6 +259,10 @@ public extension SyncEngine {
         }
 
         try Task.checkCancellation()
+
+        if _syncEngine == nil {
+            return
+        }
 
         if !pendingRecordZoneChanges.isEmpty {
             syncEngine.state.add(pendingRecordZoneChanges: pendingRecordZoneChanges)
@@ -528,6 +550,11 @@ private extension SyncEngine {
         for deletedRecordZoneId in deletedRecordZoneIDs {
             Logger.syncEngine.info("deletedRecordZone: \(deletedRecordZoneId)")
             if deletedRecordZoneId == SyncEngine.zoneID {
+                if let handle = try? storage.getHandle() {
+                    // 云端删除zone成功后，需要将本地保存的云端记录元数据删除
+                    try? storage.syncMetadataRemoveAll(handle: handle)
+                }
+
                 await MainActor.run {
                     NotificationCenter.default.post(
                         name: SyncEngine.ServerDataDeleted,
@@ -613,6 +640,13 @@ private extension SyncEngine {
                 pendingUploadChangeStates.append((localQueueId, .failed))
 
             case .unknownItem:
+                // 删除本地记录的云端记录
+                let recordID = failedRecord.recordID
+                let zoneID = recordID.zoneID
+                try? storage.syncMetadataRemove(zoneName: zoneID.zoneName, ownerName: zoneID.ownerName, recordName: recordID.recordName, handle: handle)
+
+                removePendingRecordZoneChanges.append(.saveRecord(recordID))
+
                 guard let sentQueueId = failedRecord.sentQueueId, let (localQueueId, _, _) = SyncEngine.parseCKRecordSentQueueId(sentQueueId) else { continue }
                 pendingUploadChangeStates.append((localQueueId, .failed))
 
