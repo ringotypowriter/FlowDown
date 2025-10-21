@@ -12,7 +12,7 @@ import CoreLocation
 import Foundation
 import UIKit
 
-class MTLocationTool: ModelTool {
+class MTLocationTool: ModelTool, @unchecked Sendable {
     private var locationManager: CLLocationManager?
     private var geocoder = CLGeocoder()
 

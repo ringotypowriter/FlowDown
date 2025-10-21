@@ -12,7 +12,7 @@ import EventKit
 import Foundation
 import UIKit
 
-class MTAddCalendarTool: ModelTool {
+class MTAddCalendarTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "add event to user's default system calendar"
     }
@@ -94,10 +94,15 @@ class MTAddCalendarTool: ModelTool {
     @MainActor
     func addWithUserInteractions(name: String, icsFile: String, controller: UIViewController) async throws -> String {
         try await withCheckedThrowingContinuation { cont in
-            EKEventStore().requestAccess(to: .event) { granted, _ in
-                DispatchQueue.main.async {
+            let eventStore = EKEventStore()
+            eventStore.requestFullAccessToEvents { granted, _ in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else {
+                        cont.resume(returning: String(localized: "Calendar access denied. Please enable calendar access in Settings."))
+                        return
+                    }
                     if granted {
-                        self.showAddEventConfirmation(name: name, icsFile: icsFile, controller: controller, continuation: cont)
+                        showAddEventConfirmation(name: name, icsFile: icsFile, controller: controller, continuation: cont)
                     } else {
                         cont.resume(returning: String(localized: "Calendar access denied. Please enable calendar access in Settings."))
                     }

@@ -10,7 +10,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class ModelTool: NSObject {
+class ModelTool: NSObject, @unchecked Sendable {
     var functionName: String {
         guard case let .function(name, _, _, _) = definition else {
             assertionFailure()

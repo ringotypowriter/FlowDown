@@ -10,7 +10,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class MTDeleteMemoryTool: ModelTool {
+class MTDeleteMemoryTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "delete a specific memory using its ID"
     }

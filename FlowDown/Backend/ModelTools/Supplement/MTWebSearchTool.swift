@@ -14,7 +14,7 @@ import Storage
 import UIKit
 import XMLCoder
 
-class MTWebSearchTool: ModelTool {
+class MTWebSearchTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         String(localized: "Web Search")
     }

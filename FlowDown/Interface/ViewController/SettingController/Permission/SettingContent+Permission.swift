@@ -281,10 +281,10 @@ extension SettingController.SettingContent {
                 calendarUsage.setTapBlock { _ in UIApplication.shared.openSettings() }
             case .notDetermined:
                 calendarUsage.configure(value: String(localized: "Not Determined"))
-                calendarUsage.setTapBlock { _ in
+                calendarUsage.setTapBlock { [weak self] _ in
                     let eventStore = EKEventStore()
-                    eventStore.requestAccess(to: .event) { _, _ in
-                        DispatchQueue.main.async { self.updateValues() }
+                    eventStore.requestFullAccessToEvents { _, _ in
+                        DispatchQueue.main.async { self?.updateValues() }
                     }
                 }
             case .restricted:

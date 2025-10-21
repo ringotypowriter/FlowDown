@@ -10,7 +10,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class MTStoreMemoryTool: ModelTool {
+class MTStoreMemoryTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "store important information to memory for future conversations"
     }

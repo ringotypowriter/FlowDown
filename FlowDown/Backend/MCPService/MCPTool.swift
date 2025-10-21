@@ -12,7 +12,7 @@ import Foundation
 import MCP
 import Storage
 
-class MCPTool: ModelTool {
+class MCPTool: ModelTool, @unchecked Sendable {
     // MARK: - Properties
 
     let toolInfo: MCPToolInfo

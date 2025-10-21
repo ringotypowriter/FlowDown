@@ -10,7 +10,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class MTUpdateMemoryTool: ModelTool {
+class MTUpdateMemoryTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "update existing memory content using its ID"
     }

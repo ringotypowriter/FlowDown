@@ -9,7 +9,7 @@ import ChatClientKit
 import ConfigurableKit
 import Foundation
 
-class MTWaitForNextRound: ModelTool {
+class MTWaitForNextRound: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "wait for next message from user"
     }

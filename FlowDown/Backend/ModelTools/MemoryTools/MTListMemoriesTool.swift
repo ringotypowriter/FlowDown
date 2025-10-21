@@ -10,7 +10,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class MTListMemoriesTool: ModelTool {
+class MTListMemoriesTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "list stored memories with their IDs for update/delete operations"
     }

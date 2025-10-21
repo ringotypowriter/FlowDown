@@ -10,7 +10,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class MTRecallMemoryTool: ModelTool {
+class MTRecallMemoryTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "recall stored memories to provide context for the conversation"
     }

@@ -12,7 +12,7 @@ import EventKit
 import Foundation
 import UIKit
 
-class MTQueryCalendarTool: ModelTool {
+class MTQueryCalendarTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "query events from user's system calendars"
     }
@@ -141,10 +141,16 @@ class MTQueryCalendarTool: ModelTool {
     @MainActor
     func queryWithUserInteraction(startDate: Date, endDate: Date, includeAllDayEvents: Bool, controller: UIViewController) async throws -> String {
         try await withCheckedThrowingContinuation { cont in
-            EKEventStore().requestAccess(to: .event) { granted, error in
-                DispatchQueue.main.async {
+            let eventStore = EKEventStore()
+            eventStore.requestFullAccessToEvents { granted, error in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else {
+                        let errorMessage = error?.localizedDescription ?? "Unknown error"
+                        cont.resume(returning: String(localized: "Calendar access denied: \(errorMessage). Please enable calendar access in Settings."))
+                        return
+                    }
                     if granted {
-                        self.fetchCalendarEvents(
+                        fetchCalendarEvents(
                             startDate: startDate,
                             endDate: endDate,
                             includeAllDayEvents: includeAllDayEvents

@@ -12,7 +12,7 @@ import Foundation
 import ScrubberKit
 import UIKit
 
-class MTWebScraperTool: ModelTool {
+class MTWebScraperTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "scrape content from web pages"
     }

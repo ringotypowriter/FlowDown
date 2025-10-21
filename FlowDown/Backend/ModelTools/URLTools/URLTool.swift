@@ -11,7 +11,7 @@ import ConfigurableKit
 import Foundation
 import UIKit
 
-class MTURLTool: ModelTool {
+class MTURLTool: ModelTool, @unchecked Sendable {
     override var shortDescription: String {
         "open URLs securely with user confirmation"
     }
