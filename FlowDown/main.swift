@@ -66,7 +66,9 @@ DispatchQueue.global().async {
 
 #if os(macOS) || targetEnvironment(macCatalyst)
     _ = UpdateManager.shared
+    FLDCatalystHelper.shared.install()
 #endif
+
 _ = UIApplicationMain(
     CommandLine.argc,
     CommandLine.unsafeArgv,
