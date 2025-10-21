@@ -75,6 +75,11 @@
 			path = Backend;
 			sourceTree = "<group>";
 		};
+		5089F4192EA73B8E00258D85 /* DerivedSources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DerivedSources;
+			sourceTree = "<group>";
+		};
 		50B514652D2305C00092284C /* Application */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Application;
@@ -188,6 +193,7 @@
 				50B5146A2D2305F20092284C /* main.swift */,
 				50B514652D2305C00092284C /* Application */,
 				5050EB812D478A5800634B81 /* Backend */,
+				5089F4192EA73B8E00258D85 /* DerivedSources */,
 				50B514922D2316700092284C /* Interface */,
 				50B514732D23133F0092284C /* Extension */,
 				50D148142D71F292008E9F03 /* PlatformSupport */,
@@ -215,6 +221,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				5050EB812D478A5800634B81 /* Backend */,
+				5089F4192EA73B8E00258D85 /* DerivedSources */,
 				50B514652D2305C00092284C /* Application */,
 				50B514682D2305E30092284C /* Resources */,
 				50B514732D23133F0092284C /* Extension */,
