@@ -96,8 +96,7 @@ public class InputEditor: EditorSectionView {
         textView.onReturnKeyPressed = { [weak self] in
             guard let self else { return }
             if EditorBehavior.useConfirmationOnSend {
-                textView.text += "\n"
-                textViewDidChange(textView)
+                textView.insertText("\n")
             } else {
                 sendButton.tapAction()
             }
