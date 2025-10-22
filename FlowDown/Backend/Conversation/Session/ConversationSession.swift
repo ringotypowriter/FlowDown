@@ -5,6 +5,7 @@
 
 import Combine
 import Foundation
+import OSLog
 import RichEditor
 import Storage
 
@@ -75,7 +76,7 @@ final class ConversationSession: Identifiable {
     }
 
     var models: Models = .init() {
-        didSet { print("[+] models updated \(models)") }
+        didSet { Logger.model.infoFile("models updated \(models)") }
     }
 
     func prepareSystemPrompt() {

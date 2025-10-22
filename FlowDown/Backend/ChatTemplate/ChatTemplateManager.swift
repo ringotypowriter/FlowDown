@@ -9,6 +9,7 @@ import ChatClientKit
 import ConfigurableKit
 import Foundation
 import OrderedCollections
+import OSLog
 import Storage
 import UIKit
 import XMLCoder
@@ -36,7 +37,7 @@ class ChatTemplateManager {
             OrderedDictionary<ChatTemplate.ID, ChatTemplate>.self,
             from: data
         ) {
-            print("[*] loaded \(decoded.count) chat templates")
+            Logger.model.infoFile("loaded \(decoded.count) chat templates")
             templates = decoded
         }
     }

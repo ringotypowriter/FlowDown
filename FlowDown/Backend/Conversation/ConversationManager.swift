@@ -9,6 +9,7 @@ import Combine
 import ConfigurableKit
 import Foundation
 import OrderedCollections
+import OSLog
 import RichEditor
 import Storage
 import UIKit
@@ -39,7 +40,7 @@ class ConversationManager: NSObject {
     override private init() {
         super.init()
         temporaryEditorObjects = _temporaryEditorObjects
-        print("[*] \(temporaryEditorObjects.count) temporary editor objects loaded.")
+        Logger.app.infoFile("\(temporaryEditorObjects.count) temporary editor objects loaded.")
         scanAll()
 
         NotificationCenter.default.publisher(for: SyncEngine.ConversationChanged)
@@ -62,7 +63,7 @@ class ConversationManager: NSObject {
     @objc private func saveObjects() {
         DispatchQueue.global().async {
             self._temporaryEditorObjects = self.temporaryEditorObjects
-            print("[*] \(self.temporaryEditorObjects.count) temporary editor objects saved.")
+            Logger.app.infoFile("\(self.temporaryEditorObjects.count) temporary editor objects saved.")
         }
     }
 }

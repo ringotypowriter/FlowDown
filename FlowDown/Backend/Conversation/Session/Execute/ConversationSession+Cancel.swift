@@ -5,7 +5,9 @@
 //  Created by 秋星桥 on 2025/3/25.
 //
 
+import Combine
 import Foundation
+import OSLog
 import Storage
 
 class InferenceUserCancellationError: Error, LocalizedError {
@@ -22,14 +24,14 @@ extension ConversationSession {
             }
             return
         }
-        print("[*] cancel current task for conversation: \(id)")
+        Logger.app.infoFile("cancel current task for conversation: \(id)")
         task.cancel()
         // wait until self.currentTask is nil
         DispatchQueue.global().async {
             while self.currentTask != nil {
                 Thread.sleep(forTimeInterval: 0.1)
             }
-            print("[*] current task cancelled for conversation: \(self.id)")
+            Logger.app.infoFile("current task cancelled for conversation: \(self.id)")
             DispatchQueue.main.async {
                 completion()
             }

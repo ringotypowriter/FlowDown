@@ -7,6 +7,7 @@
 
 import AlertController
 import ChatClientKit
+import OSLog
 import RichEditor
 import ScrubberKit
 import Storage
@@ -20,17 +21,17 @@ extension ConversationSession {
         completion: @escaping () -> Void
     ) {
         cancelCurrentTask { [self] in
-            print("[*] do infere called: \(id)")
-            print("    - chat - \(ModelManager.shared.modelName(identifier: models.chat))")
-            print("    - task - \(ModelManager.shared.modelName(identifier: models.auxiliary))")
-            print("    - view - \(ModelManager.shared.modelName(identifier: models.visualAuxiliary))")
+            Logger.app.infoFile("do infere called: \(id)")
+            Logger.app.infoFile("    - chat - \(ModelManager.shared.modelName(identifier: models.chat))")
+            Logger.app.infoFile("    - task - \(ModelManager.shared.modelName(identifier: models.auxiliary))")
+            Logger.app.infoFile("    - view - \(ModelManager.shared.modelName(identifier: models.visualAuxiliary))")
 
             var backgroundTask: UIBackgroundTaskIdentifier = .invalid
             backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
                 if let id = self?.id {
-                    print("[-] background task expired for conversation: \(id)")
+                    Logger.app.errorFile("background task expired for conversation: \(id)")
                 } else {
-                    print("[-] background task expired for unknown conversation")
+                    Logger.app.errorFile("background task expired for unknown conversation")
                 }
                 self?.currentTask?.cancel()
                 UIApplication.shared.endBackgroundTask(backgroundTask)
@@ -146,7 +147,7 @@ extension ConversationSession {
         assert(!Thread.isMainThread)
         let index = linkedContents.count + 1
         linkedContents[index] = url
-        print("[*] request link content index: \(index) for url: \(url)")
+        Logger.app.infoFile("request link content index: \(index) for url: \(url)")
         return index
     }
 
@@ -271,7 +272,7 @@ extension ConversationSession {
 
         await requestUpdate(view: currentMessageListView)
 
-        print("[*] inference done")
+        Logger.app.infoFile("inference done")
 
         // MARK: - 生成标题和图标
 

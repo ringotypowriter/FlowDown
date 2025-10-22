@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import MCP
+import OSLog
 import Storage
 
 class MCPService: NSObject {
@@ -65,7 +66,7 @@ class MCPService: NSObject {
                     try await connection.connect()
                 }
             } catch {
-                print("[-] failed to connect to server \(serverID): \(error.localizedDescription)")
+                Logger.network.errorFile("failed to connect to server \(serverID): \(error.localizedDescription)")
                 errors.append(error)
             }
         }
@@ -143,7 +144,7 @@ class MCPService: NSObject {
             }
             connections[config.id] = connection
         } catch {
-            print("[-] failed to connect to server \(config.id): \(error.localizedDescription)")
+            Logger.network.errorFile("failed to connect to server \(config.id): \(error.localizedDescription)")
             updateServerStatus(config.id, status: .disconnected)
         }
     }
@@ -178,7 +179,7 @@ class MCPService: NSObject {
                 discoveredCapabilities.append("tools")
             }
         } catch {
-            print("[-] failed to list tools: \(error.localizedDescription)")
+            Logger.network.errorFile("failed to list tools: \(error.localizedDescription)")
         }
 
         edit(identifier: config.id) { client in

@@ -6,7 +6,9 @@
 //
 
 import ChatClientKit
+import Combine
 import Foundation
+import OSLog
 import SwifterSwift
 import UIKit
 import Vision
@@ -67,7 +69,7 @@ extension ConversationSession {
         { decision = model }
         guard let decision else { return "" }
 
-        print("[*] describing image with model: \(ModelManager.shared.modelName(identifier: decision))")
+        Logger.model.infoFile("describing image with model: \(ModelManager.shared.modelName(identifier: decision))")
 
         try checkCancellation()
         try await Task.sleep(for: .seconds(0.5)) // for animation
@@ -115,7 +117,7 @@ extension ConversationSession {
             ans += "[QRCode Recognition]\n\(qrAns)\n"
         }
 
-        print("[*] describing image returns:\n\(ans)")
+        Logger.model.infoFile("describing image returns:\n\(ans)")
         return ans
     }
 

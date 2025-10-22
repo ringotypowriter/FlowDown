@@ -6,7 +6,9 @@
 //
 
 import ChatClientKit
+import Combine
 import Foundation
+import OSLog
 import RichEditor
 import Storage
 
@@ -25,7 +27,7 @@ extension ConversationSession {
         }
 
         guard attachmentThatRequiresProcess.count > 0, !skipImageRecognition else {
-            print("[*] requires to process \(attachmentThatRequiresProcess.count) attachments but skipImageRecognition is \(skipImageRecognition)")
+            Logger.app.infoFile("requires to process \(attachmentThatRequiresProcess.count) attachments but skipImageRecognition is \(skipImageRecognition)")
             return
         }
 

@@ -1,6 +1,8 @@
 import AlertController
+import Combine
 import DpkgVersion
 import Foundation
+import OSLog
 import UIKit
 
 private enum DistributionChannel: String, Equatable, Hashable {
@@ -31,7 +33,7 @@ class UpdateManager: NSObject {
         #else
             currentChannel = .fromApple // it's impossible to distribute iOS/iPadOS app through GitHub (right?)
         #endif
-        print("[+] UpdateManager initialized with channel: \(currentChannel)")
+        Logger.app.infoFile("UpdateManager initialized with channel: \(currentChannel)")
         super.init()
     }
 
@@ -47,12 +49,12 @@ class UpdateManager: NSObject {
 
     func performUpdateCheckFromUI() {
         guard let controller = anchorView?.parentViewController else {
-            print("[!] no anchor view set for UpdateManager.")
+            Logger.app.errorFile("no anchor view set for UpdateManager.")
             return
         }
-        print("[+] checking for updates from \(bundleVersion)...")
+        Logger.app.infoFile("checking for updates from \(bundleVersion)...")
         guard [.fromGitHub].contains(currentChannel) else {
-            print("[!] Update check is not supported for the current distribution channel.")
+            Logger.app.errorFile("Update check is not supported for the current distribution channel.")
             return
         }
 
@@ -81,9 +83,9 @@ class UpdateManager: NSObject {
                     let packages = try await self.currentChannel.getRemoteVersion()
                     package = self.newestPackage(from: packages)
                     package = self.updatePackage(from: package)
-                    print("[+] remote packages: \(packages)")
+                    Logger.app.infoFile("remote packages: \(packages)")
                 } catch {
-                    print("[!] failed to check for updates: \(error.localizedDescription)")
+                    Logger.app.errorFile("failed to check for updates: \(error.localizedDescription)")
                 }
                 completionHandler {
                     completion(package: package)
@@ -95,7 +97,7 @@ class UpdateManager: NSObject {
     private func updatePackage(from remotePackage: DistributionChannel.RemotePackage?) -> DistributionChannel.RemotePackage? {
         guard let remotePackage else { return nil }
         let compare = Version.compare(remotePackage.tag, bundleVersion)
-        print("[*] comparing \(remotePackage.tag) and \(bundleVersion) result \(compare)")
+        Logger.app.infoFile("comparing \(remotePackage.tag) and \(bundleVersion) result \(compare)")
         guard compare > 0 else { return nil }
         return remotePackage
     }
@@ -157,7 +159,7 @@ extension DistributionChannel {
                     NSLocalizedDescriptionKey: String(localized: "Failed to parse release information."),
                 ])
             }
-            print("[+] latest release version: \(tagName), url: \(htmlUrl)")
+            Logger.app.infoFile("latest release version: \(tagName), url: \(htmlUrl)")
             return [.init(tag: tagName, downloadURL: downloadPageUrl)]
         }
     }

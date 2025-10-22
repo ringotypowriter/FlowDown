@@ -7,9 +7,11 @@
 
 import AlertController
 import ChatClientKit
+import Combine
 import ConfigurableKit
 import Foundation
 import MCP
+import OSLog
 import UIKit
 
 // MARK: - MCPService Tools Extension
@@ -36,7 +38,7 @@ extension MCPService {
                 let toolInfos = tools.map { MCPToolInfo(tool: $0, serverID: serverID, serverName: name) }
                 allTools.append(contentsOf: toolInfos)
             } catch {
-                print("[-] failed to acquire tools from \(serverID): \(error.localizedDescription)")
+                Logger.network.errorFile("failed to acquire tools from \(serverID): \(error.localizedDescription)")
             }
         }
 

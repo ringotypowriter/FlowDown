@@ -6,7 +6,9 @@
 //
 
 import ChatClientKit
+import Combine
 import Foundation
+import OSLog
 import RichEditor
 @preconcurrency import ScrubberKit
 import Storage
@@ -169,7 +171,7 @@ extension ConversationSessionManager.Session {
                 .init(participant: .user, document: xmlString),
             ]
         } catch {
-            print("[-] failed to encode web search request: \(error)")
+            Logger.network.errorFile("failed to encode web search request: \(error)")
             return []
         }
     }
@@ -202,7 +204,7 @@ extension ConversationSessionManager.Session {
                 }
 
                 let eachLimit = Int(max(3, ScrubberConfiguration.limitConfigurableObjectValue / searchQueries.count))
-                print("[*] web search has limited \(eachLimit) for each query")
+                Logger.network.infoFile("web search has limited \(eachLimit) for each query")
 
                 var phase = WebSearchPhase()
                 phase.numberOfQueries = searchQueries.count
@@ -235,7 +237,7 @@ extension ConversationSessionManager.Session {
                             }
                         }
                     } onCancel: {
-                        print("[-] cancelling web search due to task is cancelled")
+                        Logger.network.errorFile("cancelling web search due to task is cancelled")
                         scrubber.cancel()
                     }
                 }
@@ -288,7 +290,7 @@ extension ConversationSessionManager.Session {
 
             return (validateQueries(queries), nil)
         } catch {
-            print("[-] failed to generate search queries: \(error)")
+            Logger.network.errorFile("failed to generate search queries: \(error)")
             return ([], nil)
         }
     }
@@ -448,7 +450,7 @@ extension ConversationSession {
         // 检查是否同时启用了工具调用，如果是，则跳过预处理阶段的网络搜索
         if case let .bool(tools) = object.options[.tools], tools {
             // 当同时启用工具调用和网络搜索时，让模型决定何时使用网络搜索工具
-            print("[*] Web search will be handled as a tool call")
+            Logger.network.infoFile("Web search will be handled as a tool call")
             return
         }
 
@@ -481,7 +483,7 @@ extension ConversationSession {
         let searchRequired = searchResult.searchRequired
 
         if let required = searchRequired, !required {
-            print("[*] model determined no web search is needed")
+            Logger.network.infoFile("model determined no web search is needed")
             let hintMessage = appendNewMessage(role: .assistant)
             hintMessage.document = String(localized: "I have determined that no web search is needed for this query.")
             await requestUpdate(view: currentMessageListView)
@@ -489,7 +491,7 @@ extension ConversationSession {
         }
 
         guard !searchQueries.isEmpty else {
-            print("[-] failed to generate search queries")
+            Logger.network.errorFile("failed to generate search queries")
             let hintMessage = appendNewMessage(role: .assistant)
             hintMessage.document = String(localized: "I was unable to generate appropriate search queries for this request.")
             await requestUpdate(view: currentMessageListView)
@@ -503,7 +505,7 @@ extension ConversationSession {
         var webAttachments: [RichEditorView.Object.Attachment] = []
 
         let onSetWebContents: ([Scrubber.Document]) -> Void = { documents in
-            print("[*] setting \(documents.count) search result")
+            Logger.network.infoFile("setting \(documents.count) search result")
             for doc in documents {
                 let index = requestLinkContentIndex(doc.url)
                 webAttachments.append(.init(
