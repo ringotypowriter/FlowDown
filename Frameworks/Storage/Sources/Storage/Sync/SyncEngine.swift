@@ -367,6 +367,8 @@ private extension SyncEngine {
 
     // MARK: - SyncEngine Events
 
+    /// 注意: ⚠️ 代理回调中，不能调用 syncEngine 的 cancelOperations performingSendChanges performingFetchChanges
+
     func handleAccountChange(
         changeType: CKSyncEngine.Event.AccountChange.ChangeType,
         syncEngine _: any SyncEngineProtocol
@@ -434,10 +436,8 @@ private extension SyncEngine {
         }
 
         if resetLocalData {
-            /// 当云端 Zone 被删除时，不删除本地现有数据，改为暂停同步并等待用户手动刷新以重建状态
-            await syncEngine.cancelOperations()
-            _syncEngine = nil
-            Logger.syncEngine.info("Zone deleted remotely; paused sync without deleting local data")
+            /// 收到其他设备发出的删除操作，当前设备应该同步清除本地所有数据
+//            try? await deleteLocalData()
         }
     }
 
@@ -568,7 +568,7 @@ private extension SyncEngine {
             Logger.syncEngine.info("DeletedRecordZone: \(deletedRecordZoneId)")
             if deletedRecordZoneId == SyncEngine.zoneID {
                 // 云端删除zone成功后，需要将本地保存的云端记录元数据删除
-                try? storage.syncMetadataRemoveAll()
+//                try? storage.syncMetadataRemoveAll()
 
                 await MainActor.run {
                     NotificationCenter.default.post(

@@ -341,17 +341,20 @@ extension SettingController.SettingContent {
 
                                 self?.deletedSeverDataCancellable = NotificationCenter.default
                                     .publisher(for: SyncEngine.ServerDataDeleted)
+                                    .receive(on: RunLoop.main)
                                     .sink { [weak self, weak controller] notification in
                                         guard let controller, let self else { return }
                                         let success = notification.userInfo?["success"] as? Bool ?? false
                                         let error = notification.userInfo?["error"] as? Error
-                                        Task { @MainActor in
-                                            self.handleServerDataDeleted(controller: controller, success: success, error: error)
-                                        }
+                                        handleServerDataDeleted(controller: controller, success: success, error: error)
                                     }
 
                                 Task { @MainActor in
-                                    do { try await syncEngine.deleteServerData() } catch {}
+                                    do {
+                                        try await syncEngine.deleteServerData()
+                                    } catch {
+                                        self?.handleServerDataDeleted(controller: controller, success: false, error: error)
+                                    }
                                 }
                             }
                         }
