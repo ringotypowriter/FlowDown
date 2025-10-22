@@ -2804,6 +2804,17 @@
         }
       }
     },
+    "Failed to delete iCloud data. Please try again later" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除iCloud数据失败，可稍后重试"
+          }
+        }
+      }
+    },
     "Failed to delete memory: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3024,6 +3035,16 @@
         }
       }
     },
+    "Fetch only the new and updated data from iCloud." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅从 iCloud 获取新增和更新的数据"
+          }
+        }
+      }
+    },
     "Fetching Model List" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3122,7 +3143,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "从 iCloud 中拉取数据"
+            "value" : "重新从 iCloud 中拉取数据"
           }
         }
       }
@@ -3348,6 +3369,17 @@
         }
       }
     },
+    "iCloud synchronization is not enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 同步未启用"
+          }
+        }
+      }
+    },
     "Identifier" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3564,6 +3596,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在导入..."
+          }
+        }
+      }
+    },
+    "Incremental Sync from iCloud" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从 iCloud 中拉取数据"
           }
         }
       }
