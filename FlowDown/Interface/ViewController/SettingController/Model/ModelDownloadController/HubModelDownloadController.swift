@@ -65,15 +65,8 @@ class HubModelDownloadController: UIViewController {
             make.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
         }
 
-        navigationItem.rightBarButtonItems = [
-            .init(
-                title: nil,
-                image: .init(systemName: "ellipsis"),
-                target: self,
-                action: #selector(showFilterMenu)
-            ),
-            .init(customView: activityIndicator),
-        ]
+        // Only add the spinner when it's animating to avoid empty glass artifacts
+        updateRightBarButtons()
         activityIndicator.stopAnimating()
 
         let searchController = UISearchController(searchResultsController: nil)
@@ -87,6 +80,21 @@ class HubModelDownloadController: UIViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
+    }
+
+    private func updateRightBarButtons() {
+        var items: [UIBarButtonItem] = [
+            .init(
+                title: nil,
+                image: .init(systemName: "ellipsis"),
+                target: self,
+                action: #selector(showFilterMenu)
+            ),
+        ]
+        if activityIndicator.isAnimating {
+            items.append(.init(customView: activityIndicator))
+        }
+        navigationItem.rightBarButtonItems = items
     }
 
     private var isFirstAppear = true
@@ -114,6 +122,7 @@ class HubModelDownloadController: UIViewController {
     func updateDataSource() {
         let searchKey = navigationItem.searchController?.searchBar.text ?? ""
         activityIndicator.startAnimating()
+        updateRightBarButtons()
         let session = UUID()
         searchSession = session
         fetchModel(keyword: searchKey) { [weak self] models in
@@ -123,6 +132,7 @@ class HubModelDownloadController: UIViewController {
             snapshot.appendItems(models)
             self?.dataSource.apply(snapshot, animatingDifferences: true)
             self?.activityIndicator.stopAnimating()
+            self?.updateRightBarButtons()
         }
     }
 

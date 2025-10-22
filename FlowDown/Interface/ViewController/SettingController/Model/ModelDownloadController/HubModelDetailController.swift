@@ -182,10 +182,12 @@ class HubModelDetailController: StackScrollController {
                     )
                 }
             } else {
-                navigationItem.rightBarButtonItem = .init(customView: downloadButtonIndicator)
+                // Only attach spinner to the nav bar while animating
+                navigationItem.rightBarButtonItem = nil
                 downloadButtonIndicator.startAnimating()
-                Task.detached {
-                    await self.checkDownloadSize()
+                navigationItem.rightBarButtonItem = .init(customView: downloadButtonIndicator)
+                Task.detached { [weak self] in
+                    await self?.checkDownloadSize()
                 }
             }
         }

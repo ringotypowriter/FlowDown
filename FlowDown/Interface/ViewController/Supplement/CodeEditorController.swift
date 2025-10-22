@@ -14,6 +14,20 @@ class CodeEditorController: UIViewController {
     let textView = RunestoneEditorView.new()
 
     let indicator = UIActivityIndicatorView()
+    private lazy var doneBarButtonItem: UIBarButtonItem = .init(
+        barButtonSystemItem: .done,
+        target: self,
+        action: #selector(done)
+    )
+    private lazy var spinnerBarButtonItem: UIBarButtonItem = .init(customView: indicator)
+
+    private func updateRightBarButtonItems() {
+        if indicator.isAnimating {
+            navigationItem.rightBarButtonItems = [doneBarButtonItem, spinnerBarButtonItem]
+        } else {
+            navigationItem.rightBarButtonItems = [doneBarButtonItem]
+        }
+    }
 
     init(language: String? = nil, text: String) {
         super.init(nibName: nil, bundle: nil)
@@ -32,16 +46,16 @@ class CodeEditorController: UIViewController {
         {
             textView.applyAsync(language: languageObject, text: text) { [weak self] in
                 self?.indicator.stopAnimating()
-                self?.indicator.removeFromSuperview()
+                self?.updateRightBarButtonItems()
             }
         } else if let languageObject = TreeSitterLanguage.language(withIdentifier: "markdown") {
             textView.applyAsync(language: languageObject, text: text) { [weak self] in
                 self?.indicator.stopAnimating()
-                self?.indicator.removeFromSuperview()
+                self?.updateRightBarButtonItems()
             }
         } else {
             indicator.stopAnimating()
-            indicator.removeFromSuperview()
+            updateRightBarButtonItems()
         }
     }
 
@@ -73,16 +87,7 @@ class CodeEditorController: UIViewController {
             make.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
         }
 
-        navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(
-                barButtonSystemItem: .done,
-                target: self,
-                action: #selector(done)
-            ),
-            UIBarButtonItem(
-                customView: indicator
-            ),
-        ]
+        updateRightBarButtonItems()
     }
 
     @objc func done() {

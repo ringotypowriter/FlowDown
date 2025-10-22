@@ -25,6 +25,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        // Global navigation bar appearance: remove blur for Liquid Glass and use solid background
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundEffect = nil
+        navAppearance.backgroundColor = .background
+        navAppearance.shadowColor = .clear
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+        UINavigationBar.appearance().compactAppearance = navAppearance
+        UINavigationBar.appearance().isTranslucent = false
+
         UITableView.appearance().backgroundColor = .clear
         UIButton.appearance().tintColor = .accent
         UITextView.appearance().tintColor = .accent
