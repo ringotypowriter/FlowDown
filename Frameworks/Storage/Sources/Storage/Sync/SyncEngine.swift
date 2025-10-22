@@ -432,8 +432,10 @@ private extension SyncEngine {
         }
 
         if resetLocalData {
-            /// 当云端 Zone 被删除时，当前设备应该同步清除本地所有数据
-            try? await deleteLocalData()
+            /// 当云端 Zone 被删除时，不删除本地现有数据，改为暂停同步并等待用户手动刷新以重建状态
+            await syncEngine.cancelOperations()
+            _syncEngine = nil
+            Logger.syncEngine.info("Zone deleted remotely; paused sync without deleting local data")
         }
     }
 

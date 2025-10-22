@@ -17,6 +17,7 @@ UPDATES = {
     "Full Refresh from iCloud": "完全刷新 iCloud 数据",
     "Rebuild sync state and fetch everything new from iCloud. Local data is preserved.": "重建同步状态并拉取 iCloud 上的所有最新内容。本地数据将被保留。",
     "Sync Scope": "同步范围",
+    "Configure which data groups sync with iCloud.": "在此配置哪些数据分组参与 iCloud 同步。",
     "Conversations, Messages, Attachments": "会话、消息、附件",
     "Sync chats and their messages and files.": "同步会话及其消息与文件。",
     "Memory": "记忆",
@@ -51,4 +52,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

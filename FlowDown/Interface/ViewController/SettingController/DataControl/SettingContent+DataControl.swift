@@ -49,57 +49,19 @@ extension SettingController.SettingContent {
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
-            // Per-group sync toggles
-            stackView.addArrangedSubviewWithMargin(
-                ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Sync Scope")
-                )
-            ) { $0.bottom /= 2 }
-            stackView.addArrangedSubview(SeparatorView())
-
-            func addGroupToggle(icon: String, title: String, desc: String, group: SyncPreferences.Group) {
-                let toggle = ConfigurableToggleActionView()
-                toggle.configure(icon: UIImage(systemName: icon))
-                toggle.configure(title: title)
-                toggle.configure(description: desc)
-                toggle.boolValue = SyncPreferences.isGroupEnabled(group)
-                toggle.actionBlock = { value in
-                    SyncPreferences.setGroup(group, enabled: value)
-                    if value, SyncEngine.isSyncEnabled {
-                        // Ensure we fetch fresh state when re-enabling a group
-                        Task {
-                            try? await syncEngine.reloadDataForcefully()
-                        }
-                    }
+            // Sync scope submenu
+            let syncScopeMenu = ConfigurableObject(
+                icon: "slider.horizontal.3",
+                title: String(localized: "Sync Scope"),
+                explain: String(localized: "Configure which data groups sync with iCloud."),
+                ephemeralAnnotation: .action { [weak self] _ in
+                    guard let self else { return }
+                    let controller = SyncScopeController()
+                    navigationController?.pushViewController(controller, animated: true)
                 }
-                stackView.addArrangedSubviewWithMargin(toggle)
-                stackView.addArrangedSubview(SeparatorView())
-            }
-
-            addGroupToggle(
-                icon: "text.bubble",
-                title: String(localized: "Conversations, Messages, Attachments"),
-                desc: String(localized: "Sync chats and their messages and files."),
-                group: .conversations
-            )
-            addGroupToggle(
-                icon: "brain.head.profile",
-                title: String(localized: "Memory"),
-                desc: String(localized: "Sync your AI memory entries."),
-                group: .memory
-            )
-            addGroupToggle(
-                icon: "rectangle.3.group.bubble.left",
-                title: String(localized: "MCP Servers"),
-                desc: String(localized: "Sync configured MCP connections."),
-                group: .mcp
-            )
-            addGroupToggle(
-                icon: "icloud",
-                title: String(localized: "Models"),
-                desc: String(localized: "Sync cloud model configurations."),
-                group: .models
-            )
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(syncScopeMenu)
+            stackView.addArrangedSubview(SeparatorView())
 
             let syncToggle = ConfigurableToggleActionView()
             syncToggle.configure(icon: UIImage(systemName: "icloud"))
