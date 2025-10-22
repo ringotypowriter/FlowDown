@@ -120,3 +120,4 @@ yarn-error.log*
 
 FlowDown/Configuration/Developer.xcconfig
 FlowDown/DerivedSources/*
+!FlowDown/DerivedSources/DerivedSourcesReadme.swift
