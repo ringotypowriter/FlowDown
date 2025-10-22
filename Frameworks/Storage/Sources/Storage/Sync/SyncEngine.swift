@@ -97,7 +97,10 @@ public final actor SyncEngine: Sendable, ObservableObject {
 
     private let storage: Storage
     package let container: any CloudContainer
+    // deprecated: use isAutomaticallySyncEnabled computed property
     private let automaticallySync: Bool
+
+    private var isAutomaticallySyncEnabled: Bool { !SyncPreferences.isManualSyncEnabled }
 
     private var debounceEnqueueTask: Task<Void, Error>?
 
@@ -153,7 +156,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
                 stateSerialization: SyncEngine.stateSerialization,
                 delegate: syncEngine
             )
-            configuration.automaticallySync = syncEngine.automaticallySync
+            configuration.automaticallySync = syncEngine.isAutomaticallySyncEnabled
             let ckSyncEngine = CKSyncEngine(configuration)
             return ckSyncEngine
         }
@@ -282,7 +285,7 @@ private extension SyncEngine {
             } else {
                 let zone = CKRecordZone(zoneID: SyncEngine.zoneID)
                 syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])
-                if !automaticallySync, immediateSendChanges {
+                if !isAutomaticallySyncEnabled, immediateSendChanges {
                     try await syncEngine.performingSendChanges()
                 }
             }
@@ -318,7 +321,10 @@ private extension SyncEngine {
         // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
         // 每次最多发送100条
         let batchSize = 100
-        let objects = storage.pendingUploadList(batchSize: batchSize)
+        var objects = storage.pendingUploadList(batchSize: batchSize)
+
+        // Respect per-group sync preferences
+        objects.removeAll { !SyncPreferences.isTableSyncEnabled(tableName: $0.tableName) }
 
         Logger.syncEngine.info("ScheduleUpload \(objects.count, privacy: .public)")
         guard !objects.isEmpty else {
@@ -353,7 +359,7 @@ private extension SyncEngine {
         if !pendingRecordZoneChanges.isEmpty {
             syncEngine.state.add(pendingRecordZoneChanges: pendingRecordZoneChanges)
 
-            if !automaticallySync, immediateSendChanges {
+            if !isAutomaticallySyncEnabled, immediateSendChanges {
                 try await syncEngine.performingSendChanges()
             }
         }
@@ -438,14 +444,25 @@ private extension SyncEngine {
     ) async {
         Logger.syncEngine.info("Received RecordZoneChanges modifications: \(modifications.count, privacy: .public) deletions: \(deletions.count, privacy: .public)")
 
+        // Filter by user group preferences
+        let filteredModifications = modifications.filter { record in
+            guard let (_, tableName) = UploadQueue.parseCKRecordID(record.recordID.recordName) else { return true }
+            return SyncPreferences.isTableSyncEnabled(tableName: tableName)
+        }
+
         do {
-            try storage.handleRemoteUpsert(modifications: modifications)
+            try storage.handleRemoteUpsert(modifications: filteredModifications)
         } catch {
             Logger.syncEngine.error("HandleRemoteUpsert error \(error)")
         }
 
+        let filteredDeletions = deletions.filter { deletion in
+            guard let (_, tableName) = UploadQueue.parseCKRecordID(deletion.recordID.recordName) else { return true }
+            return SyncPreferences.isTableSyncEnabled(tableName: tableName)
+        }
+
         do {
-            try storage.handleRemoteDeleted(deletions: deletions)
+            try storage.handleRemoteDeleted(deletions: filteredDeletions)
         } catch {
             Logger.syncEngine.error("HandleRemoteDeleted error \(error)")
         }
@@ -455,7 +472,7 @@ private extension SyncEngine {
         var modificationMessages: [Message.ID] = []
         var modificationCloudModels: [CloudModel.ID] = []
 
-        for modification in modifications {
+        for modification in filteredModifications {
             let recordID = modification.recordID
             guard let (objectId, tableName) = UploadQueue.parseCKRecordID(recordID.recordName) else { continue }
             if tableName == Conversation.tableName {
@@ -470,7 +487,7 @@ private extension SyncEngine {
         var deletedConversations: [Conversation.ID] = []
         var deletedMessages: [Message.ID] = []
         var deletedCloudModels: [CloudModel.ID] = []
-        for deletion in deletions {
+        for deletion in filteredDeletions {
             let recordID = deletion.recordID
             guard let (objectId, tableName) = UploadQueue.parseCKRecordID(recordID.recordName) else { continue }
             if tableName == Conversation.tableName {
