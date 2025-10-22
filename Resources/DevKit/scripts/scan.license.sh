@@ -60,19 +60,29 @@ SCANNER_DIR=(
 declare -A PACKAGE_NAME_MAP
 PACKAGE_RESOLVED="${PROJECT_ROOT}/FlowDown.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 
+# Manual corrections for packages where GitHub URL is lowercase but actual name has different casing
+declare -A MANUAL_CORRECTIONS=(
+    ["listviewkit"]="ListViewKit"
+)
+
 if [[ -f "$PACKAGE_RESOLVED" ]]; then
     echo "[*] reading package names from Package.resolved..."
     # Extract identity (lowercase) and location (with correct case) pairs
     while IFS= read -r line; do
         if [[ $line =~ \"identity\"[[:space:]]*:[[:space:]]*\"([^\"]+)\" ]]; then
             identity="${match[1]}"
-            # Read next few lines to find location
-            read -r location_line
-            if [[ $location_line =~ \"location\"[[:space:]]*:[[:space:]]*\"[^/]+/([^/\"]+)\" ]]; then
-                repo_name="${match[1]}"
-                # Remove .git suffix if present
-                repo_name="${repo_name%.git}"
-                PACKAGE_NAME_MAP[$identity]="$repo_name"
+            # Check manual corrections first
+            if [[ -n "${MANUAL_CORRECTIONS[$identity]}" ]]; then
+                PACKAGE_NAME_MAP[$identity]="${MANUAL_CORRECTIONS[$identity]}"
+            else
+                # Read next few lines to find location
+                read -r location_line
+                if [[ $location_line =~ \"location\"[[:space:]]*:[[:space:]]*\"[^/]+/([^/\"]+)\" ]]; then
+                    repo_name="${match[1]}"
+                    # Remove .git suffix if present
+                    repo_name="${repo_name%.git}"
+                    PACKAGE_NAME_MAP[$identity]="$repo_name"
+                fi
             fi
         fi
     done < <(grep -A 1 '"identity"' "$PACKAGE_RESOLVED")
