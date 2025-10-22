@@ -20,7 +20,9 @@ package final class UploadQueue: Identifiable, Codable, TableNamed, TableCodable
     package var changes: UploadQueue.Changes = .insert
     package var state: UploadQueue.State = .pending
     package var failCount: Int = 0
-    package var payload: Data = .init()
+
+    /// 关联的真实对象
+    package var realObject: (any Syncable)?
 
     package enum CodingKeys: String, CodingTableKey {
         package typealias Root = UploadQueue
@@ -35,7 +37,6 @@ package final class UploadQueue: Identifiable, Codable, TableNamed, TableCodable
             BindColumnConstraint(changes, isNotNull: true)
             BindColumnConstraint(state, isNotNull: true)
             BindColumnConstraint(failCount, isNotNull: true)
-            BindColumnConstraint(payload, isNotNull: false)
 
             // 本地查询
             BindIndex(state, namedWith: "_stateIndex")
@@ -56,7 +57,6 @@ package final class UploadQueue: Identifiable, Codable, TableNamed, TableCodable
         case changes
         case state
         case failCount
-        case payload
     }
 
     package var isAutoIncrement: Bool = true
@@ -121,8 +121,5 @@ package extension UploadQueue {
         creation = source.creation
         modified = source.modified
         self.changes = changes
-        if changes != .delete {
-            payload = try source.encodePayload()
-        }
     }
 }

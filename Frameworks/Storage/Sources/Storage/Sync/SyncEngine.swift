@@ -374,22 +374,24 @@ private extension SyncEngine {
         let shouldDeleteLocalData: Bool
         let shouldReUploadLocalData: Bool
 
-        Logger.syncEngine.info("Unknown account change type: \(type(of: changeType), privacy: .public)")
-
         switch changeType {
         case .signIn:
+            Logger.syncEngine.info("HandleAccountChange signIn")
             shouldDeleteLocalData = false
             shouldReUploadLocalData = true
 
         case .switchAccounts:
+            Logger.syncEngine.info("HandleAccountChange switchAccounts")
             shouldDeleteLocalData = true
             shouldReUploadLocalData = false
 
         case .signOut:
+            Logger.syncEngine.info("HandleAccountChange signOut")
             shouldDeleteLocalData = true
             shouldReUploadLocalData = false
 
         @unknown default:
+            Logger.syncEngine.info("Unknown account change")
             shouldDeleteLocalData = false
             shouldReUploadLocalData = false
         }
@@ -739,9 +741,14 @@ private extension UploadQueue {
     func populateRecord(_ record: CKRecord) {
         record[.createByDeviceId] = deviceId
         record.lastModifiedMilliseconds = modified.millisecondsSince1970
-        if changes != UploadQueue.Changes.delete {
-            record.encryptedValues[.payload] = payload
+        guard changes == .delete else {
+            return
         }
+
+        guard let realObject else { return }
+
+        let playload = try? realObject.encodePayload()
+        record.encryptedValues[.payload] = playload
     }
 }
 
@@ -874,7 +881,7 @@ extension SyncEngine: SyncEngineDelegate {
         }
 
         // 实际从数据库中查出来的保存队列记录
-        let objects = storage.pendingUploadList(queueIds: recordsToSaveQueueIds.map(\.0))
+        let objects = storage.pendingUploadList(queueIds: recordsToSaveQueueIds.map(\.0), queryRealObject: true)
 
         // 取出现存的 queueId 集合
         let existingQueueIds = Set(objects.map(\.id))

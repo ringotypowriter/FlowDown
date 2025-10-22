@@ -301,7 +301,7 @@ package extension Storage {
         uploadQueueEnqueueHandler?(queues)
     }
 
-    /// 从上传队列中删除记录，内部采用软删除。在空闲时执行物理删除
+    /// 从上传队列中删除记录
     /// - Parameters:
     ///   - deleting: 待删除集合
     ///   - handle: 数据库句柄，传入 nil 时使用主句柄
@@ -312,14 +312,8 @@ package extension Storage {
 
         try runTransaction(handle: handle) {
             for item in deleting {
-                try $0.update(
-                    table: UploadQueue.tableName,
-                    on: [
-                        UploadQueue.Properties.state,
-                    ],
-                    with: [
-                        UploadQueue.State.finish,
-                    ],
+                try $0.delete(
+                    fromTable: UploadQueue.tableName,
                     where: UploadQueue.Properties.id <= item.queueId
                         && UploadQueue.Properties.objectId == item.objectId
                         && UploadQueue.Properties.tableName == item.tableName
@@ -408,9 +402,10 @@ package extension Storage {
     /// 查询状态为pending 的集合
     /// - Parameters:
     ///   - batchSize: 批次大小
+    ///   - queryRealObject: 是否需要查询关联的 realObject
     ///   - handle: 数据库句柄，传入 nil 时使用主句柄
     /// - Returns: 队列信息， 已按ID进行ascending排序
-    func pendingUploadList(batchSize: Int = 0, handle: Handle? = nil) -> [UploadQueue] {
+    func pendingUploadList(batchSize: Int = 0, queryRealObject: Bool = false, handle: Handle? = nil) -> [UploadQueue] {
         guard let select = if let handle {
             try? handle.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
         } else {
@@ -454,8 +449,11 @@ package extension Storage {
         ])
 
         do {
-            let objects = try select.allObjects()
-            return objects as! [UploadQueue]
+            let objects: [UploadQueue] = try select.allObjects()
+            if queryRealObject {
+                queryUploadQueueRealObject(objects, handle: handle)
+            }
+            return objects
         } catch {
             Logger.database.error("query pending upload error: \(error)")
             return []
@@ -465,9 +463,10 @@ package extension Storage {
     /// 查询的指定队列ID集合, state != finish && failCount < 100
     /// - Parameters:
     ///   - queueIds: 队列ID
+    ///   - queryRealObject: 是否需要查询关联的 realObject
     ///   - handle: 数据库句柄，传入 nil 时使用主句柄
     /// - Returns: 队列信息， 已按ID进行ascending排序
-    func pendingUploadList(queueIds: [UploadQueue.ID], handle: Handle? = nil) -> [UploadQueue] {
+    func pendingUploadList(queueIds: [UploadQueue.ID], queryRealObject: Bool = false, handle: Handle? = nil) -> [UploadQueue] {
         guard let select = if let handle {
             try? handle.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
         } else {
@@ -486,7 +485,48 @@ package extension Storage {
         ])
 
         guard let objects = try? select.allObjects() as? [UploadQueue] else { return [] }
+
+        if queryRealObject {
+            queryUploadQueueRealObject(objects, handle: handle)
+        }
         return objects
+    }
+
+    /// 查询上传队列关联的真实数据对象
+    /// - Parameters:
+    ///   - objects: 上传队列
+    ///   - handle: 数据库句柄，传入 nil 时使用主句柄
+    private func queryUploadQueueRealObject(_ objects: [UploadQueue], handle: Handle? = nil) {
+        guard !objects.isEmpty else {
+            return
+        }
+
+        func getObject<T: Syncable & SyncQueryable>(_: T.Type, objectId: String, handle: Handle? = nil) -> T? {
+            let object: T? = if let handle {
+                try? handle.getObject(fromTable: T.tableName, where: T.SyncQuery.objectId == objectId)
+            } else {
+                try? db.getObject(fromTable: T.tableName, where: T.SyncQuery.objectId == objectId)
+            }
+            return object
+        }
+
+        for object in objects {
+            switch object.tableName {
+            case CloudModel.tableName:
+                object.realObject = getObject(CloudModel.self, objectId: object.objectId, handle: handle)
+            case ModelContextServer.tableName:
+                object.realObject = getObject(ModelContextServer.self, objectId: object.objectId, handle: handle)
+            case Memory.tableName:
+                object.realObject = getObject(Memory.self, objectId: object.objectId, handle: handle)
+            case Conversation.tableName:
+                object.realObject = getObject(Conversation.self, objectId: object.objectId, handle: handle)
+            case Message.tableName:
+                object.realObject = getObject(Message.self, objectId: object.objectId, handle: handle)
+            case Attachment.tableName:
+                object.realObject = getObject(Attachment.self, objectId: object.objectId, handle: handle)
+            default: continue
+            }
+        }
     }
 }
 
@@ -495,6 +535,8 @@ package extension Storage {
     func initializeUploadQueue() throws {
         try db.run(transaction: { [weak self] in
             guard let self else { return }
+
+            try $0.delete(fromTable: UploadQueue.tableName)
 
             Logger.database.info("[*] initializeUploadQueue begin")
             let tables: [any Syncable.Type] = [
