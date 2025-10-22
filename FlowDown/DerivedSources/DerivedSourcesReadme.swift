@@ -8,7 +8,7 @@
 import Foundation
 
 /*
- 
+
  Files are automatically generated. This file works like a .gitkeep file.
- 
+
  */
