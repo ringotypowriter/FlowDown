@@ -5,8 +5,10 @@
 //  Created by AI on 2025/10/22.
 //
 
-import UIKit
+import AlertController
+import ConfigurableKit
 import Storage
+import UIKit
 
 final class SyncScopePage: StackScrollController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -14,7 +16,8 @@ final class SyncScopePage: StackScrollController {
         title = String(localized: "Sync Scope")
     }
 
-    required init?(coder: NSCoder) { fatalError() }
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) { fatalError() }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +75,8 @@ final class SyncScopePage: StackScrollController {
             title: String(localized: "手动从 iCloud 刷新"),
             explain: String(localized: "立即拉取更新"),
             ephemeralAnnotation: .action { controller in
+                guard let controller else { return }
+
                 guard SyncEngine.isSyncEnabled else {
                     let alert = AlertViewController(
                         title: String(localized: "Error Occurred"),
@@ -79,7 +84,7 @@ final class SyncScopePage: StackScrollController {
                     ) { context in
                         context.addAction(title: String(localized: "OK"), attribute: .dangerous) { context.dispose() }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                     return
                 }
 
@@ -87,16 +92,16 @@ final class SyncScopePage: StackScrollController {
                     Task { @MainActor in
                         do {
                             try await syncEngine.fetchChanges()
-                            completion({})
+                            completion {}
                         } catch {
-                            completion({})
+                            completion {}
                             let alert = AlertViewController(
                                 title: String(localized: "Error Occurred"),
                                 message: error.localizedDescription
                             ) { context in
                                 context.addAction(title: String(localized: "OK"), attribute: .dangerous) { context.dispose() }
                             }
-                            controller?.present(alert, animated: true)
+                            controller.present(alert, animated: true)
                         }
                     }
                 }
@@ -106,4 +111,3 @@ final class SyncScopePage: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
     }
 }
-

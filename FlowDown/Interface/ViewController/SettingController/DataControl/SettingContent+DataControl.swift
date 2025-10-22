@@ -57,7 +57,7 @@ extension SettingController.SettingContent {
                 ephemeralAnnotation: .action { [weak self] _ in
                     guard let self else { return }
                     let controller = SyncScopePage()
-                    self.navigationController?.pushViewController(controller, animated: true)
+                    navigationController?.pushViewController(controller, animated: true)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(syncScopeMenu)
@@ -116,7 +116,7 @@ extension SettingController.SettingContent {
                     guard let self, let controller else { return }
 
                     guard SyncEngine.isSyncEnabled else {
-                        self.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
                         return
                     }
 
@@ -145,7 +145,7 @@ extension SettingController.SettingContent {
                                     }
 
                                 Task { @MainActor in
-                                    do { try await syncEngine.deleteServerData() } catch { }
+                                    do { try await syncEngine.deleteServerData() } catch {}
                                 }
                             }
                         }
