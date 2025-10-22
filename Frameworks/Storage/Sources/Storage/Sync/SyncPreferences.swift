@@ -60,13 +60,13 @@ public enum SyncPreferences {
     /// Map a table name to the preference group.
     public static func group(forTableName table: String) -> Group? {
         switch table {
-        case "Conversation", "Message", "Attachment":
+        case Conversation.tableName, Message.tableName, Attachment.tableName:
             .conversations
-        case "Memory":
+        case Memory.tableName:
             .memory
-        case "ModelContextServer":
+        case ModelContextServer.tableName:
             .mcp
-        case "CloudModel":
+        case CloudModel.tableName:
             .models
         default:
             nil
