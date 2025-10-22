@@ -38,7 +38,7 @@ To generate enterprise model configuration, aka call over custom api, there is a
 
 ## Editions
 
-We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**. Community edition is deprecated.
+We offer two editions of FlowDown: **FlowDown** and **FlowDown Community**. Community edition is deprecated and removed. FYI, checkout the old git commit history if you need it.
 
 | **Feature**           | **FlowDown** | **FlowDown Community** |
 | --------------------- | ------------ | ---------------------- |
