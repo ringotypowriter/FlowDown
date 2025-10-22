@@ -7,6 +7,7 @@
 
 import CloudKit
 import Foundation
+import OrderedCollections
 import OSLog
 
 public final class ConversationNotificationInfo: Sendable {
@@ -55,7 +56,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
     public static let LocalDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.LocalDataDeleted")
     public static let ServerDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ServerDataDeleted")
     public static let ConversationNotificationKey: String = " Conversation"
-    public static let MessageNotificationKey: String = " Conversation"
+    public static let MessageNotificationKey: String = " Message"
     public static let CloudModelNotificationKey: String = " CloudModel"
 
     public nonisolated static let syncEnabledDefaultsKey = "com.flowdown.storage.sync.manually.enabled"
@@ -871,7 +872,7 @@ extension SyncEngine: SyncEngineDelegate {
         var recordsToSave: [CKRecord] = []
 
         // 当前 state 中待上传的删除队列项
-        var realRecordIDsToDelete: [CKRecord.ID] = []
+        var realRecordIDsToDeleteSet: OrderedSet<CKRecord.ID> = []
 
         // 当前 state 中待上传的保存队列项
         var recordsToSaveQueueIds: [(queueId: UploadQueue.ID, recordId: CKRecord.ID)] = []
@@ -885,13 +886,13 @@ extension SyncEngine: SyncEngineDelegate {
 
                 recordsToSaveQueueIds.append((queueId, recordId))
             case let .deleteRecord(recordId):
-                realRecordIDsToDelete.append(recordId)
+                realRecordIDsToDeleteSet.append(recordId)
             @unknown default:
                 continue
             }
         }
 
-        if recordsToSaveQueueIds.isEmpty, realRecordIDsToDelete.isEmpty {
+        if recordsToSaveQueueIds.isEmpty, realRecordIDsToDeleteSet.isEmpty {
             return nil
         }
 
@@ -951,9 +952,16 @@ extension SyncEngine: SyncEngineDelegate {
 
         /// ✅ Step 4: 用最新对象生成 CKRecord
         for object in latestObjects {
+            let recordID = CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID)
+            if object.changes == .delete {
+                // 最新操作是删除，则不再保存，而是加入删除队列
+                realRecordIDsToDeleteSet.append(recordID)
+                continue
+            }
+
             let metadata: SyncMetadata? = try? storage.findSyncMetadata(zoneName: SyncEngine.zoneID.zoneName, ownerName: SyncEngine.zoneID.ownerName, recordName: object.ckRecordID)
 
-            let record = metadata?.lastKnownRecord ?? CKRecord(recordType: SyncEngine.recordType, recordID: CKRecord.ID(recordName: object.ckRecordID, zoneID: SyncEngine.zoneID))
+            let record = metadata?.lastKnownRecord ?? CKRecord(recordType: SyncEngine.recordType, recordID: recordID)
 
             let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
             record.sentQueueId = sentQueueId
@@ -965,6 +973,7 @@ extension SyncEngine: SyncEngineDelegate {
         /// 更新为 uploading
         try? storage.pendingUploadChangeState(by: objects.map { ($0.id, .uploading) })
 
+        let realRecordIDsToDelete = realRecordIDsToDeleteSet.elements
         if recordsToSave.isEmpty, realRecordIDsToDelete.isEmpty {
             return nil
         }
