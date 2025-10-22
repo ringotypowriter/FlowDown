@@ -34,6 +34,7 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Package-only verification: `swift build --package-path Frameworks/<Package>`
 - When running CI-style builds, prefer `xcodebuild -workspace FlowDown.xcworkspace -scheme FlowDown -configuration Debug build`
 - Archive script automatically commits changes and bumps version before building
+- Use `python3 Resources/DevKit/scripts/check_translations.py FlowDown/Resources/Localizable.xcstrings` for localization validation, fix any missing using python script too.
 
 ## Development Guidelines
 ### Swift Style

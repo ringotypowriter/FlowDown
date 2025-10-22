@@ -1733,13 +1733,34 @@
       }
     },
     "Delete data stored in iCloud." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除存储在 iCloud 中的数据。"
+          }
+        }
+      }
     },
     "Delete iCloud Data" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除 iCloud 数据"
+          }
+        }
+      }
     },
     "Delete iCloud Data ..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除 iCloud 数据..."
+          }
+        }
+      }
     },
     "Delete Icon" : {
       "localizations" : {
@@ -1852,7 +1873,14 @@
       }
     },
     "Deleting..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在删除..."
+          }
+        }
+      }
     },
     "Denied" : {
       "localizations" : {
@@ -3051,7 +3079,14 @@
       }
     },
     "Fetch Updates Now" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即获取更新"
+          }
+        }
+      }
     },
     "Fetching Model List" : {
       "localizations" : {
@@ -3390,7 +3425,14 @@
       }
     },
     "iCloud synchronization is not enabled. You have to enable iCloud sync in settings before fetching updates." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 同步未启用。在获取更新之前，你需要在设置中启用 iCloud 同步。"
+          }
+        }
+      }
     },
     "Identifier" : {
       "localizations" : {
@@ -3694,7 +3736,14 @@
       }
     },
     "Inspect recent application logs for troubleshooting." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看最近的应用程序日志以进行故障排查。"
+          }
+        }
+      }
     },
     "Introduction to FlowDown" : {
       "localizations" : {
@@ -4039,7 +4088,14 @@
       }
     },
     "Logs" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日志"
+          }
+        }
+      }
     },
     "Long" : {
       "comment" : "Model Context",
@@ -6292,7 +6348,14 @@
       }
     },
     "Syncing Scope" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步范围"
+          }
+        }
+      }
     },
     "System" : {
       "localizations" : {
@@ -6595,7 +6658,14 @@
       }
     },
     "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取更新的请求已发送。根据数据量的大小，可能需要一些时间才能完成。"
+          }
+        }
+      }
     },
     "The server is currently disabled." : {
       "localizations" : {
@@ -6878,10 +6948,24 @@
       }
     },
     "This will remove your synced data from iCloud for this app. Local data on this device will remain." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将从 iCloud 中删除此应用的同步数据。本设备上的本地数据将保留。"
+          }
+        }
+      }
     },
     "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将立即从 iCloud 请求最新更改，但根据数据量和网络状况，可能需要一些时间才能完成"
+          }
+        }
+      }
     },
     "This will use %@ compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged." : {
       "localizations" : {
@@ -7417,7 +7501,14 @@
       }
     },
     "Update Requested" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已请求更新"
+          }
+        }
+      }
     },
     "URL Access" : {
       "localizations" : {
@@ -7660,7 +7751,14 @@
       }
     },
     "View Logs" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看日志"
+          }
+        }
+      }
     },
     "View Raw" : {
       "localizations" : {
