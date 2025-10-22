@@ -132,25 +132,61 @@ extension ModelManager {
         for (key, value) in model.headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
-        URLSession.shared.dataTask(with: request) { data, _, _ in
-            guard let data,
-                  let dic = try? JSONSerialization.jsonObject(with: data, options: [])
-            else { return block([]) }
-            let value = self.scrubModel(fromDic: dic).sorted()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard error == nil else {
+                print("[fetchModelList] request error: \(error!.localizedDescription)")
+                return block([])
+            }
+            if let http = response as? HTTPURLResponse {
+                if http.statusCode != 200 {
+                    print("[fetchModelList] non-200 status: \(http.statusCode) for URL: \(url.absoluteString)")
+                }
+            }
+            guard let data else { return block([]) }
+            guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
+                if let str = String(data: data, encoding: .utf8) {
+                    print("[fetchModelList] non-JSON response: \(str.prefix(256))...")
+                }
+                return block([])
+            }
+            let value = self.scrubModel(fromDic: json).sorted()
             block(value)
         }.resume()
     }
 
     private func scrubModel(fromDic dic: Any) -> [String] {
-        if let dic = dic as? [String: Any],
-           let data = dic["data"] as? [[String: Any]]
-        {
-            data.compactMap { $0["id"] as? String }
-        } else if let data = dic as? [[String: Any]] {
-            data.compactMap { $0["id"] as? String }
-        } else {
-            []
+        // Common OpenAI-style: { data: [{id: ""}, ...] }
+        if let dict = dic as? [String: Any] {
+            if let data = dict["data"] as? [[String: Any]] {
+                return data.compactMap { $0["id"] as? String }
+            }
+            if let data = dict["data"] as? [String] {
+                return data
+            }
+            // Some providers: { models: [ { id/name/model: "..." } ] }
+            if let models = dict["models"] as? [[String: Any]] {
+                return models.compactMap { item in
+                    (item["id"] as? String)
+                        ?? (item["name"] as? String)
+                        ?? (item["model"] as? String)
+                }
+            }
+            if let models = dict["models"] as? [String] {
+                return models
+            }
+            // Generic container: { items: [...] }
+            if let items = dict["items"] as? [[String: Any]] {
+                return items.compactMap { $0["id"] as? String ?? $0["name"] as? String }
+            }
         }
+        // Direct arrays
+        if let array = dic as? [[String: Any]] {
+            return array.compactMap { $0["id"] as? String ?? $0["name"] as? String }
+        }
+        if let array = dic as? [String] {
+            return array
+        }
+        return []
     }
 
     func importCloudModel(at url: URL) throws -> CloudModel {
