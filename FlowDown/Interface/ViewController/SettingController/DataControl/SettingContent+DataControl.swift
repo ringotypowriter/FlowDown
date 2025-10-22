@@ -37,6 +37,7 @@ extension SettingController.SettingContent {
 
         var deletedSeverDataCancellable: AnyCancellable?
         var deletedSeverDataCompletionHandler: Indicator.CompletionHandler?
+        var pullSeverDataCompletionHandler: Indicator.CompletionHandler?
         override func setupContentViews() {
             super.setupContentViews()
             stackView.addArrangedSubview(SeparatorView())
@@ -87,26 +88,64 @@ extension SettingController.SettingContent {
                 title: String(localized: "Delete iCloud Data"),
                 explain: String(localized: "Remove conversations and settings stored in iCloud."),
                 ephemeralAnnotation: .action { [weak self] controller in
-                    guard let controller, let self else { return }
+                    guard let controller else { return }
 
-                    deletedSeverDataCancellable = NotificationCenter.default.publisher(for: SyncEngine.ServerDataDeleted)
+                    guard SyncEngine.isSyncEnabled else {
+                        self?.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        return
+                    }
+
+                    self?.deletedSeverDataCancellable = NotificationCenter.default.publisher(for: SyncEngine.ServerDataDeleted)
                         .receive(on: RunLoop.main)
-                        .sink(receiveValue: { [weak self] _ in
-                            self?.deletedSeverDataCancellable = nil
-                            self?.deletedSeverDataCompletionHandler? {}
-                            self?.deletedSeverDataCompletionHandler = nil
+                        .sink(receiveValue: {
+                            let success = $0.userInfo?["success"] as? Bool ?? false
+                            let error = $0.userInfo?["error"] as? Error
+                            self?.handleServerDataDeleted(controller: controller, success: success, error: error)
                         })
 
                     Indicator.progress(title: String(localized: "Delete iCloud Data ..."), controller: controller) { [weak self] completionHandler in
                         self?.deletedSeverDataCompletionHandler = completionHandler
 
-                        Task {
-                            try await syncEngine.deleteServerData()
+                        Task { @MainActor in
+                            do {
+                                try await syncEngine.deleteServerData()
+                            } catch {
+                                self?.handleServerDataDeleted(controller: controller, success: false, error: error)
+                            }
                         }
                     }
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(icloudDelete)
+            stackView.addArrangedSubview(SeparatorView())
+
+            let icloudIncrementPull = ConfigurableObject(
+                icon: "icloud.and.arrow.down",
+                title: String(localized: "Incremental Sync from iCloud"),
+                explain: String(localized: "Fetch only the new and updated data from iCloud."),
+                ephemeralAnnotation: .action { [weak self] controller in
+                    guard let controller else { return }
+
+                    guard SyncEngine.isSyncEnabled else {
+                        self?.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        return
+                    }
+
+                    Indicator.progress(title: String(localized: "Pull from iCloud ..."), controller: controller) { [weak self] completionHandler in
+                        self?.pullSeverDataCompletionHandler = completionHandler
+                    }
+
+                    Task { @MainActor in
+                        do {
+                            try await syncEngine.fetchChanges()
+                            self?.handlePullSeverData(controller: controller, error: nil)
+                        } catch {
+                            self?.handlePullSeverData(controller: controller, error: error)
+                        }
+                    }
+                }
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(icloudIncrementPull)
             stackView.addArrangedSubview(SeparatorView())
 
             let icloudForcePull = ConfigurableObject(
@@ -115,17 +154,23 @@ extension SettingController.SettingContent {
                 explain: String(localized: "Overwrite local data with the latest content from iCloud."),
                 ephemeralAnnotation: .action { [weak self] controller in
                     guard let controller else { return }
-                    _ = self // dismiss the warning
 
-                    /// iCloud 同步有时比较慢，所以这里有意添加假的loading
-                    Indicator.progress(title: String(localized: "Pull from iCloud ..."), controller: controller) { completionHandler in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                            completionHandler {}
-                        }
+                    guard SyncEngine.isSyncEnabled else {
+                        self?.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        return
                     }
 
-                    Task {
-                        try await syncEngine.reloadDataForcefully()
+                    Indicator.progress(title: String(localized: "Pull from iCloud ..."), controller: controller) { [weak self] completionHandler in
+                        self?.pullSeverDataCompletionHandler = completionHandler
+                    }
+
+                    Task { @MainActor in
+                        do {
+                            try await syncEngine.reloadDataForcefully()
+                            self?.handlePullSeverData(controller: controller, error: nil)
+                        } catch {
+                            self?.handlePullSeverData(controller: controller, error: error)
+                        }
                     }
                 }
             ).createView()
@@ -492,6 +537,64 @@ extension SettingController.SettingContent {
                     }
                 }
             }
+        }
+
+        private func showAlert(controller: UIViewController, title: String, message: String) {
+            let alert = AlertViewController(
+                title: title,
+                message: message
+            ) { context in
+                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                    context.dispose()
+                }
+            }
+            controller.present(alert, animated: true)
+        }
+
+        @MainActor
+        private func handleServerDataDeleted(controller: UIViewController, success: Bool, error: Error?) {
+            deletedSeverDataCancellable = nil
+            deletedSeverDataCompletionHandler? {
+                guard !success else {
+                    return
+                }
+
+                let message = if let error {
+                    error.localizedDescription
+                } else {
+                    String(localized: "Failed to delete iCloud data. Please try again later")
+                }
+
+                let alert = AlertViewController(
+                    title: String(localized: "Error Occurred"),
+                    message: message
+                ) { context in
+                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.dispose()
+                    }
+                }
+                controller.present(alert, animated: true)
+            }
+
+            deletedSeverDataCompletionHandler = nil
+        }
+
+        @MainActor
+        private func handlePullSeverData(controller: UIViewController, error: Error?) {
+            pullSeverDataCompletionHandler? {
+                guard let error else { return }
+                let alert = AlertViewController(
+                    title: String(localized: "Error Occurred"),
+                    message: error.localizedDescription
+                ) { context in
+                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.dispose()
+                    }
+                }
+                controller.present(alert, animated: true)
+            }
+
+            pullSeverDataCompletionHandler = nil
         }
     }
 }

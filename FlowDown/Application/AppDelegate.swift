@@ -53,6 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UIMenuSystem.main.setNeedsRebuild()
             }
 
+        application.registerForRemoteNotifications()
+
         let isSyncEnabled = SyncEngine.isSyncEnabled
         if isSyncEnabled {
             Task {
@@ -61,8 +63,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
-        application.registerForRemoteNotifications()
 
         return true
     }

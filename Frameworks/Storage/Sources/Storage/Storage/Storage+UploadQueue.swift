@@ -390,13 +390,18 @@ package extension Storage {
     /// 将状态为failed的记录更为状态为pending
     /// - Parameter handle: 数据库句柄，传入 nil 时使用主句柄
     func pendingUploadRestToPendingState(handle: Handle? = nil) throws {
-        try runTransaction(handle: handle) {
-            let update = StatementUpdate().update(table: UploadQueue.tableName)
-            update.set(UploadQueue.Properties.state)
-                .to(UploadQueue.State.pending)
-                .where(UploadQueue.Properties.state == UploadQueue.State.failed)
+        let update = StatementUpdate().update(table: UploadQueue.tableName)
+        update.set(UploadQueue.Properties.state)
+            .to(UploadQueue.State.pending)
+            .where(
+                UploadQueue.Properties.state == UploadQueue.State.failed
+                    && UploadQueue.Properties.failCount < 100
+            )
 
-            try $0.exec(update)
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
         }
     }
 
@@ -524,7 +529,7 @@ package extension Storage {
         var queues: [UploadQueue] = []
         var id = startId
         for object in objects {
-            let queue = try UploadQueue(source: object, changes: .insert)
+            let queue = try UploadQueue(source: object, changes: object.removed ? .delete : .insert)
             queue.id = id
             id += 1
             queues.append(queue)
