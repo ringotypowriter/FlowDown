@@ -12,10 +12,9 @@ UPDATES = {
     "Enable iCloud sync to keep data consistent across your devices. Turning off does not delete existing data.": "启用 iCloud 同步以保持多设备数据一致。关闭不会删除现有数据。",
     "When sync is off, no new changes are shared. Existing data remains intact. Re‑enable sync to fetch the latest state before resuming.": "关闭同步后将不再共享新更改。现有数据保持不变。重新开启同步会先获取最新状态再继续。",
     "Refresh from iCloud": "手动从 iCloud 刷新",
-    "Manually fetch the latest changes from iCloud.": "手动获取 iCloud 上的最新更改。",
+    "Manually fetch the latest changes from iCloud.": "立即拉取更新",
     "Refreshing...": "正在刷新...",
-    "Full Refresh from iCloud": "完全刷新 iCloud 数据",
-    "Rebuild sync state and fetch everything new from iCloud. Local data is preserved.": "重建同步状态并拉取 iCloud 上的所有最新内容。本地数据将被保留。",
+    # Removed per requirements: Full refresh entry
     "Sync Scope": "同步范围",
     "Configure which data groups sync with iCloud.": "在此配置哪些数据分组参与 iCloud 同步。",
     "Conversations, Messages, Attachments": "会话、消息、附件",

@@ -4182,7 +4182,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "手动获取 iCloud 上的最新更改。"
+            "value": "立即拉取更新"
           }
         }
       }

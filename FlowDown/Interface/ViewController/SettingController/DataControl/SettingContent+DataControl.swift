@@ -56,8 +56,8 @@ extension SettingController.SettingContent {
                 explain: String(localized: "Configure which data groups sync with iCloud."),
                 ephemeralAnnotation: .action { [weak self] _ in
                     guard let self else { return }
-                    let controller = SyncScopeController()
-                    navigationController?.pushViewController(controller, animated: true)
+                    let controller = SyncScopePage()
+                    self.navigationController?.pushViewController(controller, animated: true)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(syncScopeMenu)
@@ -94,28 +94,7 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubviewWithMargin(syncToggle)
             stackView.addArrangedSubview(SeparatorView())
 
-            // Manual refresh mode toggle (disables automatic background sync)
-            let manualToggle = ConfigurableToggleActionView()
-            manualToggle.configure(icon: UIImage(systemName: "arrow.triangle.2.circlepath.icloud"))
-            manualToggle.configure(title: String(localized: "Manual Refresh Mode"))
-            manualToggle.configure(
-                description: String(localized: "Pause automatic background syncing. Use Refresh to pull changes when needed.")
-            )
-            manualToggle.boolValue = SyncPreferences.isManualSyncEnabled
-            manualToggle.actionBlock = { value in
-                SyncPreferences.isManualSyncEnabled = value
-                Task {
-                    // Recreate underlying CKSyncEngine with new automaticallySync flag
-                    try? await syncEngine.stopSyncIfNeeded()
-                    if !value, SyncEngine.isSyncEnabled {
-                        // Resume automatic syncing by fetching changes once
-                        try? await syncEngine.fetchChanges()
-                    }
-                }
-            }
-            stackView.addArrangedSubviewWithMargin(manualToggle)
-            stackView.addArrangedSubview(SeparatorView())
-
+            // Footer clarifying behavior when sync disabled
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
                     footer: String(localized: "When sync is off, no new changes are shared. Existing data remains intact. Re‑enable sync to fetch the latest state before resuming.")
@@ -126,92 +105,55 @@ extension SettingController.SettingContent {
             // Dangerous: remove iCloud data option disabled per requirements
             // Keeping UI out to avoid accidental usage
 
-            // Incremental pull disabled per requirements; replaced with explicit manual refresh
-            /* let icloudIncrementPull = ConfigurableObject(
-                 icon: "icloud.and.arrow.down",
-                 title: String(localized: "Incremental Sync from iCloud"),
-                 explain: String(localized: "Fetch only the new and updated data from iCloud."),
-                 ephemeralAnnotation: .action { [weak self] controller in
-                     guard let controller else { return }
+            // Manual refresh actions moved into Sync Scope subpage per requirements
 
-                     guard SyncEngine.isSyncEnabled else {
-                         self?.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
-                         return
-                     }
-
-                     Indicator.progress(title: String(localized: "Pull from iCloud ..."), controller: controller) { [weak self] completionHandler in
-                         self?.pullSeverDataCompletionHandler = completionHandler
-                     }
-
-                     Task { @MainActor in
-                         do {
-                             try await syncEngine.fetchChanges()
-                             self?.handlePullSeverData(controller: controller, error: nil)
-                         } catch {
-                             self?.handlePullSeverData(controller: controller, error: error)
-                         }
-                     }
-                 }
-             ).createView()
-             stackView.addArrangedSubviewWithMargin(icloudIncrementPull)
-             stackView.addArrangedSubview(SeparatorView()) */
-
-            let icloudManualRefresh = ConfigurableObject(
-                icon: "arrow.clockwise.icloud",
-                title: String(localized: "Refresh from iCloud"),
-                explain: String(localized: "Manually fetch the latest changes from iCloud."),
+            // Bring back Delete iCloud Data (dangerous)
+            let deleteICloud = ConfigurableObject(
+                icon: "icloud.slash",
+                title: String(localized: "Delete iCloud Data ..."),
+                explain: String(localized: "Delete data stored in iCloud."),
                 ephemeralAnnotation: .action { [weak self] controller in
-                    guard let controller else { return }
+                    guard let self, let controller else { return }
 
                     guard SyncEngine.isSyncEnabled else {
-                        self?.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        self.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
                         return
                     }
 
-                    Indicator.progress(title: String(localized: "Refreshing..."), controller: controller) { [weak self] completionHandler in
-                        self?.pullSeverDataCompletionHandler = completionHandler
-                    }
+                    let alert = AlertViewController(
+                        title: String(localized: "Delete iCloud Data"),
+                        message: String(localized: "This will remove your synced data from iCloud for this app. Local data on this device will remain.")
+                    ) { [weak self] context in
+                        context.addAction(title: String(localized: "Cancel")) {
+                            context.dispose()
+                        }
+                        context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+                            context.dispose {
+                                Indicator.progress(title: String(localized: "Deleting..."), controller: controller) { [weak self] completion in
+                                    self?.deletedSeverDataCompletionHandler = completion
+                                }
 
-                    Task { @MainActor in
-                        do {
-                            try await syncEngine.fetchChanges()
-                            self?.handlePullSeverData(controller: controller, error: nil)
-                        } catch {
-                            self?.handlePullSeverData(controller: controller, error: error)
+                                self?.deletedSeverDataCancellable = NotificationCenter.default
+                                    .publisher(for: SyncEngine.ServerDataDeleted)
+                                    .sink { [weak self, weak controller] notification in
+                                        guard let controller, let self else { return }
+                                        let success = notification.userInfo?["success"] as? Bool ?? false
+                                        let error = notification.userInfo?["error"] as? Error
+                                        Task { @MainActor in
+                                            self.handleServerDataDeleted(controller: controller, success: success, error: error)
+                                        }
+                                    }
+
+                                Task { @MainActor in
+                                    do { try await syncEngine.deleteServerData() } catch { }
+                                }
+                            }
                         }
                     }
+                    controller.present(alert, animated: true)
                 }
             ).createView()
-            stackView.addArrangedSubviewWithMargin(icloudManualRefresh)
-            stackView.addArrangedSubview(SeparatorView())
-
-            let icloudForcePull = ConfigurableObject(
-                icon: "icloud.and.arrow.down",
-                title: String(localized: "Full Refresh from iCloud"),
-                explain: String(localized: "Rebuild sync state and fetch everything new from iCloud. Local data is preserved."),
-                ephemeralAnnotation: .action { [weak self] controller in
-                    guard let controller else { return }
-
-                    guard SyncEngine.isSyncEnabled else {
-                        self?.showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
-                        return
-                    }
-
-                    Indicator.progress(title: String(localized: "Refreshing..."), controller: controller) { [weak self] completionHandler in
-                        self?.pullSeverDataCompletionHandler = completionHandler
-                    }
-
-                    Task { @MainActor in
-                        do {
-                            try await syncEngine.reloadDataForcefully()
-                            self?.handlePullSeverData(controller: controller, error: nil)
-                        } catch {
-                            self?.handlePullSeverData(controller: controller, error: error)
-                        }
-                    }
-                }
-            ).createView()
-            stackView.addArrangedSubviewWithMargin(icloudForcePull)
+            stackView.addArrangedSubviewWithMargin(deleteICloud)
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
