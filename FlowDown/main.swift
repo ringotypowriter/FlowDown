@@ -33,6 +33,11 @@ import Storage
     }
 #endif
 
+import OSLog
+
+let logger = Logger.app
+_ = LogStore.shared
+
 import ConfigurableKit
 import MLX
 
@@ -44,11 +49,9 @@ import MLX
     assert(MLX.GPU.isSupported)
 #endif
 
-import OSLog
 import Storage
 
 let sdb = try Storage.db()
-let logger = Logger.app
 
 let syncEngine = SyncEngine(storage: sdb, containerIdentifier: CloudKitConfig.containerIdentifier, mode: .live, automaticallySync: true)
 

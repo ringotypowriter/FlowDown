@@ -33,7 +33,7 @@ public final class LogStore {
     private let queue = DispatchQueue(label: "wiki.qaq.flowdown.logstore", qos: .utility)
     private let fileManager = FileManager.default
 
-    private let maxFileSize: Int = 5 * 1024 * 1024 // 5 MB
+    private let maxFileSize: Int = 128 * 1024 * 1024 // 5 MB
     private let maxFiles: Int = 5
 
     private lazy var logsDir: URL = {
