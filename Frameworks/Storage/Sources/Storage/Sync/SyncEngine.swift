@@ -741,7 +741,7 @@ private extension UploadQueue {
     func populateRecord(_ record: CKRecord) {
         record[.createByDeviceId] = deviceId
         record.lastModifiedMilliseconds = modified.millisecondsSince1970
-        guard changes == .delete else {
+        guard changes != .delete else {
             return
         }
 
