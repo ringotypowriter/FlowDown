@@ -7,7 +7,7 @@
 
 import CloudKit
 import Foundation
-import os.log
+import OSLog
 
 public final class ConversationNotificationInfo: Sendable {
     public let modifications: [Conversation.ID]
@@ -100,7 +100,7 @@ public final actor SyncEngine: Sendable, ObservableObject {
     // deprecated: use isAutomaticallySyncEnabled computed property
     private let automaticallySync: Bool
 
-    private var isAutomaticallySyncEnabled: Bool { !SyncPreferences.isManualSyncEnabled }
+    private nonisolated var isAutomaticallySyncEnabled: Bool { !SyncPreferences.isManualSyncEnabled }
 
     private var debounceEnqueueTask: Task<Void, Error>?
 

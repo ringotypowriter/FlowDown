@@ -12,8 +12,8 @@ import Foundation
 import Hub
 import MLX
 import MLXLLM
+import OSLog
 import Storage
-
 import ZIPFoundation
 
 /*
@@ -126,7 +126,7 @@ extension ModelManager {
                   FileManager.default.fileExists(atPath: self.modelContent(for: model).path),
                   dirForLocalModel(identifier: model.id) == url // otherwise it's a hacked model
             else {
-                print("[x] removing invalid model: \(url)")
+                Logger.model.errorFile("removing invalid model: \(url)")
                 try? FileManager.default.removeItem(at: url)
                 continue
             }
@@ -141,11 +141,11 @@ extension ModelManager {
             )
             for item in dirContent ?? [] {
                 if item.lastPathComponent == "manifest" || item.lastPathComponent == "content" { continue }
-                print("[x] removing unknown item: \(item)")
+                Logger.model.errorFile("removing unknown item: \(item)")
                 try? FileManager.default.removeItem(at: item)
             }
         }
-        print("[+] scanned \(ans.count) local models")
+        Logger.model.infoFile("scanned \(ans.count) local models")
         return ans.sorted(by: \.id)
     }
 
@@ -180,7 +180,7 @@ extension ModelManager {
                     size += Int64(values.fileSize ?? 0)
                 }
             } catch {
-                print("[*] error getting size for \(fileURL): \(error)")
+                Logger.model.errorFile("error getting size for \(fileURL): \(error)")
                 continue
             }
         }

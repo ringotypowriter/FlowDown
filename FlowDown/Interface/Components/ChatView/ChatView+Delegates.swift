@@ -8,6 +8,7 @@
 import AlertController
 import ChatClientKit
 import ConfigurableKit
+import OSLog
 import RegexBuilder
 import RichEditor
 import ScrubberKit
@@ -352,9 +353,9 @@ extension ChatView: RichEditorView.Delegate {
     @objc func printModelInfomation() {
         guard let conversationIdentifier else { return }
         let session = ConversationSessionManager.shared.session(for: conversationIdentifier)
-        print("[*] offloaded model to session: \(conversationIdentifier)")
-        print("    - chat - \(ModelManager.shared.modelName(identifier: session.models.chat))")
-        print("    - task - \(ModelManager.shared.modelName(identifier: session.models.auxiliary))")
-        print("    - view - \(ModelManager.shared.modelName(identifier: session.models.visualAuxiliary))")
+        Logger.model.infoFile("offloaded model to session: \(conversationIdentifier)")
+        Logger.model.debugFile("chat: \(ModelManager.shared.modelName(identifier: session.models.chat))")
+        Logger.model.debugFile("task: \(ModelManager.shared.modelName(identifier: session.models.auxiliary))")
+        Logger.model.debugFile("view: \(ModelManager.shared.modelName(identifier: session.models.visualAuxiliary))")
     }
 }

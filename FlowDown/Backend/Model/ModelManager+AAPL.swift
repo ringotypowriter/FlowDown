@@ -8,6 +8,7 @@
 import ChatClientKit
 import Foundation
 import FoundationModels
+import OSLog
 import UIKit
 
 // MARK: - Apple Intelligence Model
@@ -20,7 +21,7 @@ final class AppleIntelligenceModel {
     var isAvailable: Bool {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
             let model = SystemLanguageModel.default
-            print("[Apple Intelligence] availability: \(model.availability)")
+            Logger.model.infoFile("[Apple Intelligence] availability: \(model.availability)")
             switch model.availability {
             case .available:
                 return true

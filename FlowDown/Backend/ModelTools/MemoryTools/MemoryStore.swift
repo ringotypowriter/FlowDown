@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import OSLog
 import Storage
 
 @MainActor
@@ -298,7 +299,7 @@ public class MemoryStore: ObservableObject {
     func store(content: String, conversationId: String? = nil) {
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedContent.isEmpty, trimmedContent.count <= maxMemoryLength else {
-            print("[MemoryStore] Invalid memory content")
+            Logger.database.errorFile("MemoryStore invalid memory content")
             return
         }
 
@@ -315,7 +316,7 @@ public class MemoryStore: ObservableObject {
                     await self.updateMemoryCount()
                 }
             } catch {
-                print("[MemoryStore] Failed to store memory: \(error)")
+                Logger.database.errorFile("MemoryStore failed to store memory: \(error)")
             }
         }
     }
@@ -325,7 +326,7 @@ public class MemoryStore: ObservableObject {
             let count = try await getMemoryCount()
             memoryCount = count
         } catch {
-            print("[MemoryStore] Failed to update memory count: \(error)")
+            Logger.database.errorFile("MemoryStore failed to update memory count: \(error)")
         }
     }
 }

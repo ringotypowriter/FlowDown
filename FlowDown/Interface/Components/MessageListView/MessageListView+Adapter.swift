@@ -7,6 +7,7 @@ import AlertController
 import ListViewKit
 import Litext
 import MarkdownView
+import OSLog
 import RichEditor
 import Storage
 import UIKit
@@ -248,14 +249,14 @@ extension MessageListView: ListViewAdapter {
                 if label.selectionRange != nil {
                     let location = label.convert(location, from: listView)
                     if label.isLocationInSelection(location: location) {
-                        print("[*] event is activate on \(label)")
+                        Logger.ui.debugFile("event is activate on \(label)")
                         return true
                     }
                     label.clearSelection()
                 }
             }
         }
-        print("[*] no event, returning false")
+        Logger.ui.debugFile("no event, returning false")
         return false
     }
 
@@ -266,7 +267,7 @@ extension MessageListView: ListViewAdapter {
         at index: Int
     ) {
         let hasActivateEvent = hasActivatedEventOnLabel(listView: listView, location: point)
-        print("[*] context menu checking event \(hasActivateEvent)")
+        Logger.ui.debugFile("context menu checking event \(hasActivateEvent)")
         guard !hasActivateEvent else { return }
         guard let view = listView.rowView(at: index) else { return }
 
@@ -283,7 +284,7 @@ extension MessageListView: ListViewAdapter {
             }
         }
 
-        print("[*] item \(item) is presenting context menu at \(point) for index \(index)")
+        Logger.ui.debugFile("item \(item) presenting context menu at \(point) for index \(index)")
         guard let entry = item as? Entry else {
             assertionFailure("Invalid item type")
             return
@@ -441,7 +442,7 @@ extension MessageListView: ListViewAdapter {
                         }
                         viewer.collectEditedContent { [weak self] text in
                             guard let self else { return }
-                            print("[*] edited \(messageIdentifier) content: \(text)")
+                            Logger.ui.infoFile("edited \(messageIdentifier) content: \(text)")
                             if isReasoningContent {
                                 session?.update(messageIdentifier: messageIdentifier, reasoningContent: text)
                             } else {

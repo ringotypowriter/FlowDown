@@ -9,6 +9,7 @@ import AlertController
 import ChatClientKit
 import ConfigurableKit
 import Foundation
+import OSLog
 import UIKit
 
 class ModelToolsManager {
@@ -80,7 +81,7 @@ class ModelToolsManager {
         #endif
 
         for tool in tools {
-            print("[*] registering tool: \(tool.functionName)")
+            Logger.model.debugFile("registering tool: \(tool.functionName)")
             #if DEBUG
                 assert(registeredToolNames.insert(tool.functionName).inserted)
             #endif
@@ -117,14 +118,14 @@ class ModelToolsManager {
     }
 
     func tool(for request: ToolCallRequest) -> ModelTool? {
-        print("[*] finding tool call with function name \(request.name)")
+        Logger.model.debugFile("finding tool call with function name \(request.name)")
         return enabledTools.first {
             $0.functionName.lowercased() == request.name.lowercased()
         }
     }
 
     func findTool(for request: ToolCallRequest) async -> ModelTool? {
-        print("[*] finding tool call with function name \(request.name)")
+        Logger.model.debugFile("finding tool call with function name \(request.name)")
         let allTools = await getEnabledToolsIncludeMCP()
         return allTools.first {
             $0.functionName.lowercased() == request.name.lowercased()

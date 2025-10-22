@@ -8,6 +8,7 @@
 import ChatClientKit
 import Foundation
 import FoundationModels
+import OSLog
 import Storage
 import XMLCoder
 
@@ -95,7 +96,7 @@ extension ConversationSessionManager.Session {
             if ret.count > 32 { ret = String(ret.prefix(32)) }
             return ret
         } catch {
-            print("[-] failed to generate title: \(error)")
+            Logger.model.errorFile("failed to generate title: \(error)")
             return nil
         }
     }

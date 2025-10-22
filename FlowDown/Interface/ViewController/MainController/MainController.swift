@@ -7,6 +7,7 @@
 
 import AlertController
 import Combine
+import OSLog
 import RichEditor
 import Storage
 import UIKit
@@ -310,21 +311,21 @@ class MainController: UIViewController {
     }
 
     func sendMessageToCurrentConversation(_ message: String) {
-        print("[*] attempting to send message: \(message)")
+        Logger.app.infoFile("attempting to send message: \(message)")
 
         guard let currentConversationID = chatView.conversationIdentifier else {
             // showErrorAlert(title: "Error", message: "No conversation available to send message.")
             return
         }
-        print("[*] current conversation ID: \(currentConversationID)")
+        Logger.app.debugFile("current conversation ID: \(currentConversationID)")
 
         // retrieve session
         let session = ConversationSessionManager.shared.session(for: currentConversationID)
-        print("[*] session created/retrieved for conversation")
+        Logger.app.debugFile("session created/retrieved for conversation")
 
         let modelID = ModelManager.ModelIdentifier.defaultModelForConversation
         guard !modelID.isEmpty else {
-            print("[!] no default model configured")
+            Logger.app.errorFile("no default model configured")
             showErrorAlert(
                 title: String(localized: "No Model Available"),
                 message: String(
@@ -334,7 +335,7 @@ class MainController: UIViewController {
             )
             return
         }
-        print("[*] using model: \(modelID)")
+        Logger.app.infoFile("using model: \(modelID)")
 
         // check if ui was loaded
         guard let currentMessageListView = chatView.currentMessageListView else {
@@ -349,7 +350,7 @@ class MainController: UIViewController {
             )
             return
         }
-        print("[*] message content: '\(trimmedMessage)'")
+        Logger.app.debugFile("message content: '\(trimmedMessage)'")
 
         let editorObject = RichEditorView.Object(text: trimmedMessage)
         session.doInfere(
@@ -357,7 +358,7 @@ class MainController: UIViewController {
             currentMessageListView: currentMessageListView,
             inputObject: editorObject
         ) {
-            print("[+] message sent and AI response triggered successfully via URL scheme")
+            Logger.app.infoFile("message sent and AI response triggered successfully via URL scheme")
         }
     }
 

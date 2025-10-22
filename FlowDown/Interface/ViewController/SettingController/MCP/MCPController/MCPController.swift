@@ -7,6 +7,7 @@
 import AlertController
 import Combine
 import ConfigurableKit
+import OSLog
 import Storage
 import UIKit
 import UniformTypeIdentifiers
@@ -254,7 +255,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDragDelegat
             }
             itemProvider.suggestedName = "\(serverName.sanitizedFileName).fdmcp"
         } catch {
-            print("[-] failed to encode MCP server for drag: \(error)")
+            Logger.app.errorFile("failed to encode MCP server for drag: \(error)")
         }
 
         let dragItem = UIDragItem(itemProvider: itemProvider)
@@ -313,7 +314,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDragDelegat
                             MCPService.shared.insert(server)
                         }
                     } catch {
-                        print("[-] failed to decode dropped template: \(error)")
+                        Logger.app.errorFile("failed to decode dropped template: \(error)")
                     }
                 }
             }
@@ -357,7 +358,7 @@ extension SettingController.SettingContent.MCPController {
             }
             exporter.execute(presentingViewController: self)
         } catch {
-            print("[-] failed to export MCP server: \(error)")
+            Logger.app.errorFile("failed to export MCP server: \(error)")
         }
     }
 }

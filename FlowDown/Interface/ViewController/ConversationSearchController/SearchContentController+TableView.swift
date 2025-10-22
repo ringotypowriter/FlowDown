@@ -5,6 +5,7 @@
 //  Created by 秋星桥 on 7/9/25.
 //
 
+import OSLog
 import UIKit
 
 extension SearchContentController: UITableViewDelegate {
@@ -27,6 +28,7 @@ extension SearchContentController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell", for: indexPath) as? SearchResultCell else {
             assertionFailure()
+            Logger.ui.errorFile("failed to dequeue cell for search results at \(indexPath)")
             return UITableViewCell()
         }
         let result = searchResults[indexPath.row]

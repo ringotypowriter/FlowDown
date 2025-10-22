@@ -8,6 +8,7 @@
 import ChatClientKit
 import Foundation
 import MarkdownParser
+import OSLog
 import RegexBuilder
 import Storage
 
@@ -115,12 +116,12 @@ extension ConversationSession {
 
             if let type, prevent.contains(type) {
                 // do not process content inside code block
-                print("[*] ignoring content inside block with type \(type)")
+                Logger.model.debugFile("ignoring content inside block type: \(type)")
                 continue
             }
 
             let replacement = replacedLink.joined(separator: " ")
-            print("[*] replacing \(source) with \(replacement) at range \(range)")
+            Logger.model.debugFile("replacing \(source) with \(replacement) at range \(range)")
             content.replaceSubrange(range, with: replacement)
         }
 

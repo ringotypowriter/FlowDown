@@ -7,6 +7,7 @@
 
 import CommonCrypto
 import Foundation
+import OSLog
 import Storage
 
 extension CloudModel {
@@ -134,18 +135,18 @@ extension ModelManager {
         }
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
-                print("[fetchModelList] request error: \(error!.localizedDescription)")
+                Logger.network.errorFile("[fetchModelList] request error: \(error!.localizedDescription)")
                 return block([])
             }
             if let http = response as? HTTPURLResponse {
                 if http.statusCode != 200 {
-                    print("[fetchModelList] non-200 status: \(http.statusCode) for URL: \(url.absoluteString)")
+                    Logger.network.errorFile("[fetchModelList] non-200 status: \(http.statusCode) for URL: \(url.absoluteString)")
                 }
             }
             guard let data else { return block([]) }
             guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
                 if let str = String(data: data, encoding: .utf8) {
-                    print("[fetchModelList] non-JSON response: \(str.prefix(256))...")
+                    Logger.network.errorFile("[fetchModelList] non-JSON response: \(str.prefix(256))...")
                 }
                 return block([])
             }

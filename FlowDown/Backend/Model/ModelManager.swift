@@ -10,6 +10,7 @@ import Combine
 import ConfigurableKit
 import Foundation
 import OrderedCollections
+import OSLog
 import Storage
 import UIKit
 
@@ -157,7 +158,7 @@ class ModelManager: NSObject {
            cloudModel(identifier: defaultModelForConversation) == nil,
            !(appleIntelligenceId != nil && defaultModelForConversation == appleIntelligenceId)
         {
-            print("[*] reset defaultModelForConversation due to not found")
+            Logger.model.debugFile("reset defaultModelForConversation due to not found")
             defaultModelForConversation = ""
         }
 
@@ -166,7 +167,7 @@ class ModelManager: NSObject {
            cloudModel(identifier: defaultModelForAuxiliaryTask) == nil,
            !(appleIntelligenceId != nil && defaultModelForAuxiliaryTask == appleIntelligenceId)
         {
-            print("[*] reset defaultModelForAuxiliaryTask due to not found")
+            Logger.model.debugFile("reset defaultModelForAuxiliaryTask due to not found")
             defaultModelForAuxiliaryTask = ""
         }
 
@@ -175,7 +176,7 @@ class ModelManager: NSObject {
             let cloudModelSatisfied = cloudModel(identifier: defaultModelForAuxiliaryVisualTask)?.capabilities.contains(.visual) ?? false
             let appleIntelligenceSatisfied = false // Apple Intelligence does not support visual capabilities
             if !localModelSatisfied, !cloudModelSatisfied, !appleIntelligenceSatisfied {
-                print("[*] reset defaultModelForAuxiliaryVisualTask due to not found")
+                Logger.model.debugFile("reset defaultModelForAuxiliaryVisualTask due to not found")
                 defaultModelForAuxiliaryVisualTask = ""
             }
         }

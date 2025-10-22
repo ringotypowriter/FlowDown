@@ -95,7 +95,7 @@ public class Storage {
 
         #if DEBUG
             db.traceSQL { _, _, _, sql, _ in
-                print("[\(name)-sql]: \(sql)")
+                Logger.database.debugFile("[\(name)-sql]: \(sql)")
             }
         #endif
 

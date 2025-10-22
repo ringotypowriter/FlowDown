@@ -1340,6 +1340,9 @@
         }
       }
     },
+    "Conversations, Messages, Attachments" : {
+
+    },
     "Coordinates: %@, %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1711,6 +1714,7 @@
       }
     },
     "Delete iCloud Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1721,6 +1725,7 @@
       }
     },
     "Delete iCloud Data ..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1921,6 +1926,7 @@
       }
     },
     "Disabling sync will stop new updates from being shared. Data already synced to iCloud will remain available on other devices." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2332,6 +2338,9 @@
           }
         }
       }
+    },
+    "Enable iCloud sync to keep data consistent across your devices. Turning off does not delete existing data." : {
+
     },
     "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response." : {
       "localizations" : {
@@ -3036,6 +3045,7 @@
       }
     },
     "Fetch only the new and updated data from iCloud." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3139,6 +3149,7 @@
       }
     },
     "Force Pull from iCloud" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3177,6 +3188,9 @@
           }
         }
       }
+    },
+    "Full Refresh from iCloud" : {
+
     },
     "General" : {
       "localizations" : {
@@ -3601,6 +3615,7 @@
       }
     },
     "Incremental Sync from iCloud" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3690,6 +3705,9 @@
           }
         }
       }
+    },
+    "Inspect recent application logs for troubleshooting." : {
+
     },
     "Introduction to FlowDown" : {
       "localizations" : {
@@ -4033,6 +4051,9 @@
         }
       }
     },
+    "Logs" : {
+
+    },
     "Long" : {
       "comment" : "Model Context",
       "localizations" : {
@@ -4124,6 +4145,12 @@
         }
       }
     },
+    "Manual Refresh Mode" : {
+
+    },
+    "Manually fetch the latest changes from iCloud." : {
+
+    },
     "MCP Server" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4204,6 +4231,9 @@
           }
         }
       }
+    },
+    "Memory" : {
+
     },
     "Memory List" : {
       "localizations" : {
@@ -4486,6 +4516,9 @@
           }
         }
       }
+    },
+    "Models" : {
+
     },
     "More" : {
       "localizations" : {
@@ -4993,6 +5026,7 @@
       }
     },
     "Overwrite local data with the latest content from iCloud." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5031,6 +5065,9 @@
           }
         }
       }
+    },
+    "Pause automatic background syncing. Use Refresh to pull changes when needed." : {
+
     },
     "People & Body" : {
       "comment" : "Emoji Category",
@@ -5366,6 +5403,7 @@
       }
     },
     "Pull from iCloud ..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -5415,6 +5453,9 @@
         }
       }
     },
+    "Rebuild sync state and fetch everything new from iCloud. Local data is preserved." : {
+
+    },
     "Recall Memory" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5445,6 +5486,9 @@
         }
       }
     },
+    "Refresh from iCloud" : {
+
+    },
     "Refreshed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5454,6 +5498,9 @@
           }
         }
       }
+    },
+    "Refreshing..." : {
+
     },
     "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template." : {
       "localizations" : {
@@ -5476,6 +5523,7 @@
       }
     },
     "Remove conversations and settings stored in iCloud." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -6168,6 +6216,21 @@
           }
         }
       }
+    },
+    "Sync chats and their messages and files." : {
+
+    },
+    "Sync cloud model configurations." : {
+
+    },
+    "Sync configured MCP connections." : {
+
+    },
+    "Sync Scope" : {
+
+    },
+    "Sync your AI memory entries." : {
+
     },
     "System" : {
       "localizations" : {
@@ -6932,6 +6995,7 @@
       }
     },
     "Turn on to sync conversations and cloud model settings with iCloud across devices." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -6941,7 +7005,11 @@
         }
       }
     },
+    "Turning off sync only pauses future updates. Existing data stays in place. Re‑enable later to fetch and resume syncing." : {
+
+    },
     "Turning off sync stops sharing new changes between devices. Data already synced will remain available in iCloud." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -7531,6 +7599,9 @@
         }
       }
     },
+    "View Logs" : {
+
+    },
     "View Raw" : {
       "localizations" : {
         "zh-Hans" : {
@@ -7840,6 +7911,9 @@
           }
         }
       }
+    },
+    "When sync is off, no new changes are shared. Existing data remains intact. Re‑enable sync to fetch the latest state before resuming." : {
+
     },
     "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible." : {
       "localizations" : {

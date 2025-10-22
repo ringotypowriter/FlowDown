@@ -7,6 +7,7 @@
 
 import ChatClientKit
 import Foundation
+import OSLog
 
 extension ConversationSession {
     func removeOutOfContextContents(
@@ -20,10 +21,10 @@ extension ConversationSession {
             input: requestMessages,
             tools: tools ?? []
         )
-        print("[*] estimated token count: \(estimatedTokenCount)")
+        Logger.model.debugFile("estimated token count: \(estimatedTokenCount)")
 
         deleteLoop: while estimatedTokenCount > modelContextLength {
-            print("[*] estimated token count \(estimatedTokenCount) exceeds limit \(modelContextLength), removing messages!")
+            Logger.model.debugFile("estimated token count \(estimatedTokenCount) exceeds limit \(modelContextLength), removing messages!")
             defer {
                 estimatedTokenCount = ModelManager.shared.calculateEstimateTokensUsingCommonEncoder(
                     input: requestMessages,
@@ -34,12 +35,12 @@ extension ConversationSession {
             for idx in 0 ..< requestMessages.count {
                 let item = requestMessages[idx]
                 if case .system = item { continue }
-                print("[*] removing message at index \(idx)")
+                Logger.model.debugFile("removing message at index \(idx)")
                 requestMessages.remove(at: idx)
                 isTrimmed = true
                 continue deleteLoop
             }
-            print("[*] unable to remove any more messages, estimated token count: \(estimatedTokenCount)")
+            Logger.model.errorFile("unable to remove any more messages, estimated token count: \(estimatedTokenCount)")
             throw NSError(
                 domain: String(localized: "Inference Service"),
                 code: 1,

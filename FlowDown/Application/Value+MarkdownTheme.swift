@@ -9,6 +9,7 @@ import Combine
 import ConfigurableKit
 import Foundation
 import MarkdownView
+import OSLog
 
 extension MarkdownTheme.FontScale {
     var title: String {
@@ -52,7 +53,7 @@ extension MarkdownTheme {
                 guard let input,
                       let scale = MarkdownTheme.FontScale(rawValue: input)
                 else { return }
-                print("[*] applying font scale to markdown fonts: \(scale)")
+                Logger.ui.debugFile("applying font scale to markdown fonts: \(scale)")
                 MarkdownTheme.default.scaleFont(by: scale)
                 fontScaleDidChange.send(())
             }

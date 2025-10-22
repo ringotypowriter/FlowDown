@@ -13,6 +13,7 @@ import MLX
 import MLXLLM
 import MLXLMCommon
 import MLXVLM
+import OSLog
 import Storage
 
 extension ModelManager {
@@ -70,7 +71,7 @@ extension ModelManager {
                 let text = try await task.value
                 MLXChatClientQueue.shared.release(token: token)
                 if let text, !text.isEmpty {
-                    print("[*] model \(model.model_identifier) generates output for test case: \(text)")
+                    Logger.model.debugFile("model \(model.model_identifier) generates output for test case: \(text)")
                     completion(.success(()))
                 } else {
                     completion(
@@ -129,7 +130,7 @@ extension ModelManager {
                         )
                     }
                 } else if let error = error as? VLMError {
-                    print("[*] VLM failed to inference: \(error)")
+                    Logger.model.errorFile("VLM failed to inference: \(error)")
                     completion(
                         .failure(
                             NSError(

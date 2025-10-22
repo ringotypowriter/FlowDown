@@ -7,6 +7,7 @@
 
 import AlertController
 import ConfigurableKit
+import OSLog
 import Storage
 import UIKit
 
@@ -73,7 +74,7 @@ class MemoryListController: UIViewController {
                 }
             } catch {
                 await MainActor.run {
-                    print("[MemoryListController] Failed to load memories: \(error)")
+                    Logger.database.errorFile("MemoryListController load memories error: \(error)")
                     self.memories = []
                     self.tableView.reloadData()
                 }
@@ -91,7 +92,7 @@ class MemoryListController: UIViewController {
                 }
             } catch {
                 await MainActor.run {
-                    print("[MemoryListController] Failed to search memories: \(error)")
+                    Logger.database.errorFile("MemoryListController search memories error: \(error)")
                     self.filteredMemories = []
                     self.tableView.reloadData()
                 }

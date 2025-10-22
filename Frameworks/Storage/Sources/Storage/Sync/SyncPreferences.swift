@@ -29,31 +29,30 @@ public enum SyncPreferences {
 
     public enum Group: Sendable {
         case conversations // Conversation, Message, Attachment
-        case memory        // Memory
-        case mcp           // ModelContextServer
-        case models        // CloudModel
+        case memory // Memory
+        case mcp // ModelContextServer
+        case models // CloudModel
     }
 
     public static func isGroupEnabled(_ group: Group) -> Bool {
         switch group {
         case .conversations:
-            return UserDefaults.standard.object(forKey: groupConversationsKey) as? Bool ?? true
+            UserDefaults.standard.object(forKey: groupConversationsKey) as? Bool ?? true
         case .memory:
-            return UserDefaults.standard.object(forKey: groupMemoryKey) as? Bool ?? true
+            UserDefaults.standard.object(forKey: groupMemoryKey) as? Bool ?? true
         case .mcp:
-            return UserDefaults.standard.object(forKey: groupMCPKey) as? Bool ?? true
+            UserDefaults.standard.object(forKey: groupMCPKey) as? Bool ?? true
         case .models:
-            return UserDefaults.standard.object(forKey: groupModelsKey) as? Bool ?? true
+            UserDefaults.standard.object(forKey: groupModelsKey) as? Bool ?? true
         }
     }
 
     public static func setGroup(_ group: Group, enabled: Bool) {
-        let key: String
-        switch group {
-        case .conversations: key = groupConversationsKey
-        case .memory: key = groupMemoryKey
-        case .mcp: key = groupMCPKey
-        case .models: key = groupModelsKey
+        let key: String = switch group {
+        case .conversations: groupConversationsKey
+        case .memory: groupMemoryKey
+        case .mcp: groupMCPKey
+        case .models: groupModelsKey
         }
         UserDefaults.standard.set(enabled, forKey: key)
     }
@@ -62,15 +61,15 @@ public enum SyncPreferences {
     public static func group(forTableName table: String) -> Group? {
         switch table {
         case "Conversation", "Message", "Attachment":
-            return .conversations
+            .conversations
         case "Memory":
-            return .memory
+            .memory
         case "ModelContextServer":
-            return .mcp
+            .mcp
         case "CloudModel":
-            return .models
+            .models
         default:
-            return nil
+            nil
         }
     }
 
@@ -80,4 +79,3 @@ public enum SyncPreferences {
         return isGroupEnabled(group)
     }
 }
-

@@ -9,6 +9,7 @@ import AlertController
 import ConfigurableKit
 import MarkdownParser
 import MarkdownView
+import OSLog
 import UIKit
 
 class HubModelDetailController: StackScrollController {
@@ -198,7 +199,7 @@ class HubModelDetailController: StackScrollController {
             let size = try await ModelManager.shared.checkModelSizeFromHugginFace(identifier: model.id)
             await MainActor.run { downloadSize = size }
         } catch {
-            print("[!] failed to check model size: \(error)")
+            Logger.model.errorFile("failed to check model size: \(error)")
             await MainActor.run { downloadSize = 0 }
         }
     }

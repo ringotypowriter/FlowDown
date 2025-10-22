@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 import Storage
 import UIKit
 
@@ -67,7 +68,7 @@ extension MainController {
     }
 
     func load(_ conv: Conversation.ID?) {
-        print("[MainController] sidebarDidSelectNewChat: \(conv ?? "-1")")
+        Logger.ui.debugFile("sidebarDidSelectNewChat: \(conv ?? "-1")")
         chatView.prepareForReuse()
         guard let identifier = conv else { return }
 

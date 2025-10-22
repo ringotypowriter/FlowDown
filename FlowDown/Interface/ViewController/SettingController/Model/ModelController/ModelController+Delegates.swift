@@ -7,6 +7,7 @@
 
 import AlertController
 import Foundation
+import OSLog
 import Storage
 import UIKit
 
@@ -144,7 +145,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDragDeleg
             dragItem.localObject = model
             return [dragItem]
         } catch {
-            print("[-] failed to encode model: \(error)")
+            Logger.model.errorFile("failed to encode model: \(error)")
             return []
         }
     }
@@ -181,7 +182,7 @@ extension SettingController.SettingContent.ModelController {
             }
             exporter.execute(presentingViewController: self)
         } catch {
-            print("[-] failed to export model: \(error)")
+            Logger.model.errorFile("failed to export model: \(error)")
         }
     }
 }

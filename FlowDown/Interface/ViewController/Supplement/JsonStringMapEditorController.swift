@@ -6,6 +6,7 @@
 //
 
 import AlertController
+import OSLog
 import UIKit
 
 class JsonStringMapEditorController: CodeEditorController {
@@ -39,7 +40,7 @@ class JsonStringMapEditorController: CodeEditorController {
         }
         do {
             let object = try JSONDecoder().decode(requiredDecodableType, from: data)
-            print("[*] JsonStringMapEditorController: done with object: \(object)")
+            Logger.ui.infoFile("JsonStringMapEditorController done with object: \(object)")
         } catch {
             let alert = AlertViewController(
                 title: String(localized: "Error"),

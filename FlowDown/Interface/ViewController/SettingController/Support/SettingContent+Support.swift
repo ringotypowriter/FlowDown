@@ -97,6 +97,14 @@ extension SettingController.SettingContent.SupportController {
                     url: URL(string: "https://discord.gg/UHKMRyJcgc")!
                 )
             ),
+            ConfigurableObject(
+                icon: "doc.richtext",
+                title: String(localized: "View Logs"),
+                explain: String(localized: "Inspect recent application logs for troubleshooting."),
+                ephemeralAnnotation: .action { controller in
+                    controller?.navigationController?.pushViewController(LogViewerController(), animated: true)
+                }
+            ),
         ]
     ) }
 

@@ -2,6 +2,7 @@ import AlertController
 import Combine
 import ConfigurableKit
 import MCP
+import OSLog
 import Storage
 import UIKit
 
@@ -96,7 +97,7 @@ class MCPEditorController: StackScrollController {
             }
             exporter.execute(presentingViewController: self)
         } catch {
-            print("[-] failed to export MCP server: \(error)")
+            Logger.app.errorFile("failed to export MCP server: \(error)")
         }
     }
 

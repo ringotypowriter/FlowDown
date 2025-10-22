@@ -8,6 +8,7 @@
 import ChatClientKit
 import Foundation
 import FoundationModels
+import OSLog
 import Storage
 import XMLCoder
 
@@ -86,10 +87,10 @@ extension ConversationSessionManager.Session {
             }
 
             let ret = ans.content.trimmingCharacters(in: .whitespacesAndNewlines)
-            print("[*] generated conversation icon: \(ret)")
+            Logger.ui.debugFile("generated conversation icon: \(ret)")
             return validateIcon(ret)
         } catch {
-            print("[-] failed to generate icon: \(error)")
+            Logger.ui.errorFile("failed to generate icon: \(error)")
             return nil
         }
     }

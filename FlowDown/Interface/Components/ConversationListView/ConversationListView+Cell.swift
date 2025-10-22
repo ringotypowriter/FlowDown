@@ -6,6 +6,7 @@
 //
 
 import AlertController
+import OSLog
 import Storage
 import UIKit
 
@@ -96,7 +97,7 @@ extension ConversationListView {
 
         @objc func didSelectCell() {
             guard let id = conversationIdentifier else { return }
-            print("[cell] did select cell \(id)")
+            Logger.ui.debugFile("did select conversation cell: \(id)")
             sidebar?.delegate?.sidebarDidSelectNewChat(id)
             sidebar?.delegate?.sidebarRecivedSingleTapForSelection()
         }

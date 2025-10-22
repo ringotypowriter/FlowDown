@@ -7,6 +7,7 @@
 
 import Combine
 import ConfigurableKit
+import OSLog
 import Storage
 import UIKit
 
@@ -88,7 +89,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
             mainController.queueBootMessage(text: String(localized: "Successfully imported \(template.name)"))
         } catch {
-            print("[*] failed to import template from URL: \(url), error: \(error)")
+            Logger.app.errorFile("failed to import template from URL: \(url), error: \(error)")
             mainController.queueBootMessage(text: String(localized: "Failed to import template: \(error.localizedDescription)"))
         }
     }
@@ -113,13 +114,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
             mainController.queueBootMessage(text: String(localized: "Successfully imported MCP server \(serverName)"))
         } catch {
-            print("[*] failed to import MCP server from URL: \(url), error: \(error)")
+            Logger.app.errorFile("failed to import MCP server from URL: \(url), error: \(error)")
             mainController.queueBootMessage(text: String(localized: "Failed to import MCP server: \(error.localizedDescription)"))
         }
     }
 
     private func handleFlowDownURL(_ url: URL) {
-        print("[*] handling incoming message: \(url)")
+        Logger.app.infoFile("handling incoming message: \(url)")
         guard let host = url.host(), !host.isEmpty else { return }
         switch host {
         case "new": handleNewMessageURL(url)

@@ -9,6 +9,7 @@ import AlertController
 import Combine
 import ConfigurableKit
 import Foundation
+import OSLog
 import Storage
 import UIKit
 import UniformTypeIdentifiers
@@ -313,7 +314,7 @@ extension ChatTemplateListController: UITableViewDragDelegate, UITableViewDropDe
             }
             itemProvider.suggestedName = "\(template.name).fdtemplate"
         } catch {
-            print("[-] failed to encode template for drag: \(error)")
+            Logger.app.errorFile("failed to encode template for drag: \(error)")
         }
 
         let dragItem = UIDragItem(itemProvider: itemProvider)
@@ -382,7 +383,7 @@ extension ChatTemplateListController: UITableViewDragDelegate, UITableViewDropDe
                                 ChatTemplateManager.shared.addTemplate(template)
                             }
                         } catch {
-                            print("[-] failed to decode dropped template: \(error)")
+                            Logger.app.errorFile("failed to decode dropped template: \(error)")
                         }
                     }
                     coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)

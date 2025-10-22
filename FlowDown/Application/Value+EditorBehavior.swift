@@ -8,6 +8,7 @@
 import Combine
 import ConfigurableKit
 import Foundation
+import OSLog
 import RichEditor
 
 extension EditorBehavior {
@@ -49,21 +50,21 @@ extension EditorBehavior {
         ConfigurableKit.publisher(forKey: useConfirmationOnSendKey, type: Bool.self)
             .sink { input in
                 guard let input else { return }
-                print("[*] applying editor behavior: confirmation on send: \(input)")
+                Logger.ui.debugFile("applying editor behavior: confirmation on send: \(input)")
                 useConfirmationOnSend = input
             }
             .store(in: &cancellables)
         ConfigurableKit.publisher(forKey: pasteAsFileStorageKey, type: Bool.self)
             .sink { input in
                 guard let input else { return }
-                print("[*] applying editor behavior: paste as file: \(input)")
+                Logger.ui.debugFile("applying editor behavior: paste as file: \(input)")
                 pasteLargeTextContentAsFile = input
             }
             .store(in: &cancellables)
         ConfigurableKit.publisher(forKey: compressImageStorageKey, type: Bool.self)
             .sink { input in
                 guard let input else { return }
-                print("[*] applying editor behavior: compress image: \(input)")
+                Logger.ui.debugFile("applying editor behavior: compress image: \(input)")
                 compressImage = input
             }
             .store(in: &cancellables)

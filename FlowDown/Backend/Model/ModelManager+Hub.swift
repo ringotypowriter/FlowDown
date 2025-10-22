@@ -10,6 +10,7 @@ import CryptoKit
 import Digger
 import Foundation
 import Hub
+import OSLog
 import Storage
 
 private let api = HubApi()
@@ -154,7 +155,7 @@ extension ModelManager {
 
         // prepare temp directories structure
         let modelTempDir = tempDirForDownloadLocalModel(model_identifier: identifier)
-        print("[+] preparing temp directory for \(identifier)...")
+        Logger.model.infoFile("preparing temp directory for \(identifier)...")
         let manifestDir = modelTempDir.appendingPathComponent("manifest")
         let contentDir = modelTempDir.appendingPathComponent("content")
         try? FileManager.default.createDirectory(
@@ -168,7 +169,7 @@ extension ModelManager {
             attributes: nil
         )
 
-        print("[+] downloading manifest for \(identifier)...")
+        Logger.model.infoFile("downloading manifest for \(identifier)...")
 
         let filenames = try await api.getFilenames(from: repo, matching: [])
         progress.acquiredFileList(filenames)
@@ -199,11 +200,11 @@ extension ModelManager {
                 progress.completeFile(filename, size: size)
             }
             if FileManager.default.fileExists(atPath: dest.path) {
-                print("[+] skipping \(filename) for \(identifier)")
+                Logger.model.debugFile("skipping \(filename) for \(identifier)")
                 continue
             }
 
-            print("[+] downloading \(filename) for \(identifier)")
+            Logger.model.infoFile("downloading \(filename) for \(identifier)")
             let remoteURL = URL(string: "https://huggingface.co")!
                 .appendingPathComponent(repo.id)
                 .appendingPathComponent("resolve")
@@ -259,7 +260,7 @@ extension ModelManager {
         await MainActor.run { progress.cancellable = false }
         try progress.checkContinue()
 
-        print("[+] download completed for \(identifier), finalizing...")
+        Logger.model.infoFile("download completed for \(identifier), finalizing...")
 
         progress.finalizeDownload()
 
@@ -268,7 +269,7 @@ extension ModelManager {
             let url = contentDir.appendingPathComponent(content)
             try size += (FileManager.default.attributesOfItem(atPath: url.path)[.size] as? UInt64) ?? 0
         }
-        print("[+] total size for \(identifier): \(size)")
+        Logger.model.infoFile("total size for \(identifier): \(size)")
 
         // prepare model/manifest directory
         let model = LocalModel(
@@ -285,7 +286,7 @@ extension ModelManager {
 
         // move both directories to final destination
         let modelDir = dirForLocalModel(identifier: model.id)
-        print("[+] moving model \(identifier) to final dest \(modelDir)")
+        Logger.model.infoFile("moving model \(identifier) to final dest \(modelDir)")
         try? FileManager.default.removeItem(at: modelDir)
         try? FileManager.default.createDirectory(at: modelDir, withIntermediateDirectories: true, attributes: nil)
         try FileManager.default.moveItem(at: contentDir, to: modelDir.appendingPathComponent(contentDir.lastPathComponent))

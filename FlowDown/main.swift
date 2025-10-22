@@ -44,11 +44,11 @@ import MLX
     assert(MLX.GPU.isSupported)
 #endif
 
-import os
+import OSLog
 import Storage
 
 let sdb = try Storage.db()
-let logger = Logger(subsystem: "wiki.qaq.flowdown", category: "general")
+let logger = Logger.app
 
 let syncEngine = SyncEngine(storage: sdb, containerIdentifier: CloudKitConfig.containerIdentifier, mode: .live, automaticallySync: true)
 
