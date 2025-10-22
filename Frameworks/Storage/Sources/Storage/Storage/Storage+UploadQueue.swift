@@ -13,14 +13,14 @@ import WCDBSwift
 private enum SyncPayloadCoder {
     static let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
+        encoder.dateEncodingStrategy = .millisecondsSince1970
         encoder.dataEncodingStrategy = .base64
         return encoder
     }()
 
     static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .millisecondsSince1970
         decoder.dataDecodingStrategy = .base64
         return decoder
     }()
