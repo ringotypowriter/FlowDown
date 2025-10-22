@@ -3050,6 +3050,9 @@
         }
       }
     },
+    "Fetch Updates Now" : {
+
+    },
     "Fetching Model List" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3385,6 +3388,9 @@
           }
         }
       }
+    },
+    "iCloud synchronization is not enabled. You have to enable iCloud sync in settings before fetching updates." : {
+
     },
     "Identifier" : {
       "localizations" : {
@@ -6285,6 +6291,9 @@
         }
       }
     },
+    "Syncing Scope" : {
+
+    },
     "System" : {
       "localizations" : {
         "zh-Hans" : {
@@ -6585,6 +6594,9 @@
         }
       }
     },
+    "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete." : {
+
+    },
     "The server is currently disabled." : {
       "localizations" : {
         "zh-Hans" : {
@@ -6866,6 +6878,9 @@
       }
     },
     "This will remove your synced data from iCloud for this app. Local data on this device will remain." : {
+
+    },
+    "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete" : {
 
     },
     "This will use %@ compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged." : {
@@ -7400,6 +7415,9 @@
           }
         }
       }
+    },
+    "Update Requested" : {
+
     },
     "URL Access" : {
       "localizations" : {
@@ -8104,12 +8122,6 @@
           }
         }
       }
-    },
-    "手动从 iCloud 刷新" : {
-
-    },
-    "立即拉取更新" : {
-
     }
   },
   "version" : "1.0"

@@ -49,20 +49,6 @@ extension SettingController.SettingContent {
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
-            // Sync scope submenu
-            let syncScopeMenu = ConfigurableObject(
-                icon: "slider.horizontal.3",
-                title: String(localized: "Sync Scope"),
-                explain: String(localized: "Configure which data groups sync with iCloud."),
-                ephemeralAnnotation: .action { [weak self] _ in
-                    guard let self else { return }
-                    let controller = SyncScopePage()
-                    navigationController?.pushViewController(controller, animated: true)
-                }
-            ).createView()
-            stackView.addArrangedSubviewWithMargin(syncScopeMenu)
-            stackView.addArrangedSubview(SeparatorView())
-
             let syncToggle = ConfigurableToggleActionView()
             syncToggle.configure(icon: UIImage(systemName: "icloud"))
             syncToggle.configure(title: String(localized: "Enable iCloud Sync"))
@@ -94,66 +80,25 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubviewWithMargin(syncToggle)
             stackView.addArrangedSubview(SeparatorView())
 
-            // Footer clarifying behavior when sync disabled
+            // Sync scope submenu
+            let syncScopeMenu = ConfigurableObject(
+                icon: "slider.horizontal.3",
+                title: String(localized: "Sync Scope"),
+                explain: String(localized: "Configure which data groups sync with iCloud."),
+                ephemeralAnnotation: .action { [weak self] _ in
+                    guard let self else { return }
+                    let controller = SyncScopePage()
+                    navigationController?.pushViewController(controller, animated: true)
+                }
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(syncScopeMenu)
+            stackView.addArrangedSubview(SeparatorView())
+
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
                     footer: String(localized: "When sync is off, no new changes are shared. Existing data remains intact. Re‑enable sync to fetch the latest state before resuming.")
                 )
             ) { $0.top /= 2 }
-            stackView.addArrangedSubview(SeparatorView())
-
-            // Dangerous: remove iCloud data option disabled per requirements
-            // Keeping UI out to avoid accidental usage
-
-            // Manual refresh actions moved into Sync Scope subpage per requirements
-
-            // Bring back Delete iCloud Data (dangerous)
-            let deleteICloud = ConfigurableObject(
-                icon: "icloud.slash",
-                title: String(localized: "Delete iCloud Data ..."),
-                explain: String(localized: "Delete data stored in iCloud."),
-                ephemeralAnnotation: .action { [weak self] controller in
-                    guard let self, let controller else { return }
-
-                    guard SyncEngine.isSyncEnabled else {
-                        showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
-                        return
-                    }
-
-                    let alert = AlertViewController(
-                        title: String(localized: "Delete iCloud Data"),
-                        message: String(localized: "This will remove your synced data from iCloud for this app. Local data on this device will remain.")
-                    ) { [weak self] context in
-                        context.addAction(title: String(localized: "Cancel")) {
-                            context.dispose()
-                        }
-                        context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
-                            context.dispose {
-                                Indicator.progress(title: String(localized: "Deleting..."), controller: controller) { [weak self] completion in
-                                    self?.deletedSeverDataCompletionHandler = completion
-                                }
-
-                                self?.deletedSeverDataCancellable = NotificationCenter.default
-                                    .publisher(for: SyncEngine.ServerDataDeleted)
-                                    .sink { [weak self, weak controller] notification in
-                                        guard let controller, let self else { return }
-                                        let success = notification.userInfo?["success"] as? Bool ?? false
-                                        let error = notification.userInfo?["error"] as? Error
-                                        Task { @MainActor in
-                                            self.handleServerDataDeleted(controller: controller, success: success, error: error)
-                                        }
-                                    }
-
-                                Task { @MainActor in
-                                    do { try await syncEngine.deleteServerData() } catch {}
-                                }
-                            }
-                        }
-                    }
-                    controller.present(alert, animated: true)
-                }
-            ).createView()
-            stackView.addArrangedSubviewWithMargin(deleteICloud)
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
@@ -366,6 +311,55 @@ extension SettingController.SettingContent {
                     header: String(localized: "Reset")
                 )
             ) { $0.bottom /= 2 }
+            stackView.addArrangedSubview(SeparatorView())
+
+            // Bring back Delete iCloud Data (dangerous)
+            let deleteICloud = ConfigurableObject(
+                icon: "icloud.slash",
+                title: String(localized: "Delete iCloud Data ..."),
+                explain: String(localized: "Delete data stored in iCloud."),
+                ephemeralAnnotation: .action { [weak self] controller in
+                    guard let self, let controller else { return }
+
+                    guard SyncEngine.isSyncEnabled else {
+                        showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        return
+                    }
+
+                    let alert = AlertViewController(
+                        title: String(localized: "Delete iCloud Data"),
+                        message: String(localized: "This will remove your synced data from iCloud for this app. Local data on this device will remain.")
+                    ) { [weak self] context in
+                        context.addAction(title: String(localized: "Cancel")) {
+                            context.dispose()
+                        }
+                        context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+                            context.dispose {
+                                Indicator.progress(title: String(localized: "Deleting..."), controller: controller) { [weak self] completion in
+                                    self?.deletedSeverDataCompletionHandler = completion
+                                }
+
+                                self?.deletedSeverDataCancellable = NotificationCenter.default
+                                    .publisher(for: SyncEngine.ServerDataDeleted)
+                                    .sink { [weak self, weak controller] notification in
+                                        guard let controller, let self else { return }
+                                        let success = notification.userInfo?["success"] as? Bool ?? false
+                                        let error = notification.userInfo?["error"] as? Error
+                                        Task { @MainActor in
+                                            self.handleServerDataDeleted(controller: controller, success: success, error: error)
+                                        }
+                                    }
+
+                                Task { @MainActor in
+                                    do { try await syncEngine.deleteServerData() } catch {}
+                                }
+                            }
+                        }
+                    }
+                    controller.present(alert, animated: true)
+                }
+            ).createView()
+            stackView.addArrangedSubviewWithMargin(deleteICloud)
             stackView.addArrangedSubview(SeparatorView())
 
             let resetApp = ConfigurableObject(

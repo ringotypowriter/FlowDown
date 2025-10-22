@@ -26,20 +26,13 @@ final class SyncScopePage: StackScrollController {
 
     override func setupContentViews() {
         super.setupContentViews()
-        stackView.addArrangedSubview(SeparatorView())
 
-        func addGroupToggle(icon: String, title: String, desc: String, group: SyncPreferences.Group) {
-            let toggle = ConfigurableToggleActionView()
-            toggle.configure(icon: UIImage(systemName: icon))
-            toggle.configure(title: title)
-            toggle.configure(description: desc)
-            toggle.boolValue = SyncPreferences.isGroupEnabled(group)
-            toggle.actionBlock = { value in
-                SyncPreferences.setGroup(group, enabled: value)
-            }
-            stackView.addArrangedSubviewWithMargin(toggle)
-            stackView.addArrangedSubview(SeparatorView())
-        }
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView().with(
+                header: String(localized: "Syncing Scope")
+            )
+        ) { $0.bottom /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
 
         addGroupToggle(
             icon: "text.bubble",
@@ -69,18 +62,24 @@ final class SyncScopePage: StackScrollController {
             group: .models
         )
 
-        // Manual fetch action moved here; updated copy per requirements
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView().with(
+                header: String(localized: "Shortcuts")
+            )
+        ) { $0.bottom /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
+
         let refreshAction = ConfigurableObject(
             icon: "arrow.clockwise.icloud",
-            title: String(localized: "手动从 iCloud 刷新"),
-            explain: String(localized: "立即拉取更新"),
+            title: String(localized: "Fetch Updates Now"),
+            explain: String(localized: "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete"),
             ephemeralAnnotation: .action { controller in
                 guard let controller else { return }
 
                 guard SyncEngine.isSyncEnabled else {
                     let alert = AlertViewController(
                         title: String(localized: "Error Occurred"),
-                        message: String(localized: "iCloud synchronization is not enabled")
+                        message: String(localized: "iCloud synchronization is not enabled. You have to enable iCloud sync in settings before fetching updates.")
                     ) { context in
                         context.addAction(title: String(localized: "OK"), attribute: .dangerous) { context.dispose() }
                     }
@@ -92,22 +91,50 @@ final class SyncScopePage: StackScrollController {
                     Task { @MainActor in
                         do {
                             try await syncEngine.fetchChanges()
-                            completion {}
-                        } catch {
-                            completion {}
-                            let alert = AlertViewController(
-                                title: String(localized: "Error Occurred"),
-                                message: error.localizedDescription
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) { context.dispose() }
+                            completion {
+                                let alert = AlertViewController(
+                                    title: String(localized: "Update Requested"),
+                                    message: String(localized: "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete.")
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
+                                    }
+                                }
+                                controller.present(alert, animated: true)
                             }
-                            controller.present(alert, animated: true)
+                        } catch {
+                            completion {
+                                let alert = AlertViewController(
+                                    title: String(localized: "Error Occurred"),
+                                    message: error.localizedDescription
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
+                                    }
+                                }
+                                controller.present(alert, animated: true)
+                            }
                         }
                     }
                 }
             }
         ).createView()
         stackView.addArrangedSubviewWithMargin(refreshAction)
+        stackView.addArrangedSubview(SeparatorView())
+    }
+}
+
+extension SyncScopePage {
+    func addGroupToggle(icon: String, title: String, desc: String, group: SyncPreferences.Group) {
+        let toggle = ConfigurableToggleActionView()
+        toggle.configure(icon: UIImage(systemName: icon))
+        toggle.configure(title: title)
+        toggle.configure(description: desc)
+        toggle.boolValue = SyncPreferences.isGroupEnabled(group)
+        toggle.actionBlock = { value in
+            SyncPreferences.setGroup(group, enabled: value)
+        }
+        stackView.addArrangedSubviewWithMargin(toggle)
         stackView.addArrangedSubview(SeparatorView())
     }
 }
