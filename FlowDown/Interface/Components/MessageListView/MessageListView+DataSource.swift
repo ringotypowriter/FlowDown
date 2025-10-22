@@ -13,7 +13,7 @@ extension MessageListView {
         case userAttachment(Message.ID, Attachments)
         case reasoningContent(Message.ID, MessageRepresentation)
         case aiContent(Message.ID, MessageRepresentation)
-        case hint(Int, String)
+        case hint(String, String)
         case webSearchContent(Message.WebSearchStatus)
         case activityReporting(String)
         case toolCallStatus(Message.ToolStatus)
@@ -79,13 +79,15 @@ extension MessageListView {
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let dayKeyFormatter = DateFormatter()
+        dayKeyFormatter.dateFormat = "yyyy-MM-dd"
 
         func checkAddDateHint(_ date: Date) {
             func addDateHint(_ date: Date) {
                 latestDay = date
                 let hint = dateFormatter.string(from: date)
-                let days = Int(date.timeIntervalSince1970)
-                entries.append(.hint(days, hint))
+                let dayKey = dayKeyFormatter.string(from: date)
+                entries.append(.hint("date.\(dayKey)", hint))
             }
             if let latestDay {
                 if !Calendar.current.isDate(date, inSameDayAs: latestDay) {
@@ -158,7 +160,7 @@ extension MessageListView {
 
             case .hint:
                 checkAddDateHint(message.creation)
-                entries.append(.hint(Int(message.creation.timeIntervalSince1970), message.document))
+                entries.append(.hint("message.\(message.objectId)", message.document))
 
             // MARK: - Tool Call Status
 
