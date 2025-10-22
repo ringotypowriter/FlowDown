@@ -22,6 +22,9 @@ public class Storage {
     public let databaseDir: URL
     public let databaseLocation: URL
 
+    /// SyncEngine 弱引用，用于在数据更新后触发同步
+    package weak var syncEngine: SyncEngine?
+
     /// UploadQueue enqueue 事件回调类型
     package typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
     package var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?

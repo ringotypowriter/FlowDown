@@ -112,6 +112,11 @@ public extension Storage {
 
             try pendingUploadEnqueue(sources: changes, handle: $0)
         }
+
+        // 触发同步
+        Task {
+            try? await syncEngine?.sendChanges()
+        }
     }
 
     func messageEdit(identifier: Message.ID, _ block: @escaping (inout Message) -> Void) {

@@ -54,6 +54,7 @@ import Storage
 let sdb = try Storage.db()
 
 let syncEngine = SyncEngine(storage: sdb, containerIdentifier: CloudKitConfig.containerIdentifier, mode: .live, automaticallySync: true)
+Storage.setSyncEngine(syncEngine)
 
 _ = ModelManager.shared
 _ = ModelToolsManager.shared

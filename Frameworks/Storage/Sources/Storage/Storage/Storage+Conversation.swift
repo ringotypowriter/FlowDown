@@ -95,6 +95,11 @@ public extension Storage {
 
             try pendingUploadEnqueue(sources: changes, handle: $0)
         }
+
+        // 触发同步
+        Task {
+            try? await syncEngine?.sendChanges()
+        }
     }
 
     func conversationWith(identifier: Conversation.ID) -> Conversation? {

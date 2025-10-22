@@ -221,6 +221,21 @@ public extension SyncEngine {
         try await syncEngine.performingFetchChanges()
     }
 
+    /// 发送变化 !不要在代理回调里面调用!
+    func sendChanges() async throws {
+        guard SyncEngine.isSyncEnabled else { return }
+        var needDelay = false
+        if _syncEngine == nil {
+            initializeSyncEngine()
+            needDelay = true
+        }
+        Logger.syncEngine.info("SendChanges")
+        if needDelay {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+        }
+        try await syncEngine.performingSendChanges()
+    }
+
     /// 删除本地数据
     func deleteLocalData() async throws {
         Logger.syncEngine.info("Deleting local data")

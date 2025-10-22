@@ -16,5 +16,9 @@ public extension Storage {
         return new
     }
 
+    static func setSyncEngine(_ syncEngine: SyncEngine) {
+        instance?.syncEngine = syncEngine
+    }
+
     private static var instance: Storage?
 }
