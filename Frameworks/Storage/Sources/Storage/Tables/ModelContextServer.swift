@@ -142,12 +142,64 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
         self.capabilities = capabilities
     }
 
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        objectId = try container.decodeIfPresent(String.self, forKey: .objectId) ?? UUID().uuidString
+        deviceId = try container.decodeIfPresent(String.self, forKey: .deviceId) ?? Storage.deviceId
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+        comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
+        type = try container.decodeIfPresent(ServerType.self, forKey: .type) ?? .http
+        endpoint = try container.decodeIfPresent(String.self, forKey: .endpoint) ?? ""
+        header = try container.decodeIfPresent(String.self, forKey: .header) ?? ""
+        timeout = try container.decodeIfPresent(Int.self, forKey: .timeout) ?? 60
+        isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
+        toolsEnabled = try container.decodeIfPresent(EnableCodable.self, forKey: .toolsEnabled) ?? .init()
+        resourcesEnabled = try container.decodeIfPresent(EnableCodable.self, forKey: .resourcesEnabled) ?? .init()
+        templateEnabled = try container.decodeIfPresent(EnableCodable.self, forKey: .templateEnabled) ?? .init()
+        lastConnected = try container.decodeIfPresent(Date.self, forKey: .lastConnected)
+        connectionStatus = try container.decodeIfPresent(ConnectionStatus.self, forKey: .connectionStatus) ?? .disconnected
+        capabilities = try container.decodeIfPresent(StringArrayCodable.self, forKey: .capabilities) ?? .init([])
+
+        removed = try container.decodeIfPresent(Bool.self, forKey: .removed) ?? false
+        creation = try container.decodeIfPresent(Date.self, forKey: .creation) ?? Date()
+        modified = try container.decodeIfPresent(Date.self, forKey: .modified) ?? Date()
+    }
+
     func markModified(_ date: Date = .now) {
         modified = date
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+public extension ModelContextServer {
+    static func decodeCompatible(from data: Data) throws -> ModelContextServer {
+        let decoder = PropertyListDecoder()
+
+        // 尝试旧结构
+        if let old = try? decoder.decode(ModelContextServerV1.self, from: data) {
+            let new = ModelContextServer(deviceId: Storage.deviceId)
+            new.objectId = old.id
+            new.name = old.name
+            new.comment = old.comment
+            new.type = old.type
+            new.endpoint = old.endpoint
+            new.header = old.header
+            new.timeout = old.timeout
+            new.isEnabled = old.isEnabled
+            new.toolsEnabled = old.toolsEnabled
+            new.resourcesEnabled = old.resourcesEnabled
+            new.templateEnabled = old.templateEnabled
+            new.lastConnected = old.lastConnected
+            new.connectionStatus = old.connectionStatus
+            new.capabilities = old.capabilities
+            return new
+        }
+
+        let new = try decoder.decode(ModelContextServer.self, from: data)
+        return new
     }
 }
 
