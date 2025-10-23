@@ -30,6 +30,14 @@ class MCPService: NSObject {
         }
         updateFromDatabase()
         setupServerSync()
+
+        NotificationCenter.default.publisher(for: SyncEngine.ModelContextServerChanged)
+            .debounce(for: .seconds(2), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                logger.info("Recived SyncEngine.ModelContextServerChanged")
+                self?.updateFromDatabase()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Setup
@@ -162,7 +170,8 @@ class MCPService: NSObject {
     }
 
     private func updateServerStatus(_ serverId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
-        edit(identifier: serverId) { client in
+        // 连接状态不进行同步
+        edit(identifier: serverId, skipSync: true) { client in
             client.connectionStatus = status
             if status == .connected {
                 client.lastConnected = Date()
@@ -182,7 +191,8 @@ class MCPService: NSObject {
             Logger.network.errorFile("failed to list tools: \(error.localizedDescription)")
         }
 
-        edit(identifier: config.id) { client in
+        // capabilities不进行同步
+        edit(identifier: config.id, skipSync: true) { client in
             client.capabilities = StringArrayCodable(discoveredCapabilities)
         }
     }
@@ -213,8 +223,8 @@ class MCPService: NSObject {
         sdb.modelContextServerRemove(identifier: identifier)
     }
 
-    func edit(identifier: ModelContextServer.ID, block: @escaping (inout ModelContextServer) -> Void) {
+    func edit(identifier: ModelContextServer.ID, skipSync: Bool = false, block: @escaping (inout ModelContextServer) -> Void) {
         defer { updateFromDatabase() }
-        sdb.modelContextServerEdit(identifier: identifier, block)
+        sdb.modelContextServerEdit(identifier: identifier, skipSync: skipSync, block)
     }
 }

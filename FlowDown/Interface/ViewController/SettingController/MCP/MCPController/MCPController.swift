@@ -177,8 +177,7 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
                     _ = url.startAccessingSecurityScopedResource()
                     defer { url.stopAccessingSecurityScopedResource() }
                     let data = try Data(contentsOf: url)
-                    let decoder = PropertyListDecoder()
-                    let server = try decoder.decode(ModelContextServer.self, from: data)
+                    let server = try ModelContextServer.decodeCompatible(from: data)
                     DispatchQueue.main.asyncAndWait {
                         MCPService.shared.insert(server)
                     }

@@ -388,6 +388,11 @@ package extension Storage {
         )
 
         guard let localObject else {
+            /// 这些状态不需要同步
+            remoteObject.connectionStatus = .disconnected
+            remoteObject.lastConnected = nil
+            remoteObject.capabilities = .init([])
+
             try? handle.insertOrReplace([remoteObject], intoTable: ModelContextServer.tableName)
             return
         }
@@ -403,6 +408,11 @@ package extension Storage {
             try? pendingUploadEnqueue(sources: [(localObject, .update)], skipEnqueueHandler: true, handle: handle)
             return
         }
+
+        /// 这些状态不需要同步
+        remoteObject.connectionStatus = localObject.connectionStatus
+        remoteObject.lastConnected = localObject.lastConnected
+        remoteObject.capabilities = localObject.capabilities
 
         // 云端最新的
         try? handle.insertOrReplace([remoteObject], intoTable: ModelContextServer.tableName)
