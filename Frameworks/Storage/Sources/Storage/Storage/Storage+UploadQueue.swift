@@ -533,12 +533,14 @@ package extension Storage {
 package extension Storage {
     /// 初始化上传队列，通常只在app升级数据迁移或者导入数据库需要执行
     func initializeUploadQueue() throws {
+        let start = Date.now
+        Logger.database.info("[*] initializeUploadQueue begin")
+
         try db.run(transaction: { [weak self] in
             guard let self else { return }
 
             try $0.delete(fromTable: UploadQueue.tableName)
 
-            Logger.database.info("[*] initializeUploadQueue begin")
             let tables: [any Syncable.Type] = [
                 CloudModel.self,
                 ModelContextServer.self,
@@ -556,7 +558,8 @@ package extension Storage {
 
         })
 
-        Logger.database.info("[*] initializeUploadQueue end")
+        let elapsed = Date.now.timeIntervalSince(start) * 1000.0
+        Logger.database.info("[*] initializeUploadQueue end elapsed \(Int(elapsed), privacy: .public)ms")
     }
 
     private func initializeMigrationUploadQueue<T: Syncable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {

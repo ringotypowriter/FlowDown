@@ -42,9 +42,9 @@ struct MigrationV0ToV1: DBMigration {
     let requiresDataMigration: Bool = false
 
     func migrate(db: Database) throws {
+        let start = Date.now
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
         try db.run(transaction: {
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
-
             try $0.create(table: AttachmentV1.tableName, of: AttachmentV1.self)
             try $0.create(table: MessageV1.tableName, of: MessageV1.self)
             try $0.create(table: ConversationV1.tableName, of: ConversationV1.self)
@@ -54,9 +54,10 @@ struct MigrationV0ToV1: DBMigration {
             try $0.create(table: MemoryV1.tableName, of: MemoryV1.self)
 
             try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
-
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
         })
+
+        let elapsed = Date.now.timeIntervalSince(start) * 1000.0
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
     }
 }
 
@@ -67,9 +68,10 @@ struct MigrationV1ToV2: DBMigration {
     let requiresDataMigration: Bool
 
     func migrate(db: Database) throws {
-        try db.run(transaction: {
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
+        let start = Date.now
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
 
+        try db.run(transaction: {
             if requiresDataMigration {
                 try performDataMigration(handle: $0)
             } else {
@@ -80,6 +82,9 @@ struct MigrationV1ToV2: DBMigration {
 
             Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
         })
+
+        let elapsed = Date.now.timeIntervalSince(start) * 1000.0
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
     }
 
     private func performSchemaMigration(handle: Handle) throws {
