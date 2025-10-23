@@ -55,9 +55,9 @@ public final actor SyncEngine: Sendable, ObservableObject {
     public static let CloudModelChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.CloudModelChanged")
     public static let LocalDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.LocalDataDeleted")
     public static let ServerDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ServerDataDeleted")
-    public static let ConversationNotificationKey: String = " Conversation"
-    public static let MessageNotificationKey: String = " Message"
-    public static let CloudModelNotificationKey: String = " CloudModel"
+    public static let ConversationNotificationKey: String = "Conversation"
+    public static let MessageNotificationKey: String = "Message"
+    public static let CloudModelNotificationKey: String = "CloudModel"
 
     public nonisolated static let syncEnabledDefaultsKey = "com.flowdown.storage.sync.manually.enabled"
 
