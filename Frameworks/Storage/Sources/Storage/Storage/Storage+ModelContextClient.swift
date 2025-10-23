@@ -23,7 +23,7 @@ public extension Storage {
 
     typealias ModelContextServerMakeInitDataBlock = (ModelContextServer) -> Void
     func modelContextServerMake(_ block: ModelContextServerMakeInitDataBlock? = nil) -> ModelContextServer {
-        let object = ModelContextServer(deviceId: Self.deviceId)
+        let object = ModelContextServer()
         if let block {
             block(object)
         }
@@ -39,7 +39,7 @@ public extension Storage {
         modelContextServerPut(objects: [object])
     }
 
-    func modelContextServerPut(objects: [ModelContextServer]) {
+    func modelContextServerPut(objects: [ModelContextServer], skipSync: Bool = false) {
         guard !objects.isEmpty else {
             return
         }
@@ -71,6 +71,10 @@ public extension Storage {
                 try $0.exec(update)
             }
 
+            if skipSync {
+                return
+            }
+
             var changes = diff.insert.map { ($0, UploadQueue.Changes.insert) }
                 + diff.updated.map { ($0, UploadQueue.Changes.update) }
                 + diff.deleted.map { ($0, UploadQueue.Changes.delete) }
@@ -88,14 +92,14 @@ public extension Storage {
         )
     }
 
-    func modelContextServerEdit(identifier: ModelContextServer.ID, _ block: @escaping (inout ModelContextServer) -> Void) {
+    func modelContextServerEdit(identifier: ModelContextServer.ID, skipSync: Bool = false, _ block: @escaping (inout ModelContextServer) -> Void) {
         let read: ModelContextServer? = try? db.getObject(
             fromTable: ModelContextServer.tableName,
             where: ModelContextServer.Properties.objectId == identifier
         )
         guard var object = read else { return }
         block(&object)
-        modelContextServerPut(objects: [object])
+        modelContextServerPut(objects: [object], skipSync: skipSync)
     }
 
     func modelContextServerRemove(identifier: ModelContextServer.ID, handle: Handle? = nil) {

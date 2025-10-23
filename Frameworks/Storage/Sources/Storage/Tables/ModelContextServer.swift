@@ -40,7 +40,7 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
     }
 
     public var objectId: String = UUID().uuidString
-    public var deviceId: String = ""
+    public var deviceId: String = Storage.deviceId
     public var name: String = ""
     public var comment: String = ""
     public var type: ServerType = .http
@@ -109,8 +109,6 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
     }
 
     public init(
-        deviceId: String,
-        objectId: String = Storage.deviceId,
         name: String = "",
         comment: String = "",
         type: ServerType = .http,
@@ -125,8 +123,6 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
         connectionStatus: ConnectionStatus = .disconnected,
         capabilities: StringArrayCodable = StringArrayCodable([])
     ) {
-        self.deviceId = deviceId
-        self.objectId = objectId
         self.name = name
         self.comment = comment
         self.type = type
@@ -180,7 +176,7 @@ public extension ModelContextServer {
 
         // 尝试旧结构
         if let old = try? decoder.decode(ModelContextServerV1.self, from: data) {
-            let new = ModelContextServer(deviceId: Storage.deviceId)
+            let new = ModelContextServer()
             new.objectId = old.id
             new.name = old.name
             new.comment = old.comment

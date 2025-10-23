@@ -219,7 +219,7 @@ struct MigrationV1ToV2: DBMigration {
 
         var migrateMCSs: [ModelContextServer] = []
         for mcs in mcss {
-            let update = ModelContextServer(deviceId: deviceId)
+            let update = ModelContextServer()
             update.objectId = mcs.id
             update.name = mcs.name
             update.comment = mcs.comment
