@@ -64,6 +64,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
+        sdb.clearDeletedRecords()
+
         return true
     }
 
