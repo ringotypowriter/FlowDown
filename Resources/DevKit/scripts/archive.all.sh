@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+set -euo pipefail
 cd "$(dirname "$0")"
 
 while [[ ! -d .git ]] && [[ "$(pwd)" != "/" ]]; do
