@@ -36,6 +36,32 @@ public final class CloudModelNotificationInfo: Sendable {
     }
 }
 
+public final class ModelContextServerNotificationInfo: Sendable {
+    public let modifications: [ModelContextServer.ID]
+    public let deletions: [ModelContextServer.ID]
+    public var isEmpty: Bool {
+        modifications.isEmpty && deletions.isEmpty
+    }
+
+    public init(modifications: [ModelContextServer.ID], deletions: [ModelContextServer.ID]) {
+        self.modifications = modifications
+        self.deletions = deletions
+    }
+}
+
+public final class MemoryNotificationInfo: Sendable {
+    public let modifications: [Memory.ID]
+    public let deletions: [Memory.ID]
+    public var isEmpty: Bool {
+        modifications.isEmpty && deletions.isEmpty
+    }
+
+    public init(modifications: [Memory.ID], deletions: [Memory.ID]) {
+        self.modifications = modifications
+        self.deletions = deletions
+    }
+}
+
 public final class MessageNotificationInfo: Sendable {
     public let modifications: [Conversation.ID: [Message.ID]]
     public let deletions: [Conversation.ID: [Message.ID]]
@@ -53,11 +79,15 @@ public final actor SyncEngine: Sendable, ObservableObject {
     public static let ConversationChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ConversationChanged")
     public static let MessageChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.MessageChanged")
     public static let CloudModelChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.CloudModelChanged")
+    public static let ModelContextServerChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ModelContextServerChanged")
+    public static let MemoryChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.MemoryChanged")
     public static let LocalDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.LocalDataDeleted")
     public static let ServerDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ServerDataDeleted")
     public static let ConversationNotificationKey: String = "Conversation"
     public static let MessageNotificationKey: String = "Message"
     public static let CloudModelNotificationKey: String = "CloudModel"
+    public static let ModelContextServerNotificationKey: String = "ModelContextServer"
+    public static let MemoryNotificationKey: String = "Memory"
 
     public nonisolated static let syncEnabledDefaultsKey = "com.flowdown.storage.sync.manually.enabled"
 
@@ -491,6 +521,8 @@ private extension SyncEngine {
         var modificationConversations: [Conversation.ID] = []
         var modificationMessages: [Message.ID] = []
         var modificationCloudModels: [CloudModel.ID] = []
+        var modificationMCPS: [ModelContextServer.ID] = []
+        var modificationMemorys: [Memory.ID] = []
 
         for modification in filteredModifications {
             let recordID = modification.recordID
@@ -501,12 +533,18 @@ private extension SyncEngine {
                 modificationMessages.append(objectId)
             } else if tableName == CloudModel.tableName {
                 modificationCloudModels.append(objectId)
+            } else if tableName == ModelContextServer.tableName {
+                modificationMCPS.append(objectId)
+            } else if tableName == Memory.tableName {
+                modificationMemorys.append(objectId)
             }
         }
 
         var deletedConversations: [Conversation.ID] = []
         var deletedMessages: [Message.ID] = []
         var deletedCloudModels: [CloudModel.ID] = []
+        var deletedMCPS: [ModelContextServer.ID] = []
+        var deletedMemorys: [Memory.ID] = []
         for deletion in filteredDeletions {
             let recordID = deletion.recordID
             guard let (objectId, tableName) = UploadQueue.parseCKRecordID(recordID.recordName) else { continue }
@@ -516,6 +554,10 @@ private extension SyncEngine {
                 deletedMessages.append(objectId)
             } else if tableName == CloudModel.tableName {
                 deletedCloudModels.append(objectId)
+            } else if tableName == ModelContextServer.tableName {
+                deletedMCPS.append(objectId)
+            } else if tableName == Memory.tableName {
+                deletedMemorys.append(objectId)
             }
         }
 
@@ -532,6 +574,9 @@ private extension SyncEngine {
         let conversationNotificationInfo = ConversationNotificationInfo(modifications: modificationConversations, deletions: deletedConversations)
         let messageNotificationInfo = MessageNotificationInfo(modifications: modificationMessageMap, deletions: deletionMessageMap)
         let cloudModelNotificationInfo = CloudModelNotificationInfo(modifications: modificationCloudModels, deletions: deletedCloudModels)
+        let MCPNotificationInfo = ModelContextServerNotificationInfo(modifications: modificationMCPS, deletions: deletedMCPS)
+        let memoryNotificationInfo = MemoryNotificationInfo(modifications: modificationMemorys, deletions: deletedMemorys)
+
         await MainActor.run {
             if !conversationNotificationInfo.isEmpty {
                 NotificationCenter.default.post(
@@ -559,6 +604,26 @@ private extension SyncEngine {
                     object: nil,
                     userInfo: [
                         SyncEngine.CloudModelNotificationKey: cloudModelNotificationInfo,
+                    ]
+                )
+            }
+
+            if !MCPNotificationInfo.isEmpty {
+                NotificationCenter.default.post(
+                    name: SyncEngine.ModelContextServerChanged,
+                    object: nil,
+                    userInfo: [
+                        SyncEngine.ModelContextServerNotificationKey: MCPNotificationInfo,
+                    ]
+                )
+            }
+
+            if !memoryNotificationInfo.isEmpty {
+                NotificationCenter.default.post(
+                    name: SyncEngine.MemoryChanged,
+                    object: nil,
+                    userInfo: [
+                        SyncEngine.MemoryNotificationKey: MCPNotificationInfo,
                     ]
                 )
             }

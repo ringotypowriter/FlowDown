@@ -30,6 +30,14 @@ class MCPService: NSObject {
         }
         updateFromDatabase()
         setupServerSync()
+
+        NotificationCenter.default.publisher(for: SyncEngine.ModelContextServerChanged)
+            .debounce(for: .seconds(2), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                logger.info("Recived SyncEngine.ModelContextServerChanged")
+                self?.updateFromDatabase()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Setup
