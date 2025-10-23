@@ -16,12 +16,14 @@ class ConfigurableInfoView: ConfigurableView {
     override init() {
         super.init()
         valueLabel.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
-        valueLabel.titleLabel?.numberOfLines = 0
+        valueLabel.titleLabel?.numberOfLines = 3
+        valueLabel.titleLabel?.lineBreakMode = .byTruncatingMiddle
         valueLabel.titleLabel?.textAlignment = .right
         valueLabel.contentHorizontalAlignment = .right
         valueLabel.addTarget(self, action: #selector(tapped), for: .touchUpInside)
         valueLabel.snp.makeConstraints { make in
             make.width.lessThanOrEqualTo(self.snp.width).dividedBy(2)
+            make.edges.equalToSuperview()
         }
     }
 
