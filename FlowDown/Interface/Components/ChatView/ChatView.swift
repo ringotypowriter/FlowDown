@@ -188,7 +188,10 @@ class ChatView: UIView {
             return
         }
         conversationIdentifier = conversation
-        ConversationSessionManager.shared.resolvePendingRefresh(for: conversation)
+
+        // dont do it here, stream may still alive
+        // ConversationSessionManager.shared.resolvePendingRefresh(for: conversation)
+
         if let listView = currentMessageListView {
             insertSubview(listView, belowSubview: editorBackgroundView)
             listView.snp.makeConstraints { make in
