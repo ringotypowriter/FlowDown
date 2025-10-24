@@ -54,10 +54,18 @@ public class Storage {
     }
 
     convenience init(name: String) throws {
-        let databaseDir = FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)
-            .first!
-            .appendingPathComponent("Objects.db")
+        #if DEBUG
+            let databaseDir = FileManager.default
+                .urls(for: .documentDirectory, in: .userDomainMask)
+                .first!
+                .appendingPathComponent("Objects+Debug.db")
+        #else
+            let databaseDir = FileManager.default
+                .urls(for: .documentDirectory, in: .userDomainMask)
+                .first!
+                .appendingPathComponent("Objects.db")
+        #endif
+
         try self.init(name: name, databaseDir: databaseDir)
     }
 
