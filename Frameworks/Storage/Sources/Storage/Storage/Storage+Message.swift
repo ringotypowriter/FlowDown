@@ -187,7 +187,13 @@ public extension Storage {
         try? messageMarkDeleteAfter(messageId: messageIdentifier)
     }
 
-    func messageMarkDelete(messageIds: [Message.ID], skipSync: Bool = false, handle: Handle? = nil) throws {
+    /// 标记消息删除
+    /// - Parameters:
+    ///   - messageIds: 消息ID集合
+    ///   - skipAttachment: 是否跳过附件
+    ///   - skipSync: 是否跳过同步
+    ///   - handle: 数据库句柄，通常只有在事务中时传递
+    func messageMarkDelete(messageIds: [Message.ID], skipAttachment: Bool = false, skipSync: Bool = false, handle: Handle? = nil) throws {
         guard !messageIds.isEmpty else {
             return
         }
@@ -204,7 +210,10 @@ public extension Storage {
 
         let deletedIds = messages.map(\.objectId)
         let modified = Date.now
-        messages.forEach { $0.markModified(modified) }
+        for message in messages {
+            message.removed = true
+            message.markModified(modified)
+        }
 
         let update = StatementUpdate().update(table: Message.tableName)
             .set(Message.Properties.removed)
@@ -219,6 +228,10 @@ public extension Storage {
             try db.exec(update)
         }
 
+        if !skipAttachment {
+            try attachmentsMarkDelete(messageIds: deletedIds, skipSync: skipSync, handle: handle)
+        }
+
         guard !skipSync else {
             return
         }
@@ -226,7 +239,73 @@ public extension Storage {
         try pendingUploadEnqueue(sources: messages.map { ($0, .delete) }, handle: handle)
     }
 
-    func messageMarkDeleteAfter(messageId: Message.ID, skipSync: Bool = false, handle: Handle? = nil) throws {
+    /// 标记消息删除
+    /// - Parameters:
+    ///   - conversationID: 会话ID
+    ///   - skipAttachment: 是否跳过附件
+    ///   - skipSync: 是否跳过同步
+    ///   - handle: 数据库句柄，通常只有在事务中时传递
+    func messageMarkDelete(conversationID: Conversation.ID, skipAttachment: Bool = false, skipSync: Bool = false, handle: Handle? = nil) throws {
+        guard !conversationID.isEmpty else {
+            return
+        }
+
+        let messages: [Message] = if let handle {
+            try handle.getObjects(
+                fromTable: Message.tableName,
+                where: Message.Properties.conversationId == conversationID
+                    && Message.Properties.removed == false
+            )
+        } else {
+            try db.getObjects(
+                fromTable: Message.tableName,
+                where: Message.Properties.conversationId == conversationID
+                    && Message.Properties.removed == false
+            )
+        }
+
+        guard !messages.isEmpty else {
+            return
+        }
+
+        let deletedIds = messages.map(\.objectId)
+        let modified = Date.now
+        for message in messages {
+            message.removed = true
+            message.markModified(modified)
+        }
+
+        let update = StatementUpdate().update(table: Message.tableName)
+            .set(Message.Properties.removed)
+            .to(true)
+            .set(Message.Properties.modified)
+            .to(modified)
+            .where(Message.Properties.objectId.in(deletedIds))
+
+        if let handle {
+            try handle.exec(update)
+        } else {
+            try db.exec(update)
+        }
+
+        if !skipAttachment {
+            try attachmentsMarkDelete(messageIds: deletedIds, skipSync: skipSync, handle: handle)
+        }
+
+        guard !skipSync else {
+            return
+        }
+
+        try pendingUploadEnqueue(sources: messages.map { ($0, .delete) }, handle: handle)
+    }
+
+    /// 标记消息删除
+    /// - Parameters:
+    ///   - messageId: 消息ID
+    ///   - skipAttachment: 是否跳过附件
+    ///   - skipSync: 是否跳过同步
+    ///   - handle: 数据库句柄，通常只有在事务中时传递
+    func messageMarkDeleteAfter(messageId: Message.ID, skipAttachment: Bool = false, skipSync: Bool = false, handle: Handle? = nil) throws {
         guard !messageId.isEmpty else {
             return
         }
@@ -255,7 +334,10 @@ public extension Storage {
 
         let deletedIds = messages.map(\.objectId)
         let modified = Date.now
-        messages.forEach { $0.markModified(modified) }
+        for message in messages {
+            message.removed = true
+            message.markModified(modified)
+        }
 
         let update = StatementUpdate().update(table: Message.tableName)
             .set(Message.Properties.removed)
@@ -270,6 +352,10 @@ public extension Storage {
             try db.exec(update)
         }
 
+        if !skipAttachment {
+            try attachmentsMarkDelete(messageIds: deletedIds, skipSync: skipSync, handle: handle)
+        }
+
         guard !skipSync else {
             return
         }
@@ -277,7 +363,12 @@ public extension Storage {
         try pendingUploadEnqueue(sources: messages.map { ($0, .delete) }, handle: handle)
     }
 
-    func messageMarkDelete(skipSync: Bool = false, handle: Handle? = nil) throws {
+    /// 标记消息删除
+    /// - Parameters:
+    ///   - skipAttachment: 是否跳过附件
+    ///   - skipSync: 是否跳过同步
+    ///   - handle: 数据库句柄，通常只有在事务中时传递
+    func messageMarkDelete(skipAttachment: Bool = false, skipSync: Bool = false, handle: Handle? = nil) throws {
         let messages: [Message] = if let handle {
             try handle.getObjects(fromTable: Message.tableName, where: Message.Properties.removed == false)
         } else {
@@ -290,7 +381,10 @@ public extension Storage {
 
         let deletedIds = messages.map(\.objectId)
         let modified = Date.now
-        messages.forEach { $0.markModified(modified) }
+        for message in messages {
+            message.removed = true
+            message.markModified(modified)
+        }
 
         let update = StatementUpdate().update(table: Message.tableName)
             .set(Message.Properties.removed)
@@ -303,6 +397,10 @@ public extension Storage {
             try handle.exec(update)
         } else {
             try db.exec(update)
+        }
+
+        if !skipAttachment {
+            try attachmentsMarkDelete(messageIds: deletedIds, skipSync: skipSync, handle: handle)
         }
 
         guard !skipSync else {

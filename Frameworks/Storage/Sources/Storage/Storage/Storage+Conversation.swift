@@ -297,25 +297,29 @@ public extension Storage {
         }
 
         let conv: Conversation? = if let handle {
-            try handle.getObject(fromTable: Conversation.tableName, where: Conversation.Properties.objectId == conversationId)
+            try handle.getObject(
+                fromTable: Conversation.tableName,
+                where: Conversation.Properties.objectId == conversationId
+            )
         } else {
-            try db.getObject(fromTable: Conversation.tableName, where: Conversation.Properties.objectId == conversationId)
+            try db.getObject(
+                fromTable: Conversation.tableName,
+                where: Conversation.Properties.objectId == conversationId
+            )
         }
 
         guard let conv else { return }
 
-        let messages = listMessages(within: conversationId, handle: handle)
-        let messagesIds = messages.compactMap(\.objectId)
+        conv.removed = true
+        conv.markModified()
 
-        /// 删除操作不能恢复, 所以当删除会话后。可以不用同步对应的消息和附件
-        try attachmentsMarkDelete(messageIds: messagesIds, skipSync: true, handle: handle)
-        try messageMarkDelete(messageIds: messagesIds, skipSync: true, handle: handle)
+        try messageMarkDelete(conversationID: conversationId, handle: handle)
 
         let update = StatementUpdate().update(table: Conversation.tableName)
             .set(Conversation.Properties.removed)
             .to(true)
             .set(Conversation.Properties.modified)
-            .to(Date.now)
+            .to(conv.modified)
             .where(Conversation.Properties.objectId == conversationId)
         if let handle {
             try handle.exec(update)
@@ -337,12 +341,18 @@ public extension Storage {
             return
         }
 
+        let modified = Date.now
+        for conv in convs {
+            conv.removed = true
+            conv.markModified(modified)
+        }
+
         let objectIds = convs.map(\.objectId)
         let update = StatementUpdate().update(table: Conversation.tableName)
             .set(Conversation.Properties.removed)
             .to(true)
             .set(Conversation.Properties.modified)
-            .to(Date.now)
+            .to(modified)
             .where(Conversation.Properties.objectId.in(objectIds))
 
         if let handle {
@@ -360,9 +370,7 @@ public extension Storage {
 
     private func executeEraseAllConversations(handle: Handle) throws {
         try conversationMarkDelete(handle: handle)
-
-        /// 删除操作不能恢复, 所以当删除会话后。可以不用同步对应的消息和附件
-        try messageMarkDelete(skipSync: true, handle: handle)
-        try attachmentsMarkDelete(skipSync: true, handle: handle)
+        try messageMarkDelete(skipAttachment: true, handle: handle)
+        try attachmentsMarkDelete(handle: handle)
     }
 }

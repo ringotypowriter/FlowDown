@@ -105,7 +105,9 @@ public class Storage {
         try setup(db: db)
 
         // 将上传中/上传失败的同步记录重置为Pending
-        try pendingUploadRestToPendingState()
+        try db.run(transaction: { [unowned self] in
+            try pendingUploadRestToPendingState(handle: $0)
+        })
     }
 
     func setup(db: Database) throws {

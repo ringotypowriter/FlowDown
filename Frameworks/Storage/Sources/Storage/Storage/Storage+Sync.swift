@@ -62,93 +62,18 @@ package extension Storage {
     }
 
     private func handleRemoteDeletedConversation(conversationId: String, handle: Handle) throws {
-        // 删除会话时，直接同步删除消息及其附件
         try handle.delete(
             fromTable: Conversation.tableName,
             where: Conversation.Properties.objectId == conversationId
         )
 
-        let messageIdRows = try handle.getRows(
-            on: [
-                Message.Properties.objectId,
-            ],
-            fromTable: Message.tableName,
-            where: Message.Properties.conversationId == conversationId
-        )
-
         Logger.syncEngine.info("handleRemoteDeletedConversation \(conversationId)")
-
-        guard !messageIdRows.isEmpty else {
-            return
-        }
-
-        let messageIds = messageIdRows.map { $0[0].stringValue }
-
-        let attachmentIdRows = try handle.getRows(
-            on: [
-                Attachment.Properties.objectId,
-            ],
-            fromTable: Attachment.tableName,
-            where: Attachment.Properties.messageId.in(messageIds)
-        )
-
-        let attachmentIds = attachmentIdRows.map { $0[0].stringValue }
-
-        try handle.delete(
-            fromTable: Message.tableName,
-            where: Message.Properties.conversationId == conversationId
-        )
-
-        let recordNames = messageIds.map { "\($0):\(UploadQueue.CKRecordIDSeparator)\(Message.tableName)" }
-        try handle.delete(
-            fromTable: SyncMetadata.tableName,
-            where: SyncMetadata.Properties.recordName.in(recordNames)
-        )
-
-        if !attachmentIds.isEmpty {
-            try handle.delete(
-                fromTable: Attachment.tableName,
-                where: Attachment.Properties.objectId.in(attachmentIds)
-            )
-
-            let recordNames = attachmentIds.map { "\($0):\(UploadQueue.CKRecordIDSeparator)\(Attachment.tableName)" }
-            try handle.delete(
-                fromTable: SyncMetadata.tableName,
-                where: SyncMetadata.Properties.recordName.in(recordNames)
-            )
-        }
     }
 
     private func handleRemoteDeletedMessage(messageId: String, handle: Handle) throws {
-        // 删除消息时，删除对应的附件
-        let attachmentIdRows = try handle.getRows(
-            on: [
-                Attachment.Properties.objectId,
-            ],
-            fromTable: Attachment.tableName,
-            where: Attachment.Properties.messageId == messageId
-        )
-
         try handle.delete(
             fromTable: Message.tableName,
             where: Message.Properties.objectId == messageId
-        )
-
-        let attachmentIds = attachmentIdRows.map { $0[0].stringValue }
-        guard !attachmentIds.isEmpty else {
-            return
-        }
-
-        try handle.delete(
-            fromTable: Attachment.tableName,
-            where: Attachment.Properties.objectId.in(attachmentIds)
-        )
-
-        let recordNames = attachmentIds.map { "\($0):\(UploadQueue.CKRecordIDSeparator)\(Attachment.tableName)" }
-
-        try handle.delete(
-            fromTable: SyncMetadata.tableName,
-            where: SyncMetadata.Properties.recordName.in(recordNames)
         )
 
         Logger.syncEngine.info("handleRemoteDeletedMessage \(messageId)")
