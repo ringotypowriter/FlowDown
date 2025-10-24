@@ -14,6 +14,7 @@ class Sidebar: UIView {
     let searchButton = SearchControllerOpenButton()
     let settingButton = SettingButton()
     let conversationListView = ConversationListView()
+    let syncIndicator = SidebarSyncLabel()
 
     var chatSelection: Conversation.ID? {
         didSet {
@@ -36,6 +37,7 @@ class Sidebar: UIView {
         addSubview(newChatButton)
         addSubview(settingButton)
         addSubview(searchButton)
+        addSubview(syncIndicator)
 
         brandingLabel.snp.makeConstraints { make in
             make.left.top.equalToSuperview()
@@ -66,6 +68,13 @@ class Sidebar: UIView {
             make.top.equalTo(brandingLabel.snp.bottom).offset(spacing)
             make.bottom.equalTo(settingButton.snp.top).offset(-spacing)
             make.left.right.equalToSuperview()
+        }
+
+        syncIndicator.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.left.equalTo(settingButton.snp.right).offset(8)
+            make.right.equalTo(searchButton.snp.left).offset(-8)
+            make.height.equalTo(32)
         }
     }
 

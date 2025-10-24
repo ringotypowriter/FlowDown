@@ -3936,6 +3936,16 @@
         }
       }
     },
+    "Last synced %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最后同步于 %@"
+          }
+        }
+      }
+    },
     "Leave a message on GitHub issue." : {
       "localizations" : {
         "zh-Hans" : {
@@ -6353,6 +6363,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同步范围"
+          }
+        }
+      }
+    },
+    "Syncing with iCloud" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在同步"
           }
         }
       }
