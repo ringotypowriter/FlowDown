@@ -188,8 +188,7 @@ class ChatView: UIView {
             return
         }
         conversationIdentifier = conversation
-        // Clear pending refresh since switching will reload from database
-        ConversationSessionManager.shared.clearPendingRefresh(for: conversation)
+        ConversationSessionManager.shared.resolvePendingRefresh(for: conversation)
         if let listView = currentMessageListView {
             insertSubview(listView, belowSubview: editorBackgroundView)
             listView.snp.makeConstraints { make in

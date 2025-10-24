@@ -100,7 +100,7 @@ final class ConversationSessionManager {
         session.refreshContentsFromDatabase()
     }
 
-    func checkPendingRefresh(for sessionID: Conversation.ID) {
+    func resolvePendingRefresh(for sessionID: Conversation.ID) {
         guard pendingRefresh.contains(sessionID) else { return }
         guard let session = sessions[sessionID] else {
             pendingRefresh.remove(sessionID)
