@@ -58,6 +58,33 @@ class ConversationManager: NSObject {
                 self?.scanAll()
             }
             .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: SyncEngine.MessageChanged)
+            .debounce(for: .seconds(1), scheduler: RunLoop.main)
+            .sink { [weak self] note in
+                logger.info("Recived SyncEngine.MessageChanged")
+                guard let userInfo = note.userInfo,
+                      let info = userInfo[SyncEngine.MessageNotificationKey] as? MessageNotificationInfo else {
+                    // No detailed info: invalidate all sessions and rescan
+                    ConversationSessionManager.shared.invalidateAllSessions()
+                    self?.scanAll()
+                    return
+                }
+
+                // Collect affected conversation IDs from modifications and deletions
+                var affected: Set<Conversation.ID> = []
+                affected.formUnion(info.modifications.keys)
+                affected.formUnion(info.deletions.keys)
+
+                if affected.isEmpty {
+                    ConversationSessionManager.shared.invalidateAllSessions()
+                } else {
+                    ConversationSessionManager.shared.invalidateSessions(for: Array(affected))
+                }
+
+                self?.scanAll()
+            }
+            .store(in: &cancellables)
     }
 
     @objc private func saveObjects() {

@@ -30,4 +30,18 @@ final class ConversationSessionManager {
         sessions[id] = session
         return session
     }
+
+    func invalidateSession(for id: Conversation.ID) {
+        sessions[id] = nil
+    }
+
+    func invalidateSessions(for ids: [Conversation.ID]) {
+        for id in ids {
+            sessions[id] = nil
+        }
+    }
+
+    func invalidateAllSessions() {
+        sessions.removeAll()
+    }
 }
