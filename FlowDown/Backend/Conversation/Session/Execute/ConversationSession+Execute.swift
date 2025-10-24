@@ -56,7 +56,11 @@ extension ConversationSession {
                     inputObject: inputObject
                 )
                 self.currentTask = nil
-                await MainActor.run { completion() }
+                // Check if there's a pending refresh after task completion
+                await MainActor.run {
+                    ConversationSessionManager.shared.checkPendingRefresh(for: id)
+                    completion()
+                }
             }
         }
     }

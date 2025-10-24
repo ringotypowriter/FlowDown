@@ -93,33 +93,22 @@ final class ConversationSessionManager {
             logger.debug("Defer refresh for session \(String(describing: session.id)) due to active task")
             if !pendingRefresh.contains(session.id) {
                 pendingRefresh.insert(session.id)
-                waitUntilIdleAndRefresh(sessionID: session.id)
             }
             return
         }
+        // No active task or task is cancelled, safe to refresh immediately
         session.refreshContentsFromDatabase()
     }
 
-    private func waitUntilIdleAndRefresh(sessionID: Conversation.ID) {
-        Task { @MainActor in
-            var attempts = 0
-            let maxAttempts = 60 // ~30s total
-            while attempts < maxAttempts {
-                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
-                attempts += 1
-                guard let session = sessions[sessionID] else {
-                    pendingRefresh.remove(sessionID)
-                    return
-                }
-                if session.currentTask == nil {
-                    session.refreshContentsFromDatabase()
-                    pendingRefresh.remove(sessionID)
-                    return
-                }
-            }
-            // Still busy, invalidate so next switch loads from DB.
-            logger.info("Timeout waiting for idle; invalidating session \(String(describing: sessionID))")
-            invalidateSession(for: sessionID)
+    func checkPendingRefresh(for sessionID: Conversation.ID) {
+        guard pendingRefresh.contains(sessionID) else { return }
+        guard let session = sessions[sessionID] else {
+            pendingRefresh.remove(sessionID)
+            return
         }
+        // Task completed, now safe to refresh
+        logger.info("Executing pending refresh for session \(String(describing: sessionID))")
+        session.refreshContentsFromDatabase()
+        pendingRefresh.remove(sessionID)
     }
 }
