@@ -120,6 +120,8 @@ extension ConversationManager {
         sdb.conversationRemove(conversationWith: identifier)
         setRichEditorObject(identifier: identifier, nil)
         scanAll()
+        // Invalidate session cache so next access reloads from DB
+        ConversationSessionManager.shared.invalidateSession(for: identifier)
     }
 
     func eraseAll() {
@@ -127,6 +129,10 @@ extension ConversationManager {
         clearRichEditorObject()
         ConversationManager.shouldShowGuideMessage = true
         scanAll()
+        // Clear all cached sessions after mass deletion
+        for (identifier, _) in conversations.value {
+            ConversationSessionManager.shared.invalidateSession(for: identifier)
+        }
     }
 
     func conversationIdentifierLookup(from messageIdentifier: Message.ID) -> Conversation.ID? {

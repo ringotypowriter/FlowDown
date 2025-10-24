@@ -1,29 +1,37 @@
 //
+//  ConversationSessionManager.swift
+//  FlowDown
+//
 //  Created by ktiays on 2025/2/12.
-//  Copyright (c) 2025 ktiays. All rights reserved.
 //
 
 import ChatClientKit
 import Foundation
+import OSLog
 import Storage
 
-/// The manager for a collection of chat sessions.
+@MainActor
 final class ConversationSessionManager {
     typealias Session = ConversationSession
 
-    /// Instantiates `ConversationSessionManager` as a singleton.
+    // MARK: - Singleton
     static let shared = ConversationSessionManager()
 
+    // MARK: - State
     private var sessions: [Conversation.ID: Session] = [:]
     private var messageChangedObserver: Any?
+    private var pendingRefresh: Set<Conversation.ID> = []
+    private let logger = Logger(subsystem: "wiki.qaq.flowdown", category: "ConversationSessionManager")
 
+    // MARK: - Lifecycle
     private init() {
         messageChangedObserver = NotificationCenter.default.addObserver(
             forName: SyncEngine.MessageChanged,
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            self?.handleMessageChanged(notification)
+            guard let self else { return }
+            self.handleMessageChanged(notification)
         }
     }
 
@@ -33,52 +41,75 @@ final class ConversationSessionManager {
         }
     }
 
-    /// Returns the session for the given conversation ID.
-    func session(for id: Conversation.ID) -> Session {
+    // MARK: - Public APIs
+    func session(for conversationID: Conversation.ID) -> Session {
+        if let cached = sessions[conversationID] { return cached }
         #if DEBUG
-            ConversationSession.allowedInit = id
+            ConversationSession.allowedInit = conversationID
         #endif
-
-        if let session = sessions[id] { return session }
-        let session = Session(id: id)
-        if session.messages.isEmpty {
-            session.prepareSystemPrompt()
-        }
-        sessions[id] = session
-        return session
+        let newSession = Session(id: conversationID)
+        sessions[conversationID] = newSession
+        return newSession
     }
 
+    func invalidateSession(for conversationID: Conversation.ID) {
+        sessions.removeValue(forKey: conversationID)
+        pendingRefresh.remove(conversationID)
+    }
+
+    // MARK: - Message Change Handling
     private func handleMessageChanged(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let info = userInfo[SyncEngine.MessageNotificationKey] as? MessageNotificationInfo
-        else {
-            refreshAllCachedSessions()
+        // Only update message lists; do not touch conversation sidebar (no scanAll here).
+        guard let info = notification.userInfo?[SyncEngine.MessageNotificationKey] as? MessageNotificationInfo else {
+            logger.info("MessageChanged without detail; refreshing all cached sessions")
+            for (_, session) in sessions { refreshSafely(session) }
             return
         }
 
-        var identifiers = Set(info.modifications.keys)
-        identifiers.formUnion(info.deletions.keys)
+        var affected = Set<Conversation.ID>()
+        for (cid, _) in info.modifications { affected.insert(cid) }
+        for (cid, _) in info.deletions { affected.insert(cid) }
+        guard !affected.isEmpty else { return }
 
-        if identifiers.isEmpty {
-            refreshAllCachedSessions()
+        for cid in affected {
+            guard let session = sessions[cid] else { continue }
+            refreshSafely(session)
+        }
+    }
+
+    private func refreshSafely(_ session: Session) {
+        // Avoid refreshing while a streaming task is active to prevent UI errors.
+        if let task = session.currentTask, !task.isCancelled {
+            logger.debug("Defer refresh for session \(String(describing: session.id)) due to active task")
+            if !pendingRefresh.contains(session.id) {
+                pendingRefresh.insert(session.id)
+                waitUntilIdleAndRefresh(sessionID: session.id)
+            }
             return
         }
-
-        for identifier in identifiers {
-            refreshSession(for: identifier)
-        }
+        session.refreshContentsFromDatabase()
     }
 
-    private func refreshSession(for identifier: Conversation.ID) {
-        guard let session = sessions[identifier] else { return }
-        DispatchQueue.global(qos: .userInitiated).async {
-            session.refreshContentsFromDatabase()
-        }
-    }
-
-    private func refreshAllCachedSessions() {
-        for identifier in sessions.keys {
-            refreshSession(for: identifier)
+    private func waitUntilIdleAndRefresh(sessionID: Conversation.ID) {
+        Task { @MainActor in
+            var attempts = 0
+            let maxAttempts = 60 // ~30s total
+            while attempts < maxAttempts {
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+                attempts += 1
+                guard let session = sessions[sessionID] else {
+                    pendingRefresh.remove(sessionID)
+                    return
+                }
+                if session.currentTask == nil {
+                    session.refreshContentsFromDatabase()
+                    pendingRefresh.remove(sessionID)
+                    return
+                }
+            }
+            // Still busy, invalidate so next switch loads from DB.
+            logger.info("Timeout waiting for idle; invalidating session \(String(describing: sessionID))")
+            invalidateSession(for: sessionID)
         }
     }
 }

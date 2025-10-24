@@ -157,6 +157,7 @@ final class ConversationSession: Identifiable {
 
     func refreshContentsFromDatabase() {
         // Load historical messages from the database.
+        assert(Thread.isMainThread, "refreshContentsFromDatabase must be called on main thread for UI coherence")
         messages.removeAll()
         attachments.removeAll()
         messages = sdb.listMessages(within: id)
