@@ -75,14 +75,23 @@ public final class MessageNotificationInfo: Sendable {
     }
 }
 
-public final actor SyncEngine: Sendable, ObservableObject {
+public final actor SyncEngine: Sendable {
+    /// 会话列表变化通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let ConversationChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ConversationChanged")
+    /// 消息列表变化通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let MessageChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.MessageChanged")
+    /// 模型列表变化通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let CloudModelChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.CloudModelChanged")
+    /// MCP列表变化通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let ModelContextServerChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ModelContextServerChanged")
+    /// 记忆列表变化通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let MemoryChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.MemoryChanged")
+    /// 本地数据删除通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let LocalDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.LocalDataDeleted")
+    /// 云端数据删除通知, 在 MainActor 中发布。可安全的在UI线程中访问
     public static let ServerDataDeleted: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.ServerDataDeleted")
+    /// 同步状态通知, 在 MainActor 中发布。可安全的在UI线程中访问
+    public static let SyncStatusChanged: Notification.Name = .init("wiki.qaq.flowdown.SyncEngine.SyncStatusChanged")
     public static let ConversationNotificationKey: String = "Conversation"
     public static let MessageNotificationKey: String = "Message"
     public static let CloudModelNotificationKey: String = "CloudModel"
@@ -134,6 +143,33 @@ public final actor SyncEngine: Sendable, ObservableObject {
     private nonisolated var isAutomaticallySyncEnabled: Bool { !SyncPreferences.isManualSyncEnabled }
 
     private var debounceEnqueueTask: Task<Void, Error>?
+
+    private var beginSyncDate: Date = .now
+    private var fetchingChangesCount: Int = 0
+    private var sendingChangesCount: Int = 0
+
+    private static let LastSyncDateKey = "FlowDownSyncEngineLastSyncDate"
+
+    /// 最后一次同步时间, 在 MainActor 中更新。可安全的在UI线程中访问
+    public private(set) nonisolated static var LastSyncDate: Date? {
+        get {
+            guard let date = UserDefaults.standard.object(forKey: SyncEngine.LastSyncDateKey) as? Date else {
+                return nil
+            }
+            return date
+        }
+
+        set {
+            if let newValue {
+                UserDefaults.standard.set(newValue, forKey: SyncEngine.LastSyncDateKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: SyncEngine.LastSyncDateKey)
+            }
+        }
+    }
+
+    /// 当前是否正在同步中, 在 MainActor 中更新。可安全的在UI线程中访问
+    public private(set) static var isSynchronizing = false
 
     private static var stateSerialization: CKSyncEngine.State.Serialization? {
         get {
@@ -223,6 +259,21 @@ public extension SyncEngine {
 
         await syncEngine.cancelOperations()
         _syncEngine = nil
+        sendingChangesCount = 0
+        fetchingChangesCount = 0
+
+        await MainActor.run {
+            SyncEngine.LastSyncDate = .now
+            SyncEngine.isSynchronizing = false
+            NotificationCenter.default.post(
+                name: SyncEngine.SyncStatusChanged,
+                object: nil,
+                userInfo: [
+                    "isSynchronizing": false,
+                ]
+            )
+        }
+
         Logger.syncEngine.info("StopSyncIfNeeded")
     }
 
@@ -232,7 +283,7 @@ public extension SyncEngine {
         try await fetchChanges()
     }
 
-    /// 拉取变化
+    /// 拉取变化 !不要在代理回调里面调用!
     func fetchChanges() async throws {
         guard SyncEngine.isSyncEnabled else { return }
 
@@ -407,6 +458,86 @@ private extension SyncEngine {
 
             if !isAutomaticallySyncEnabled, immediateSendChanges {
                 try await syncEngine.performingSendChanges()
+            }
+        }
+    }
+
+    func enqueueSendingChanges() async {
+        sendingChangesCount += 1
+        if sendingChangesCount == 1, fetchingChangesCount == 0 {
+            beginSyncDate = .now
+            Logger.syncEngine.info("Begin synchronization")
+            await MainActor.run {
+                SyncEngine.isSynchronizing = true
+                NotificationCenter.default.post(
+                    name: SyncEngine.SyncStatusChanged,
+                    object: nil,
+                    userInfo: [
+                        "isSynchronizing": true,
+                    ]
+                )
+            }
+        }
+    }
+
+    func dequeueSendingChanges() async {
+        sendingChangesCount = max(sendingChangesCount - 1, 0)
+
+        if sendingChangesCount == 0, fetchingChangesCount == 0 {
+            let nowDate = Date.now
+            let elapsed = nowDate.timeIntervalSince(beginSyncDate) * 1000.0
+            // swiftformat:disable:next redundantSelf
+            Logger.syncEngine.info("Finish synchronization beging \(self.beginSyncDate, privacy: .public) elapsed \(Int(elapsed), privacy: .public)ms")
+            await MainActor.run {
+                SyncEngine.LastSyncDate = nowDate
+                SyncEngine.isSynchronizing = false
+                NotificationCenter.default.post(
+                    name: SyncEngine.SyncStatusChanged,
+                    object: nil,
+                    userInfo: [
+                        "isSynchronizing": false,
+                    ]
+                )
+            }
+        }
+    }
+
+    func enqueueFetchingChanges() async {
+        fetchingChangesCount += 1
+        if fetchingChangesCount == 1, sendingChangesCount == 0 {
+            beginSyncDate = .now
+            Logger.syncEngine.info("Begin synchronization")
+            await MainActor.run {
+                SyncEngine.isSynchronizing = true
+                NotificationCenter.default.post(
+                    name: SyncEngine.SyncStatusChanged,
+                    object: nil,
+                    userInfo: [
+                        "isSynchronizing": true,
+                    ]
+                )
+            }
+        }
+    }
+
+    func dequeueFetchingChanges() async {
+        fetchingChangesCount = max(fetchingChangesCount - 1, 0)
+
+        if fetchingChangesCount == 0, sendingChangesCount == 0 {
+            let nowDate = Date.now
+            let elapsed = nowDate.timeIntervalSince(beginSyncDate) * 1000.0
+            // swiftformat:disable:next redundantSelf
+            Logger.syncEngine.info("Finish synchronization beging \(self.beginSyncDate, privacy: .public) elapsed \(Int(elapsed), privacy: .public)ms")
+            await MainActor.run {
+                SyncEngine.LastSyncDate = nowDate
+                SyncEngine.isSynchronizing = false
+                NotificationCenter.default.post(
+                    name: SyncEngine.SyncStatusChanged,
+                    object: nil,
+                    userInfo: [
+                        "isSynchronizing": false,
+                    ]
+                )
             }
         }
     }
@@ -910,13 +1041,27 @@ extension SyncEngine: SyncEngineDelegate {
                 syncEngine: syncEngine
             )
 
-        case .willFetchChanges, .willFetchRecordZoneChanges, .didFetchRecordZoneChanges, .willSendChanges:
-            break
+        case .willFetchRecordZoneChanges:
+            await enqueueFetchingChanges()
 
-        case .didFetchChanges, .didSendChanges:
+        case .didFetchRecordZoneChanges:
+            await dequeueFetchingChanges()
+
+        case .willFetchChanges:
+            await enqueueFetchingChanges()
+
+        case .didFetchChanges:
+            await dequeueFetchingChanges()
             // 调度下一批
             try? await scheduleUploadIfNeeded()
-            break
+
+        case .willSendChanges:
+            await enqueueSendingChanges()
+
+        case .didSendChanges:
+            await dequeueSendingChanges()
+            // 调度下一批
+            try? await scheduleUploadIfNeeded()
 
         @unknown default:
             break
