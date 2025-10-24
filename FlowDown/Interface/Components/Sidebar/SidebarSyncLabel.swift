@@ -19,9 +19,9 @@ private let formatter: RelativeDateTimeFormatter = {
 
 class SidebarSyncLabel: UIView {
     let textLabel: GlyphixTextLabel = .init().with {
-        $0.font = .preferredFont(forTextStyle: .footnote).bold
+        $0.font = .preferredFont(forTextStyle: .caption1)
+        $0.textColor = .secondaryLabel
         $0.isBlurEffectEnabled = true
-        $0.textColor = .label
         $0.textAlignment = .center
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.clipsToBounds = true
@@ -66,6 +66,8 @@ class SidebarSyncLabel: UIView {
                 textLabel.text = text
             }
         }
+
+        scheduleTextDismissal()
     }
 
     func scheduleTextDismissal() {
