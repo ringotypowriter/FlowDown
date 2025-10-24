@@ -17,7 +17,7 @@ public class Storage {
     let db: Database
     let initVersion: DBVersion
     /// 标记为删除的数据在多长时间后，执行物理删除， 默认为： 30天
-    let deleteAfterDuration: TimeInterval = 60 * 60 * 24 * 30
+    static let DeleteAfterDuration: TimeInterval = 60 * 60 * 24 * 30
 
     public let databaseDir: URL
     public let databaseLocation: URL
@@ -105,7 +105,9 @@ public class Storage {
         try setup(db: db)
 
         // 将上传中/上传失败的同步记录重置为Pending
-        try pendingUploadRestToPendingState()
+        try db.run(transaction: { [unowned self] in
+            try pendingUploadRestToPendingState(handle: $0)
+        })
     }
 
     func setup(db: Database) throws {
@@ -196,37 +198,42 @@ private extension Storage {
 public extension Storage {
     /// 清理无效数据
     func clearDeletedRecords() {
-        let nowDate = Date.now
-        let deleteAt = nowDate.addingTimeInterval(-deleteAfterDuration)
-
         DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let self else { return }
 
-            Logger.database.info("clearDeletedRecords begin")
-            try? db.run(transaction: {
-                try $0.delete(fromTable: Attachment.tableName, where: Attachment.Properties.modified <= deleteAt && Attachment.Properties.removed == true)
-                try $0.delete(fromTable: Message.tableName, where: Message.Properties.modified <= deleteAt && Message.Properties.removed == true)
-                try $0.delete(fromTable: Conversation.tableName, where: Conversation.Properties.modified <= deleteAt && Conversation.Properties.removed == true)
-                try $0.delete(fromTable: CloudModel.tableName, where: CloudModel.Properties.modified <= deleteAt && CloudModel.Properties.removed == true)
-                try $0.delete(fromTable: Memory.tableName, where: Memory.Properties.modified <= deleteAt && Memory.Properties.removed == true)
-                try $0.delete(fromTable: ModelContextServer.tableName, where: ModelContextServer.Properties.modified <= deleteAt && ModelContextServer.Properties.removed == true)
+            let nowDate = Date.now
+            let deleteAt = nowDate.addingTimeInterval(-Storage.DeleteAfterDuration)
 
-                try $0.delete(fromTable: CloudModel.tableName, where: CloudModel.Properties.objectId == "")
+            do {
+                Logger.database.info("clearDeletedRecords begin")
+                try db.run(transaction: {
+                    try $0.delete(fromTable: Attachment.tableName, where: Attachment.Properties.modified <= deleteAt && Attachment.Properties.removed == true)
+                    try $0.delete(fromTable: Message.tableName, where: Message.Properties.modified <= deleteAt && Message.Properties.removed == true)
+                    try $0.delete(fromTable: Conversation.tableName, where: Conversation.Properties.modified <= deleteAt && Conversation.Properties.removed == true)
+                    try $0.delete(fromTable: CloudModel.tableName, where: CloudModel.Properties.modified <= deleteAt && CloudModel.Properties.removed == true)
+                    try $0.delete(fromTable: Memory.tableName, where: Memory.Properties.modified <= deleteAt && Memory.Properties.removed == true)
+                    try $0.delete(fromTable: ModelContextServer.tableName, where: ModelContextServer.Properties.modified <= deleteAt && ModelContextServer.Properties.removed == true)
 
-                // 清理上传队列
-                // 1. 上传成功的
-                // 2. 上传失败次数超过阈值的
-                try $0.delete(
-                    fromTable: UploadQueue.tableName,
-                    where:
-                    UploadQueue.Properties.state == UploadQueue.State.finish
-                        || UploadQueue.Properties.failCount >= 100
-                )
+                    try $0.delete(fromTable: CloudModel.tableName, where: CloudModel.Properties.objectId == "")
 
-            })
+                    // 清理上传队列
+                    // 1. 上传成功的
+                    // 2. 上传失败次数超过阈值的
+                    try $0.delete(
+                        fromTable: UploadQueue.tableName,
+                        where:
+                        UploadQueue.Properties.state == UploadQueue.State.finish
+                            || UploadQueue.Properties.failCount >= 100
+                    )
 
-            let elapsed = Date.now.timeIntervalSince(nowDate) * 1000.0
-            Logger.database.info("clearDeletedRecords end elapsed \(Int(elapsed), privacy: .public)ms")
+                })
+
+                let elapsed = Date.now.timeIntervalSince(nowDate) * 1000.0
+                Logger.database.info("clearDeletedRecords end elapsed \(Int(elapsed), privacy: .public)ms")
+            } catch {
+                let elapsed = Date.now.timeIntervalSince(nowDate) * 1000.0
+                Logger.database.error("clearDeletedRecords elapsed \(Int(elapsed), privacy: .public)ms error \(error.localizedDescription, privacy: .public)")
+            }
         }
     }
 

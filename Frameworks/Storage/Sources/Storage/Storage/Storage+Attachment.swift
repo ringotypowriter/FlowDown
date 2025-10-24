@@ -90,11 +90,14 @@ public extension Storage {
 
         try runTransaction(handle: handle) { [weak self] in
             guard let self else { return }
+
             let object: Attachment? = try $0.getObject(fromTable: Attachment.tableName, where: Attachment.Properties.messageId == messageId)
+
             guard let object else {
                 return
             }
 
+            object.removed = true
             object.markModified()
 
             let update = StatementUpdate().update(table: Attachment.tableName)
@@ -117,7 +120,13 @@ public extension Storage {
 
         try runTransaction(handle: handle) { [weak self] in
             guard let self else { return }
-            let objects: [Attachment] = try $0.getObjects(fromTable: Attachment.tableName, where: Attachment.Properties.messageId.in(messageIds))
+
+            let objects: [Attachment] = try $0.getObjects(
+                fromTable: Attachment.tableName,
+                where: Attachment.Properties.messageId.in(messageIds)
+                    && Attachment.Properties.removed == false
+            )
+
             guard !objects.isEmpty else {
                 return
             }
@@ -149,7 +158,12 @@ public extension Storage {
     func attachmentsMarkDelete(skipSync: Bool = false, handle: Handle? = nil) throws {
         try runTransaction(handle: handle) { [weak self] in
             guard let self else { return }
-            let objects: [Attachment] = try $0.getObjects(fromTable: Attachment.tableName, where: Attachment.Properties.removed == false)
+
+            let objects: [Attachment] = try $0.getObjects(
+                fromTable: Attachment.tableName,
+                where: Attachment.Properties.removed == false
+            )
+
             guard !objects.isEmpty else {
                 return
             }
