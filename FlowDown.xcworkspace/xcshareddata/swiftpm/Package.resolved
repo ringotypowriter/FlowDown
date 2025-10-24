@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ChidoriMenu",
       "state" : {
-        "revision" : "27a1a96565fa934da56abb3a926318d5bee70e4d",
-        "version" : "4.0.0"
+        "revision" : "8fa8bead4054862109723c1c9d52dff97f948ff0",
+        "version" : "4.0.1"
       }
     },
     {
@@ -150,7 +150,7 @@
       "location" : "https://github.com/ml-explore/mlx-swift-examples/",
       "state" : {
         "branch" : "main",
-        "revision" : "eb76c5b7f0cc335103bbabb0c3e1c37f8ff5d482"
+        "revision" : "3d432f5e98ed79ec984cf8ebe6690ad9584518df"
       }
     },
     {
