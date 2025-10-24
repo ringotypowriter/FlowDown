@@ -10,20 +10,22 @@ import Foundation
 import OSLog
 import Storage
 
-@MainActor
 final class ConversationSessionManager {
     typealias Session = ConversationSession
 
     // MARK: - Singleton
+
     static let shared = ConversationSessionManager()
 
     // MARK: - State
+
     private var sessions: [Conversation.ID: Session] = [:]
     private var messageChangedObserver: Any?
     private var pendingRefresh: Set<Conversation.ID> = []
     private let logger = Logger(subsystem: "wiki.qaq.flowdown", category: "ConversationSessionManager")
 
     // MARK: - Lifecycle
+
     private init() {
         messageChangedObserver = NotificationCenter.default.addObserver(
             forName: SyncEngine.MessageChanged,
@@ -31,7 +33,7 @@ final class ConversationSessionManager {
             queue: .main
         ) { [weak self] notification in
             guard let self else { return }
-            self.handleMessageChanged(notification)
+            handleMessageChanged(notification)
         }
     }
 
@@ -42,6 +44,7 @@ final class ConversationSessionManager {
     }
 
     // MARK: - Public APIs
+
     func session(for conversationID: Conversation.ID) -> Session {
         if let cached = sessions[conversationID] { return cached }
         #if DEBUG
@@ -58,17 +61,24 @@ final class ConversationSessionManager {
     }
 
     // MARK: - Message Change Handling
+
     private func handleMessageChanged(_ notification: Notification) {
         // Only update message lists; do not touch conversation sidebar (no scanAll here).
         guard let info = notification.userInfo?[SyncEngine.MessageNotificationKey] as? MessageNotificationInfo else {
             logger.info("MessageChanged without detail; refreshing all cached sessions")
-            for (_, session) in sessions { refreshSafely(session) }
+            for (_, session) in sessions {
+                refreshSafely(session)
+            }
             return
         }
 
         var affected = Set<Conversation.ID>()
-        for (cid, _) in info.modifications { affected.insert(cid) }
-        for (cid, _) in info.deletions { affected.insert(cid) }
+        for (cid, _) in info.modifications {
+            affected.insert(cid)
+        }
+        for (cid, _) in info.deletions {
+            affected.insert(cid)
+        }
         guard !affected.isEmpty else { return }
 
         for cid in affected {
