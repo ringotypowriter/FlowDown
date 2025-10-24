@@ -38,14 +38,9 @@ package final class UploadQueue: Identifiable, Codable, TableNamed, TableCodable
             BindColumnConstraint(state, isNotNull: true)
             BindColumnConstraint(failCount, isNotNull: true)
 
-            // 本地查询
             BindIndex(state, namedWith: "_stateIndex")
-
-//            BindIndex(tableName, namedWith: "_tableNameIndex")
-//            BindIndex(objectId, namedWith: "_objectIdIndex")
-
-            // 收到云端更新
-            BindIndex(objectId, tableName, namedWith: "_objectIdAndTableNameIndex")
+            BindIndex(tableName, state, namedWith: "_tableNameAndStateIndex")
+            BindIndex(tableName, objectId, namedWith: "_tableNameANDObjectIdIndex")
         }
 
         case id

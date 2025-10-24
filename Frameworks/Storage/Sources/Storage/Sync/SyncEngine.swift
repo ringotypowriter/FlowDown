@@ -417,11 +417,13 @@ private extension SyncEngine {
 
         // 查出UploadQueue 队列中的数据 构建 CKSyncEngine Changes
         // 每次最多发送100条
-        let batchSize = 100
-        var objects = storage.pendingUploadList(batchSize: batchSize)
+        let tables = SyncPreferences.enabledTables()
+        guard !tables.isEmpty else {
+            return
+        }
 
-        // Respect per-group sync preferences
-        objects.removeAll { !SyncPreferences.isTableSyncEnabled(tableName: $0.tableName) }
+        let batchSize = 100
+        let objects = storage.pendingUploadList(tables: tables, batchSize: batchSize)
 
         Logger.syncEngine.info("ScheduleUpload \(objects.count, privacy: .public)")
         guard !objects.isEmpty else {

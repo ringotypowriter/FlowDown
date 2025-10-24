@@ -31,6 +31,7 @@ public class Storage {
 
     /// 是否需要初始化上传队列
     private let shouldInitializeUploadQueue: Bool
+    private var didInitializeUploadQueue = false
     private let existsDatabaseFile: Bool
     private let migrations: [DBMigration]
     private static var _deviceId: String?
@@ -112,6 +113,9 @@ public class Storage {
 
         try setup(db: db)
 
+        // 创建索引
+        try db.create(table: UploadQueue.tableName, of: UploadQueue.self)
+
         // 将上传中/上传失败的同步记录重置为Pending
         try db.run(transaction: { [unowned self] in
             try pendingUploadRestToPendingState(handle: $0)
@@ -134,6 +138,7 @@ public class Storage {
 
         if shouldInitializeUploadQueue, hasMigrate {
             try initializeUploadQueue()
+            didInitializeUploadQueue = true
         }
     }
 
@@ -224,14 +229,24 @@ public extension Storage {
 
                     try $0.delete(fromTable: CloudModel.tableName, where: CloudModel.Properties.objectId == "")
 
+                    let syncTables = [
+                        Conversation.tableName,
+                        Message.tableName,
+                        Attachment.tableName,
+                        CloudModel.tableName,
+                        Memory.tableName,
+                        ModelContextServer.tableName,
+                    ]
+
                     // 清理上传队列
                     // 1. 上传成功的
                     // 2. 上传失败次数超过阈值的
                     try $0.delete(
                         fromTable: UploadQueue.tableName,
                         where:
-                        UploadQueue.Properties.state == UploadQueue.State.finish
-                            || UploadQueue.Properties.failCount >= 100
+                        UploadQueue.Properties.tableName.in(syncTables)
+                            && (UploadQueue.Properties.state == UploadQueue.State.finish
+                                || (UploadQueue.Properties.state.in([UploadQueue.State.pending, UploadQueue.State.failed]) && UploadQueue.Properties.failCount >= 100))
                     )
 
                 })
@@ -323,6 +338,10 @@ public extension Storage {
             Logger.database.info("Import the database and execute the migration.")
             /// 内部会按照数据迁移的流程走,确保相关表一定是存在的
             let tempDB = try Storage(name: "Import", databaseDir: unzipTarget)
+
+            if !tempDB.didInitializeUploadQueue {
+                try tempDB.initializeUploadQueue()
+            }
 
             /// 关闭数据库
             tempDB.db.close()

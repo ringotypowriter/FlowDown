@@ -78,4 +78,30 @@ public enum SyncPreferences {
         guard let group = group(forTableName: tableName) else { return true }
         return isGroupEnabled(group)
     }
+
+    /// 获取当前启用同步的表
+    /// - Returns: 表名集合
+    package static func enabledTables() -> [String] {
+        var tables: [String] = []
+
+        if SyncPreferences.isGroupEnabled(.conversations) {
+            tables.append(Conversation.tableName)
+            tables.append(Message.tableName)
+            tables.append(Attachment.tableName)
+        }
+
+        if SyncPreferences.isGroupEnabled(.models) {
+            tables.append(CloudModel.tableName)
+        }
+
+        if SyncPreferences.isGroupEnabled(.memory) {
+            tables.append(Memory.tableName)
+        }
+
+        if SyncPreferences.isGroupEnabled(.mcp) {
+            tables.append(ModelContextServer.tableName)
+        }
+
+        return tables
+    }
 }

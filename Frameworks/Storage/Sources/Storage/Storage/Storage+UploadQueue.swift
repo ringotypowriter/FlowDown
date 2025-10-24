@@ -315,8 +315,8 @@ package extension Storage {
                 try $0.delete(
                     fromTable: UploadQueue.tableName,
                     where: UploadQueue.Properties.id <= item.queueId
-                        && UploadQueue.Properties.objectId == item.objectId
                         && UploadQueue.Properties.tableName == item.tableName
+                        && UploadQueue.Properties.objectId == item.objectId
                 )
             }
         }
@@ -335,8 +335,9 @@ package extension Storage {
             for item in deleting {
                 try $0.delete(
                     fromTable: UploadQueue.tableName,
-                    where: UploadQueue.Properties.objectId == item.objectId
-                        && UploadQueue.Properties.tableName == item.tableName
+                    where:
+                    UploadQueue.Properties.tableName == item.tableName
+                        && UploadQueue.Properties.objectId == item.objectId
                 )
 
                 let recordName = "\(item.objectId)\(UploadQueue.CKRecordIDSeparator)\(item.tableName)"
@@ -401,11 +402,16 @@ package extension Storage {
 
     /// 查询状态为pending 的集合
     /// - Parameters:
+    ///   - tables: 表名集合
     ///   - batchSize: 批次大小
     ///   - queryRealObject: 是否需要查询关联的 realObject
     ///   - handle: 数据库句柄，传入 nil 时使用主句柄
     /// - Returns: 队列信息， 已按ID进行ascending排序
-    func pendingUploadList(batchSize: Int = 0, queryRealObject: Bool = false, handle: Handle? = nil) -> [UploadQueue] {
+    func pendingUploadList(tables: [String], batchSize: Int = 0, queryRealObject: Bool = false, handle: Handle? = nil) -> [UploadQueue] {
+        guard !tables.isEmpty else {
+            return []
+        }
+
         guard let select = if let handle {
             try? handle.prepareSelect(of: UploadQueue.self, fromTable: UploadQueue.tableName)
         } else {
@@ -418,7 +424,10 @@ package extension Storage {
         let subSelect = StatementSelect()
             .select(UploadQueue.Properties.id.max())
             .from(UploadQueue.tableName)
-            .where(UploadQueue.Properties.state == UploadQueue.State.pending && UploadQueue.Properties.failCount < 100)
+            .where(
+                UploadQueue.Properties.tableName.in(tables)
+                    && UploadQueue.Properties.state == UploadQueue.State.pending
+                    && UploadQueue.Properties.failCount < 100)
             .group(by: UploadQueue.Properties.objectId)
             .order(by: UploadQueue.Properties.creation.order(.ascending))
 
