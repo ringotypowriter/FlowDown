@@ -21,6 +21,7 @@ class SidebarSyncLabel: UIView {
     let textLabel: GlyphixTextLabel = .init().with {
         $0.font = .preferredFont(forTextStyle: .caption1)
         $0.textColor = .secondaryLabel
+        $0.alpha = 0.5
         $0.isBlurEffectEnabled = true
         $0.textAlignment = .center
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +62,10 @@ class SidebarSyncLabel: UIView {
         if SyncEngine.isSynchronizing {
             textLabel.text = String(localized: "Syncing with iCloud")
         } else {
-            if let data = SyncEngine.LastSyncDate, let dateText = formatter.string(for: data) {
+            if let date = SyncEngine.LastSyncDate,
+               // 会出现 0 秒后 这种文案。。醉了
+               let dateText = formatter.string(for: date.addingTimeInterval(-1))
+            {
                 let text = String(localized: "Last synced \(dateText)")
                 textLabel.text = text
             }
