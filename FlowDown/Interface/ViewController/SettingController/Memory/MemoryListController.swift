@@ -6,8 +6,8 @@
 //
 
 import AlertController
-import ConfigurableKit
 import OSLog
+import SnapKit
 import Storage
 import UIKit
 
@@ -16,12 +16,10 @@ class MemoryListController: UIViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private var memories: [Memory] = []
     private var filteredMemories: [Memory] = []
-    private var isSearching: Bool {
-        searchController.isActive && !searchText.isEmpty
-    }
 
-    private var searchText: String {
-        searchController.searchBar.text ?? ""
+    private var isSearching: Bool {
+        let text = searchController.searchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return searchController.isActive && !text.isEmpty
     }
 
     init() {
@@ -42,7 +40,6 @@ class MemoryListController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .background
 
-        // Setup search controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = String(localized: "Search memories...")
@@ -51,11 +48,14 @@ class MemoryListController: UIViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.preferredSearchBarPlacement = .stacked
 
-        // Setup table view
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .background
+        tableView.backgroundColor = .clear
         tableView.separatorStyle = .singleLine
+        tableView.separatorInset = .init(top: 0, left: 20, bottom: 0, right: 20)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 120
+        tableView.keyboardDismissMode = .interactive
         tableView.register(MemoryCell.self, forCellReuseIdentifier: MemoryCell.identifier)
 
         view.addSubview(tableView)
@@ -65,17 +65,19 @@ class MemoryListController: UIViewController {
     }
 
     private func loadMemories() {
-        Task.detached {
+        Task {
             do {
                 let loadedMemories = try await MemoryStore.shared.getAllMemoriesAsync()
                 await MainActor.run {
                     self.memories = loadedMemories
-                    self.filterMemories()
+                    self.filteredMemories = loadedMemories
+                    self.tableView.reloadData()
                 }
             } catch {
                 await MainActor.run {
                     Logger.database.errorFile("MemoryListController load memories error: \(error)")
                     self.memories = []
+                    self.filteredMemories = []
                     self.tableView.reloadData()
                 }
             }
@@ -83,7 +85,7 @@ class MemoryListController: UIViewController {
     }
 
     private func searchMemories(query: String) {
-        Task.detached {
+        Task {
             do {
                 let searchResults = try await MemoryStore.shared.searchMemories(query: query, limit: 50)
                 await MainActor.run {
@@ -100,15 +102,6 @@ class MemoryListController: UIViewController {
         }
     }
 
-    private func filterMemories() {
-        if isSearching {
-            searchMemories(query: searchText)
-        } else {
-            filteredMemories = memories
-            tableView.reloadData()
-        }
-    }
-
     private func currentMemories() -> [Memory] {
         isSearching ? filteredMemories : memories
     }
@@ -116,7 +109,7 @@ class MemoryListController: UIViewController {
     private func deleteMemory(at indexPath: IndexPath) {
         let memory = currentMemories()[indexPath.row]
 
-        Task.detached {
+        Task {
             do {
                 try await MemoryStore.shared.deleteMemoryAsync(id: memory.id)
                 await MainActor.run {
@@ -165,24 +158,96 @@ extension MemoryListController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension MemoryListController: UITableViewDelegate {
-    func tableView(_: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            deleteMemory(at: indexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let memory = currentMemories()[indexPath.row]
+        presentEditor(for: memory)
+    }
+
+    func tableView(
+        _: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let memory = currentMemories()[indexPath.row]
+
+        let delete = UIContextualAction(style: .destructive, title: String(localized: "Delete")) { [weak self] _, _, completion in
+            self?.deleteMemory(at: indexPath)
+            completion(true)
+        }
+        delete.image = UIImage(systemName: "trash")
+
+        let edit = UIContextualAction(style: .normal, title: String(localized: "Edit")) { [weak self] _, _, completion in
+            self?.presentEditor(for: memory)
+            completion(true)
+        }
+        edit.backgroundColor = .systemBlue
+        edit.image = UIImage(systemName: "square.and.pencil")
+
+        let configuration = UISwipeActionsConfiguration(actions: [delete, edit])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
+    }
+
+    func tableView(
+        _: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let memory = currentMemories()[indexPath.row]
+        return UIContextMenuConfiguration(
+            identifier: memory.id as NSString,
+            previewProvider: {
+                let viewer = TextViewerController(editable: false)
+                viewer.title = String(localized: "Memory")
+                viewer.text = memory.content
+                return viewer
+            }
+        ) { [weak self] _ in
+            guard let self else { return nil }
+            let editAction = UIAction(title: String(localized: "Edit"), image: UIImage(systemName: "square.and.pencil")) { _ in
+                self.presentEditor(for: memory)
+            }
+
+            let copyAction = UIAction(title: String(localized: "Copy"), image: UIImage(systemName: "doc.on.doc")) { _ in
+                UIPasteboard.general.string = memory.content
+            }
+
+            let shareAction = UIAction(title: String(localized: "Share"), image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
+                guard let self else { return }
+                let activity = UIActivityViewController(activityItems: [memory.content], applicationActivities: nil)
+                #if targetEnvironment(macCatalyst)
+                    activity.popoverPresentationController?.sourceView = view
+                    activity.popoverPresentationController?.sourceRect = view.bounds
+                #else
+                    activity.popoverPresentationController?.sourceView = view
+                #endif
+                present(activity, animated: true)
+            }
+
+            let deleteAction = UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+                guard let self else { return }
+                if let currentIndexPath = self.indexPath(for: memory) {
+                    deleteMemory(at: currentIndexPath)
+                }
+            }
+
+            return UIMenu(children: [editAction, copyAction, shareAction, deleteAction])
         }
     }
 
-    func tableView(_: UITableView, titleForDeleteConfirmationButtonForRowAt _: IndexPath) -> String? {
-        String(localized: "Delete")
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let menu = UIMenu(options: [.displayInline], children: [
-            UIAction(title: String(localized: "Delete Memory"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
-                self?.deleteMemory(at: indexPath)
-            },
-        ])
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.present(menu: menu)
+    func tableView(
+        _: UITableView,
+        willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
+        animator: UIContextMenuInteractionCommitAnimating
+    ) {
+        guard let identifier = configuration.identifier as? NSString else { return }
+        let memoryId = identifier as String
+        animator.addCompletion { [weak self] in
+            guard let self else { return }
+            if let memory = memories.first(where: { $0.id == memoryId }) {
+                presentEditor(for: memory)
+            }
+        }
     }
 }
 
@@ -190,7 +255,12 @@ extension MemoryListController: UITableViewDelegate {
 
 extension MemoryListController: UISearchResultsUpdating {
     func updateSearchResults(for _: UISearchController) {
-        filterMemories()
+        if isSearching {
+            searchMemories(query: searchController.searchBar.text ?? "")
+        } else {
+            filteredMemories = memories
+            tableView.reloadData()
+        }
     }
 }
 
@@ -199,10 +269,9 @@ extension MemoryListController: UISearchResultsUpdating {
 class MemoryCell: UITableViewCell {
     static let identifier = "MemoryCell"
 
-    private let configurableView = ConfigurableActionView(
-        responseEverywhere: false,
-        actionBlock: { _ in }
-    )
+    private let titleLabel = UILabel()
+    private let detailLabel = UILabel()
+    private let stackView = UIStackView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -216,37 +285,43 @@ class MemoryCell: UITableViewCell {
 
     private func setupUI() {
         backgroundColor = .clear
-        selectionStyle = .none
+        selectionStyle = .default
 
-        let margin = AutoLayoutMarginView(configurableView)
-        contentView.addSubview(margin)
-        margin.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        stackView.axis = .vertical
+        stackView.spacing = 6
+        stackView.alignment = .leading
+
+        titleLabel.font = .preferredFont(forTextStyle: .body)
+        titleLabel.textColor = .label
+        titleLabel.numberOfLines = 0
+
+        detailLabel.font = .preferredFont(forTextStyle: .footnote)
+        detailLabel.textColor = .secondaryLabel
+        detailLabel.numberOfLines = 0
+
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(detailLabel)
+
+        contentView.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16))
         }
-        separatorInset = .zero
 
-        configurableView.configure(icon: UIImage(systemName: "bubbles.and.sparkles") ?? UIImage())
-        configurableView.isUserInteractionEnabled = false
+        let selectionBackground = UIView()
+        selectionBackground.backgroundColor = UIColor.secondarySystemGroupedBackground
+        selectedBackgroundView = selectionBackground
     }
 
     func configure(with memory: Memory) {
-        // Use the memory content as title
-        configurableView.configure(title: memory.content)
+        titleLabel.text = memory.content
 
-        // Format timestamp for description
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        let timestamp = formatter.string(from: memory.creation)
+        var detailComponents: [String] = [Self.dateFormatter.string(from: memory.creation)]
 
-        var descriptions: [String] = [timestamp]
-
-        // Add conversation context if available
-        if let conversationId = memory.conversationId {
-            descriptions.append("Conversation: \(conversationId)")
+        if let conversationId = memory.conversationId, !conversationId.isEmpty {
+            detailComponents.append(String(localized: "Conversation: \(conversationId)"))
         }
 
-        configurableView.configure(description: descriptions.joined(separator: " • "))
+        detailLabel.text = detailComponents.joined(separator: " · ")
     }
 
     override func layoutSubviews() {
@@ -254,5 +329,57 @@ class MemoryCell: UITableViewCell {
         preservesSuperviewLayoutMargins = false
         separatorInset = UIEdgeInsets.zero
         layoutMargins = UIEdgeInsets.zero
+    }
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
+    }()
+}
+
+private extension MemoryListController {
+    func presentEditor(for memory: Memory) {
+        let controller = TextEditorContentController()
+        controller.title = String(localized: "Memory")
+        controller.text = memory.content
+        controller.callback = { [weak self] text in
+            guard let self else { return }
+            Task {
+                do {
+                    try await MemoryStore.shared.updateMemoryAsync(id: memory.id, newContent: text)
+                    let refreshed = try await MemoryStore.shared.getAllMemoriesAsync()
+                    await MainActor.run {
+                        self.memories = refreshed
+                        if self.isSearching {
+                            self.searchMemories(query: self.searchController.searchBar.text ?? "")
+                        } else {
+                            self.filteredMemories = refreshed
+                            self.tableView.reloadData()
+                        }
+                    }
+                } catch {
+                    await MainActor.run {
+                        let errorAlert = AlertViewController(
+                            title: String(localized: "Error"),
+                            message: String(localized: "Failed to update memory: \(error.localizedDescription)")
+                        ) { context in
+                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                context.dispose()
+                            }
+                        }
+                        self.present(errorAlert, animated: true)
+                    }
+                }
+            }
+        }
+        navigationController?.pushViewController(controller, animated: true)
+    }
+
+    func indexPath(for memory: Memory) -> IndexPath? {
+        let displayed = currentMemories()
+        guard let row = displayed.firstIndex(where: { $0.id == memory.id }) else { return nil }
+        return IndexPath(row: row, section: 0)
     }
 }
