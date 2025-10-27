@@ -23,9 +23,8 @@ class MTStoreMemoryTool: ModelTool, @unchecked Sendable {
         .function(
             name: "store_memory",
             description: """
-            Stores important information to memory that can be recalled in future conversations. Use this proactively when the user shares personal preferences, project details, feedback, goals, or other information that would be valuable to remember.
-
-            IMPORTANT: Format memories in third person perspective (e.g., "User is a student" not "I'm a student"). Be specific and clear about what you're storing.
+            Stores important information to memory that can be recalled in future conversations. Use this proactively when the user shares personal preferences, project details, feedback, goals, or other information that would be valuable to remember. Preferred using user's local language. 
+            IMPORTANT: Format memories in third person perspective (e.g., "User is a student" not "I'm a student"). Be specific and clear about what you're storing
             """,
             parameters: [
                 "type": "object",
