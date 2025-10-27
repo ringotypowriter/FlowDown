@@ -16,23 +16,28 @@ final class ToolHintView: MessageListRowView {
     }
 
     var text: String? {
-        didSet { updateContent() }
+        didSet { updateContentText() }
     }
 
     var toolName: String = .init() {
-        didSet { updateContent() }
+        didSet { updateContentText() }
     }
 
     var state: State = .running {
-        didSet { updateState() }
+        didSet { updateStateImage() }
     }
 
     var clickHandler: (() -> Void)?
 
-    private let label: GlyphixTextLabel = .init().with {
-        $0.isBlurEffectEnabled = true
-        $0.countsDown = true
-        $0.textAlignment = .leading
+    private let label: UILabel = .init().with {
+        $0.font = UIFont.preferredFont(forTextStyle: .body)
+        $0.textColor = .label
+        $0.minimumScaleFactor = 0.5
+        $0.adjustsFontForContentSizeCategory = true
+        $0.lineBreakMode = .byTruncatingTail
+        $0.numberOfLines = 1
+        $0.adjustsFontSizeToFitWidth = true
+        $0.textAlignment = .left
     }
 
     private let symbolView: UIImageView = .init()
@@ -80,7 +85,7 @@ final class ToolHintView: MessageListRowView {
         label.font = theme.fonts.body
     }
 
-    private func updateState() {
+    private func updateStateImage() {
         let configuration = UIImage.SymbolConfiguration(scale: .small)
         switch state {
         case .suceeded:
@@ -99,13 +104,10 @@ final class ToolHintView: MessageListRowView {
             symbolView.image = image
             symbolView.tintColor = .systemRed
         }
-        label.invalidateIntrinsicContentSize()
-        label.sizeToFit()
-        setNeedsLayout()
-        layoutIfNeeded()
+        postUpdate()
     }
 
-    private func updateContent() {
+    private func updateContentText() {
         switch state {
         case .running:
             isClickable = false
@@ -117,10 +119,17 @@ final class ToolHintView: MessageListRowView {
             isClickable = true
             label.text = .init(localized: "Tool call for \(toolName) failed.")
         }
+        postUpdate()
+    }
+
+    func postUpdate() {
         label.invalidateIntrinsicContentSize()
         label.sizeToFit()
         setNeedsLayout()
-        layoutIfNeeded()
+
+        withAnimation {
+            self.layoutIfNeeded()
+        }
     }
 
     @objc

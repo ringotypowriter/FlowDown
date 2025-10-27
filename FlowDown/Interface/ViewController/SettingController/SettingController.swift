@@ -63,6 +63,20 @@ import UIKit
             required init?(coder _: NSCoder) {
                 fatalError()
             }
+
+            override func viewDidLoad() {
+                super.viewDidLoad()
+                view.alpha = 0
+            }
+
+            override func viewWillAppear(_ animated: Bool) {
+                super.viewWillAppear(animated)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    UIView.animate(withDuration: 0.25) {
+                        self.view.alpha = 1
+                    }
+                }
+            }
         }
     }
 #else
