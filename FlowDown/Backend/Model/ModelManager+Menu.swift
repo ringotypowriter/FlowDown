@@ -97,12 +97,6 @@ extension ModelManager {
         var cloudMenuChildren: [UIMenuElement] = []
         var cloudMenuChildrenOptions: UIMenu.Options = []
         if cloudModels.count < 4 { cloudMenuChildrenOptions.insert(.displayInline) }
-        if !localMenuChildrenOptions.contains(.displayInline) {
-            cloudMenuChildrenOptions.remove(.displayInline)
-        }
-        if !cloudMenuChildrenOptions.contains(.displayInline) {
-            localMenuChildrenOptions.remove(.displayInline)
-        }
 
         for key in localBuildSections.keys.sorted() {
             let items = localBuildSections[key] ?? []
