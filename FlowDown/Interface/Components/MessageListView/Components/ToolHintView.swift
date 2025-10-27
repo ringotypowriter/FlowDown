@@ -16,21 +16,15 @@ final class ToolHintView: MessageListRowView {
     }
 
     var text: String? {
-        didSet {
-            updateContent()
-        }
+        didSet { updateContent() }
     }
 
     var toolName: String = .init() {
-        didSet {
-            updateContent()
-        }
+        didSet { updateContent() }
     }
 
     var state: State = .running {
-        didSet {
-            updateState()
-        }
+        didSet { updateState() }
     }
 
     var clickHandler: (() -> Void)?
@@ -108,6 +102,7 @@ final class ToolHintView: MessageListRowView {
         label.invalidateIntrinsicContentSize()
         label.sizeToFit()
         setNeedsLayout()
+        layoutIfNeeded()
     }
 
     private func updateContent() {
@@ -125,6 +120,7 @@ final class ToolHintView: MessageListRowView {
         label.invalidateIntrinsicContentSize()
         label.sizeToFit()
         setNeedsLayout()
+        layoutIfNeeded()
     }
 
     @objc
