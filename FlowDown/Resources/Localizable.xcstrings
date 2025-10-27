@@ -1562,6 +1562,16 @@
         }
       }
     },
+    "Custom display name for this MCP server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为此 MCP 服务器设置自定义显示名称。"
+          }
+        }
+      }
+    },
     "Custom display name for this model." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1578,6 +1588,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自定义的颜色标签"
+          }
+        }
+      }
+    },
+    "Customization" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "个性化"
           }
         }
       }
@@ -2249,6 +2269,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑名称"
+          }
+        }
+      }
+    },
+    "Edit Nickname" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑昵称"
           }
         }
       }
@@ -4716,6 +4746,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切换至下个对话"
+          }
+        }
+      }
+    },
+    "Nickname" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "昵称"
           }
         }
       }

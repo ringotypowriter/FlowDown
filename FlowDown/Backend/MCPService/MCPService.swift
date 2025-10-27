@@ -118,7 +118,13 @@ class MCPService: NSObject {
                     }
                     await self.negotiateCapabilities(client: client, config: server)
                     let tools = try await client.listTools().tools
-                    completion(.success(tools.map(\.name).joined(separator: ", ")))
+                    let toolSummary = tools.map { tool in
+                        if let toolServer = self.server(with: serverID) {
+                            return "\(toolServer.displayName): \(tool.name)"
+                        }
+                        return tool.name
+                    }.joined(separator: ", ")
+                    completion(.success(toolSummary))
                 } catch {
                     completion(.failure(error))
                 }

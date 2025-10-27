@@ -165,6 +165,7 @@ class MCPEditorController: StackScrollController {
                 .with(header: String(localized: "Connection"))
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
+
         let typeView = ConfigurableInfoView()
         typeView.configure(icon: .init(systemName: "gear"))
         typeView.configure(title: String(localized: "Connection Type"))
@@ -240,6 +241,39 @@ class MCPEditorController: StackScrollController {
         headerView.configure(description: String(localized: "This value will be added to the request as additional header."))
         headerView.configure(value: server.header.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
         stackView.addArrangedSubviewWithMargin(headerView)
+        stackView.addArrangedSubview(SeparatorView())
+
+        // MARK: - Customization
+
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView()
+                .with(header: String(localized: "Customization"))
+        ) { $0.bottom /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
+
+        let nicknameView = ConfigurableInfoView().setTapBlock { view in
+            guard let client = MCPService.shared.server(with: self.serverId) else { return }
+            let input = AlertInputViewController(
+                title: String(localized: "Edit Nickname"),
+                message: String(localized: "Custom display name for this MCP server."),
+                placeholder: String(localized: "Nickname (Optional)"),
+                text: client.name
+            ) { output in
+                MCPService.shared.edit(identifier: self.serverId) { server in
+                    server.name = output
+                }
+                self.refreshUI()
+                view.configure(value: output.isEmpty ? String(localized: "Not Configured") : output)
+            }
+            view.parentViewController?.present(input, animated: true)
+        }
+        nicknameView.configure(icon: .init(systemName: "tag"))
+        nicknameView.configure(title: String(localized: "Nickname"))
+        nicknameView.configure(description: String(localized: "Custom display name for this MCP server."))
+        nicknameView.configure(
+            value: server.name.isEmpty ? String(localized: "Not Configured") : server.name
+        )
+        stackView.addArrangedSubviewWithMargin(nicknameView)
         stackView.addArrangedSubview(SeparatorView())
 
         // MARK: - Test
