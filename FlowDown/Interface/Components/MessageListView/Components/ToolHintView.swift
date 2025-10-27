@@ -36,7 +36,9 @@ final class ToolHintView: MessageListRowView {
     var clickHandler: (() -> Void)?
 
     private let label: GlyphixTextLabel = .init().with {
-        $0.isBlurEffectEnabled = false
+        $0.isBlurEffectEnabled = true
+        $0.countsDown = true
+        $0.textAlignment = .leading
     }
 
     private let symbolView: UIImageView = .init()
@@ -103,6 +105,8 @@ final class ToolHintView: MessageListRowView {
             symbolView.image = image
             symbolView.tintColor = .systemRed
         }
+        label.invalidateIntrinsicContentSize()
+        label.sizeToFit()
         setNeedsLayout()
     }
 

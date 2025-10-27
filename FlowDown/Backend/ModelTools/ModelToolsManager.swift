@@ -150,7 +150,9 @@ class ModelToolsManager {
         }
 
         if Self.skipConfirmationValue {
-            Task.detached { await execution() }
+            Task.detached(priority: .userInitiated) {
+                await execution()
+            }
             sem.wait()
         } else {
             DispatchQueue.main.async {
