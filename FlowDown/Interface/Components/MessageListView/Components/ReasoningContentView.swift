@@ -131,7 +131,10 @@ final class ReasoningContentView: MessageListRowView {
 
     @objc
     private func handleThinkTileTap(_: UITapGestureRecognizer) {
-        thinkingTileTapHandler?(!isRevealed)
+        withAnimation { [self] in
+            thinkingTileTapHandler?(!isRevealed)
+            superListView?.layoutIfNeeded()
+        }
     }
 }
 
@@ -143,7 +146,7 @@ extension ReasoningContentView {
             }
         }
 
-        var isRevealed: Bool = true {
+        var isRevealed: Bool = false {
             didSet {
                 setNeedsLayout()
             }
