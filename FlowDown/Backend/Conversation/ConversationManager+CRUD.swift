@@ -46,10 +46,11 @@ extension ConversationManager {
         }
         Logger.database.infoFile("created new conversation id: \(object.id)")
         NotificationCenter.default.post(name: .newChatCreated, object: object.id)
+        let session = ConversationSessionManager.shared.session(for: object.id)
+
         // guide message when no history message
         if ConversationManager.shouldShowGuideMessage {
             if conversations.value.count <= 1 {
-                let session = ConversationSessionManager.shared.session(for: object.id)
                 let guide = String(localized:
                     """
                     **Welcome to FlowDown🐦**, a blazing fast and smooth client app for LLMs with respect of your privacy.
@@ -83,6 +84,8 @@ extension ConversationManager {
                 ConversationManager.shouldShowGuideMessage = false
             }
         }
+
+        session.prepareSystemPrompt()
         return object
     }
 
