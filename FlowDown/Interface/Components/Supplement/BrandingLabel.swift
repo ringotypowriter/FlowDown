@@ -7,9 +7,10 @@
 
 import AlertController
 import ConfigurableKit
+import GlyphixTextFx
 import UIKit
 
-class BrandingLabel: UILabel {
+class BrandingLabel: GlyphixTextLabel {
     static let configurableObject = ConfigurableObject(
         icon: "pencil",
         title: String(localized: "Edit Branding Name"),
@@ -45,9 +46,12 @@ class BrandingLabel: UILabel {
 
     init() {
         super.init(frame: .zero)
-        text = String(localized: "FlowDown")
         textColor = .label
         font = .systemFont(ofSize: UIFont.labelFontSize, weight: .semibold)
+        isBlurEffectEnabled = true
+        countsDown = true
+        text = String(localized: "FlowDown")
+
         setContentHuggingPriority(.required, for: .vertical)
         setContentCompressionResistancePriority(.required, for: .vertical)
 
