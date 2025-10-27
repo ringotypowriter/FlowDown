@@ -64,6 +64,7 @@ final class ReasoningContentView: MessageListRowView {
             thinkingTile.thinkingContent = singleLineContent?.suffix(50)
                 .map { String($0) }
                 .joined()
+            setNeedsLayout()
         }
     }
 
@@ -131,10 +132,7 @@ final class ReasoningContentView: MessageListRowView {
 
     @objc
     private func handleThinkTileTap(_: UITapGestureRecognizer) {
-        withAnimation { [self] in
-            thinkingTileTapHandler?(!isRevealed)
-            superListView?.layoutIfNeeded()
-        }
+        thinkingTileTapHandler?(!isRevealed) // dont do it, otherwise content are flying
     }
 }
 
@@ -178,6 +176,8 @@ extension ReasoningContentView {
                 }
                 if textView.bounds.width > 0 {
                     doWithAnimation { self.layoutTextView() }
+                } else {
+                    layoutTextView()
                 }
             }
         }
