@@ -3735,6 +3735,16 @@
         }
       }
     },
+    "Insert the current model name, date, and locale in the system prompt for each request. Turn this off if your use caching systems to save cost." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在每次对话发生时添加即时信息，这包括模型的名字、时间与日期、系统语言等信息。若你使用缓存系统来节省推理开销，请关闭此选项。"
+          }
+        }
+      }
+    },
     "Inspect recent application logs for troubleshooting." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5774,6 +5784,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重写模版"
+          }
+        }
+      }
+    },
+    "Runtime System Prompt" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "即时信息提示"
           }
         }
       }

@@ -16,8 +16,8 @@ extension ConversationSession {
         _ modelWillExecuteTools: Bool,
         _ object: RichEditorView.Object
     ) async {
-        let sysPrompt = [
-            String(localized:
+        if ModelManager.shared.includeDynamicSystemInfo {
+            let runtimeContent = String(localized:
                 """
                 System is providing you up to date information about current query:
 
@@ -27,9 +27,9 @@ extension ConversationSession {
 
                 Please use up-to-date information and ensure compliance with the previously provided guidelines.
                 """
-            ),
-        ]
-        requestMessages.append(.system(content: .text(sysPrompt.joined(separator: "\n"))))
+            )
+            requestMessages.append(.system(content: .text(runtimeContent)))
+        }
 
         if case .bool(true) = object.options[.browsing] {
             let sensitivity = ModelManager.shared.searchSensitivity

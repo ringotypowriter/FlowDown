@@ -73,6 +73,12 @@ class ModelManager: NSObject {
         _collapseReasoningSectionWhenComplete.key
     }
 
+    @BareCodableStorage(key: "Model.ChatInterface.IncludeDynamicSystemInfo", defaultValue: true)
+    var includeDynamicSystemInfo: Bool
+    var includeDynamicSystemInfoKey: String {
+        _includeDynamicSystemInfo.key
+    }
+
     var cancellables: Set<AnyCancellable> = []
 
     override private init() {

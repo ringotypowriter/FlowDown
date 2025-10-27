@@ -82,6 +82,15 @@ extension ModelManager {
         }
     )
 
+    static let includeDynamicSystemInfo = ConfigurableObject(
+        icon: "info.circle",
+        title: String(localized: "Runtime System Prompt"),
+        explain: String(localized: "Insert the current model name, date, and locale in the system prompt for each request. Turn this off if your use caching systems to save cost."),
+        key: ModelManager.shared.includeDynamicSystemInfoKey,
+        defaultValue: true,
+        annotation: .boolean
+    )
+
     static let temperatureConfigurableObject: ConfigurableObject = .init(
         icon: "sparkles",
         title: String(localized: "Imagination"),

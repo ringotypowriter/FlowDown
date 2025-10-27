@@ -143,6 +143,9 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubviewWithMargin(ModelManager.extraPromptConfigurableObject.createView())
             stackView.addArrangedSubview(SeparatorView())
 
+            stackView.addArrangedSubviewWithMargin(ModelManager.includeDynamicSystemInfo.createView())
+            stackView.addArrangedSubview(SeparatorView())
+
             stackView.addArrangedSubviewWithMargin(ModelManager.temperatureConfigurableObject.createView())
             stackView.addArrangedSubview(SeparatorView())
 
