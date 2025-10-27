@@ -40,15 +40,25 @@ final class ActivityReportingLabel: UIView {
         loadingSymbol.animationDuration = 0.3
         loadingSymbol.animationInterval = 0.1
         addSubview(loadingSymbol)
+    }
 
-        textLabel.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview()
-        }
-        loadingSymbol.snp.makeConstraints { make in
-            make.centerY.equalTo(textLabel)
-            make.leading.equalTo(textLabel.snp.trailing)
-            make.size.equalTo(Self.loadingSymbolSize)
-        }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        let textSize = textLabel.intrinsicContentSize
+        textLabel.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: textSize.width,
+            height: bounds.height
+        )
+
+        loadingSymbol.frame = CGRect(
+            x: textLabel.frame.maxX,
+            y: (bounds.height - Self.loadingSymbolSize.height) / 2,
+            width: Self.loadingSymbolSize.width,
+            height: Self.loadingSymbolSize.height
+        )
     }
 
     @available(*, unavailable)
@@ -72,9 +82,18 @@ final class ActivityReportingView: MessageListRowView {
         super.init(frame: frame)
 
         contentView.addSubview(reportingLabel)
-        reportingLabel.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview()
-        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        let labelSize = reportingLabel.intrinsicContentSize
+        reportingLabel.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: labelSize.width + Self.loadingSymbolSize.width,
+            height: contentView.bounds.height
+        )
     }
 
     @available(*, unavailable)

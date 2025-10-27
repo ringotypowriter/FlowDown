@@ -5,7 +5,6 @@
 
 import ListViewKit
 import MarkdownView
-import SnapKit
 import UIKit
 
 final class AiMessageView: MessageListRowView {

@@ -6,7 +6,6 @@
 import ListViewKit
 import Litext
 import MarkdownView
-import SnapKit
 import UIKit
 
 final class UserMessageView: MessageListRowView {

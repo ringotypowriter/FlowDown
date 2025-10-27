@@ -5,7 +5,6 @@
 
 import GlyphixTextFx
 import ScrubberKit
-import SnapKit
 import Storage
 import UIKit
 
@@ -17,14 +16,22 @@ final class WebSearchStateView: MessageListRowView {
         super.init(frame: frame)
 
         contentView.addSubview(searchIndicatorView)
-        searchIndicatorView.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview()
-            make.trailing.lessThanOrEqualToSuperview()
-        }
 
         searchIndicatorView.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         searchIndicatorView.addGestureRecognizer(gesture)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        let indicatorSize = searchIndicatorView.intrinsicContentSize
+        searchIndicatorView.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: min(indicatorSize.width, contentView.bounds.width),
+            height: contentView.bounds.height
+        )
     }
 
     @available(*, unavailable)
@@ -110,6 +117,7 @@ extension WebSearchStateView {
             $0.isBlurEffectEnabled = false
         }
 
+        private var magnifyImageView: UIImageView!
         private let progressBar: UIView = .init()
 
         override init(frame: CGRect) {
@@ -128,20 +136,12 @@ extension WebSearchStateView {
                 )
             )
             magnifyImageView.tintColor = .label
+            self.magnifyImageView = magnifyImageView
             addSubview(magnifyImageView)
-            magnifyImageView.snp.makeConstraints { make in
-                make.leading.equalToSuperview().offset(Self.horizontalPadding)
-                make.centerY.equalToSuperview()
-            }
 
             textLabel.countsDown = false
             textLabel.textAlignment = .leading
             addSubview(textLabel)
-            textLabel.snp.makeConstraints { make in
-                make.leading.equalTo(magnifyImageView.snp.trailing).offset(Self.spacing)
-                make.top.bottom.centerY.equalToSuperview()
-                make.trailing.equalToSuperview().offset(-Self.horizontalPadding).priority(.low)
-            }
 
             progressBar.isHidden = true
             progressBar.backgroundColor = .accent
@@ -150,7 +150,7 @@ extension WebSearchStateView {
 
             progressBar.alpha = 0
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                UIView.animate(withDuration: 0.25) {
+                self.doWithAnimation {
                     self.progressBar.alpha = 1
                 }
             }
@@ -159,6 +159,28 @@ extension WebSearchStateView {
         @available(*, unavailable)
         required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+
+            let imageSize = magnifyImageView.intrinsicContentSize
+            magnifyImageView.frame = CGRect(
+                x: Self.horizontalPadding,
+                y: (bounds.height - imageSize.height) / 2,
+                width: imageSize.width,
+                height: imageSize.height
+            )
+
+            let textX = magnifyImageView.frame.maxX + Self.spacing
+            textLabel.frame = CGRect(
+                x: textX,
+                y: 0,
+                width: bounds.width - textX - Self.horizontalPadding,
+                height: bounds.height
+            )
+
+            updateProgressBarFrame()
         }
 
         func updateProgressBarFrame() {
@@ -175,7 +197,9 @@ extension WebSearchStateView {
                 updateProgressBarFrame()
                 return
             }
-            doWithAnimation { self.updateProgressBarFrame() }
+            doWithAnimation {
+                self.updateProgressBarFrame()
+            }
         }
 
         static func intrinsicHeight(withLabelFont labelFont: UIFont) -> CGFloat {

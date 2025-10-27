@@ -5,8 +5,6 @@
 
 import GlyphixTextFx
 import Litext
-import SnapKit
-import SwiftUI
 import UIKit
 
 final class ReasoningContentView: MessageListRowView {
@@ -176,14 +174,7 @@ extension ReasoningContentView {
                     textView.attributedText = .init()
                 }
                 if textView.bounds.width > 0 {
-                    UIView.animate(
-                        withDuration: 0.2,
-                        delay: 0,
-                        usingSpringWithDamping: 1,
-                        initialSpringVelocity: 0
-                    ) {
-                        self.layoutTextView()
-                    }
+                    doWithAnimation { self.layoutTextView() }
                 }
             }
         }
@@ -200,7 +191,9 @@ extension ReasoningContentView {
                 systemName: "chevron.right",
                 withConfiguration: UIImage.SymbolConfiguration(scale: .small)
             )
-        )
+        ).with {
+            $0.contentMode = .scaleAspectFit
+        }
 
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -223,23 +216,19 @@ extension ReasoningContentView {
             addSubview(textView)
             addSubview(textContainerView)
             textContainerView.addSubview(textView)
-            let maskImage = ImageRenderer(
-                content: LinearGradient(
-                    colors: [.black, .black.opacity(0)],
-                    startPoint: .init(x: 0.2, y: 0),
-                    endPoint: .init(x: 0, y: 0)
-                )
-            ).uiImage
-            let maskLayer = CALayer()
-            maskLayer.contents = maskImage!.cgImage
-            textContainerView.layer.mask = maskLayer
+
+            // Create gradient mask using CAGradientLayer
+            let gradientMask = CAGradientLayer()
+            gradientMask.colors = [
+                UIColor.black.cgColor,
+                UIColor.black.withAlphaComponent(0).cgColor,
+            ]
+            gradientMask.startPoint = CGPoint(x: 0.8, y: 0.5)
+            gradientMask.endPoint = CGPoint(x: 1.0, y: 0.5)
+            textContainerView.layer.mask = gradientMask
 
             arrowView.tintColor = .label
             addSubview(arrowView)
-            arrowView.snp.makeConstraints { make in
-                make.centerY.equalToSuperview()
-                make.trailing.equalToSuperview().inset(12)
-            }
 
             updateThinkingDurationText()
         }
@@ -265,6 +254,15 @@ extension ReasoningContentView {
                 width: loadingSymbol.intrinsicContentSize.width,
                 height: 9
             )
+
+            let arrowSize = arrowView.intrinsicContentSize
+            arrowView.frame = .init(
+                x: bounds.width - arrowSize.width - 12,
+                y: (bounds.height - arrowSize.height) / 2,
+                width: arrowSize.width,
+                height: arrowSize.height
+            )
+
             layoutTextView()
 
             if isRevealed {

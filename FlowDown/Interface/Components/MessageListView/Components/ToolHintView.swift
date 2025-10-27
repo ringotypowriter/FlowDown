@@ -5,7 +5,6 @@
 
 import GlyphixTextFx
 import RichEditor
-import SnapKit
 import UIKit
 
 final class ToolHintView: MessageListRowView {
@@ -133,7 +132,9 @@ final class ToolHintView: MessageListRowView {
         label.sizeToFit()
         setNeedsLayout()
 
-        withAnimation { self.layoutIfNeeded() }
+        doWithAnimation {
+            self.layoutIfNeeded()
+        }
     }
 
     @objc
