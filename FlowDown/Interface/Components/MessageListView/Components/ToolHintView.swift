@@ -40,7 +40,10 @@ final class ToolHintView: MessageListRowView {
         $0.textAlignment = .left
     }
 
-    private let symbolView: UIImageView = .init()
+    private let symbolView: UIImageView = .init().with {
+        $0.contentMode = .scaleAspectFit
+    }
+
     private let decoratedView: UIImageView = .init(image: richEditorIcon(named: "tools"))
     private var isClickable: Bool = false
 
@@ -56,11 +59,6 @@ final class ToolHintView: MessageListRowView {
         contentView.addSubview(symbolView)
         contentView.addSubview(label)
 
-        symbolView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().offset(12)
-        }
-
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         contentView.addGestureRecognizer(tapGesture)
     }
@@ -69,6 +67,14 @@ final class ToolHintView: MessageListRowView {
         super.layoutSubviews()
 
         let labelSize = label.intrinsicContentSize
+
+        symbolView.frame = .init(
+            x: 12,
+            y: (contentView.bounds.height - labelSize.height) / 2,
+            width: labelSize.height, // 1:1
+            height: labelSize.height
+        )
+
         label.frame = .init(
             x: symbolView.frame.maxX + 8,
             y: (contentView.bounds.height - labelSize.height) / 2,
