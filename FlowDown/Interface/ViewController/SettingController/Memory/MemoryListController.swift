@@ -196,12 +196,7 @@ extension MemoryListController: UITableViewDelegate {
         let memory = currentMemories()[indexPath.row]
         return UIContextMenuConfiguration(
             identifier: memory.id as NSString,
-            previewProvider: {
-                let viewer = TextViewerController(editable: false)
-                viewer.title = String(localized: "Memory")
-                viewer.text = memory.content
-                return viewer
-            }
+            previewProvider: { nil }
         ) { [weak self] _ in
             guard let self else { return nil }
             let editAction = UIAction(title: String(localized: "Edit"), image: UIImage(systemName: "square.and.pencil")) { _ in
