@@ -127,9 +127,7 @@ final class ToolHintView: MessageListRowView {
         label.sizeToFit()
         setNeedsLayout()
 
-        withAnimation {
-            self.layoutIfNeeded()
-        }
+        withAnimation { self.layoutIfNeeded() }
     }
 
     @objc
