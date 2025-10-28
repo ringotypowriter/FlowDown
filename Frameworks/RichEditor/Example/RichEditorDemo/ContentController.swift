@@ -23,7 +23,7 @@ class ContentController: UIViewController, RichEditorView.Delegate {
         ) { [weak self] _ in
             guard let self else { return }
             isProcessing.toggle()
-            editor.setProcessingMode(isProcessing, animated: true)
+            editor.setProcessingMode(isProcessing)
         }
         NotificationCenter.default.addObserver(
             forName: .init("DONE"),
@@ -95,19 +95,19 @@ class ContentController: UIViewController, RichEditorView.Delegate {
             textView.text = prettyString
 
             // Show Apple Intelligence animation
-            editor.setProcessingMode(true, animated: true)
+            editor.setProcessingMode(true)
 
             // Simulate async work
             DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
                 DispatchQueue.main.async {
                     // Hide animation when done
-                    self.editor.setProcessingMode(false, animated: true)
+                    self.editor.setProcessingMode(false)
                     completion(true)
                 }
             }
         } catch {
             textView.text = "Error: \(error)"
-            editor.setProcessingMode(false, animated: true)
+            editor.setProcessingMode(false)
             completion(false)
         }
     }

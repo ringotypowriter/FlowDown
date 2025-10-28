@@ -211,7 +211,7 @@ public class RichEditorView: EditorSectionView {
         quickSettingBarPickModel()
     }
 
-    public func setProcessingMode(_ isProcessing: Bool, animated _: Bool = true) {
+    public func setProcessingMode(_ isProcessing: Bool) {
         let mode: ColorfulShadowView.Mode = isProcessing ? .appleIntelligence : .idle
         colorfulShadow.mode = mode
     }
