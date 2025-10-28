@@ -11,10 +11,20 @@ import UIKit
 class ContentController: UIViewController, RichEditorView.Delegate {
     let editor = RichEditorView()
     let textView = UITextView()
+    var isProcessing = false
 
     init() {
         super.init(nibName: nil, bundle: nil)
 
+        NotificationCenter.default.addObserver(
+            forName: .init("TOGGLE_AI"),
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            guard let self else { return }
+            isProcessing.toggle()
+            editor.setProcessingMode(isProcessing, animated: true)
+        }
         NotificationCenter.default.addObserver(
             forName: .init("DONE"),
             object: nil,
@@ -84,14 +94,20 @@ class ContentController: UIViewController, RichEditorView.Delegate {
             }
             textView.text = prettyString
 
+            // Show Apple Intelligence animation
+            editor.setProcessingMode(true, animated: true)
+
             // Simulate async work
-            DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
                 DispatchQueue.main.async {
+                    // Hide animation when done
+                    self.editor.setProcessingMode(false, animated: true)
                     completion(true)
                 }
             }
         } catch {
             textView.text = "Error: \(error)"
+            editor.setProcessingMode(false, animated: true)
             completion(false)
         }
     }

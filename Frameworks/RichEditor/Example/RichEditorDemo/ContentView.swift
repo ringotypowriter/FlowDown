@@ -15,6 +15,11 @@ struct ContentView: View {
                 .navigationTitle("FlowDown Editor")
                 .toolbar {
                     ToolbarItem {
+                        Button("Toggle AI") {
+                            NotificationCenter.default.post(name: .init("TOGGLE_AI"), object: nil)
+                        }
+                    }
+                    ToolbarItem {
                         Button("Copy") {
                             NotificationCenter.default.post(name: .init("COPY"), object: nil)
                         }

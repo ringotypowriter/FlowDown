@@ -19,16 +19,6 @@ extension UIView {
         return nil
     }
 
-    func addShadow() {
-        clipsToBounds = false
-        layer.masksToBounds = false
-        layer.cornerRadius = 16
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = .zero
-        layer.shadowRadius = 8
-        layer.shadowOpacity = 0.1
-    }
-
     func withAnimation(duration: TimeInterval = 0.5, _ execute: @escaping () -> Void, completion: @escaping () -> Void = {}) {
         layoutIfNeeded()
         UIView.animate(

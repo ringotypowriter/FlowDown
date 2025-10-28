@@ -29,6 +29,7 @@ public class RichEditorView: EditorSectionView {
     let controlPanel = ControlPanel()
 
     let shadowContainer = UIView()
+    let colorfulShadow = ColorfulShadowView(frame: .zero)
     let dropContainer = DropView()
     let dropColorView = UIView()
     let attachmentSeprator = UIView()
@@ -61,10 +62,12 @@ public class RichEditorView: EditorSectionView {
     override public func initializeViews() {
         super.initializeViews()
 
+        addSubview(colorfulShadow)
+
         shadowContainer.layer.cornerRadius = 16
         shadowContainer.layer.cornerCurve = .continuous
         shadowContainer.backgroundColor = handlerColor
-        shadowContainer.addShadow()
+        shadowContainer.clipsToBounds = false
         addSubview(shadowContainer)
 
         dropContainer.clipsToBounds = true
@@ -146,6 +149,21 @@ public class RichEditorView: EditorSectionView {
             shadowContainer.frame = inputEditor.frame
         }
 
+        let shadowInset: CGFloat = 8
+        let shadowBlur: CGFloat = 8
+        colorfulShadow.frame = shadowContainer.frame.insetBy(dx: -shadowInset - shadowBlur, dy: -shadowInset - shadowBlur)
+        colorfulShadow.updateGeometry(.init(
+            innerRect: CGRect(
+                x: shadowInset + shadowBlur,
+                y: shadowInset + shadowBlur,
+                width: shadowContainer.frame.width,
+                height: shadowContainer.frame.height
+            ),
+            cornerRadius: shadowContainer.layer.cornerRadius,
+            blur: shadowBlur,
+            offset: .zero
+        ))
+
         attachmentSeprator.frame = .init(
             x: shadowContainer.frame.minX,
             y: inputEditor.frame.minY - 0.5,
@@ -191,6 +209,11 @@ public class RichEditorView: EditorSectionView {
 
     public func scheduleModelSelection() {
         quickSettingBarPickModel()
+    }
+
+    public func setProcessingMode(_ isProcessing: Bool, animated _: Bool = true) {
+        let mode: ColorfulShadowView.Mode = isProcessing ? .appleIntelligence : .idle
+        colorfulShadow.mode = mode
     }
 
     // used when requesting retry, inherit current option toggles
