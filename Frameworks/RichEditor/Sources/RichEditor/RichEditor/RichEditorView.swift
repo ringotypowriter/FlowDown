@@ -29,7 +29,7 @@ public class RichEditorView: EditorSectionView {
     let controlPanel = ControlPanel()
 
     let shadowContainer = UIView()
-    let colorfulShadow = ColorfulShadowView(frame: .zero)
+    let colorfulShadow = ColorfulShadowView()
     let dropContainer = DropView()
     let dropColorView = UIView()
     let attachmentSeprator = UIView()

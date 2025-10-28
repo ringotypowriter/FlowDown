@@ -1,6 +1,13 @@
 import ColorfulX
 import UIKit
 
+private let idlePalette: [ColorElement] = [
+    UIColor(white: 0.0, alpha: 0.10),
+]
+private let intelligentPalette: [ColorElement] = [
+    ColorfulPreset.appleIntelligence.colors,
+].flatMap(\.self)
+
 final class ColorfulShadowView: UIView {
     enum Mode: Equatable {
         case idle
@@ -48,38 +55,28 @@ final class ColorfulShadowView: UIView {
         didSet { applyCurrentMode() }
     }
 
-    private static let idlePalette: [ColorElement] = [
-        UIColor(white: 0.0, alpha: 0.10),
-    ]
-
-    override init(frame: CGRect) {
+    init() {
         director = SpeckleAnimationRoundedRectangleDirector(
             inset: -0.2,
             cornerRadius: 1,
             direction: .clockwise,
             movementRate: 0.05,
-            positionResponseRate: 1.5
+            positionResponseRate: 100
         )
         gradientView = AnimatedMulticolorGradientView(animationDirector: director)
-        super.init(frame: frame)
+
+        super.init(frame: .zero)
 
         isUserInteractionEnabled = false
         gradientView.isUserInteractionEnabled = false
         gradientView.backgroundColor = .clear
-        gradientView.transitionSpeed = 32
+        gradientView.transitionSpeed = 20
         gradientView.noise = 0
-        gradientView.bias /= 400_000
+        gradientView.bias /= 50000
+        gradientView.speed = 4
         addSubview(gradientView)
         maskLayer.contentsScale = layer.contentsScale
         gradientView.layer.mask = maskLayer
-
-        // Add saturation filter using private API
-        if let filterClass = NSClassFromString("CAFilter") as? NSObject.Type {
-            let filter = filterClass.init()
-            filter.setValue("colorSaturate", forKey: "name")
-            filter.setValue(1.5, forKey: "inputAmount")
-            gradientView.layer.setValue([filter], forKey: "filters")
-        }
 
         applyCurrentMode()
     }
@@ -121,20 +118,26 @@ private extension ColorfulShadowView {
         format.scale = scale
         format.opaque = false
 
-        let path = UIBezierPath(roundedRect: geometry.innerRect, cornerRadius: geometry.cornerRadius)
+        let strokeExpansion: CGFloat = mode == .appleIntelligence ? 1 : 0
+        let outerRect = geometry.innerRect.insetBy(dx: -strokeExpansion, dy: -strokeExpansion)
+        let outerPath = UIBezierPath(roundedRect: outerRect, cornerRadius: geometry.cornerRadius + strokeExpansion)
+        let innerPath = UIBezierPath(roundedRect: geometry.innerRect, cornerRadius: geometry.cornerRadius)
+
         let image = UIGraphicsImageRenderer(size: bounds.size, format: format).image { context in
             let cgContext = context.cgContext
 
+            // Draw the shadow/glow area
             cgContext.saveGState()
             cgContext.setShadow(offset: geometry.offset, blur: geometry.blur * shadowRadius, color: UIColor.white.cgColor)
             cgContext.setFillColor(UIColor.white.cgColor)
-            cgContext.addPath(path.cgPath)
+            cgContext.addPath(outerPath.cgPath)
             cgContext.fillPath()
             cgContext.restoreGState()
 
+            // Cut out the inner rect to create stroke effect
             cgContext.saveGState()
             cgContext.setBlendMode(.clear)
-            cgContext.addPath(path.cgPath)
+            cgContext.addPath(innerPath.cgPath)
             cgContext.fillPath()
             cgContext.restoreGState()
         }
@@ -150,10 +153,10 @@ private extension ColorfulShadowView {
         switch mode {
         case .idle:
             shadowRadius = 1.0
-            gradientView.setColors(Self.idlePalette, animated: true, repeats: true)
+            gradientView.setColors(idlePalette, animated: true, repeats: true)
         case .appleIntelligence:
-            shadowRadius = 2
-            gradientView.setColors(ColorfulPreset.appleIntelligence, animated: true, repeats: true)
+            shadowRadius = 1.0
+            gradientView.setColors(intelligentPalette, animated: true, repeats: true)
         }
     }
 }
