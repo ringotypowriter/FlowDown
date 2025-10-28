@@ -133,7 +133,7 @@ class MTAddCalendarTool: ModelTool, @unchecked Sendable {
         dateFormatter.timeStyle = .short
 
         var eventDetails = [
-            String(localized: "Event: \(String(describing: event.title))"),
+            String(localized: "Event: \(event.title ?? String(localized: "Untitled Event"))"),
             "",
         ]
 

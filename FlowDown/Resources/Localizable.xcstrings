@@ -7580,6 +7580,16 @@
         }
       }
     },
+    "Untitled Event" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名事件"
+          }
+        }
+      }
+    },
     "Unverified Model" : {
       "localizations" : {
         "zh-Hans" : {
