@@ -74,8 +74,8 @@ extension ConversationManager {
                     """
                 )
 
-                let _ = session.appendNewMessage(role: .assistant) {
-                    $0.document = guide
+                session.appendNewMessage(role: .assistant) {
+                    $0.update(\.document, to: guide)
                 }
                 session.save()
                 session.notifyMessagesDidChange()

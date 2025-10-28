@@ -20,18 +20,18 @@ public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, Tabl
         "\(Int(creation.timeIntervalSince1970 * 1000.0))-\(objectId)"
     }
 
-    public var objectId: String = UUID().uuidString
-    public var deviceId: String = ""
-    public var conversationId: Conversation.ID = .init()
-    public var creation: Date = .now
-    public var role: Role = .system
-    public var thinkingDuration: TimeInterval = 0
-    public var reasoningContent: String = ""
-    public var isThinkingFold: Bool = false
-    public var document: String = ""
-    public var documentNodes: [MarkdownBlockNode] = []
-    public var webSearchStatus: WebSearchStatus = .init()
-    public var toolStatus: ToolStatus = .init()
+    public package(set) var objectId: String = UUID().uuidString
+    public package(set) var deviceId: String = ""
+    public package(set) var conversationId: Conversation.ID = .init()
+    public package(set) var creation: Date = .now
+    public package(set) var role: Role = .system
+    public package(set) var thinkingDuration: TimeInterval = 0
+    public package(set) var reasoningContent: String = ""
+    public package(set) var isThinkingFold: Bool = false
+    public package(set) var document: String = ""
+    public package(set) var documentNodes: [MarkdownBlockNode] = []
+    public package(set) var webSearchStatus: WebSearchStatus = .init()
+    public package(set) var toolStatus: ToolStatus = .init()
 
     public var removed: Bool = false
     public var modified: Date = .now
@@ -98,6 +98,12 @@ extension Message: Updatable {
         return true
     }
 
+    @discardableResult
+    public func update<Value>(_ keyPath: KeyPath<Message, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let keyPath = keyPath as! ReferenceWritableKeyPath<Message, Value>
+        return update(keyPath, to: newValue)
+    }
+
     public func update(_ block: (Message) -> Void) {
         block(self)
         markModified()
@@ -154,7 +160,7 @@ public extension Message {
 }
 
 public extension Message {
-    struct WebSearchStatus: Codable, ColumnCodable, Hashable {
+    struct WebSearchStatus: Codable, ColumnCodable, Hashable, Equatable {
         public var id: UUID = .init()
 
         public var queries: [String] = []

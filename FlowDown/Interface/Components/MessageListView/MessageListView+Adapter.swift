@@ -183,12 +183,13 @@ extension MessageListView: ListViewAdapter {
                 reasoningContentView.thinkingDuration = message.thinkingDuration
                 reasoningContentView.text = message.content
                 reasoningContentView.thinkingTileTapHandler = { [unowned self] newValue in
-                    guard let thinkingMessage = session.messages.filter({
+                    let thinkingMessages = session.messages.filter {
                         $0.combinationID == message.id
-                    }).first else {
+                    }
+                    guard let thinkingMessage = thinkingMessages.first else {
                         return
                     }
-                    thinkingMessage.isThinkingFold = !newValue
+                    thinkingMessage.update(\.isThinkingFold, to: !newValue)
                     updateList()
                     session.save()
                 }

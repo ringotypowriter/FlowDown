@@ -102,13 +102,13 @@ class ChatTemplateManager {
                     session.delete(messageIdentifier: message.objectId)
                 }
             }
-            let _ = session.appendNewMessage(role: .system) {
-                $0.document = template.prompt
+            session.appendNewMessage(role: .system) {
+                $0.update(\.document, to: template.prompt)
             }
         }
 
-        let _ = session.appendNewMessage(role: .hint) {
-            $0.document = String(localized: "This conversation is based on the template: \(template.name).")
+        session.appendNewMessage(role: .hint) {
+            $0.update(\.document, to: String(localized: "This conversation is based on the template: \(template.name)."))
         }
 
         return conversation.id

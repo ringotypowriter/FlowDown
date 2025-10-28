@@ -124,9 +124,8 @@ extension ConversationSession {
             saveIfNeeded(object)
         } catch {
             logger.error("\(error.localizedDescription)")
-            _ = appendNewMessage(role: .assistant) {
-                $0.document = "*\(error.localizedDescription)*"
-            }
+            let errorMessage = appendNewMessage(role: .assistant)
+            errorMessage.update(\.document, to: "*\(error.localizedDescription)*")
             await requestUpdate(view: currentMessageListView)
             await requestUpdate(view: currentMessageListView)
         }
@@ -134,14 +133,14 @@ extension ConversationSession {
         stopThinkingForAll()
         for message in messages {
             if message.document.hasSuffix(ModelManager.indicatorText) {
-                message.update {
-                    $0.document.removeLast(ModelManager.indicatorText.count)
-                }
+                var newDocument = message.document
+                newDocument.removeLast(ModelManager.indicatorText.count)
+                message.update(\.document, to: newDocument)
             }
             if message.reasoningContent.hasSuffix(ModelManager.indicatorText) {
-                message.update {
-                    $0.reasoningContent.removeLast(ModelManager.indicatorText.count)
-                }
+                var newReasoningContent = message.reasoningContent
+                newReasoningContent.removeLast(ModelManager.indicatorText.count)
+                message.update(\.reasoningContent, to: newReasoningContent)
             }
         }
 
@@ -177,9 +176,8 @@ extension ConversationSession {
         // MARK: - 添加用户的消息到储存框架
 
         let document = object.text
-        let userMessage = appendNewMessage(role: .user) {
-            $0.document = document
-        }
+        let userMessage = appendNewMessage(role: .user)
+        userMessage.update(\.document, to: document)
 
         addAttachments(object.attachments, to: userMessage)
         await requestUpdate(view: currentMessageListView)
@@ -253,9 +251,8 @@ extension ConversationSession {
 
         try checkCancellation()
         if try removeOutOfContextContents(&requestMessages, toolsDefinitions, modelContextLength) {
-            _ = appendNewMessage(role: .hint) {
-                $0.document = String(localized: "Some messages have been removed to fit the model context length.")
-            }
+            let hintMessage = appendNewMessage(role: .hint)
+            hintMessage.update(\.document, to: String(localized: "Some messages have been removed to fit the model context length."))
             await requestUpdate(view: currentMessageListView)
         }
 

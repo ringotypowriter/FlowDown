@@ -485,7 +485,7 @@ extension ConversationSession {
         if let required = searchRequired, !required {
             Logger.network.infoFile("model determined no web search is needed")
             _ = appendNewMessage(role: .assistant) {
-                $0.document = String(localized: "I have determined that no web search is needed for this query.")
+                $0.update(\.document, to: String(localized: "I have determined that no web search is needed for this query."))
             }
             await requestUpdate(view: currentMessageListView)
             return
@@ -494,14 +494,16 @@ extension ConversationSession {
         guard !searchQueries.isEmpty else {
             Logger.network.errorFile("failed to generate search queries")
             _ = appendNewMessage(role: .assistant) {
-                $0.document = String(localized: "I was unable to generate appropriate search queries for this request.")
+                $0.update(\.document, to: String(localized: "I was unable to generate appropriate search queries for this request."))
             }
             await requestUpdate(view: currentMessageListView)
             return
         }
 
         let webSearchMessage = appendNewMessage(role: .webSearch) {
-            $0.webSearchStatus.queries = searchQueries
+            var status = $0.webSearchStatus
+            status.queries = searchQueries
+            $0.update(\.webSearchStatus, to: status)
         }
 
         await requestUpdate(view: currentMessageListView)
@@ -528,9 +530,9 @@ extension ConversationSession {
             let storableContent: [Message.WebSearchStatus.SearchResult] = documents.map { doc in
                 .init(title: doc.title, url: doc.url)
             }
-            webSearchMessage.update {
-                $0.webSearchStatus.searchResults.append(contentsOf: storableContent)
-            }
+            var updatedStatus = webSearchMessage.webSearchStatus
+            updatedStatus.searchResults.append(contentsOf: storableContent)
+            webSearchMessage.update(\.webSearchStatus, to: updatedStatus)
         }
 
         for try await phase in gatheringWebContent(
@@ -546,22 +548,20 @@ extension ConversationSession {
             status.currentQueryBeginDate = phase.queryBeginDate
             status.numberOfResults = phase.numberOfResults
             status.proccessProgress = max(0.1, phase.proccessProgress)
-            webSearchMessage.update {
-                $0.webSearchStatus = status
-            }
+            webSearchMessage.update(\.webSearchStatus, to: status)
             await requestUpdate(view: currentMessageListView)
         }
-        webSearchMessage.update {
-            $0.webSearchStatus.proccessProgress = 0
-        }
+        var finalStatus = webSearchMessage.webSearchStatus
+        finalStatus.proccessProgress = 0
+        webSearchMessage.update(\.webSearchStatus, to: finalStatus)
         await requestUpdate(view: currentMessageListView)
 
         object.attachments.append(contentsOf: webAttachments)
 
         if webAttachments.isEmpty {
-            webSearchMessage.update {
-                $0.webSearchStatus.proccessProgress = -1
-            }
+            var errorStatus = webSearchMessage.webSearchStatus
+            errorStatus.proccessProgress = -1
+            webSearchMessage.update(\.webSearchStatus, to: errorStatus)
             throw NSError(
                 domain: "Inference Service",
                 code: -1,

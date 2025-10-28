@@ -69,9 +69,9 @@ class MTWebSearchTool: ModelTool, @unchecked Sendable {
             )
         }
 
-        webSearchMessage.update {
-            $0.webSearchStatus.queries = [query]
-        }
+        var status = webSearchMessage.webSearchStatus
+        status.queries = [query]
+        webSearchMessage.update(\.webSearchStatus, to: status)
 
         await session.requestUpdate(view: messageListView)
 
@@ -82,9 +82,9 @@ class MTWebSearchTool: ModelTool, @unchecked Sendable {
                 .init(title: doc.title, url: doc.url)
             }
 
-            webSearchMessage.update {
-                $0.webSearchStatus.searchResults.append(contentsOf: storableContent)
-            }
+            var status = webSearchMessage.webSearchStatus
+            status.searchResults.append(contentsOf: storableContent)
+            webSearchMessage.update(\.webSearchStatus, to: status)
         }
 
         for try await phase in await messageListView.session.gatheringWebContent(
@@ -99,15 +99,13 @@ class MTWebSearchTool: ModelTool, @unchecked Sendable {
             status.currentQueryBeginDate = phase.queryBeginDate
             status.numberOfResults = phase.numberOfResults
             status.proccessProgress = max(0.1, phase.proccessProgress)
-            webSearchMessage.update {
-                $0.webSearchStatus = status
-            }
+            webSearchMessage.update(\.webSearchStatus, to: status)
             await session.requestUpdate(view: messageListView)
         }
 
-        webSearchMessage.update {
-            $0.webSearchStatus.proccessProgress = 0
-        }
+        var statusFinal = webSearchMessage.webSearchStatus
+        statusFinal.proccessProgress = 1.0
+        webSearchMessage.update(\.webSearchStatus, to: statusFinal)
         await session.requestUpdate(view: messageListView)
 
         if webSearchResults.isEmpty {

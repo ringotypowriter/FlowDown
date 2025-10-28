@@ -87,7 +87,7 @@ final class ConversationSession: Identifiable {
             prompt += "\n" + extra
         }
         appendNewMessage(role: .system) {
-            $0.document = prompt
+            $0.update(\.document, to: prompt)
         }
     }
 
@@ -99,8 +99,8 @@ final class ConversationSession: Identifiable {
                 block($0)
             }
 
-            $0.role = role
-            $0.creation = .now
+            $0.update(\.role, to: role)
+            $0.update(\.creation, to: .now)
         }
 
         messages.append(message)

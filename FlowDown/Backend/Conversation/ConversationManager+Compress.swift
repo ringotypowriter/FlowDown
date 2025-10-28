@@ -56,8 +56,8 @@ extension ConversationManager {
         }
         let sess = ConversationSessionManager.shared.session(for: conv.id)
 
-        _ = sess.appendNewMessage(role: .hint) {
-            $0.document = String(localized: "This conversation is created by compressing \(title).")
+        sess.appendNewMessage(role: .hint) {
+            $0.update(\.document, to: String(localized: "This conversation is created by compressing \"\(title)\"."))
         }
         sess.save()
         sess.notifyMessagesDidChange()
@@ -104,8 +104,11 @@ extension ConversationManager {
                 await MainActor.run { completion(.success(conv.id)) }
             } catch {
                 await MainActor.run {
-                    let newMessage = sess.appendNewMessage(role: .assistant) {
-                        $0.document = error.localizedDescription
+                    sess.appendNewMessage(role: .assistant) {
+                        $0.update(
+                            \.document,
+                            to: String(localized: "An error occurred during compression: \(error.localizedDescription)")
+                        )
                     }
                     sess.notifyMessagesDidChange()
                     sess.save()
