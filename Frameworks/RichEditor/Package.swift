@@ -16,14 +16,14 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/mischa-hildebrand/AlignedCollectionViewFlowLayout", from: "1.1.3"),
         .package(url: "https://github.com/Lakr233/AlertController", from: "1.0.1"),
-        .package(url: "https://github.com/Lakr233/ScrubberKit", branch: "main"),
+        .package(url: "https://github.com/Lakr233/ScrubberKit", from: "0.1.0"),
         .package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
     ],
     targets: [
         .target(name: "RichEditor", dependencies: [
-            "AlertController",
-            "AlignedCollectionViewFlowLayout",
-            "ScrubberKit",
+            .product(name: "AlertController", package: "AlertController"),
+            .product(name: "AlignedCollectionViewFlowLayout", package: "AlignedCollectionViewFlowLayout"),
+            .product(name: "ScrubberKit", package: "ScrubberKit"),
             .product(name: "OrderedCollections", package: "swift-collections"),
         ]),
     ]
