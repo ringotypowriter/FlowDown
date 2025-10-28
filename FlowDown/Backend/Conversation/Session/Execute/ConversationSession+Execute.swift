@@ -39,6 +39,10 @@ extension ConversationSession {
             }
 
             currentTask = Task {
+                await MainActor.run {
+                    ConversationSessionManager.shared.markSessionExecuting(id)
+                }
+
                 defer {
                     if backgroundTask != .invalid {
                         let finalBackgroundTask = backgroundTask
@@ -58,6 +62,7 @@ extension ConversationSession {
                 self.currentTask = nil
                 // Check if there's a pending refresh after task completion
                 await MainActor.run {
+                    ConversationSessionManager.shared.markSessionCompleted(id)
                     ConversationSessionManager.shared.resolvePendingRefresh(for: id)
                     completion()
                 }

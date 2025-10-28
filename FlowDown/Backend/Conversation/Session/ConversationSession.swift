@@ -56,6 +56,7 @@ final class ConversationSession: Identifiable {
         currentTask?.cancel()
         currentTask = nil
         thinkingDurationTimer.values.forEach { $0.invalidate() }
+        ConversationSessionManager.shared.markSessionCompleted(id)
     }
 
     init(id: Conversation.ID) {

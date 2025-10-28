@@ -6,6 +6,7 @@
 //
 
 import ChatClientKit
+import Combine
 import Foundation
 import OSLog
 import Storage
@@ -23,6 +24,9 @@ final class ConversationSessionManager {
     private var messageChangedObserver: Any?
     private var pendingRefresh: Set<Conversation.ID> = []
     private let logger = Logger(subsystem: "wiki.qaq.flowdown", category: "ConversationSessionManager")
+
+    private var executingSessions: Set<Conversation.ID> = []
+    let executingSessionsPublisher = PassthroughSubject<Set<Conversation.ID>, Never>()
 
     // MARK: - Lifecycle
 
@@ -58,6 +62,7 @@ final class ConversationSessionManager {
     func invalidateSession(for conversationID: Conversation.ID) {
         sessions.removeValue(forKey: conversationID)
         pendingRefresh.remove(conversationID)
+        markSessionCompleted(conversationID)
     }
 
     // MARK: - Message Change Handling
@@ -110,5 +115,21 @@ final class ConversationSessionManager {
         logger.info("Executing pending refresh for session \(String(describing: sessionID))")
         session.refreshContentsFromDatabase()
         pendingRefresh.remove(sessionID)
+    }
+
+    // MARK: - Execution State Management
+
+    func markSessionExecuting(_ sessionID: Conversation.ID) {
+        executingSessions.insert(sessionID)
+        executingSessionsPublisher.send(executingSessions)
+    }
+
+    func markSessionCompleted(_ sessionID: Conversation.ID) {
+        executingSessions.remove(sessionID)
+        executingSessionsPublisher.send(executingSessions)
+    }
+
+    func isSessionExecuting(_ sessionID: Conversation.ID) -> Bool {
+        executingSessions.contains(sessionID)
     }
 }

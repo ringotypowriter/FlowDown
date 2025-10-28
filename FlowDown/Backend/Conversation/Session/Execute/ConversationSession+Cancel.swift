@@ -33,6 +33,7 @@ extension ConversationSession {
             }
             Logger.app.infoFile("current task cancelled for conversation: \(self.id)")
             DispatchQueue.main.async {
+                ConversationSessionManager.shared.markSessionCompleted(self.id)
                 completion()
             }
         }

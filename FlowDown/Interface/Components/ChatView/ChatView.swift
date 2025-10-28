@@ -99,6 +99,14 @@ class ChatView: UIView {
             make.top.equalTo(editor.snp.top).offset(-4) // for visual
         }
 
+        sessionManager.executingSessionsPublisher
+            .sink { [weak self] executingSessions in
+                guard let self, let conversationID = conversationIdentifier else { return }
+                let isExecuting = executingSessions.contains(conversationID)
+                editor.setProcessingMode(isExecuting)
+            }
+            .store(in: &cancellables)
+
         #if !targetEnvironment(macCatalyst)
             escapeButton.backgroundColor = .clear
             escapeButton.snp.makeConstraints { make in
@@ -208,6 +216,9 @@ class ChatView: UIView {
 
         editor.use(identifier: conversation)
         title.use(identifier: conversation)
+
+        let isExecuting = sessionManager.isSessionExecuting(conversation)
+        editor.setProcessingMode(isExecuting)
 
         offloadModelsToSession(modelIdentifier: modelIdentifier())
         removeUnusedListViews()
