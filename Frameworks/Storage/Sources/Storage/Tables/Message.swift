@@ -33,8 +33,10 @@ public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, Tabl
     public package(set) var webSearchStatus: WebSearchStatus = .init()
     public package(set) var toolStatus: ToolStatus = .init()
 
-    public var removed: Bool = false
-    public var modified: Date = .now
+    public package(set) var removed: Bool = false
+    public package(set) var modified: Date = .now
+
+    public package(set) var metadata: Data?
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = Message
@@ -56,6 +58,7 @@ public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, Tabl
             BindColumnConstraint(documentNodes, isNotNull: true, defaultTo: [MarkdownBlockNode]())
             BindColumnConstraint(webSearchStatus, isNotNull: true, defaultTo: WebSearchStatus())
             BindColumnConstraint(toolStatus, isNotNull: true, defaultTo: ToolStatus())
+            BindColumnConstraint(metadata, isNotNull: false)
 
             BindIndex(creation, namedWith: "_creationIndex")
             BindIndex(modified, namedWith: "_modifiedIndex")
@@ -77,6 +80,7 @@ public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, Tabl
 
         case removed
         case modified
+        case metadata
     }
 
     public init(deviceId: String) {
@@ -90,7 +94,7 @@ public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, Tabl
 
 extension Message: Updatable {
     @discardableResult
-    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Message, Value>, to newValue: Value) -> Bool where Value: Equatable {
+    public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Message, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
         self[keyPath: keyPath] = newValue
@@ -98,13 +102,7 @@ extension Message: Updatable {
         return true
     }
 
-    @discardableResult
-    public func update<Value>(_ keyPath: KeyPath<Message, Value>, to newValue: Value) -> Bool where Value: Equatable {
-        let keyPath = keyPath as! ReferenceWritableKeyPath<Message, Value>
-        return update(keyPath, to: newValue)
-    }
-
-    public func update(_ block: (Message) -> Void) {
+    package func update(_ block: (Message) -> Void) {
         block(self)
         markModified()
     }

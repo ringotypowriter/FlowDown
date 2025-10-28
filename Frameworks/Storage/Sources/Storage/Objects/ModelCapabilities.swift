@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ModelCapabilities: String, Codable, CaseIterable {
+public enum ModelCapabilities: String, Codable, CaseIterable, Equatable {
 //    case stream
     case visual
     case tool
@@ -19,7 +19,7 @@ public enum ModelCapabilities: String, Codable, CaseIterable {
 // https://llmpricecheck.com/calculator/
 //
 
-public enum ModelContextLength: Int, Codable, CaseIterable {
+public enum ModelContextLength: Int, Codable, CaseIterable, Equatable {
     case short_4k = 4000 // 4k
     case short_8k = 8000 // 8k
     case medium_16k = 16000 // 16k
@@ -31,7 +31,7 @@ public enum ModelContextLength: Int, Codable, CaseIterable {
     case infinity = 2_147_483_647
 }
 
-public enum ModelTemperaturePreference: String, CaseIterable {
+public enum ModelTemperaturePreference: String, CaseIterable, Equatable {
     case inherit
     case custom
 }

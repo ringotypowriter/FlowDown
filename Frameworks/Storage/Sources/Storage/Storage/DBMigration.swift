@@ -374,3 +374,26 @@ struct MigrationV1ToV2: DBMigration {
         return migrateAttachment
     }
 }
+
+struct MigrationV2ToV3: DBMigration {
+    let fromVersion: DBVersion = .Version2
+    let toVersion: DBVersion = .Version3
+    let requiresDataMigration: Bool = false
+
+    func migrate(db: Database) throws {
+        let start = Date.now
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
+        try db.run(transaction: {
+            // 增加了字段
+            try $0.create(table: Message.tableName, of: Message.self)
+
+            // 调整了索引
+            try db.create(table: UploadQueue.tableName, of: UploadQueue.self)
+
+            try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
+        })
+
+        let elapsed = Date.now.timeIntervalSince(start) * 1000.0
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
+    }
+}

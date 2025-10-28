@@ -67,7 +67,7 @@ public final class Conversation: Identifiable, Codable, TableNamed, DeviceOwned,
 
 extension Conversation: Updatable {
     @discardableResult
-    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Conversation, Value>, to newValue: Value) -> Bool where Value: Equatable {
+    public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Conversation, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
         self[keyPath: keyPath] = newValue
@@ -75,7 +75,7 @@ extension Conversation: Updatable {
         return true
     }
 
-    public func update(_ block: (Conversation) -> Void) {
+    package func update(_ block: (Conversation) -> Void) {
         block(self)
         markModified()
     }

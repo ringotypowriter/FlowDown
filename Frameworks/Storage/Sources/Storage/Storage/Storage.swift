@@ -29,8 +29,6 @@ public class Storage {
     package typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
     package var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
 
-    /// 是否需要初始化上传队列
-    private let shouldInitializeUploadQueue: Bool
     private var didInitializeUploadQueue = false
     private let existsDatabaseFile: Bool
     private let migrations: [DBMigration]
@@ -81,16 +79,16 @@ public class Storage {
 
         if existsDatabaseFile {
             initVersion = .Version0
-            shouldInitializeUploadQueue = true
             migrations = [
                 MigrationV0ToV1(),
                 MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: true),
+                MigrationV2ToV3(),
             ]
         } else {
             initVersion = .Version1
-            shouldInitializeUploadQueue = false
             migrations = [
                 MigrationV1ToV2(deviceId: Storage.deviceId, requiresDataMigration: false),
+                MigrationV2ToV3(),
             ]
         }
 
@@ -113,9 +111,6 @@ public class Storage {
 
         try setup(db: db)
 
-        // 创建索引
-        try db.create(table: UploadQueue.tableName, of: UploadQueue.self)
-
         // 将上传中/上传失败的同步记录重置为Pending
         try db.run(transaction: { [unowned self] in
             try pendingUploadRestToPendingState(handle: $0)
@@ -129,14 +124,17 @@ public class Storage {
             initVersion
         }
 
-        var hasMigrate = false
+        var shouldInitializeUploadQueue = false
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
-            hasMigrate = true
             version = migration.toVersion
+            /// 只有V1 到 V2 需要执行初始化上传队列
+            if migration.fromVersion == .Version1, migration.toVersion == .Version2 {
+                shouldInitializeUploadQueue = true
+            }
         }
 
-        if shouldInitializeUploadQueue, hasMigrate {
+        if shouldInitializeUploadQueue {
             try initializeUploadQueue()
             didInitializeUploadQueue = true
         }
