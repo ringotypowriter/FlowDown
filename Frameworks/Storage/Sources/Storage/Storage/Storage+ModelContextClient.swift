@@ -44,7 +44,7 @@ public extension Storage {
             return
         }
         let modified = Date.now
-        objects.forEach { $0.markModified(modified) }
+//        objects.forEach { $0.markModified(modified) }
 
         try? runTransaction { [weak self] in
             guard let self else { return }
@@ -55,7 +55,7 @@ public extension Storage {
             }
 
             /// 恢复修改时间
-            diff.insert.forEach { $0.markModified($0.creation) }
+//            diff.insert.forEach { $0.markModified($0.creation) }
 
             try $0.insertOrReplace(diff.insertOrReplace(), intoTable: ModelContextServer.tableName)
 
@@ -99,6 +99,7 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         modelContextServerPut(objects: [object], skipSync: skipSync)
     }
 

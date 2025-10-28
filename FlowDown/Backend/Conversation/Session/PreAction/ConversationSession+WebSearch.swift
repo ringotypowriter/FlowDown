@@ -484,22 +484,26 @@ extension ConversationSession {
 
         if let required = searchRequired, !required {
             Logger.network.infoFile("model determined no web search is needed")
-            let hintMessage = appendNewMessage(role: .assistant)
-            hintMessage.document = String(localized: "I have determined that no web search is needed for this query.")
+            _ = appendNewMessage(role: .assistant) {
+                $0.document = String(localized: "I have determined that no web search is needed for this query.")
+            }
             await requestUpdate(view: currentMessageListView)
             return
         }
 
         guard !searchQueries.isEmpty else {
             Logger.network.errorFile("failed to generate search queries")
-            let hintMessage = appendNewMessage(role: .assistant)
-            hintMessage.document = String(localized: "I was unable to generate appropriate search queries for this request.")
+            _ = appendNewMessage(role: .assistant) {
+                $0.document = String(localized: "I was unable to generate appropriate search queries for this request.")
+            }
             await requestUpdate(view: currentMessageListView)
             return
         }
 
-        let webSearchMessage = appendNewMessage(role: .webSearch)
-        webSearchMessage.webSearchStatus.queries = searchQueries
+        let webSearchMessage = appendNewMessage(role: .webSearch) {
+            $0.webSearchStatus.queries = searchQueries
+        }
+
         await requestUpdate(view: currentMessageListView)
 
         var webAttachments: [RichEditorView.Object.Attachment] = []
@@ -524,7 +528,9 @@ extension ConversationSession {
             let storableContent: [Message.WebSearchStatus.SearchResult] = documents.map { doc in
                 .init(title: doc.title, url: doc.url)
             }
-            webSearchMessage.webSearchStatus.searchResults.append(contentsOf: storableContent)
+            webSearchMessage.update {
+                $0.webSearchStatus.searchResults.append(contentsOf: storableContent)
+            }
         }
 
         for try await phase in gatheringWebContent(
@@ -540,16 +546,22 @@ extension ConversationSession {
             status.currentQueryBeginDate = phase.queryBeginDate
             status.numberOfResults = phase.numberOfResults
             status.proccessProgress = max(0.1, phase.proccessProgress)
-            webSearchMessage.webSearchStatus = status
+            webSearchMessage.update {
+                $0.webSearchStatus = status
+            }
             await requestUpdate(view: currentMessageListView)
         }
-        webSearchMessage.webSearchStatus.proccessProgress = 0
+        webSearchMessage.update {
+            $0.webSearchStatus.proccessProgress = 0
+        }
         await requestUpdate(view: currentMessageListView)
 
         object.attachments.append(contentsOf: webAttachments)
 
         if webAttachments.isEmpty {
-            webSearchMessage.webSearchStatus.proccessProgress = -1
+            webSearchMessage.update {
+                $0.webSearchStatus.proccessProgress = -1
+            }
             throw NSError(
                 domain: "Inference Service",
                 code: -1,

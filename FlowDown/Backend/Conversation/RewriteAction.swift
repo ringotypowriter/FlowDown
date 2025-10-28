@@ -106,7 +106,7 @@ extension RewriteAction {
                         input: messageBody
                     )
                     for try await resp in stream {
-                        message.document = resp.content
+                        message.update(\.document, to: resp.content)
                         session.notifyMessagesDidChange(scrolling: false)
                         session.save()
                     }

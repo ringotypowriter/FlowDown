@@ -124,8 +124,9 @@ extension ConversationSession {
             saveIfNeeded(object)
         } catch {
             logger.error("\(error.localizedDescription)")
-            let message = appendNewMessage(role: .assistant)
-            message.document = "*\(error.localizedDescription)*"
+            _ = appendNewMessage(role: .assistant) {
+                $0.document = "*\(error.localizedDescription)*"
+            }
             await requestUpdate(view: currentMessageListView)
             await requestUpdate(view: currentMessageListView)
         }
@@ -133,10 +134,14 @@ extension ConversationSession {
         stopThinkingForAll()
         for message in messages {
             if message.document.hasSuffix(ModelManager.indicatorText) {
-                message.document.removeLast(ModelManager.indicatorText.count)
+                message.update {
+                    $0.document.removeLast(ModelManager.indicatorText.count)
+                }
             }
             if message.reasoningContent.hasSuffix(ModelManager.indicatorText) {
-                message.reasoningContent.removeLast(ModelManager.indicatorText.count)
+                message.update {
+                    $0.reasoningContent.removeLast(ModelManager.indicatorText.count)
+                }
             }
         }
 
@@ -171,8 +176,11 @@ extension ConversationSession {
 
         // MARK: - 添加用户的消息到储存框架
 
-        let userMessage = appendNewMessage(role: .user)
-        userMessage.document = object.text
+        let document = object.text
+        let userMessage = appendNewMessage(role: .user) {
+            $0.document = document
+        }
+
         addAttachments(object.attachments, to: userMessage)
         await requestUpdate(view: currentMessageListView)
 
@@ -245,9 +253,9 @@ extension ConversationSession {
 
         try checkCancellation()
         if try removeOutOfContextContents(&requestMessages, toolsDefinitions, modelContextLength) {
-            let hint = appendNewMessage(role: .hint)
-            hint.document = String(
-                localized: "Some messages have been removed to fit the model context length.")
+            _ = appendNewMessage(role: .hint) {
+                $0.document = String(localized: "Some messages have been removed to fit the model context length.")
+            }
             await requestUpdate(view: currentMessageListView)
         }
 

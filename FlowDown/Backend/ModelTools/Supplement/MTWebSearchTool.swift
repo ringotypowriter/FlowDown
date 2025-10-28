@@ -69,7 +69,10 @@ class MTWebSearchTool: ModelTool, @unchecked Sendable {
             )
         }
 
-        webSearchMessage.webSearchStatus.queries = [query]
+        webSearchMessage.update {
+            $0.webSearchStatus.queries = [query]
+        }
+
         await session.requestUpdate(view: messageListView)
 
         var webSearchResults: [Scrubber.Document] = []
@@ -78,7 +81,10 @@ class MTWebSearchTool: ModelTool, @unchecked Sendable {
             let storableContent: [Message.WebSearchStatus.SearchResult] = documents.map { doc in
                 .init(title: doc.title, url: doc.url)
             }
-            webSearchMessage.webSearchStatus.searchResults.append(contentsOf: storableContent)
+
+            webSearchMessage.update {
+                $0.webSearchStatus.searchResults.append(contentsOf: storableContent)
+            }
         }
 
         for try await phase in await messageListView.session.gatheringWebContent(
@@ -93,11 +99,15 @@ class MTWebSearchTool: ModelTool, @unchecked Sendable {
             status.currentQueryBeginDate = phase.queryBeginDate
             status.numberOfResults = phase.numberOfResults
             status.proccessProgress = max(0.1, phase.proccessProgress)
-            webSearchMessage.webSearchStatus = status
+            webSearchMessage.update {
+                $0.webSearchStatus = status
+            }
             await session.requestUpdate(view: messageListView)
         }
 
-        webSearchMessage.webSearchStatus.proccessProgress = 0
+        webSearchMessage.update {
+            $0.webSearchStatus.proccessProgress = 0
+        }
         await session.requestUpdate(view: messageListView)
 
         if webSearchResults.isEmpty {

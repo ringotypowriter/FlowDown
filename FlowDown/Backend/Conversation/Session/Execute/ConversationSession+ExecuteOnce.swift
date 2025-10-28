@@ -46,11 +46,15 @@ extension ConversationSession {
             let reasoningContent = resp.reasoningContent
             let content = resp.content
             pendingToolCalls.append(contentsOf: resp.toolCallRequests)
-            message.reasoningContent = reasoningContent
-            message.document = content
+
+            message.update(\.reasoningContent, to: reasoningContent)
+            message.update(\.document, to: content)
+
             if !content.isEmpty {
                 stopThinking(for: message.objectId)
-                if collapseAfterReasoningComplete { message.isThinkingFold = true }
+                if collapseAfterReasoningComplete {
+                    message.update(\.isThinkingFold, to: true)
+                }
             } else if !reasoningContent.isEmpty {
                 startThinking(for: message.objectId)
             }
@@ -60,16 +64,19 @@ extension ConversationSession {
         await requestUpdate(view: currentMessageListView)
 
         if collapseAfterReasoningComplete {
-            message.isThinkingFold = true
+            message.update(\.isThinkingFold, to: true)
             await requestUpdate(view: currentMessageListView)
         }
 
         if !message.document.isEmpty {
             logger.info("\(message.document)")
-            message.document = fixWebReferenceIfPossible(in: message.document, with: linkedContents.mapValues(\.absoluteString))
+            let document = fixWebReferenceIfPossible(in: message.document, with: linkedContents.mapValues(\.absoluteString))
+            message.update(\.document, to: document)
         }
+
         if !message.reasoningContent.isEmpty, message.document.isEmpty {
-            message.document = String(localized: "Thinking finished without output any content.")
+            let document = String(localized: "Thinking finished without output any content.")
+            message.update(\.document, to: document)
         }
 
         await requestUpdate(view: currentMessageListView)
@@ -162,7 +169,7 @@ extension ConversationSession {
             } else {
                 var toolStatus = Message.ToolStatus(name: tool.interfaceName, state: 0, message: "")
                 let toolMessage = appendNewMessage(role: .toolHint)
-                toolMessage.toolStatus = toolStatus
+                toolMessage.update(\.toolStatus, to: toolStatus)
                 await requestUpdate(view: currentMessageListView)
 
                 // 标准工具
@@ -176,13 +183,13 @@ extension ConversationSession {
                 case let .success(result):
                     toolStatus.state = 1
                     toolStatus.message = result
-                    toolMessage.toolStatus = toolStatus
+                    toolMessage.update(\.toolStatus, to: toolStatus)
                     await requestUpdate(view: currentMessageListView)
                     requestMessages.append(.tool(content: .text(result), toolCallID: request.id.uuidString))
                 case let .failure(error):
                     toolStatus.state = 2
                     toolStatus.message = error.localizedDescription
-                    toolMessage.toolStatus = toolStatus
+                    toolMessage.update(\.toolStatus, to: toolStatus)
                     await requestUpdate(view: currentMessageListView)
                 }
             }

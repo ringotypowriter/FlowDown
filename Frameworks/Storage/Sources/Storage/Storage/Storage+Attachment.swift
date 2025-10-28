@@ -46,7 +46,7 @@ public extension Storage {
         }
 
         let modified = Date.now
-        attachments.forEach { $0.markModified(modified) }
+//        attachments.forEach { $0.markModified(modified) }
 
         try? runTransaction { [weak self] in
             guard let self else { return }

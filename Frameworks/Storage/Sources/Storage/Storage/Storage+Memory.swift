@@ -42,7 +42,7 @@ public extension Storage {
         }
 
         let modified = Date.now
-        memorys.forEach { $0.markModified(modified) }
+//        memorys.forEach { $0.markModified(modified) }
 
         do {
             try runTransaction { [weak self] in

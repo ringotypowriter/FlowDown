@@ -83,12 +83,10 @@ class ChatTemplateManager {
 
     func createConversationFromTemplate(_ template: ChatTemplate) -> Conversation.ID {
         assert(Thread.isMainThread)
-        let conversation = ConversationManager.shared.createNewConversation()
-
-        ConversationManager.shared.editConversation(identifier: conversation.id) { conv in
-            conv.icon = template.avatar
-            conv.title = template.name
-            conv.shouldAutoRename = true
+        let conversation = ConversationManager.shared.createNewConversation {
+            $0.icon = template.avatar
+            $0.title = template.name
+            $0.shouldAutoRename = true
         }
 
         let session = ConversationSessionManager.shared.session(for: conversation.id)
@@ -104,12 +102,14 @@ class ChatTemplateManager {
                     session.delete(messageIdentifier: message.objectId)
                 }
             }
-            let templateMessage = session.appendNewMessage(role: .system)
-            templateMessage.document = template.prompt
+            let _ = session.appendNewMessage(role: .system) {
+                $0.document = template.prompt
+            }
         }
 
-        let hint = session.appendNewMessage(role: .hint)
-        hint.document = String(localized: "This conversation is based on the template: \(template.name).")
+        let _ = session.appendNewMessage(role: .hint) {
+            $0.document = String(localized: "This conversation is based on the template: \(template.name).")
+        }
 
         return conversation.id
     }

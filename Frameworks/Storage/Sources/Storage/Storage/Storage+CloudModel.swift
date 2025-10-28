@@ -32,7 +32,7 @@ public extension Storage {
         }
 
         let modified = Date.now
-        objects.forEach { $0.markModified(modified) }
+//        objects.forEach { $0.markModified(modified) }
 
         try runTransaction { [weak self] in
             guard let self else { return }
@@ -83,6 +83,7 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         try? cloudModelPut(objects: [object])
     }
 

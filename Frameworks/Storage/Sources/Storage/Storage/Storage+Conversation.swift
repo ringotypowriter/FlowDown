@@ -60,7 +60,7 @@ public extension Storage {
             return
         }
         let modified = Date.now
-        objects.forEach { $0.markModified(modified) }
+//        objects.forEach { $0.markModified(modified) }
 
         try? runTransaction { [weak self] in
             guard let self else { return }
@@ -116,6 +116,7 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         conversationUpdate(objects: [object])
     }
 
@@ -192,10 +193,13 @@ public extension Storage {
         )
         guard let conv else { throw NSError() }
 
-        // new objectId
-        conv.objectId = UUID().uuidString
-        conv.creation = .now
-        conv.modified = .now
+        let nowDate = Date.now
+        // 更新
+        conv.update {
+            $0.objectId = UUID().uuidString
+            $0.creation = nowDate
+            $0.modified = nowDate
+        }
 
         customize(conv)
         try handle.insert([conv], intoTable: Conversation.tableName)
@@ -223,9 +227,13 @@ public extension Storage {
             let oldMessageId = message.objectId
             oldMessageIdentifierSet.insert(oldMessageId)
 
-            // new objectId
-            message.objectId = UUID().uuidString
-            message.conversationId = newIdentifier
+            // new
+            message.update {
+                $0.objectId = UUID().uuidString
+                $0.conversationId = newIdentifier
+                $0.creation = nowDate
+                $0.modified = nowDate
+            }
 
             try handle.insert(message, intoTable: Message.tableName)
             let newMessageId = message.objectId
@@ -238,9 +246,13 @@ public extension Storage {
             for attachment in attachments {
                 oldAttachmentIdentifierSet.insert(attachment.id)
 
-                // new objectId
-                attachment.objectId = UUID().uuidString
-                attachment.messageId = message.objectId
+                // new
+                attachment.update {
+                    $0.objectId = UUID().uuidString
+                    $0.messageId = message.objectId
+                    $0.creation = nowDate
+                    $0.modified = nowDate
+                }
                 try handle.insert(attachment, intoTable: Attachment.tableName)
             }
             let newAttachments: [Attachment] = try handle.getObjects(

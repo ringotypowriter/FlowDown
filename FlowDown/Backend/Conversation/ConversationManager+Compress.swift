@@ -49,15 +49,16 @@ extension ConversationManager {
         onConversationCreated: @escaping (Conversation.ID) -> Void,
         completion: @escaping (Result<Conversation.ID, Error>) -> Void
     ) {
-        let conv = ConversationManager.shared.createNewConversation()
-        let sess = ConversationSessionManager.shared.session(for: conv.id)
-        ConversationManager.shared.editConversation(identifier: conv.id) { conv in
-            conv.title = title
-            conv.icon = "🗜️".textToImage(size: 64)?.pngData() ?? .init()
-            conv.shouldAutoRename = true
+        let conv = ConversationManager.shared.createNewConversation {
+            $0.title = title
+            $0.icon = "🗜️".textToImage(size: 64)?.pngData() ?? .init()
+            $0.shouldAutoRename = true
         }
-        let hint = sess.appendNewMessage(role: .hint)
-        hint.document = String(localized: "This conversation is created by compressing \(title).")
+        let sess = ConversationSessionManager.shared.session(for: conv.id)
+
+        _ = sess.appendNewMessage(role: .hint) {
+            $0.document = String(localized: "This conversation is created by compressing \(title).")
+        }
         sess.save()
         sess.notifyMessagesDidChange()
 
@@ -94,7 +95,7 @@ extension ConversationManager {
                 let stream = try await ModelManager.shared.streamingInfer(with: model, input: messageBody)
                 let mess = sess.appendNewMessage(role: .assistant)
                 for try await resp in stream where !resp.content.isEmpty {
-                    mess.document = resp.content
+                    mess.update(\.document, to: resp.content)
                     sess.notifyMessagesDidChange()
                     sess.save()
                 }
@@ -103,8 +104,9 @@ extension ConversationManager {
                 await MainActor.run { completion(.success(conv.id)) }
             } catch {
                 await MainActor.run {
-                    let newMessage = sess.appendNewMessage(role: .assistant)
-                    newMessage.document = error.localizedDescription
+                    let newMessage = sess.appendNewMessage(role: .assistant) {
+                        $0.document = error.localizedDescription
+                    }
                     sess.notifyMessagesDidChange()
                     sess.save()
                     completion(.failure(error))

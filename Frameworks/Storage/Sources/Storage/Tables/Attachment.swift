@@ -75,7 +75,23 @@ public final class Attachment: Identifiable, Codable, TableNamed, DeviceOwned, T
         self.deviceId = deviceId
     }
 
-    func markModified(_ date: Date = .now) {
+    public func markModified(_ date: Date = .now) {
         modified = date
+    }
+}
+
+extension Attachment: Updatable {
+    @discardableResult
+    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Attachment, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let oldValue = self[keyPath: keyPath]
+        guard oldValue != newValue else { return false }
+        self[keyPath: keyPath] = newValue
+        markModified()
+        return true
+    }
+
+    public func update(_ block: (Attachment) -> Void) {
+        block(self)
+        markModified()
     }
 }

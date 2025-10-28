@@ -85,12 +85,15 @@ extension ConversationSession {
             await requestUpdate(view: currentMessageListView)
             startThinking(for: message.objectId)
             llmText = resp.content
-            message.reasoningContent = llmText
+            message.update(\.reasoningContent, to: llmText)
             await requestUpdate(view: currentMessageListView)
         }
+
         if !message.reasoningContent.isEmpty {
-            message.document = String(localized: "I have recognized this image.")
+            let document = String(localized: "I have recognized this image.")
+            message.update(\.document, to: document)
         }
+
         let collapseAfterReasoningComplete = ModelManager.shared.collapseReasoningSectionWhenComplete
         if collapseAfterReasoningComplete { message.isThinkingFold = true }
         stopThinking(for: message.objectId)

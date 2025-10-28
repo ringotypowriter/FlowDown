@@ -77,7 +77,7 @@ public extension Storage {
         }
 
         let modified = Date.now
-        messages.forEach { $0.markModified(modified) }
+//        messages.forEach { $0.markModified(modified) }
 
         try? runTransaction { [weak self] in
             guard let self else { return }
@@ -126,6 +126,7 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
+        object.markModified()
         messagePut(messages: [object])
     }
 

@@ -60,8 +60,24 @@ public final class Conversation: Identifiable, Codable, TableNamed, DeviceOwned,
         self.deviceId = deviceId
     }
 
-    func markModified(_ date: Date = .now) {
+    public func markModified(_ date: Date = .now) {
         modified = date
+    }
+}
+
+extension Conversation: Updatable {
+    @discardableResult
+    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Conversation, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let oldValue = self[keyPath: keyPath]
+        guard oldValue != newValue else { return false }
+        self[keyPath: keyPath] = newValue
+        markModified()
+        return true
+    }
+
+    public func update(_ block: (Conversation) -> Void) {
+        block(self)
+        markModified()
     }
 }
 

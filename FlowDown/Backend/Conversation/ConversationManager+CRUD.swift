@@ -32,11 +32,15 @@ extension ConversationManager {
         return createNewConversation()
     }
 
-    func createNewConversation() -> Conversation {
+    func createNewConversation(_ block: Storage.ConversationMakeInitDataBlock? = nil) -> Conversation {
         let tempObject = sdb.conversationMake {
             $0.title = String(localized: "Conversation")
             if $0.modelId?.isEmpty ?? true {
                 $0.modelId = ModelManager.ModelIdentifier.defaultModelForConversation
+            }
+
+            if let block {
+                block($0)
             }
         }
 
@@ -70,8 +74,9 @@ extension ConversationManager {
                     """
                 )
 
-                let message = session.appendNewMessage(role: .assistant)
-                message.document = guide
+                let _ = session.appendNewMessage(role: .assistant) {
+                    $0.document = guide
+                }
                 session.save()
                 session.notifyMessagesDidChange()
 
@@ -101,6 +106,7 @@ extension ConversationManager {
         let conv = conversation(identifier: identifier)
         guard var conv else { return }
         block(&conv)
+        conv.markModified()
         sdb.conversationUpdate(object: conv)
         scanAll()
     }

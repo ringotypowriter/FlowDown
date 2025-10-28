@@ -83,8 +83,24 @@ public final class Message: Identifiable, Codable, TableNamed, DeviceOwned, Tabl
         self.deviceId = deviceId
     }
 
-    func markModified(_ date: Date = .now) {
+    public func markModified(_ date: Date = .now) {
         modified = date
+    }
+}
+
+extension Message: Updatable {
+    @discardableResult
+    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Message, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let oldValue = self[keyPath: keyPath]
+        guard oldValue != newValue else { return false }
+        self[keyPath: keyPath] = newValue
+        markModified()
+        return true
+    }
+
+    public func update(_ block: (Message) -> Void) {
+        block(self)
+        markModified()
     }
 }
 
@@ -187,7 +203,7 @@ public extension Message {
 }
 
 public extension Message {
-    struct ToolStatus: Identifiable, Codable, ColumnCodable, Hashable {
+    struct ToolStatus: Identifiable, Codable, ColumnCodable, Hashable, Equatable {
         public var id: UUID = .init()
         public var name: String = .init()
         public var state: Int = 0
@@ -217,6 +233,13 @@ public extension Message {
             self.name = name
             self.state = state
             self.message = message
+        }
+
+        public static func == (lhs: ToolStatus, rhs: ToolStatus) -> Bool {
+            lhs.id == rhs.id &&
+                lhs.name == rhs.name &&
+                lhs.state == rhs.state &&
+                lhs.message == rhs.message
         }
     }
 }

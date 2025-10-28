@@ -161,12 +161,28 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
         modified = try container.decodeIfPresent(Date.self, forKey: .modified) ?? Date()
     }
 
-    func markModified(_ date: Date = .now) {
+    public func markModified(_ date: Date = .now) {
         modified = date
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+extension ModelContextServer: Updatable {
+    @discardableResult
+    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<ModelContextServer, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let oldValue = self[keyPath: keyPath]
+        guard oldValue != newValue else { return false }
+        self[keyPath: keyPath] = newValue
+        markModified()
+        return true
+    }
+
+    public func update(_ block: (ModelContextServer) -> Void) {
+        block(self)
+        markModified()
     }
 }
 

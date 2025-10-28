@@ -84,7 +84,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
 
     public init(
         deviceId: String,
-        objectId: String = Storage.deviceId,
+        objectId: String = UUID().uuidString,
         model_identifier: String = "",
         model_list_endpoint: String = "$INFERENCE_ENDPOINT$/../../models",
         creation: Date = .init(),
@@ -135,7 +135,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         removed = try container.decodeIfPresent(Bool.self, forKey: .removed) ?? false
     }
 
-    func markModified(_ date: Date = .now) {
+    public func markModified(_ date: Date = .now) {
         modified = date
     }
 
@@ -160,6 +160,22 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(temperature_preference)
         hasher.combine(temperature_override)
         hasher.combine(removed)
+    }
+}
+
+extension CloudModel: Updatable {
+    @discardableResult
+    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<CloudModel, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let oldValue = self[keyPath: keyPath]
+        guard oldValue != newValue else { return false }
+        self[keyPath: keyPath] = newValue
+        markModified()
+        return true
+    }
+
+    public func update(_ block: (CloudModel) -> Void) {
+        block(self)
+        markModified()
     }
 }
 

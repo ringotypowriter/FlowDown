@@ -109,13 +109,21 @@ final class ConversationSession: Identifiable {
     }
 
     private func updateAttachment(_ attachment: Attachment, using object: RichEditorView.Object.Attachment) {
-        attachment.objectId = object.id.uuidString
-        attachment.type = object.type.rawValue
-        attachment.name = object.name
-        attachment.previewImageData = object.previewImage
-        attachment.representedDocument = object.textRepresentation
-        attachment.storageSuffix = object.storageSuffix
-        attachment.imageRepresentation = object.imageRepresentation
+//        attachment.objectId = object.id.uuidString
+//        attachment.type = object.type.rawValue
+//        attachment.name = object.name
+//        attachment.previewImageData = object.previewImage
+//        attachment.representedDocument = object.textRepresentation
+//        attachment.storageSuffix = object.storageSuffix
+//        attachment.imageRepresentation = object.imageRepresentation
+
+        attachment.update(\.objectId, to: object.id.uuidString)
+        attachment.update(\.type, to: object.type.rawValue)
+        attachment.update(\.name, to: object.name)
+        attachment.update(\.previewImageData, to: object.previewImage)
+        attachment.update(\.representedDocument, to: object.textRepresentation)
+        attachment.update(\.storageSuffix, to: object.storageSuffix)
+        attachment.update(\.imageRepresentation, to: object.imageRepresentation)
     }
 
     func addAttachments(_ attachments: [RichEditorView.Object.Attachment], to message: Message) {
@@ -169,7 +177,7 @@ final class ConversationSession: Identifiable {
             if !message.reasoningContent.isEmpty,
                message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             {
-                message.document = String(localized: "Empty message.")
+                message.update(\.document, to: String(localized: "Empty message."))
             }
         }
         #if DEBUG
@@ -220,10 +228,10 @@ final class ConversationSession: Identifiable {
             guard let message = messages.first(where: { $0.objectId == messageIdentifier }) else {
                 return
             }
-            message.document = content
+            message.update(\.document, to: content)
             // we have => representation.isThinking = messageContent.isEmpty .......
             if message.document.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                message.document = String(localized: "Empty message.")
+                message.update(\.document, to: String(localized: "Empty message."))
             }
             sdb.messagePut(messages: [message])
             notifyMessagesDidChange()
@@ -234,7 +242,7 @@ final class ConversationSession: Identifiable {
         guard let message = messages.first(where: { $0.objectId == messageIdentifier }) else {
             return
         }
-        message.reasoningContent = reasoningContent
+        message.update(\.reasoningContent, to: reasoningContent)
         sdb.messagePut(messages: [message])
         notifyMessagesDidChange()
     }
@@ -248,7 +256,7 @@ final class ConversationSession: Identifiable {
         }
         let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
             guard let self else { return }
-            message.thinkingDuration += 1
+            message.update(\.thinkingDuration, to: message.thinkingDuration + 1)
             notifyMessagesDidChange(scrolling: false)
         }
         RunLoop.main.add(timer, forMode: .common)

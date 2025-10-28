@@ -58,8 +58,24 @@ public final class Memory: Identifiable, Codable, TableNamed, DeviceOwned, Table
         self.conversationId = conversationId
     }
 
-    func markModified(_ date: Date = .now) {
+    public func markModified(_ date: Date = .now) {
         modified = date
+    }
+}
+
+extension Memory: Updatable {
+    @discardableResult
+    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Memory, Value>, to newValue: Value) -> Bool where Value: Equatable {
+        let oldValue = self[keyPath: keyPath]
+        guard oldValue != newValue else { return false }
+        self[keyPath: keyPath] = newValue
+        markModified()
+        return true
+    }
+
+    public func update(_ block: (Memory) -> Void) {
+        block(self)
+        markModified()
     }
 }
 
