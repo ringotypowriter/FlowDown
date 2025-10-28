@@ -237,7 +237,13 @@ extension WebSearchStateView {
 
             textLabel.text = text
 
-            progressFraction = phase.proccessProgress
+            if phase.proccessProgress > 0 || progressFraction < 1 {
+                doWithAnimation {
+                    self.progressFraction = phase.proccessProgress
+                }
+            } else {
+                progressFraction = phase.proccessProgress
+            }
         }
     }
 }
