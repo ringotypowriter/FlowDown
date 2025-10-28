@@ -26,9 +26,9 @@ package final class SyncMetadata: Identifiable, Codable, TableNamed, TableCodabl
         get {
             guard let lastKnownRecordData, !lastKnownRecordData.isEmpty else { return nil }
             do {
-                let unarchiver = try NSKeyedUnarchiver(forReadingFrom: lastKnownRecordData)
-                unarchiver.requiresSecureCoding = true
-                let record = CKRecord(coder: unarchiver)
+                let coder = try NSKeyedUnarchiver(forReadingFrom: lastKnownRecordData)
+                let record = CKRecord(coder: coder)
+                coder.finishDecoding()
                 return record
             } catch {
                 // swiftformat:disable:next redundantSelf

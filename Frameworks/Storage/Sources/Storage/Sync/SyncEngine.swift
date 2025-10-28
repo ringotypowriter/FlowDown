@@ -150,6 +150,11 @@ public final actor SyncEngine: Sendable {
 
     private static let LastSyncDateKey = "FlowDownSyncEngineLastSyncDate"
 
+    package static let temporaryAssetStorage = FileManager.default
+        .temporaryDirectory
+        .appendingPathComponent("wiki.qaq.flowdown.syncengine")
+        .appending(component: "Asset")
+
     /// 最后一次同步时间, 在 MainActor 中更新。可安全的在UI线程中访问
     public private(set) nonisolated static var LastSyncDate: Date? {
         get {
@@ -234,6 +239,10 @@ public final actor SyncEngine: Sendable {
         self.container = container
         self.automaticallySync = automaticallySync
         self.createSyncEngine = createSyncEngine
+
+        if !FileManager.default.fileExists(atPath: SyncEngine.temporaryAssetStorage.path()) {
+            try? FileManager.default.createDirectory(at: SyncEngine.temporaryAssetStorage, withIntermediateDirectories: true)
+        }
 
         storage.uploadQueueEnqueueHandler = { [weak self] _ in
             guard SyncEngine.isSyncEnabled else { return }
@@ -834,6 +843,8 @@ private extension SyncEngine {
                 if sentDeviceId == deviceId {
                     savedLocalQueueIds.append((localQueueId, objectId, tableName))
                     metadatas.append(SyncMetadata(record: savedRecord))
+                    // 清理临时文件
+                    savedRecord.clearTemporaryAssets(prefix: SyncEngine.temporaryAssetStorage)
                 }
             }
 
@@ -849,6 +860,9 @@ private extension SyncEngine {
         //  发送失败
         for failedRecordSave in failedRecordSaves {
             let failedRecord = failedRecordSave.record
+            // 清理临时文件
+            failedRecord.clearTemporaryAssets(prefix: SyncEngine.temporaryAssetStorage)
+
             switch failedRecordSave.error.code {
             case .serverRecordChanged:
                 removePendingRecordZoneChanges.append(.saveRecord(failedRecord.recordID))
@@ -955,7 +969,14 @@ private extension SyncEngine {
 }
 
 private extension UploadQueue {
-    func populateRecord(_ record: CKRecord) {
+    private static var formatter: ByteCountFormatter {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .binary
+        formatter.includesActualByteCount = true
+        return formatter
+    }
+
+    func populateRecord(_ record: CKRecord) throws {
         record[.createByDeviceId] = deviceId
         record.lastModifiedMilliseconds = modified.millisecondsSince1970
         guard changes != .delete else {
@@ -964,9 +985,34 @@ private extension UploadQueue {
 
         guard let realObject else { return }
 
-        let playload = try? realObject.encodePayload()
-        Logger.syncEngine.debug("populateRecord \(record.recordID, privacy: .public) playload \(playload?.count ?? 0, privacy: .public)")
-        record.encryptedValues[.payload] = playload
+        let payload = try? realObject.encodePayload()
+
+        #if DEBUG
+            Logger.syncEngine.debug("populateRecord \(record.recordID, privacy: .public) payload \(UploadQueue.formatter.string(fromByteCount: Int64(payload?.count ?? 0)), privacy: .public)")
+        #endif
+
+        guard let payload else {
+            record.encryptedValues[.payload] = nil
+            record[.payloadAsset] = nil
+            return
+        }
+
+        // 大于20kb的采用CKAsset
+        // CKAsset本身就会采用加密存储
+        guard payload.count > 1024 * 20 else {
+            record.encryptedValues[.payload] = payload
+            record[.payloadAsset] = nil
+            return
+        }
+        record.encryptedValues[.payload] = nil
+
+        if !FileManager.default.fileExists(atPath: SyncEngine.temporaryAssetStorage.path()) {
+            try FileManager.default.createDirectory(atPath: SyncEngine.temporaryAssetStorage.path(), withIntermediateDirectories: true)
+        }
+        let tempURL = SyncEngine.temporaryAssetStorage.appending(component: "\(UUID().uuidString).asset")
+        try payload.write(to: tempURL, options: .atomic)
+        let asset = CKAsset(fileURL: tempURL)
+        record[.payloadAsset] = asset
     }
 }
 
@@ -1182,8 +1228,13 @@ extension SyncEngine: SyncEngineDelegate {
             let sentQueueId = SyncEngine.makeCKRecordSentQueueId(queueId: object.id, objectId: object.objectId, deviceId: deviceId)
             record.sentQueueId = sentQueueId
             record.lastModifiedByDeviceId = deviceId
-            object.populateRecord(record)
-            recordsToSave.append(record)
+            do {
+                try object.populateRecord(record)
+                recordsToSave.append(record)
+            } catch {
+                Logger.syncEngine.error("populateRecord error \(error, privacy: .public)")
+                syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
+            }
         }
 
         /// 更新为 uploading
