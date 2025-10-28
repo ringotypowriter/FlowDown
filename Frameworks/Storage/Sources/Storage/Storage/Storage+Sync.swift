@@ -164,7 +164,7 @@ package extension Storage {
     }
 
     private func handleRemoteUpsertConversation(serverRecord: CKRecord, handle: Handle) throws {
-        guard let payload = serverRecord.encryptedValues[.payload] as? Data else { return }
+        guard let payload = serverRecord.payloadData else { return }
 
         guard let remoteObject = try? Conversation.decodePayload(payload) else {
             Logger.syncEngine.error("handleRemoteUpsertConversation decodePayload fail")
@@ -198,7 +198,7 @@ package extension Storage {
     }
 
     private func handleRemoteUpsertMessage(serverRecord: CKRecord, handle: Handle) throws {
-        guard let payload = serverRecord.encryptedValues[.payload] as? Data else { return }
+        guard let payload = serverRecord.payloadData else { return }
 
         guard let remoteObject = try? Message.decodePayload(payload) else {
             Logger.syncEngine.error("handleRemoteUpsertMessage decodePayload fail")
@@ -232,7 +232,7 @@ package extension Storage {
     }
 
     private func handleRemoteUpsertAttachment(serverRecord: CKRecord, handle: Handle) throws {
-        guard let payload = serverRecord.encryptedValues[.payload] as? Data else { return }
+        guard let payload = serverRecord.payloadData else { return }
 
         guard let remoteObject = try? Attachment.decodePayload(payload) else {
             Logger.syncEngine.error("handleRemoteUpsertAttachment decodePayload fail")
@@ -266,7 +266,7 @@ package extension Storage {
     }
 
     private func handleRemoteUpsertCloudModel(serverRecord: CKRecord, handle: Handle) throws {
-        guard let payload = serverRecord.encryptedValues[.payload] as? Data else { return }
+        guard let payload = serverRecord.payloadData else { return }
 
         guard let remoteObject = try? CloudModel.decodePayload(payload) else {
             Logger.syncEngine.error("handleRemoteUpsertCloudModel decodePayload fail")
@@ -300,7 +300,7 @@ package extension Storage {
     }
 
     private func handleRemoteUpsertModelContextServer(serverRecord: CKRecord, handle: Handle) throws {
-        guard let payload = serverRecord.encryptedValues[.payload] as? Data else { return }
+        guard let payload = serverRecord.payloadData else { return }
 
         guard let remoteObject = try? ModelContextServer.decodePayload(payload) else {
             Logger.syncEngine.error("handleRemoteUpsertModelContextServer decodePayload fail")
@@ -344,7 +344,7 @@ package extension Storage {
     }
 
     private func handleRemoteUpsertMemory(serverRecord: CKRecord, handle: Handle) throws {
-        guard let payload = serverRecord.encryptedValues[.payload] as? Data else { return }
+        guard let payload = serverRecord.payloadData else { return }
 
         guard let remoteObject = try? Memory.decodePayload(payload) else {
             Logger.syncEngine.error("handleRemoteUpsertMemory decodePayload fail")
