@@ -389,7 +389,14 @@
       }
     },
     "An error occurred during compression: %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩对话遇到错五：%@"
+          }
+        }
+      }
     },
     "An error occurred while rewriting the message: %@" : {
       "localizations" : {
@@ -6901,10 +6908,6 @@
       }
     },
     "This conversation is created by compressing \"%@\"." : {
-
-    },
-    "This conversation is created by compressing %@." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
