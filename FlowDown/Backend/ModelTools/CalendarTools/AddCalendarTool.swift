@@ -178,7 +178,7 @@ class MTAddCalendarTool: ModelTool, @unchecked Sendable {
         // Check if controller already has a presented view controller
         guard controller.presentedViewController == nil else {
             continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
-                NSLocalizedDescriptionKey: String(localized: "Cannot display dialog: another dialog is already presented."),
+                NSLocalizedDescriptionKey: String(localized: "Tool execution failed: authorization dialog is already presented."),
             ]))
             return
         }

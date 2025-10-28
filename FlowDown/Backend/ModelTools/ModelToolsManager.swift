@@ -182,20 +182,20 @@ class ModelToolsManager {
                         setupActions: setupContext
                     )
                 }
-                
+
                 // Check if view controller already has a presented view controller
                 guard let parentVC = view.parentViewController else {
                     ans = String(localized: "Tool execution failed: parent view controller not found.")
                     sem.signal()
                     return
                 }
-                
+
                 guard parentVC.presentedViewController == nil else {
-                    ans = String(localized: "Tool execution failed: another dialog is already presented.")
+                    ans = String(localized: "Tool execution failed: authorization dialog is already presented.")
                     sem.signal()
                     return
                 }
-                
+
                 parentVC.present(alert, animated: true)
             }
             sem.wait()

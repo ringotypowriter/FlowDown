@@ -7208,6 +7208,26 @@
         }
       }
     },
+    "Tool execution failed: authorization dialog is already presented." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具执行失败：另一个授权请求正在进行中。"
+          }
+        }
+      }
+    },
+    "Tool execution failed: parent view controller not found." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具调用失败：无法展示授权请求。"
+          }
+        }
+      }
+    },
     "Tools" : {
       "localizations" : {
         "zh-Hans" : {
