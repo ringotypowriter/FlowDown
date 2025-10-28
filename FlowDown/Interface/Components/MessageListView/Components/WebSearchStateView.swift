@@ -206,8 +206,17 @@ extension WebSearchStateView {
             2 * verticalPadding + labelFont.lineHeight
         }
 
+        override var intrinsicContentSize: CGSize {
+            let imageSize = magnifyImageView.intrinsicContentSize
+            let textSize = textLabel.intrinsicContentSize
+            let width = horizontalPadding + imageSize.width + Self.spacing + textSize.width + horizontalPadding
+            let height = 2 * Self.verticalPadding + textLabel.font.lineHeight
+            return CGSize(width: width, height: height)
+        }
+
         func update(with phase: Message.WebSearchStatus) {
             setNeedsLayout()
+            invalidateIntrinsicContentSize()
 
             let keyword: String? = phase.queries[safe: phase.currentQuery]
             let numberOfResults = phase.numberOfResults
