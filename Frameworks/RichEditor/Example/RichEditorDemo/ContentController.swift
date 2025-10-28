@@ -9,7 +9,7 @@ import RichEditor
 import UIKit
 
 class ContentController: UIViewController, RichEditorView.Delegate {
-    let editor = RichEditorView(conversationIdentifier: UUID(uuidString: "83fa720a-a511-4d75-a963-a18198485d3f")!)
+    let editor = RichEditorView()
     let textView = UITextView()
 
     init() {
@@ -49,21 +49,19 @@ class ContentController: UIViewController, RichEditorView.Delegate {
         textView.textContainerInset = .init(top: 16, left: 16, bottom: 16, right: 16)
         textView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(textView)
-        [
+        NSLayoutConstraint.activate([
             textView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             textView.topAnchor.constraint(equalTo: view.topAnchor),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ]
-        .forEach { $0.isActive = true }
+        ])
 
         view.addSubview(editor)
-        [
+        NSLayoutConstraint.activate([
             editor.widthAnchor.constraint(equalTo: view.widthAnchor),
             editor.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             editor.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ]
-        .forEach { $0.isActive = true }
+        ])
 
         textView.text = "Submit to see object."
         textView.textColor = .label
@@ -76,25 +74,35 @@ class ContentController: UIViewController, RichEditorView.Delegate {
         textView.contentSize = .init(width: 100, height: 4000)
     }
 
-    func onRichEditorSubmit(object: RichEditor.RichEditorView.Object) {
+    func onRichEditorSubmit(object: RichEditor.RichEditorView.Object, completion: @escaping (Bool) -> Void) {
         do {
             let data = try JSONEncoder().encode(object)
-            let object = try JSONSerialization.jsonObject(with: data, options: [])
-            let prettyData = try JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted])
+            let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+            let prettyData = try JSONSerialization.data(withJSONObject: jsonObject, options: [.prettyPrinted])
             guard let prettyString = String(data: prettyData, encoding: .utf8) else {
                 throw NSError(domain: "Error", code: -1, userInfo: nil)
             }
             textView.text = prettyString
+
+            // Simulate async work
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.async {
+                    completion(true)
+                }
+            }
         } catch {
             textView.text = "Error: \(error)"
+            completion(false)
         }
+    }
 
-        let handler = editor.withProgress {
-            print("[*] cancel triggered")
-        }
-        DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
-            handler()
-        }
+    func onRichEditorError(_ error: String) {
+        print("[*] Error: \(error)")
+        // You can show an alert or handle the error as needed
+    }
+
+    func onRichEditorTogglesUpdate(object: RichEditor.RichEditorView.Object) {
+        print("[*] Toggles updated: \(object)")
     }
 
     func onRichEditorRequestObjectForRestore() -> RichEditor.RichEditorView.Object? {
@@ -122,11 +130,27 @@ class ContentController: UIViewController, RichEditorView.Delegate {
         completion()
     }
 
+    func onRichEditorShowAlternativeModelMenu(anchor: UIView) {
+        print("[*] Show alternative model menu from anchor: \(anchor)")
+        // Implement your model menu here
+    }
+
     func onRichEditorRequestCurrentModelName() -> String? {
         currentModel
     }
 
     func onRichEditorRequestCurrentModelIdentifier() -> String? {
         UUID().uuidString
+    }
+
+    func onRichEditorCheckIfModelSupportsToolCall(_: String) -> Bool {
+        // Return true if this model supports tool calls
+        // For now, just return true for demonstration
+        true
+    }
+
+    func onRichEditorShowAlternativeToolsMenu(anchor: UIView) {
+        print("[*] Show alternative tools menu from anchor: \(anchor)")
+        // Implement your tools menu here
     }
 }
