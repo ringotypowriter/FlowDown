@@ -15,14 +15,14 @@ public final class Memory: Identifiable, Codable, TableNamed, DeviceOwned, Table
         objectId
     }
 
-    public var objectId: String = UUID().uuidString
-    public var deviceId: String = ""
-    public var content: String = ""
-    public var creation: Date = .now
-    public var conversationId: String? = nil
+    public package(set) var objectId: String = UUID().uuidString
+    public package(set) var deviceId: String = ""
+    public package(set) var content: String = ""
+    public package(set) var creation: Date = .now
+    public package(set) var conversationId: String? = nil
 
-    public var removed: Bool = false
-    public var modified: Date = .now
+    public package(set) var removed: Bool = false
+    public package(set) var modified: Date = .now
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = Memory
@@ -65,7 +65,7 @@ public final class Memory: Identifiable, Codable, TableNamed, DeviceOwned, Table
 
 extension Memory: Updatable {
     @discardableResult
-    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Memory, Value>, to newValue: Value) -> Bool where Value: Equatable {
+    public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Memory, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
         self[keyPath: keyPath] = newValue
@@ -73,7 +73,7 @@ extension Memory: Updatable {
         return true
     }
 
-    public func update(_ block: (Memory) -> Void) {
+    package func update(_ block: (Memory) -> Void) {
         block(self)
         markModified()
     }

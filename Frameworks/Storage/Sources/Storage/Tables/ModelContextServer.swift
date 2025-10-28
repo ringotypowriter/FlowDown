@@ -172,7 +172,7 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
 
 extension ModelContextServer: Updatable {
     @discardableResult
-    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<ModelContextServer, Value>, to newValue: Value) -> Bool where Value: Equatable {
+    public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<ModelContextServer, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
         self[keyPath: keyPath] = newValue
@@ -180,7 +180,7 @@ extension ModelContextServer: Updatable {
         return true
     }
 
-    public func update(_ block: (ModelContextServer) -> Void) {
+    package func update(_ block: (ModelContextServer) -> Void) {
         block(self)
         markModified()
     }

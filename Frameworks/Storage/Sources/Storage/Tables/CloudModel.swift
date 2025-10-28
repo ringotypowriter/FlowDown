@@ -165,7 +165,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
 
 extension CloudModel: Updatable {
     @discardableResult
-    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<CloudModel, Value>, to newValue: Value) -> Bool where Value: Equatable {
+    public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<CloudModel, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
         self[keyPath: keyPath] = newValue
@@ -173,7 +173,7 @@ extension CloudModel: Updatable {
         return true
     }
 
-    public func update(_ block: (CloudModel) -> Void) {
+    package func update(_ block: (CloudModel) -> Void) {
         block(self)
         markModified()
     }

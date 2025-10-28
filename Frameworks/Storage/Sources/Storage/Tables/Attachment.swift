@@ -15,19 +15,19 @@ public final class Attachment: Identifiable, Codable, TableNamed, DeviceOwned, T
         objectId
     }
 
-    public var objectId: String = UUID().uuidString
-    public var deviceId: String = Storage.deviceId
-    public var messageId: String = .init()
-    public var data: Data = .init()
-    public var previewImageData: Data = .init()
-    public var imageRepresentation: Data = .init()
-    public var representedDocument: String = ""
-    public var type: String = ""
-    public var name: String = ""
-    public var storageSuffix: String = ""
+    public package(set) var objectId: String = UUID().uuidString
+    public package(set) var deviceId: String = Storage.deviceId
+    public package(set) var messageId: String = .init()
+    public package(set) var data: Data = .init()
+    public package(set) var previewImageData: Data = .init()
+    public package(set) var imageRepresentation: Data = .init()
+    public package(set) var representedDocument: String = ""
+    public package(set) var type: String = ""
+    public package(set) var name: String = ""
+    public package(set) var storageSuffix: String = ""
 
-    public var removed: Bool = false
-    public var creation: Date = .now
+    public package(set) var removed: Bool = false
+    public package(set) var creation: Date = .now
     public var modified: Date = .now
 
     public enum CodingKeys: String, CodingTableKey {
@@ -82,7 +82,7 @@ public final class Attachment: Identifiable, Codable, TableNamed, DeviceOwned, T
 
 extension Attachment: Updatable {
     @discardableResult
-    public func update<Value>(_ keyPath: ReferenceWritableKeyPath<Attachment, Value>, to newValue: Value) -> Bool where Value: Equatable {
+    public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Attachment, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
         self[keyPath: keyPath] = newValue
@@ -90,7 +90,7 @@ extension Attachment: Updatable {
         return true
     }
 
-    public func update(_ block: (Attachment) -> Void) {
+    package func update(_ block: (Attachment) -> Void) {
         block(self)
         markModified()
     }

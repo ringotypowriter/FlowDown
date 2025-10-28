@@ -199,7 +199,7 @@ extension ChatView: RichEditorView.Delegate {
             currentSelection: modelIdentifier
         ) { modelIdentifier in
             ConversationManager.shared.editConversation(identifier: conversationIdentifier) { conv in
-                conv.modelId = modelIdentifier
+                conv.update(\.modelId, to: modelIdentifier)
             }
             if self.editorApplyModelToDefault {
                 ModelManager.ModelIdentifier.defaultModelForConversation = modelIdentifier

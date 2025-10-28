@@ -8,9 +8,20 @@
 import Foundation
 
 public protocol Updatable: AnyObject {
-    var modified: Date { get set }
-
     @discardableResult
     func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Self, Value>, to newValue: Value) -> Bool
-    func update(_ block: (Self) -> Void)
+
+    @discardableResult
+    func update<Value: Equatable>(_ keyPath: KeyPath<Self, Value>, to newValue: Value) -> Bool
+}
+
+public extension Updatable {
+    @discardableResult
+    func update<Value: Equatable>(_ keyPath: KeyPath<Self, Value>, to newValue: Value) -> Bool {
+        guard let writable = keyPath as? ReferenceWritableKeyPath<Self, Value> else {
+            assertionFailure("❌ Attempted to update a read-only keyPath: \(keyPath)")
+            return false
+        }
+        return update(writable, to: newValue)
+    }
 }

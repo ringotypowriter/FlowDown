@@ -140,8 +140,8 @@ public class MemoryStore: ObservableObject {
                         return
                     }
 
-                    existingMemory.content = trimmedContent
-                    existingMemory.creation = Date()
+                    existingMemory.update(\.content, to: trimmedContent)
+                    existingMemory.update(\.creation, to: Date.now)
                     try storage.updateMemory(existingMemory)
 
                     continuation.resume()
@@ -265,8 +265,8 @@ public class MemoryStore: ObservableObject {
                 return "Memory with ID \(id) not found."
             }
 
-            existingMemory.content = trimmedContent
-            existingMemory.creation = Date()
+            existingMemory.update(\.content, to: trimmedContent)
+            existingMemory.update(\.creation, to: Date.now)
             try storage.updateMemory(existingMemory)
 
             return "Memory updated successfully."
