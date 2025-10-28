@@ -284,6 +284,7 @@ class MTAddCalendarTool: ModelTool, @unchecked Sendable {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
         formatter.timeZone = TimeZone(abbreviation: "UTC")
+        formatter.locale = Locale(identifier: "en_US_POSIX")
 
         if let date = formatter.date(from: dateString) {
             return date
