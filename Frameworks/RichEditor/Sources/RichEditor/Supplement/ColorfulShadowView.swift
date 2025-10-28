@@ -70,10 +70,10 @@ final class ColorfulShadowView: UIView {
         isUserInteractionEnabled = false
         gradientView.isUserInteractionEnabled = false
         gradientView.backgroundColor = .clear
-        gradientView.transitionSpeed = 20
+        gradientView.transitionSpeed = 16
         gradientView.noise = 0
-        gradientView.bias /= 50000
-        gradientView.speed = 4
+        gradientView.bias /= 1000
+        gradientView.speed = 1
         addSubview(gradientView)
         maskLayer.contentsScale = layer.contentsScale
         gradientView.layer.mask = maskLayer
@@ -118,10 +118,7 @@ private extension ColorfulShadowView {
         format.scale = scale
         format.opaque = false
 
-        let strokeExpansion: CGFloat = mode == .appleIntelligence ? 1 : 0
-        let outerRect = geometry.innerRect.insetBy(dx: -strokeExpansion, dy: -strokeExpansion)
-        let outerPath = UIBezierPath(roundedRect: outerRect, cornerRadius: geometry.cornerRadius + strokeExpansion)
-        let innerPath = UIBezierPath(roundedRect: geometry.innerRect, cornerRadius: geometry.cornerRadius)
+        let shadowPath = UIBezierPath(roundedRect: geometry.innerRect, cornerRadius: geometry.cornerRadius)
 
         let image = UIGraphicsImageRenderer(size: bounds.size, format: format).image { context in
             let cgContext = context.cgContext
@@ -130,14 +127,14 @@ private extension ColorfulShadowView {
             cgContext.saveGState()
             cgContext.setShadow(offset: geometry.offset, blur: geometry.blur * shadowRadius, color: UIColor.white.cgColor)
             cgContext.setFillColor(UIColor.white.cgColor)
-            cgContext.addPath(outerPath.cgPath)
+            cgContext.addPath(shadowPath.cgPath)
             cgContext.fillPath()
             cgContext.restoreGState()
 
             // Cut out the inner rect to create stroke effect
             cgContext.saveGState()
             cgContext.setBlendMode(.clear)
-            cgContext.addPath(innerPath.cgPath)
+            cgContext.addPath(shadowPath.cgPath)
             cgContext.fillPath()
             cgContext.restoreGState()
         }
