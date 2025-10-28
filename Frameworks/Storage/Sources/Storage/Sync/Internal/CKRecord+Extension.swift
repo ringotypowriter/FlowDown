@@ -13,6 +13,7 @@ package extension CKRecord.FieldKey {
     static let createByDeviceId = "createByDeviceId"
     static let lastModifiedByDeviceId = "lastModifiedByDeviceId"
     static let payload = "payload"
+    static let payloadAsset = "payloadAsset"
     static let lastModifiedMilliseconds = "lastModifiedMilliseconds"
 }
 
@@ -44,6 +45,28 @@ package extension CKRecord {
     var lastModifiedMilliseconds: Int64 {
         get { self[.lastModifiedMilliseconds] as? Int64 ?? 0 }
         set { self[.lastModifiedMilliseconds] = newValue }
+    }
+
+    var payloadData: Data? {
+        if let payload = encryptedValues[.payload] as? Data {
+            return payload
+        }
+
+        if let asset = self[.payloadAsset] as? CKAsset, let fileURL = asset.fileURL {
+            let data = try? Data(contentsOf: fileURL)
+            return data
+        }
+
+        return nil
+    }
+
+    func clearTemporaryAssets(prefix: URL) {
+        guard let asset = self[.payloadAsset] as? CKAsset, let fileURL = asset.fileURL else { return }
+        guard fileURL.path().hasPrefix(prefix.path()) else {
+            return
+        }
+
+        try? FileManager.default.removeItem(at: fileURL)
     }
 }
 
