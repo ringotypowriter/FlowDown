@@ -182,16 +182,21 @@ open class RemoteChatClient: ChatService {
                         }
                         do {
                             var response = try JSONDecoder().decode(ChatCompletionChunk.self, from: data)
-                            let reasoningContent = [
-                                response.choices.map(\.delta).compactMap(\.reasoning),
-                                response.choices.map(\.delta).compactMap(\.reasoningContent),
-                            ].flatMap(\.self)
-                            let content = response.choices.map(\.delta).compactMap(\.content)
 
-                            if canDecodeReasoningContent { canDecodeReasoningContent = reasoningContent.isEmpty }
+                            // Check if any delta contains reasoning-related fields (even if empty)
+                            let hasReasoningField = response.choices.contains { choice in
+                                choice.delta.reasoning != nil || choice.delta.reasoningContent != nil
+                            }
 
+                            // Once we detect the API supports reasoning fields, disable tag-based parsing
+                            if canDecodeReasoningContent, hasReasoningField {
+                                canDecodeReasoningContent = false
+                            }
+
+                            // Only process <think> tags if API doesn't have native reasoning support
                             if canDecodeReasoningContent {
-                                self.processReasoningContent(content, reasoningContent, &isInsideReasoningContent, &response)
+                                let content = response.choices.map(\.delta).compactMap(\.content)
+                                self.processReasoningContent(content, [], &isInsideReasoningContent, &response)
                             }
 
                             for delta in response.choices {
