@@ -44,17 +44,16 @@ struct MigrationV0ToV1: DBMigration {
     func migrate(db: Database) throws {
         let start = Date.now
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
-        try db.run(transaction: {
-            try $0.create(table: AttachmentV1.tableName, of: AttachmentV1.self)
-            try $0.create(table: MessageV1.tableName, of: MessageV1.self)
-            try $0.create(table: ConversationV1.tableName, of: ConversationV1.self)
 
-            try $0.create(table: CloudModelV1.tableName, of: CloudModelV1.self)
-            try $0.create(table: ModelContextServerV1.tableName, of: ModelContextServerV1.self)
-            try $0.create(table: MemoryV1.tableName, of: MemoryV1.self)
+        try db.create(table: AttachmentV1.tableName, of: AttachmentV1.self)
+        try db.create(table: MessageV1.tableName, of: MessageV1.self)
+        try db.create(table: ConversationV1.tableName, of: ConversationV1.self)
 
-            try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
-        })
+        try db.create(table: CloudModelV1.tableName, of: CloudModelV1.self)
+        try db.create(table: ModelContextServerV1.tableName, of: ModelContextServerV1.self)
+        try db.create(table: MemoryV1.tableName, of: MemoryV1.self)
+
+        try db.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
         let elapsed = Date.now.timeIntervalSince(start) * 1000.0
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
@@ -71,36 +70,39 @@ struct MigrationV1ToV2: DBMigration {
         let start = Date.now
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
 
-        try db.run(transaction: {
-            if requiresDataMigration {
-                try performDataMigration(handle: $0)
-            } else {
-                try performSchemaMigration(handle: $0)
-            }
+        if requiresDataMigration {
+            try performDataMigration(db: db)
+        } else {
+            try performSchemaMigration(db: db)
+        }
 
-            try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
+        try db.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
-        })
+        if requiresDataMigration {
+            // 初始化上传队列
+            try initializeUploadQueue(db: db)
+        }
 
         let elapsed = Date.now.timeIntervalSince(start) * 1000.0
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
+
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end")
     }
 
-    private func performSchemaMigration(handle: Handle) throws {
-        try handle.create(table: Attachment.tableName, of: Attachment.self)
-        try handle.create(table: Message.tableName, of: Message.self)
-        try handle.create(table: Conversation.tableName, of: Conversation.self)
+    private func performSchemaMigration(db: Database) throws {
+        try db.create(table: Attachment.tableName, of: Attachment.self)
+        try db.create(table: Message.tableName, of: Message.self)
+        try db.create(table: Conversation.tableName, of: Conversation.self)
 
-        try handle.create(table: CloudModel.tableName, of: CloudModel.self)
-        try handle.create(table: ModelContextServer.tableName, of: ModelContextServer.self)
-        try handle.create(table: Memory.tableName, of: Memory.self)
+        try db.create(table: CloudModel.tableName, of: CloudModel.self)
+        try db.create(table: ModelContextServer.tableName, of: ModelContextServer.self)
+        try db.create(table: Memory.tableName, of: Memory.self)
 
-        try handle.create(table: SyncMetadata.tableName, of: SyncMetadata.self)
-        try handle.create(table: UploadQueue.tableName, of: UploadQueue.self)
+        try db.create(table: SyncMetadata.tableName, of: SyncMetadata.self)
+        try db.create(table: UploadQueue.tableName, of: UploadQueue.self)
     }
 
-    private func performDataMigration(handle: Handle) throws {
+    private func performDataMigration(db: Database) throws {
         // 重命名旧表
         let oldTableSuffix = "_old"
         let oldTables: [TableNamed.Type] = [
@@ -114,70 +116,74 @@ struct MigrationV1ToV2: DBMigration {
 
         var tableExists: [String: String] = [:]
         for table in oldTables {
-            if try handle.isTableExists(table.tableName) {
+            if try db.isTableExists(table.tableName) {
                 let oldTableName = "\(table.tableName)\(oldTableSuffix)"
                 let alter = StatementAlterTable().alter(table: table.tableName).rename(to: oldTableName)
-                try handle.exec(alter)
+                try db.exec(alter)
                 Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) rename \(table.tableName) -> \(oldTableName)")
                 tableExists[table.tableName] = oldTableName
             }
         }
 
         // 创建新表
-        try performSchemaMigration(handle: handle)
+        try performSchemaMigration(db: db)
 
-        if let oldTableName = tableExists[CloudModelV1.tableName] {
-            let cloudModelCount = try migrateCloudModels(handle: handle, oldTableName: oldTableName)
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) cloudModels \(cloudModelCount)")
-        }
+        try db.run(transaction: { handle in
+            if let oldTableName = tableExists[CloudModelV1.tableName] {
+                let cloudModelCount = try migrateCloudModels(handle: handle, oldTableName: oldTableName)
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) cloudModels \(cloudModelCount)")
+            }
 
-        if let oldTableName = tableExists[ModelContextServerV1.tableName] {
-            let modelContextServerCount = try migrateModelContextServers(handle: handle, oldTableName: oldTableName)
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) modelContextServers \(modelContextServerCount)")
-        }
+            if let oldTableName = tableExists[ModelContextServerV1.tableName] {
+                let modelContextServerCount = try migrateModelContextServers(handle: handle, oldTableName: oldTableName)
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) modelContextServers \(modelContextServerCount)")
+            }
 
-        if let oldTableName = tableExists[MemoryV1.tableName] {
-            let memoryCount = try migrateMemorys(handle: handle, oldTableName: oldTableName)
-            Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) memorys \(memoryCount)")
-        }
+            if let oldTableName = tableExists[MemoryV1.tableName] {
+                let memoryCount = try migrateMemorys(handle: handle, oldTableName: oldTableName)
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) memorys \(memoryCount)")
+            }
+        })
 
-        while true {
-            var conversationsMap: [ConversationV1.ID: Conversation] = [:]
-            var messagesMap: [MessageV1.ID: Message] = [:]
+        var conversationsMap: [ConversationV1.ID: Conversation] = [:]
+        var messagesMap: [MessageV1.ID: Message] = [:]
 
-            // 迁移会话
-            if let oldTableName = tableExists[ConversationV1.tableName] {
+        // 迁移会话
+        if let oldTableName = tableExists[ConversationV1.tableName] {
+            try db.run(transaction: { handle in
                 conversationsMap = try migrateConversations(handle: handle, oldTableName: oldTableName)
                 guard !conversationsMap.isEmpty else {
-                    break
+                    return
                 }
                 Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) conversations \(conversationsMap.count)")
-            }
+            })
+        }
 
-            // 迁移消息
-            if let oldTableName = tableExists[MessageV1.tableName] {
+        // 迁移消息
+        if let oldTableName = tableExists[MessageV1.tableName] {
+            try db.run(transaction: { handle in
                 messagesMap = try migrateMessages(handle: handle, conversationsMap: conversationsMap, oldTableName: oldTableName)
                 guard !messagesMap.isEmpty else {
-                    break
+                    return
                 }
                 Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) messages \(messagesMap.count)")
-            }
+            })
+        }
 
-            // 迁移附件
-            if let oldTableName = tableExists[AttachmentV1.tableName] {
+        // 迁移附件
+        if let oldTableName = tableExists[AttachmentV1.tableName] {
+            try db.run(transaction: { handle in
                 let attachments = try migrateAttachments(handle: handle, messagesMap: messagesMap, oldTableName: oldTableName)
                 guard !attachments.isEmpty else {
-                    break
+                    return
                 }
                 Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) attachments \(attachments.count)")
-            }
-
-            break
+            })
         }
 
         // 删除旧表
         for (_, oldTable) in tableExists {
-            try handle.drop(table: oldTable)
+            try db.drop(table: oldTable)
         }
     }
 
@@ -373,6 +379,94 @@ struct MigrationV1ToV2: DBMigration {
 
         return migrateAttachment
     }
+
+    /// 初始化上传队列
+    private func initializeUploadQueue(db: Database) throws {
+        let start = Date.now
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) initializeUploadQueue begin")
+
+        let tables: [any (Syncable & SyncQueryable).Type] = [
+            CloudModel.self,
+            ModelContextServer.self,
+            Conversation.self,
+            Message.self,
+            Attachment.self,
+            Memory.self,
+        ]
+
+        let row = try db.getRow(on: UploadQueue.Properties.id.max(), fromTable: UploadQueue.tableName)
+        var startId = row[0].int64Value
+        for table in tables {
+            startId = try initializeMigrationUploadQueue(table: table, db: db, startId: startId + 1)
+        }
+
+        let elapsed = Date.now.timeIntervalSince(start) * 1000.0
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) initializeUploadQueue end elapsed \(Int(elapsed), privacy: .public)ms")
+    }
+
+    private func initializeMigrationUploadQueue<T: Syncable & SyncQueryable>(table _: T.Type, db: Database, startId: Int64) throws -> Int64 {
+        let batchSize = 500
+        var lastObjectId: String?
+        var lastCreation: Date?
+        var innerStartId = startId
+        var lastInsertedRowID = startId
+
+        while true {
+            var finish = false
+            try db.run(transaction: { handle in
+                let objects: [T] = if let lastObjectId, let lastCreation {
+                    try handle.getObjects(
+                        fromTable: T.tableName,
+                        where:
+                        T.SyncQuery.creation >= lastCreation
+                            && T.SyncQuery.objectId != lastObjectId,
+                        orderBy: [
+                            T.SyncQuery.creation.order(.ascending),
+                        ],
+                        limit: batchSize
+                    )
+                } else {
+                    try handle.getObjects(
+                        fromTable: T.tableName,
+                        orderBy: [
+                            T.SyncQuery.creation.order(.ascending),
+                        ],
+                        limit: batchSize
+                    )
+                }
+
+                guard !objects.isEmpty else {
+                    finish = true
+                    return
+                }
+
+                lastObjectId = objects.last?.objectId
+                lastCreation = objects.last?.creation
+                var queues: [UploadQueue] = []
+                for object in objects {
+                    let queue = try UploadQueue(source: object, changes: object.removed ? .delete : .insert)
+                    queue.id = innerStartId
+                    innerStartId += 1
+                    queues.append(queue)
+                }
+
+                try handle.insert(queues, intoTable: UploadQueue.tableName)
+                lastInsertedRowID = handle.lastInsertedRowID
+
+                Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) firstMigrationUploadQueue \(T.tableName, privacy: .public)  -> batch \(queues.count, privacy: .public)")
+
+                if objects.count < batchSize {
+                    finish = true
+                }
+            })
+
+            if finish {
+                break
+            }
+        }
+
+        return lastInsertedRowID
+    }
 }
 
 struct MigrationV2ToV3: DBMigration {
@@ -383,15 +477,13 @@ struct MigrationV2ToV3: DBMigration {
     func migrate(db: Database) throws {
         let start = Date.now
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
-        try db.run(transaction: {
-            // 增加了字段
-            try $0.create(table: Message.tableName, of: Message.self)
+        // 增加了字段
+        try db.create(table: Message.tableName, of: Message.self)
 
-            // 调整了索引
-            try db.create(table: UploadQueue.tableName, of: UploadQueue.self)
+        // 调整了索引
+        try db.create(table: UploadQueue.tableName, of: UploadQueue.self)
 
-            try $0.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
-        })
+        try db.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
 
         let elapsed = Date.now.timeIntervalSince(start) * 1000.0
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")

@@ -29,7 +29,6 @@ public class Storage {
     package typealias UploadQueueEnqueueHandler = (_ queues: [UploadQueue]) -> Void
     package var uploadQueueEnqueueHandler: UploadQueueEnqueueHandler?
 
-    private var didInitializeUploadQueue = false
     private let existsDatabaseFile: Bool
     private let migrations: [DBMigration]
     private static var _deviceId: String?
@@ -111,6 +110,8 @@ public class Storage {
 
         try setup(db: db)
 
+        try resetUploadQueueMaxID()
+
         // 将上传中/上传失败的同步记录重置为Pending
         try db.run(transaction: { [unowned self] in
             try pendingUploadRestToPendingState(handle: $0)
@@ -124,19 +125,9 @@ public class Storage {
             initVersion
         }
 
-        var shouldInitializeUploadQueue = false
         while let migration = migrations.first(where: { $0.fromVersion == version }) {
             try migration.migrate(db: db)
             version = migration.toVersion
-            /// 只有V1 到 V2 需要执行初始化上传队列
-            if migration.fromVersion == .Version1, migration.toVersion == .Version2 {
-                shouldInitializeUploadQueue = true
-            }
-        }
-
-        if shouldInitializeUploadQueue {
-            try initializeUploadQueue()
-            didInitializeUploadQueue = true
         }
     }
 
@@ -179,6 +170,30 @@ public class Storage {
 
             try $0.exec(updateTableSequence)
         })
+    }
+
+    /// 重置上传队列自增ID初始值
+    private func resetUploadQueueMaxID() throws {
+        let select = StatementSelect().select(UploadQueue.Properties.id.count())
+            .from(UploadQueue.tableName)
+        let row = try db.getRow(from: select)
+        guard let row else { return }
+
+        let count = row[0].int64Value
+
+        guard count == 0 else {
+            return
+        }
+
+        let nameColumn = WCDBSwift.Column(named: "name")
+        let seqColumn = WCDBSwift.Column(named: "seq")
+        let updateTableSequence = StatementUpdate()
+            .update(table: "sqlite_sequence")
+            .set(seqColumn)
+            .to(0)
+            .where(nameColumn == UploadQueue.tableName)
+
+        try db.exec(updateTableSequence)
     }
 }
 
@@ -336,10 +351,8 @@ public extension Storage {
             Logger.database.info("Import the database and execute the migration.")
             /// 内部会按照数据迁移的流程走,确保相关表一定是存在的
             let tempDB = try Storage(name: "Import", databaseDir: unzipTarget)
-
-            if !tempDB.didInitializeUploadQueue {
-                try tempDB.initializeUploadQueue()
-            }
+            /// 初始化上传队列
+            try tempDB.reinitializeUploadQueue()
 
             /// 关闭数据库
             tempDB.db.close()
