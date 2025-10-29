@@ -159,6 +159,7 @@ class ModelToolsManager {
                 let setupContext: (ActionContext) -> Void = { context in
                     context.addAction(title: String(localized: "Cancel")) {
                         context.dispose {
+                            ans = String(localized: "Tool execution cancelled by user")
                             sem.signal()
                         }
                     }
