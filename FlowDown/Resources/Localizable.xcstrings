@@ -5071,12 +5071,12 @@
         }
       }
     },
-    "Open in Safari" : {
+    "Open in Default Browser" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Safari 中打开"
+            "value" : "在默认浏览器中打开"
           }
         }
       }

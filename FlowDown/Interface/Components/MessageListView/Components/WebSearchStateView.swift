@@ -82,7 +82,7 @@ final class WebSearchStateView: MessageListRowView {
                         parentViewController?.present(shareSheet, animated: true)
                     },
                     UIAction(
-                        title: String(localized: "Open in Safari"),
+                        title: String(localized: "Open in Default Browser"),
                         image: UIImage(systemName: "safari")
                     ) { [weak self] _ in
                         guard let self else { return }

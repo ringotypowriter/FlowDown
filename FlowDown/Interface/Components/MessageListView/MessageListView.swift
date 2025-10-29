@@ -189,7 +189,7 @@ final class MessageListView: UIView {
                     )
                     self?.parentViewController?.present(shareSheet, animated: true)
                 },
-                UIAction(title: String(localized: "Open in Safari"), image: UIImage(systemName: "safari")) { [weak self] _ in
+                UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }
                     Indicator.open(link, referencedView: self)
                 },
