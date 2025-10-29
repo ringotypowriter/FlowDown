@@ -51,7 +51,13 @@ import MLX
 
 import Storage
 
-let sdb = try Storage.db()
+let sdb: Storage = {
+    do {
+        return try Storage.db()
+    } catch {
+        fatalError(error.localizedDescription)
+    }
+}()
 
 let syncEngine = SyncEngine(
     storage: sdb,

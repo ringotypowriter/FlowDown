@@ -384,20 +384,3 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         view.parentViewController?.present(picker, animated: true)
     }
 }
-
-#if DEBUG && canImport(SwiftUI)
-    import SwiftUI
-
-    struct ChatTemplateEditorControllerPreview: PreviewProvider {
-        static var previews: some View {
-            UIViewControllerPreview {
-                let id = UUID(uuidString: "152e61da-d457-43fe-b0df-fd58e53b14ec")!
-                var template = ChatTemplate()
-                template.id = id
-                ChatTemplateManager.shared.templates[id] = template
-                return ChatTemplateEditorController(templateIdentifier: id)
-            }
-            .previewLayout(.fixed(width: 555, height: 555))
-        }
-    }
-#endif
