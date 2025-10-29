@@ -264,7 +264,13 @@ extension SettingController.SettingContent {
 
 extension SettingController.SettingContent {
     class SettingFooterView: UIView {
-        let versionButton = UIButton(type: .system).with {
+        let stackView = UIStackView().with {
+            $0.axis = .vertical
+            $0.alignment = .center
+            $0.spacing = 8
+        }
+
+        let versionLabel = UILabel().with {
             let version = String(AnchorVersion.version)
             let build = String(AnchorVersion.build)
             let text = String(format: String(localized: "Version %@ (%@)"), version, build)
@@ -273,23 +279,40 @@ extension SettingController.SettingContent {
             #else
                 let finalText = text
             #endif
-            $0.setTitle(finalText, for: .normal)
-            $0.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
-            $0.setTitleColor(.secondaryLabel, for: .normal)
-            $0.contentHorizontalAlignment = .center
+            $0.text = finalText
+            $0.font = .preferredFont(forTextStyle: .caption2)
+            $0.textColor = .tertiaryLabel
+            $0.textAlignment = .center
+            $0.numberOfLines = 1
+        }
+
+        let buildTimeLabel = UILabel().with {
+            $0.text = BuildInfo.buildTime
+            $0.font = .preferredFont(forTextStyle: .caption2).monospaced
+            $0.textColor = .tertiaryLabel
+            $0.textAlignment = .center
+            $0.numberOfLines = 1
+        }
+
+        let commitLabel = UILabel().with {
+            let commitID = BuildInfo.commitID
+            let displayCommit = commitID.isEmpty ? "N/A" : String(commitID)
+            $0.text = displayCommit
+            $0.font = .preferredFont(forTextStyle: .caption2).monospaced
+            $0.textColor = .tertiaryLabel
+            $0.textAlignment = .center
+            $0.numberOfLines = 1
         }
 
         init() {
             super.init(frame: .zero)
-            addSubview(versionButton)
-            let action = UIAction { _ in
-                UpdateManager.shared.anchor(self)
-                UpdateManager.shared.performUpdateCheckFromUI()
-            }
-            versionButton.addAction(action, for: .touchUpInside)
 
-            addSubview(versionButton)
-            versionButton.snp.makeConstraints { make in
+            addSubview(stackView)
+            stackView.addArrangedSubview(versionLabel)
+            stackView.addArrangedSubview(buildTimeLabel)
+            stackView.addArrangedSubview(commitLabel)
+
+            stackView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
         }
