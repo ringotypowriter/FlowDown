@@ -198,8 +198,8 @@ extension ChatView: RichEditorView.Delegate {
             anchoringView: anchor,
             currentSelection: modelIdentifier
         ) { modelIdentifier in
-            ConversationManager.shared.editConversation(identifier: conversationIdentifier) { conv in
-                conv.update(\.modelId, to: modelIdentifier)
+            ConversationManager.shared.editConversation(identifier: conversationIdentifier) {
+                $0.update(\.modelId, to: modelIdentifier)
             }
             if self.editorApplyModelToDefault {
                 ModelManager.ModelIdentifier.defaultModelForConversation = modelIdentifier
@@ -285,9 +285,9 @@ extension ChatView: RichEditorView.Delegate {
                         attributes: [.keepsMenuPresented],
                         state: server.isEnabled ? .on : .off
                     ) { action in
-                        MCPService.shared.edit(identifier: server.id) { server in
-                            server.isEnabled.toggle()
-                            action.state = server.isEnabled ? .on : .off
+                        MCPService.shared.edit(identifier: server.id) {
+                            $0.update(\.isEnabled, to: !$0.isEnabled)
+                            action.state = $0.isEnabled ? .on : .off
                         }
                     }
                 }

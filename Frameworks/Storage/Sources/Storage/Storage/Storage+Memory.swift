@@ -158,7 +158,6 @@ public extension Storage {
                 throw MemoryError.memoryNotFound(memory.objectId)
             }
 
-            memory.markModified()
             try db.insertOrReplace([memory], intoTable: Memory.tableName)
             try pendingUploadEnqueue(sources: [(memory, .update)])
 

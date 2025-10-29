@@ -51,8 +51,8 @@ extension ConversationManager {
                     ) { text in
                         guard !text.isEmpty else { return }
                         ConversationManager.shared.editConversation(identifier: conv.id) {
-                            $0.title = text
-                            $0.shouldAutoRename = false
+                            $0.update(\.title, to: text)
+                            $0.update(\.shouldAutoRename, to: false)
                         }
                     }
                     controller.present(alert, animated: true)
@@ -63,8 +63,9 @@ extension ConversationManager {
                 ) { _ in
                     let picker = EmojiPickerViewController(sourceView: view) { emoji in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
-                            $0.icon = emoji.emoji.textToImage(size: 128)?.pngData() ?? .init()
-                            $0.shouldAutoRename = false
+                            let icon = emoji.emoji.textToImage(size: 128)?.pngData() ?? .init()
+                            $0.update(\.icon, to: icon)
+                            $0.update(\.shouldAutoRename, to: false)
                         }
                     }
                     controller.present(picker, animated: true)
@@ -217,7 +218,8 @@ extension ConversationManager {
                             let session = sessionManager.session(for: conv.id)
                             if let emoji = await session.generateConversationIcon() {
                                 ConversationManager.shared.editConversation(identifier: conv.id) { conversation in
-                                    conversation.icon = emoji.textToImage(size: 128)?.pngData() ?? .init()
+                                    let icon = emoji.textToImage(size: 128)?.pngData() ?? .init()
+                                    conversation.update(\.icon, to: icon)
                                 }
                             } else {
                                 Indicator.present(
@@ -246,7 +248,7 @@ extension ConversationManager {
                             let session = sessionManager.session(for: conv.id)
                             if let title = await session.generateConversationTitle() {
                                 ConversationManager.shared.editConversation(identifier: conv.id) { conversation in
-                                    conversation.title = title
+                                    conversation.update(\.title, to: title)
                                 }
                             } else {
                                 Indicator.present(
@@ -273,7 +275,7 @@ extension ConversationManager {
                         image: UIImage(systemName: "star.slash")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
-                            $0.isFavorite = false
+                            $0.update(\.isFavorite, to: false)
                         }
                     }
                 } else {
@@ -287,7 +289,7 @@ extension ConversationManager {
                         image: UIImage(systemName: "star")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
-                            $0.isFavorite = true
+                            $0.update(\.isFavorite, to: true)
                         }
                     }
                 } else {
@@ -478,7 +480,7 @@ extension ConversationManager {
                                         attributes: .destructive
                                     ) { _ in
                                         ConversationManager.shared.editConversation(identifier: conv.id) {
-                                            $0.icon = .init()
+                                            $0.update(\.icon, to: .init())
                                         }
                                     }
                                 } else { nil }

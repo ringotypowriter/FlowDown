@@ -39,6 +39,9 @@ public extension Storage {
             block(object)
         }
 
+        object.creation = .now
+        object.modified = object.creation
+
         if skipSave {
             return object
         }
@@ -107,17 +110,6 @@ public extension Storage {
             fromTable: Conversation.tableName,
             where: Conversation.Properties.objectId == identifier && Conversation.Properties.removed == false
         )
-    }
-
-    func conversationEdit(identifier: Conversation.ID, _ block: @escaping (inout Conversation) -> Void) {
-        let read: Conversation? = try? db.getObject(
-            fromTable: Conversation.tableName,
-            where: Conversation.Properties.objectId == identifier && Conversation.Properties.removed == false
-        )
-        guard var object = read else { return }
-        block(&object)
-        object.markModified()
-        conversationUpdate(objects: [object])
     }
 
     func conversationIds(by messageIds: [Message.ID], handle: Handle? = nil) -> [Conversation.ID: [Message.ID]] {
@@ -195,13 +187,13 @@ public extension Storage {
 
         let nowDate = Date.now
         // 更新
-        conv.update {
-            $0.objectId = UUID().uuidString
-            $0.creation = nowDate
-            $0.modified = nowDate
-        }
+        conv.objectId = UUID().uuidString
 
         customize(conv)
+
+        conv.creation = nowDate
+        conv.modified = nowDate
+
         try handle.insert([conv], intoTable: Conversation.tableName)
 
         let newIdentifier = conv.objectId
@@ -228,12 +220,10 @@ public extension Storage {
             oldMessageIdentifierSet.insert(oldMessageId)
 
             // new
-            message.update {
-                $0.objectId = UUID().uuidString
-                $0.conversationId = newIdentifier
-                $0.creation = nowDate
-                $0.modified = nowDate
-            }
+            message.objectId = UUID().uuidString
+            message.conversationId = newIdentifier
+            message.creation = nowDate
+            message.modified = nowDate
 
             try handle.insert(message, intoTable: Message.tableName)
             let newMessageId = message.objectId
@@ -247,12 +237,11 @@ public extension Storage {
                 oldAttachmentIdentifierSet.insert(attachment.id)
 
                 // new
-                attachment.update {
-                    $0.objectId = UUID().uuidString
-                    $0.messageId = message.objectId
-                    $0.creation = nowDate
-                    $0.modified = nowDate
-                }
+                attachment.objectId = UUID().uuidString
+                attachment.messageId = message.objectId
+                attachment.creation = nowDate
+                attachment.modified = nowDate
+
                 try handle.insert(attachment, intoTable: Attachment.tableName)
             }
             let newAttachments: [Attachment] = try handle.getObjects(

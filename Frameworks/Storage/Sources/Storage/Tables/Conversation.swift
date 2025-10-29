@@ -11,17 +11,17 @@ public final class Conversation: Identifiable, Codable, TableNamed, DeviceOwned,
         objectId
     }
 
-    public var title: String = ""
-    public var creation: Date = .now
-    public var icon: Data = .init()
-    public var isFavorite: Bool = false
-    public var shouldAutoRename: Bool = true
-    public var modelId: String? = nil
+    public package(set) var title: String = ""
+    public package(set) var creation: Date = .now
+    public package(set) var icon: Data = .init()
+    public package(set) var isFavorite: Bool = false
+    public package(set) var shouldAutoRename: Bool = true
+    public package(set) var modelId: String? = nil
 
-    public var objectId: String = UUID().uuidString
-    public var deviceId: String = ""
-    public var removed: Bool = false
-    public var modified: Date = .init()
+    public package(set) var objectId: String = UUID().uuidString
+    public package(set) var deviceId: String = ""
+    public package(set) var removed: Bool = false
+    public package(set) var modified: Date = .init()
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = Conversation
@@ -70,9 +70,13 @@ extension Conversation: Updatable {
     public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Conversation, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
+        assign(keyPath, to: newValue)
+        return true
+    }
+
+    public func assign<Value>(_ keyPath: ReferenceWritableKeyPath<Conversation, Value>, to newValue: Value) {
         self[keyPath: keyPath] = newValue
         markModified()
-        return true
     }
 
     package func update(_ block: (Conversation) -> Void) {

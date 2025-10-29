@@ -50,9 +50,10 @@ extension ConversationManager {
         completion: @escaping (Result<Conversation.ID, Error>) -> Void
     ) {
         let conv = ConversationManager.shared.createNewConversation {
-            $0.title = title
-            $0.icon = "🗜️".textToImage(size: 64)?.pngData() ?? .init()
-            $0.shouldAutoRename = true
+            let icon = "🗜️".textToImage(size: 64)?.pngData() ?? .init()
+            $0.update(\.title, to: title)
+            $0.update(\.icon, to: icon)
+            $0.update(\.shouldAutoRename, to: true)
         }
         let sess = ConversationSessionManager.shared.session(for: conv.id)
 

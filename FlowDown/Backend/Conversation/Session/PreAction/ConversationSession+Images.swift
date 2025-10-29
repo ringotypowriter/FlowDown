@@ -95,7 +95,9 @@ extension ConversationSession {
         }
 
         let collapseAfterReasoningComplete = ModelManager.shared.collapseReasoningSectionWhenComplete
-        if collapseAfterReasoningComplete { message.update(\.isThinkingFold, to: true) }
+        if collapseAfterReasoningComplete {
+            message.update(\.isThinkingFold, to: true)
+        }
         stopThinking(for: message.objectId)
         await requestUpdate(view: currentMessageListView)
         await currentMessageListView.loading()

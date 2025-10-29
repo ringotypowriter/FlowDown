@@ -503,7 +503,7 @@ extension ConversationSession {
         let webSearchMessage = appendNewMessage(role: .webSearch) {
             var status = $0.webSearchStatus
             status.queries = searchQueries
-            $0.update(\.webSearchStatus, to: status)
+            $0.assign(\.webSearchStatus, to: status)
         }
 
         await requestUpdate(view: currentMessageListView)
@@ -532,7 +532,7 @@ extension ConversationSession {
             }
             var updatedStatus = webSearchMessage.webSearchStatus
             updatedStatus.searchResults.append(contentsOf: storableContent)
-            webSearchMessage.update(\.webSearchStatus, to: updatedStatus)
+            webSearchMessage.assign(\.webSearchStatus, to: updatedStatus)
         }
 
         for try await phase in gatheringWebContent(
@@ -548,12 +548,12 @@ extension ConversationSession {
             status.currentQueryBeginDate = phase.queryBeginDate
             status.numberOfResults = phase.numberOfResults
             status.proccessProgress = max(0.1, phase.proccessProgress)
-            webSearchMessage.update(\.webSearchStatus, to: status)
+            webSearchMessage.assign(\.webSearchStatus, to: status)
             await requestUpdate(view: currentMessageListView)
         }
         var finalStatus = webSearchMessage.webSearchStatus
         finalStatus.proccessProgress = 0
-        webSearchMessage.update(\.webSearchStatus, to: finalStatus)
+        webSearchMessage.assign(\.webSearchStatus, to: finalStatus)
         await requestUpdate(view: currentMessageListView)
 
         object.attachments.append(contentsOf: webAttachments)
@@ -561,7 +561,7 @@ extension ConversationSession {
         if webAttachments.isEmpty {
             var errorStatus = webSearchMessage.webSearchStatus
             errorStatus.proccessProgress = -1
-            webSearchMessage.update(\.webSearchStatus, to: errorStatus)
+            webSearchMessage.assign(\.webSearchStatus, to: errorStatus)
             throw NSError(
                 domain: "Inference Service",
                 code: -1,

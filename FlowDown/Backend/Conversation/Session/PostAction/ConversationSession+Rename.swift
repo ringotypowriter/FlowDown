@@ -12,15 +12,16 @@ import Storage
 extension ConversationSession {
     func updateTitleAndIcon() async {
         if let title = await generateConversationTitle() {
-            ConversationManager.shared.editConversation(identifier: id) { conversation in
-                conversation.title = title
-                conversation.shouldAutoRename = false
+            ConversationManager.shared.editConversation(identifier: id) {
+                $0.update(\.title, to: title)
+                $0.update(\.shouldAutoRename, to: false)
             }
         }
         if let emoji = await generateConversationIcon() {
-            ConversationManager.shared.editConversation(identifier: id) { conversation in
-                conversation.icon = emoji.textToImage(size: 128)?.pngData() ?? .init()
-                conversation.shouldAutoRename = false
+            ConversationManager.shared.editConversation(identifier: id) {
+                let icon = emoji.textToImage(size: 128)?.pngData() ?? .init()
+                $0.update(\.icon, to: icon)
+                $0.update(\.shouldAutoRename, to: false)
             }
         }
     }

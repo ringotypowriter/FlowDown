@@ -97,9 +97,13 @@ extension Message: Updatable {
     public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Message, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
+        assign(keyPath, to: newValue)
+        return true
+    }
+
+    public func assign<Value>(_ keyPath: ReferenceWritableKeyPath<Message, Value>, to newValue: Value) {
         self[keyPath: keyPath] = newValue
         markModified()
-        return true
     }
 
     package func update(_ block: (Message) -> Void) {
@@ -158,7 +162,7 @@ public extension Message {
 }
 
 public extension Message {
-    struct WebSearchStatus: Codable, ColumnCodable, Hashable, Equatable {
+    struct WebSearchStatus: Codable, ColumnCodable, Hashable {
         public var id: UUID = .init()
 
         public var queries: [String] = []

@@ -34,9 +34,9 @@ extension ConversationManager {
 
     func createNewConversation(_ block: Storage.ConversationMakeInitDataBlock? = nil) -> Conversation {
         let tempObject = sdb.conversationMake {
-            $0.title = String(localized: "Conversation")
+            $0.update(\.title, to: String(localized: "Conversation"))
             if $0.modelId?.isEmpty ?? true {
-                $0.modelId = ModelManager.ModelIdentifier.defaultModelForConversation
+                $0.update(\.modelId, to: ModelManager.ModelIdentifier.defaultModelForConversation)
             }
 
             if let block {
@@ -81,9 +81,11 @@ extension ConversationManager {
                 session.notifyMessagesDidChange()
 
                 editConversation(identifier: object.id) { conversation in
-                    conversation.title = String(localized: "Introduction to FlowDown")
-                    conversation.icon = "🥳".textToImage(size: 128)?.pngData() ?? .init()
-                    conversation.shouldAutoRename = false
+                    let icon = "🥳".textToImage(size: 128)?.pngData() ?? .init()
+
+                    conversation.update(\.title, to: String(localized: "Introduction to FlowDown"))
+                    conversation.update(\.icon, to: icon)
+                    conversation.update(\.shouldAutoRename, to: false)
                 }
 
                 ConversationManager.shouldShowGuideMessage = false
@@ -106,18 +108,18 @@ extension ConversationManager {
         let conv = conversation(identifier: identifier)
         guard var conv else { return }
         block(&conv)
-        conv.markModified()
         sdb.conversationUpdate(object: conv)
         scanAll()
     }
 
     func duplicateConversation(identifier: Conversation.ID) -> Conversation.ID? {
         let ans = sdb.conversationDuplicate(identifier: identifier) { conv in
-            conv.creation = .init()
-            conv.title = String(
+            let title = String(
                 format: String(localized: "%@ Copy"),
                 conv.title
             )
+
+            conv.update(\.title, to: title)
         }
         scanAll()
         return ans

@@ -18,6 +18,9 @@ public extension Storage {
             block(message)
         }
 
+        message.creation = .now
+        message.modified = message.creation
+
         if skipSave {
             return message
         }
@@ -117,17 +120,6 @@ public extension Storage {
         Task {
             try? await syncEngine?.sendChanges()
         }
-    }
-
-    func messageEdit(identifier: Message.ID, _ block: @escaping (inout Message) -> Void) {
-        let read: Message? = try? db.getObject(
-            fromTable: Message.tableName,
-            where: Message.Properties.objectId == identifier
-        )
-        guard var object = read else { return }
-        block(&object)
-        object.markModified()
-        messagePut(messages: [object])
     }
 
     func conversationIdentifierLookup(identifier: Message.ID) -> Conversation.ID? {

@@ -40,7 +40,7 @@ final class ConversationSession: Identifiable {
         get { ConversationManager.shared.conversation(identifier: id)?.shouldAutoRename ?? false }
         set {
             ConversationManager.shared.editConversation(identifier: id) { conv in
-                conv.shouldAutoRename = newValue
+                conv.update(\.shouldAutoRename, to: newValue)
             }
         }
     }
@@ -101,7 +101,6 @@ final class ConversationSession: Identifiable {
             }
 
             $0.update(\.role, to: role)
-            $0.update(\.creation, to: .now)
         }
 
         messages.append(message)

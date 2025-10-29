@@ -73,7 +73,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
                     guard let model = ModelManager.shared.cloudModel(identifier: itemIdentifier.identifier) else {
                         return
                     }
-                    model.objectId = UUID().uuidString
+                    model.update(\.objectId, to: UUID().uuidString)
                     ModelManager.shared.insertCloudModel(model)
                 }
             })

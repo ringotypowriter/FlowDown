@@ -29,6 +29,9 @@ public extension Storage {
             block(attachment)
         }
 
+        attachment.creation = .now
+        attachment.modified = attachment.creation
+
         if skipSave {
             return attachment
         }

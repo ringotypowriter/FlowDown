@@ -141,7 +141,6 @@ public class MemoryStore: ObservableObject {
                     }
 
                     existingMemory.update(\.content, to: trimmedContent)
-                    existingMemory.update(\.creation, to: Date.now)
                     try storage.updateMemory(existingMemory)
 
                     continuation.resume()
@@ -266,7 +265,6 @@ public class MemoryStore: ObservableObject {
             }
 
             existingMemory.update(\.content, to: trimmedContent)
-            existingMemory.update(\.creation, to: Date.now)
             try storage.updateMemory(existingMemory)
 
             return "Memory updated successfully."

@@ -28,6 +28,9 @@ public extension Storage {
             block(object)
         }
 
+        object.creation = .now
+        object.modified = object.creation
+
         try? runTransaction {
             try $0.insert([object], intoTable: ModelContextServer.tableName)
             try self.pendingUploadEnqueue(sources: [(object, .insert)], handle: $0)
@@ -99,7 +102,6 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
-        object.markModified()
         modelContextServerPut(objects: [object], skipSync: skipSync)
     }
 

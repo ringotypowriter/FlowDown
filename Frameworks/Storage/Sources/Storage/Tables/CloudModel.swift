@@ -15,27 +15,27 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         objectId
     }
 
-    public var objectId: String = UUID().uuidString
-    public var deviceId: String = Storage.deviceId
-    public var model_identifier: String = ""
-    public var model_list_endpoint: String = ""
-    public var creation: Date = .now
-    public var modified: Date = .now
-    public var removed: Bool = false
-    public var endpoint: String = ""
-    public var token: String = ""
-    public var headers: [String: String] = [:] // additional headers
-    public var capabilities: Set<ModelCapabilities> = []
-    public var context: ModelContextLength = .short_8k
-    public var temperature_preference: ModelTemperaturePreference = .inherit
-    public var temperature_override: Double?
+    public package(set) var objectId: String = UUID().uuidString
+    public package(set) var deviceId: String = Storage.deviceId
+    public package(set) var model_identifier: String = ""
+    public package(set) var model_list_endpoint: String = ""
+    public package(set) var creation: Date = .now
+    public package(set) var modified: Date = .now
+    public package(set) var removed: Bool = false
+    public package(set) var endpoint: String = ""
+    public package(set) var token: String = ""
+    public package(set) var headers: [String: String] = [:] // additional headers
+    public package(set) var capabilities: Set<ModelCapabilities> = []
+    public package(set) var context: ModelContextLength = .short_8k
+    public package(set) var temperature_preference: ModelTemperaturePreference = .inherit
+    public package(set) var temperature_override: Double?
 
     // can be used when loading model from our server
     // present to user on the top of the editor page
-    public var comment: String = ""
+    public package(set) var comment: String = ""
 
     // custom display name for the model
-    public var name: String = ""
+    public package(set) var name: String = ""
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = CloudModel
@@ -168,9 +168,13 @@ extension CloudModel: Updatable {
     public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<CloudModel, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
+        assign(keyPath, to: newValue)
+        return true
+    }
+
+    public func assign<Value>(_ keyPath: ReferenceWritableKeyPath<CloudModel, Value>, to newValue: Value) {
         self[keyPath: keyPath] = newValue
         markModified()
-        return true
     }
 
     package func update(_ block: (CloudModel) -> Void) {

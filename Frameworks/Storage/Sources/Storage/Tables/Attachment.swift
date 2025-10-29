@@ -85,9 +85,13 @@ extension Attachment: Updatable {
     public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<Attachment, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
+        assign(keyPath, to: newValue)
+        return true
+    }
+
+    public func assign<Value>(_ keyPath: ReferenceWritableKeyPath<Attachment, Value>, to newValue: Value) {
         self[keyPath: keyPath] = newValue
         markModified()
-        return true
     }
 
     package func update(_ block: (Attachment) -> Void) {

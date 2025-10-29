@@ -144,8 +144,8 @@ class MCPEditorController: StackScrollController {
         let enabledView = ConfigurableToggleActionView()
         enabledView.boolValue = server.isEnabled
         enabledView.actionBlock = { value in
-            MCPService.shared.edit(identifier: self.serverId) { client in
-                client.isEnabled = value
+            MCPService.shared.edit(identifier: self.serverId) {
+                $0.update(\.isEnabled, to: value)
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 // let toggle finish animate
@@ -177,8 +177,8 @@ class MCPEditorController: StackScrollController {
                     title: String(localized: "Streamble HTTP"),
                     image: UIImage(systemName: "network")
                 ) { _ in
-                    MCPService.shared.edit(identifier: self.serverId) { client in
-                        client.type = .http
+                    MCPService.shared.edit(identifier: self.serverId) {
+                        $0.update(\.type, to: .http)
                     }
                     self.refreshUI()
                     view.configure(value: String(localized: "Streamble HTTP"))
@@ -201,8 +201,8 @@ class MCPEditorController: StackScrollController {
                 placeholder: placeholder,
                 text: server.endpoint.isEmpty ? "https://" : server.endpoint
             ) { output in
-                MCPService.shared.edit(identifier: self.serverId) { client in
-                    client.endpoint = output
+                MCPService.shared.edit(identifier: self.serverId) {
+                    $0.update(\.endpoint, to: output)
                 }
                 self.refreshUI()
                 view.configure(value: output.isEmpty ? String(localized: "Not Configured") : output)
@@ -228,8 +228,9 @@ class MCPEditorController: StackScrollController {
                 }
                 let jsonData = try? JSONSerialization.data(withJSONObject: object, options: .prettyPrinted)
                 let jsonString = String(data: jsonData ?? Data(), encoding: .utf8) ?? ""
-                MCPService.shared.edit(identifier: self.serverId) { client in
-                    client.header = jsonString == "{}" ? "" : jsonString
+                MCPService.shared.edit(identifier: self.serverId) {
+                    let header = jsonString == "{}" ? "" : jsonString
+                    $0.update(\.header, to: header)
                 }
                 self.refreshUI()
                 view.configure(value: object.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
@@ -259,8 +260,8 @@ class MCPEditorController: StackScrollController {
                 placeholder: String(localized: "Nickname (Optional)"),
                 text: client.name
             ) { output in
-                MCPService.shared.edit(identifier: self.serverId) { server in
-                    server.name = output
+                MCPService.shared.edit(identifier: self.serverId) {
+                    $0.update(\.name, to: output)
                 }
                 self.refreshUI()
                 view.configure(value: output.isEmpty ? String(localized: "Not Configured") : output)

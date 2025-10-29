@@ -83,7 +83,6 @@ public extension Storage {
         )
         guard var object = read else { return }
         block(&object)
-        object.markModified()
         try? cloudModelPut(objects: [object])
     }
 

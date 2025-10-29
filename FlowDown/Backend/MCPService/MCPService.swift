@@ -177,10 +177,10 @@ class MCPService: NSObject {
 
     private func updateServerStatus(_ serverId: ModelContextServer.ID, status: ModelContextServer.ConnectionStatus) {
         // 连接状态不进行同步
-        edit(identifier: serverId, skipSync: true) { client in
-            client.connectionStatus = status
+        edit(identifier: serverId, skipSync: true) {
+            $0.update(\.connectionStatus, to: status)
             if status == .connected {
-                client.lastConnected = Date()
+                $0.update(\.lastConnected, to: .now)
             }
         }
     }
@@ -198,8 +198,8 @@ class MCPService: NSObject {
         }
 
         // capabilities不进行同步
-        edit(identifier: config.id, skipSync: true) { client in
-            client.capabilities = StringArrayCodable(discoveredCapabilities)
+        edit(identifier: config.id, skipSync: true) {
+            $0.assign(\.capabilities, to: StringArrayCodable(discoveredCapabilities))
         }
     }
 

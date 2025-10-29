@@ -84,9 +84,9 @@ class ChatTemplateManager {
     func createConversationFromTemplate(_ template: ChatTemplate) -> Conversation.ID {
         assert(Thread.isMainThread)
         let conversation = ConversationManager.shared.createNewConversation {
-            $0.icon = template.avatar
-            $0.title = template.name
-            $0.shouldAutoRename = true
+            $0.update(\.icon, to: template.avatar)
+            $0.update(\.title, to: template.name)
+            $0.update(\.shouldAutoRename, to: true)
         }
 
         let session = ConversationSessionManager.shared.session(for: conversation.id)

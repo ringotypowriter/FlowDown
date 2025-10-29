@@ -39,25 +39,25 @@ public final class ModelContextServer: Identifiable, Codable, TableNamed, Device
         objectId
     }
 
-    public var objectId: String = UUID().uuidString
-    public var deviceId: String = Storage.deviceId
-    public var name: String = ""
-    public var comment: String = ""
-    public var type: ServerType = .http
-    public var endpoint: String = ""
-    public var header: String = ""
-    public var timeout: Int = 60
-    public var isEnabled: Bool = true
-    public var toolsEnabled: EnableCodable = .init()
-    public var resourcesEnabled: EnableCodable = .init()
-    public var templateEnabled: EnableCodable = .init()
-    public var lastConnected: Date?
-    public var connectionStatus: ConnectionStatus = .disconnected
-    public var capabilities: StringArrayCodable = .init([])
+    public package(set) var objectId: String = UUID().uuidString
+    public package(set) var deviceId: String = Storage.deviceId
+    public package(set) var name: String = ""
+    public package(set) var comment: String = ""
+    public package(set) var type: ServerType = .http
+    public package(set) var endpoint: String = ""
+    public package(set) var header: String = ""
+    public package(set) var timeout: Int = 60
+    public package(set) var isEnabled: Bool = true
+    public package(set) var toolsEnabled: EnableCodable = .init()
+    public package(set) var resourcesEnabled: EnableCodable = .init()
+    public package(set) var templateEnabled: EnableCodable = .init()
+    public package(set) var lastConnected: Date?
+    public package(set) var connectionStatus: ConnectionStatus = .disconnected
+    public package(set) var capabilities: StringArrayCodable = .init([])
 
-    public var removed: Bool = false
-    public var creation: Date = .now
-    public var modified: Date = .now
+    public package(set) var removed: Bool = false
+    public package(set) var creation: Date = .now
+    public package(set) var modified: Date = .now
 
     public enum CodingKeys: String, CodingTableKey {
         public typealias Root = ModelContextServer
@@ -175,9 +175,13 @@ extension ModelContextServer: Updatable {
     public func update<Value: Equatable>(_ keyPath: ReferenceWritableKeyPath<ModelContextServer, Value>, to newValue: Value) -> Bool {
         let oldValue = self[keyPath: keyPath]
         guard oldValue != newValue else { return false }
+        assign(keyPath, to: newValue)
+        return true
+    }
+
+    public func assign<Value>(_ keyPath: ReferenceWritableKeyPath<ModelContextServer, Value>, to newValue: Value) {
         self[keyPath: keyPath] = newValue
         markModified()
-        return true
     }
 
     package func update(_ block: (ModelContextServer) -> Void) {
@@ -224,7 +228,7 @@ extension ModelContextServer: Equatable {
 extension ModelContextServer: Hashable {}
 
 public extension ModelContextServer {
-    enum ServerType: String, Codable, ColumnCodable {
+    enum ServerType: String, Codable, ColumnCodable, Equatable {
         case http
 
         public init?(with value: WCDBSwift.Value) {
@@ -241,7 +245,7 @@ public extension ModelContextServer {
         }
     }
 
-    enum ConnectionStatus: String, Codable, ColumnCodable {
+    enum ConnectionStatus: String, Codable, ColumnCodable, Equatable {
         case disconnected
         case connecting
         case connected

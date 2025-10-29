@@ -97,7 +97,9 @@ class CloudModelEditorController: StackScrollController {
                 placeholder: "https://",
                 text: model.endpoint.isEmpty ? "https://" : model.endpoint
             ) { output in
-                ModelManager.shared.editCloudModel(identifier: model.id) { $0.endpoint = output }
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.endpoint, to: output)
+                }
                 view.configure(value: output)
             }
             view.parentViewController?.present(input, animated: true)
@@ -120,7 +122,9 @@ class CloudModelEditorController: StackScrollController {
                 placeholder: "workgroup-xxx",
                 text: model.token
             ) { newToken in
-                ModelManager.shared.editCloudModel(identifier: model.id) { $0.token = newToken }
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.token, to: newToken)
+                }
                 view.configure(value: newToken.isEmpty ? String(localized: "N/A") : String(localized: "Configured"))
                 let list = ModelManager.shared.cloudModels.value.filter {
                     $0.endpoint == model.endpoint && $0.token == oldToken && $0.id != model.id
@@ -136,7 +140,9 @@ class CloudModelEditorController: StackScrollController {
                         context.addAction(title: String(localized: "Update All"), attribute: .dangerous) {
                             context.dispose {
                                 for item in list {
-                                    ModelManager.shared.editCloudModel(identifier: item.id) { $0.token = newToken }
+                                    ModelManager.shared.editCloudModel(identifier: item.id) {
+                                        $0.update(\.token, to: newToken)
+                                    }
                                 }
                             }
                         }
@@ -170,7 +176,9 @@ class CloudModelEditorController: StackScrollController {
                 guard let object = try? JSONDecoder().decode([String: String].self, from: result.data(using: .utf8) ?? .init()) else {
                     return
                 }
-                ModelManager.shared.editCloudModel(identifier: model.id) { $0.headers = object }
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.headers, to: object)
+                }
                 view.configure(value: object.isEmpty ? String(localized: "N/A") : String(localized: "Configured"))
             }
             view.parentViewController?.navigationController?.pushViewController(textEditor, animated: true)
@@ -194,7 +202,9 @@ class CloudModelEditorController: StackScrollController {
                     placeholder: String(localized: "Model Identifier"),
                     text: model.model_identifier
                 ) { output in
-                    ModelManager.shared.editCloudModel(identifier: model.id) { $0.model_identifier = output }
+                    ModelManager.shared.editCloudModel(identifier: model.id) {
+                        $0.update(\.model_identifier, to: output)
+                    }
                     if output.isEmpty {
                         if modelCanFetchList {
                             view.configure(value: String(localized: "Not Configured (Tapped to Fetch)"))
@@ -242,7 +252,9 @@ class CloudModelEditorController: StackScrollController {
                                 children: items.map { item in
                                     UIAction(title: item.0, image: .modelCloud) { _ in
                                         var modelIdentifier = item.1
-                                        ModelManager.shared.editCloudModel(identifier: model.id) { $0.model_identifier = modelIdentifier }
+                                        ModelManager.shared.editCloudModel(identifier: model.id) {
+                                            $0.update(\.model_identifier, to: modelIdentifier)
+                                        }
                                         if modelIdentifier.isEmpty {
                                             if modelCanFetchList {
                                                 modelIdentifier = String(localized: "Not Configured (Tapped to Fetch)")
@@ -336,11 +348,13 @@ class CloudModelEditorController: StackScrollController {
             view.actionBlock = { [weak self] value in
                 guard let self else { return }
                 ModelManager.shared.editCloudModel(identifier: identifier) { model in
+                    var capabilities = model.capabilities
                     if value {
-                        model.capabilities.insert(cap)
+                        capabilities.insert(cap)
                     } else {
-                        model.capabilities.remove(cap)
+                        capabilities.remove(cap)
                     }
+                    model.assign(\.capabilities, to: capabilities)
                 }
             }
             view.configure(icon: .init(systemName: cap.icon))
@@ -374,7 +388,9 @@ class CloudModelEditorController: StackScrollController {
                     title: item.title,
                     image: UIImage(systemName: item.icon)
                 ) { _ in
-                    ModelManager.shared.editCloudModel(identifier: model?.id) { $0.context = item }
+                    ModelManager.shared.editCloudModel(identifier: model?.id) {
+                        $0.update(\.context, to: item)
+                    }
                     view.configure(value: item.title)
                 }
             }
@@ -406,7 +422,9 @@ class CloudModelEditorController: StackScrollController {
                 placeholder: String(localized: "Nickname (Optional)"),
                 text: model.name
             ) { output in
-                ModelManager.shared.editCloudModel(identifier: model.id) { $0.name = output }
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.name, to: output)
+                }
                 if output.isEmpty {
                     view.configure(value: String(localized: "Not Configured"))
                 } else {
@@ -443,8 +461,8 @@ class CloudModelEditorController: StackScrollController {
                 image: UIImage(systemName: "circle.dashed")
             ) { _ in
                 ModelManager.shared.editCloudModel(identifier: model.id) { item in
-                    item.temperature_preference = .inherit
-                    item.temperature_override = nil
+                    item.update(\.temperature_preference, to: .inherit)
+                    item.update(\.temperature_override, to: nil)
                 }
                 updateDisplay(.inherit, override: nil)
             }
@@ -457,8 +475,8 @@ class CloudModelEditorController: StackScrollController {
                     image: UIImage(systemName: preset.icon)
                 ) { _ in
                     ModelManager.shared.editCloudModel(identifier: model.id) { item in
-                        item.temperature_preference = .custom
-                        item.temperature_override = preset.value
+                        item.update(\.temperature_preference, to: .custom)
+                        item.update(\.temperature_override, to: preset.value)
                     }
                     updateDisplay(.custom, override: preset.value)
                 }
@@ -583,8 +601,9 @@ class CloudModelEditorController: StackScrollController {
             guard let nav = self?.navigationController else { return }
             let newIdentifier = UUID().uuidString
             ModelManager.shared.editCloudModel(identifier: self?.identifier) {
-                $0.objectId = newIdentifier
-                $0.model_identifier = ""
+                $0.update(\.objectId, to: newIdentifier)
+                $0.update(\.model_identifier, to: "")
+                $0.update(\.creation, to: $0.modified)
             }
             guard let newModel = ModelManager.shared.cloudModel(identifier: newIdentifier) else { return }
             assert(newModel.objectId == newIdentifier)
