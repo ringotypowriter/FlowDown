@@ -128,7 +128,7 @@ extension Storage {
 }
 
 extension CloudModel: Syncable, SyncQueryable {
-    package static let SyncQuery: SyncQueryProperties = .init(objectId: CloudModel.Properties.objectId.asProperty(), modified: CloudModel.Properties.modified.asProperty(), removed: CloudModel.Properties.removed.asProperty())
+    package static let SyncQuery: SyncQueryProperties = .init(objectId: CloudModel.Properties.objectId.asProperty(), creation: CloudModel.Properties.creation.asProperty(), modified: CloudModel.Properties.modified.asProperty(), removed: CloudModel.Properties.removed.asProperty())
     package func encodePayload() throws -> Data {
         try Storage.encodePayloadSyncable(self)
     }
@@ -139,7 +139,7 @@ extension CloudModel: Syncable, SyncQueryable {
 }
 
 extension ModelContextServer: Syncable, SyncQueryable {
-    package static let SyncQuery: SyncQueryProperties = .init(objectId: ModelContextServer.Properties.objectId.asProperty(), modified: ModelContextServer.Properties.modified.asProperty(), removed: ModelContextServer.Properties.removed.asProperty())
+    package static let SyncQuery: SyncQueryProperties = .init(objectId: ModelContextServer.Properties.objectId.asProperty(), creation: ModelContextServer.Properties.creation.asProperty(), modified: ModelContextServer.Properties.modified.asProperty(), removed: ModelContextServer.Properties.removed.asProperty())
     package func encodePayload() throws -> Data {
         try Storage.encodePayloadSyncable(self)
     }
@@ -150,7 +150,7 @@ extension ModelContextServer: Syncable, SyncQueryable {
 }
 
 extension Memory: Syncable, SyncQueryable {
-    package static let SyncQuery: SyncQueryProperties = .init(objectId: Memory.Properties.objectId.asProperty(), modified: Memory.Properties.modified.asProperty(), removed: Memory.Properties.removed.asProperty())
+    package static let SyncQuery: SyncQueryProperties = .init(objectId: Memory.Properties.objectId.asProperty(), creation: Memory.Properties.creation.asProperty(), modified: Memory.Properties.modified.asProperty(), removed: Memory.Properties.removed.asProperty())
     package func encodePayload() throws -> Data {
         try Storage.encodePayloadSyncable(self)
     }
@@ -161,7 +161,7 @@ extension Memory: Syncable, SyncQueryable {
 }
 
 extension Conversation: Syncable, SyncQueryable {
-    package static let SyncQuery: SyncQueryProperties = .init(objectId: Conversation.Properties.objectId.asProperty(), modified: Conversation.Properties.modified.asProperty(), removed: Conversation.Properties.removed.asProperty())
+    package static let SyncQuery: SyncQueryProperties = .init(objectId: Conversation.Properties.objectId.asProperty(), creation: Conversation.Properties.creation.asProperty(), modified: Conversation.Properties.modified.asProperty(), removed: Conversation.Properties.removed.asProperty())
     package func encodePayload() throws -> Data {
         try Storage.encodePayloadSyncable(self)
     }
@@ -172,7 +172,7 @@ extension Conversation: Syncable, SyncQueryable {
 }
 
 extension Message: Syncable, SyncQueryable {
-    package static let SyncQuery: SyncQueryProperties = .init(objectId: Message.Properties.objectId.asProperty(), modified: Message.Properties.modified.asProperty(), removed: Message.Properties.removed.asProperty())
+    package static let SyncQuery: SyncQueryProperties = .init(objectId: Message.Properties.objectId.asProperty(), creation: Message.Properties.creation.asProperty(), modified: Message.Properties.modified.asProperty(), removed: Message.Properties.removed.asProperty())
     package func encodePayload() throws -> Data {
         try Storage.encodePayloadSyncable(self)
     }
@@ -183,7 +183,7 @@ extension Message: Syncable, SyncQueryable {
 }
 
 extension Attachment: Syncable, SyncQueryable {
-    package static let SyncQuery: SyncQueryProperties = .init(objectId: Attachment.Properties.objectId.asProperty(), modified: Attachment.Properties.modified.asProperty(), removed: Attachment.Properties.removed.asProperty())
+    package static let SyncQuery: SyncQueryProperties = .init(objectId: Attachment.Properties.objectId.asProperty(), creation: Attachment.Properties.creation.asProperty(), modified: Attachment.Properties.modified.asProperty(), removed: Attachment.Properties.removed.asProperty())
     package func encodePayload() throws -> Data {
         try Storage.encodePayloadSyncable(self)
     }
@@ -541,16 +541,16 @@ package extension Storage {
 
 package extension Storage {
     /// 初始化上传队列，通常只在app升级数据迁移或者导入数据库需要执行
-    func initializeUploadQueue() throws {
+    func reinitializeUploadQueue() throws {
         let start = Date.now
-        Logger.database.info("[*] initializeUploadQueue begin")
+        Logger.database.info("[*] reinitializeUploadQueue begin")
 
         try db.run(transaction: { [weak self] in
             guard let self else { return }
 
             try $0.delete(fromTable: UploadQueue.tableName)
 
-            let tables: [any Syncable.Type] = [
+            let tables: [any (Syncable & SyncQueryable).Type] = [
                 CloudModel.self,
                 ModelContextServer.self,
                 Conversation.self,
@@ -568,35 +568,60 @@ package extension Storage {
         })
 
         let elapsed = Date.now.timeIntervalSince(start) * 1000.0
-        Logger.database.info("[*] initializeUploadQueue end elapsed \(Int(elapsed), privacy: .public)ms")
+        Logger.database.info("[*] reinitializeUploadQueue end elapsed \(Int(elapsed), privacy: .public)ms")
     }
 
-    private func initializeMigrationUploadQueue<T: Syncable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {
-        var objects: [T] = try handle.getObjects(fromTable: T.tableName)
+    private func initializeMigrationUploadQueue<T: Syncable & SyncQueryable>(table _: T.Type, handle: Handle, startId: Int64) throws -> Int64 {
+        let batchSize = 500
+        var lastObjectId: String?
+        var lastCreation: Date?
+        var innerStartId = startId
+        var lastInsertedRowID = startId
 
-        guard !objects.isEmpty else {
-            return startId
+        while true {
+            let objects: [T] = if let lastObjectId, let lastCreation {
+                try handle.getObjects(
+                    fromTable: T.tableName,
+                    where:
+                    T.SyncQuery.creation >= lastCreation
+                        && T.SyncQuery.objectId != lastObjectId,
+                    orderBy: [
+                        T.SyncQuery.creation.order(.ascending),
+                    ],
+                    limit: batchSize
+                )
+            } else {
+                try handle.getObjects(
+                    fromTable: T.tableName,
+                    orderBy: [
+                        T.SyncQuery.creation.order(.ascending),
+                    ],
+                    limit: batchSize
+                )
+            }
+
+            guard !objects.isEmpty else {
+                return lastInsertedRowID
+            }
+
+            lastObjectId = objects.last?.objectId
+            lastCreation = objects.last?.creation
+            var queues: [UploadQueue] = []
+            for object in objects {
+                let queue = try UploadQueue(source: object, changes: object.removed ? .delete : .insert)
+                queue.id = innerStartId
+                innerStartId += 1
+                queues.append(queue)
+            }
+
+            try handle.insert(queues, intoTable: UploadQueue.tableName)
+            lastInsertedRowID = handle.lastInsertedRowID
+
+            Logger.database.info("[*] firstMigrationUploadQueue \(T.tableName, privacy: .public)  -> batch \(queues.count, privacy: .public)")
+            if objects.count < batchSize {
+                break
+            }
         }
-
-        objects = objects.sorted(by: { $0.modified < $1.modified })
-
-        var queues: [UploadQueue] = []
-        var id = startId
-        for object in objects {
-            let queue = try UploadQueue(source: object, changes: object.removed ? .delete : .insert)
-            queue.id = id
-            id += 1
-            queues.append(queue)
-        }
-
-        guard !queues.isEmpty else {
-            return startId
-        }
-
-        try handle.insert(queues, intoTable: UploadQueue.tableName)
-        let lastInsertedRowID = handle.lastInsertedRowID
-
-        Logger.database.info("[*] firstMigrationUploadQueue \(T.tableName) -> \(queues.count)")
 
         return lastInsertedRowID
     }

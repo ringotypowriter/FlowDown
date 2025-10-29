@@ -592,9 +592,6 @@ private extension SyncEngine {
         }
 
         if shouldReUploadLocalData {
-            // 重新构建上传队列
-            try? storage.initializeUploadQueue()
-
             await createCustomZoneIfNeeded()
         }
     }

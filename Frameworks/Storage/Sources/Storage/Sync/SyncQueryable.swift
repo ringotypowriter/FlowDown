@@ -10,6 +10,7 @@ import WCDBSwift
 
 package struct SyncQueryProperties {
     let objectId: WCDBSwift.Property
+    let creation: WCDBSwift.Property
     let modified: WCDBSwift.Property
     let removed: WCDBSwift.Property
 
@@ -29,6 +30,25 @@ package struct SyncQueryProperties {
             Attachment.SyncQuery.objectId
         default:
             WCDBSwift.Property(named: "objectId", with: nil)
+        }
+    }
+
+    static func creationColumn(for tableName: String) -> WCDBSwift.Property {
+        switch tableName {
+        case CloudModel.tableName:
+            CloudModel.SyncQuery.creation
+        case ModelContextServer.tableName:
+            ModelContextServer.SyncQuery.creation
+        case Memory.tableName:
+            Memory.SyncQuery.creation
+        case Conversation.tableName:
+            Conversation.SyncQuery.creation
+        case Message.tableName:
+            Message.SyncQuery.creation
+        case Attachment.tableName:
+            Attachment.SyncQuery.creation
+        default:
+            WCDBSwift.Property(named: "creation", with: nil)
         }
     }
 
