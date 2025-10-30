@@ -17,7 +17,7 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
     }
 
     let contentView = UIView()
-    var handleContextMenu: ((_ location: CGPoint) -> Void)?
+    var contextMenuProvider: ((CGPoint) -> UIMenu?)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,7 +50,7 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        handleContextMenu = nil
+        contextMenuProvider = nil
 
         // clear any LTXLabel selection
         var queue = subviews
@@ -67,7 +67,9 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
         _: UIContextMenuInteraction,
         configurationForMenuAtLocation location: CGPoint
     ) -> UIContextMenuConfiguration? {
-        handleContextMenu?(location)
-        return nil
+        guard let menu = contextMenuProvider?(location) else { return nil }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            menu
+        }
     }
 }

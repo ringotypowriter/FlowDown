@@ -120,7 +120,7 @@ struct Scanner {
       buffer[i++] = *iter;
     }
 
-    return i;
+    return (unsigned int)i;
   }
 
   void deserialize(const char *buffer, unsigned length) {

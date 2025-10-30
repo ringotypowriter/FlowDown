@@ -59,7 +59,7 @@ namespace {
       // }
       // no_of_bytes += delimiter_count;
 
-      return no_of_bytes;
+      return (unsigned int)no_of_bytes;
     }
 
     void deserialize(const char *buffer, unsigned length) {

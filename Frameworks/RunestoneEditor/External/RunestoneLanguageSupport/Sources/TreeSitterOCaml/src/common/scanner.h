@@ -22,7 +22,7 @@ struct Scanner {
 
     buffer[0] = in_string;
     quoted_string_id.copy(&buffer[1], size);
-    return size + 1;
+    return (unsigned int)size + 1;
   }
 
   void deserialize(const char *buffer, unsigned length) {

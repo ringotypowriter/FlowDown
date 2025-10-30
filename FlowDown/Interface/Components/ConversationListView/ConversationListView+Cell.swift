@@ -85,10 +85,6 @@ extension ConversationListView {
             iconView.image = conv.interfaceImage
         }
 
-        func presentMenu() {
-            // This method is kept for compatibility but context menu is now handled by UIContextMenuInteraction
-        }
-
         func contextMenuInteraction(
             _: UIContextMenuInteraction,
             configurationForMenuAtLocation _: CGPoint
