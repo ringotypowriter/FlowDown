@@ -284,9 +284,10 @@ extension ChatView: RichEditorView.Delegate {
                                 image: UIImage(systemName: "server.rack"),
                                 attributes: [.keepsMenuPresented],
                                 state: server.isEnabled ? .on : .off
-                            ) { _ in
+                            ) { action in
                                 MCPService.shared.edit(identifier: server.id) {
                                     $0.update(\.isEnabled, to: !$0.isEnabled)
+                                    action.state = $0.isEnabled ? .on : .off
                                 }
                             }
                         }
