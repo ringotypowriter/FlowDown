@@ -122,23 +122,6 @@
         }
       }
     },
-    "%lld%% Finished" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% Finished"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已完成 %lld%%"
-          }
-        }
-      }
-    },
     "5 Pages" : {
       "localizations" : {
         "en" : {
@@ -2332,23 +2315,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "复制内容"
-          }
-        }
-      }
-    },
-    "Copy Link" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copy Link"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "复制链接"
           }
         }
       }
@@ -5128,7 +5094,14 @@
       }
     },
     "Finished" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成"
+          }
+        }
+      }
     },
     "Flags" : {
       "comment" : "Emoji Category",
@@ -8827,23 +8800,6 @@
         }
       }
     },
-    "Prompt Behavior" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prompt Behavior"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提示词行为"
-          }
-        }
-      }
-    },
     "Query Calendar" : {
       "localizations" : {
         "en" : {
@@ -10952,23 +10908,6 @@
         }
       }
     },
-    "Third Party Content" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Third Party Content"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "第三方内容"
-          }
-        }
-      }
-    },
     "This conversation is based on the template: %@." : {
       "localizations" : {
         "en" : {
@@ -12664,23 +12603,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "警告"
-          }
-        }
-      }
-    },
-    "We are not responsible for the content of this website you are about to visit." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We are not responsible for the content of this website you are about to visit."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我们不对你将要访问的内容负责。请谨慎操作。"
           }
         }
       }

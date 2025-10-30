@@ -11,7 +11,7 @@ import UIKit
 class SearchContentController: UIViewController {
     var callback: ConversationSearchController.SearchCallback
 
-    let searchBar = KeyboardNavigationSearchBar()
+    let searchController = UISearchController(searchResultsController: nil)
     let tableView = UITableView(frame: .zero, style: .plain)
     let noResultsView = UIView()
     let emptyStateView = UIView()
@@ -31,6 +31,10 @@ class SearchContentController: UIViewController {
         return tableView.cellForRow(at: highlightedIndex) as? SearchResultCell
     }
 
+    var searchBar: UISearchBar {
+        searchController.searchBar
+    }
+
     init(callback: @escaping ConversationSearchController.SearchCallback) {
         self.callback = callback
         super.init(nibName: nil, bundle: nil)
@@ -44,28 +48,31 @@ class SearchContentController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = String(localized: "Search Conversations")
+
         view.backgroundColor = .background
 
-        searchBar.placeholder = String(localized: "Search")
-        searchBar.delegate = self
-        searchBar.showsCancelButton = true
-        searchBar.searchBarStyle = .minimal
-        searchBar.keyboardNavigationDelegate = self
+        searchController.searchBar.placeholder = String(localized: "Search")
+        searchController.searchBar.delegate = self
+        searchController.searchBar.searchBarStyle = .minimal
+        searchController.searchBar.returnKeyType = .search
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
 
-        view.addSubview(searchBar)
-        searchBar.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(56)
+        if let keyboardNavBar = searchController.searchBar as? KeyboardNavigationSearchBar {
+            keyboardNavBar.keyboardNavigationDelegate = self
         }
+
+        navigationItem.searchController = searchController
+        navigationItem.preferredSearchBarPlacement = .stacked
+        navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
 
         tableView.keyboardDismissMode = .none
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+            make.edges.equalTo(view.safeAreaLayoutGuide)
         }
         tableView.delegate = self
         tableView.dataSource = self
@@ -76,8 +83,6 @@ class SearchContentController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 60
 
-        searchBar.returnKeyType = .search
-
         setupNoResultsView()
         setupEmptyStateView()
     }
@@ -86,14 +91,14 @@ class SearchContentController: UIViewController {
         super.viewWillAppear(animated)
 
         #if !targetEnvironment(macCatalyst)
-            searchBar.becomeFirstResponder()
+            searchController.searchBar.becomeFirstResponder()
         #endif
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !searchBar.isFirstResponder {
-            searchBar.becomeFirstResponder()
+        if !searchController.searchBar.isFirstResponder {
+            searchController.searchBar.becomeFirstResponder()
         }
     }
 

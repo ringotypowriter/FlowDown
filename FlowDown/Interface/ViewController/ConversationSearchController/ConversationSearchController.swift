@@ -31,7 +31,7 @@ import UIKit
         class NavigationController: UINavigationController {
             init(callback: @escaping SearchCallback) {
                 super.init(rootViewController: SearchContentController(callback: callback))
-                navigationBar.isHidden = true
+                navigationBar.prefersLargeTitles = false
             }
 
             @available(*, unavailable)
@@ -44,7 +44,7 @@ import UIKit
     class ConversationSearchController: UINavigationController {
         init(callback: @escaping SearchCallback) {
             super.init(rootViewController: SearchContentController(callback: callback))
-            navigationBar.isHidden = true
+            navigationBar.prefersLargeTitles = false
             modalPresentationStyle = .formSheet
             modalTransitionStyle = .coverVertical
             preferredContentSize = .init(width: 550, height: 550)

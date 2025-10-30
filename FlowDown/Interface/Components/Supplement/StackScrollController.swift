@@ -25,7 +25,7 @@ open class StackScrollController: UIViewController {
         scrollView.addSubview(contentView)
         contentView.addSubview(stackView)
 
-        scrollView.clipsToBounds = false
+        scrollView.clipsToBounds = true
         scrollView.alwaysBounceVertical = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -33,24 +33,20 @@ open class StackScrollController: UIViewController {
 
         scrollView.contentInset = .init(top: 0, left: 0, bottom: 32, right: 0)
 
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.greaterThanOrEqualToSuperview()
+        }
 
-            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: 0),
-        ])
+        stackView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.lessThanOrEqualToSuperview()
+        }
 
         view.hideKeyboardWhenTappedAround()
 

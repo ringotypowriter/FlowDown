@@ -49,9 +49,7 @@ extension SearchContentController {
 
         view.addSubview(noResultsView)
         noResultsView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
+            make.edges.equalTo(tableView)
         }
 
         noResultsView.isHidden = true
@@ -98,9 +96,7 @@ extension SearchContentController {
 
         view.addSubview(emptyStateView)
         emptyStateView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+            make.edges.equalTo(tableView)
         }
     }
 }
