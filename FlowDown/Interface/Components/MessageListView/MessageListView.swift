@@ -20,10 +20,6 @@ final class MessageListView: UIView {
 
     // Temporary storage for link menu actions
     private var currentTappedLink: URL?
-    private lazy var editMenuInteraction: UIEditMenuInteraction = {
-        let interaction = UIEditMenuInteraction(delegate: self)
-        return interaction
-    }()
 
     private var entryCount = 0
     private let updateQueue = DispatchQueue(label: "MessageListView.UpdateQueue", qos: .userInteractive)
@@ -98,9 +94,6 @@ final class MessageListView: UIView {
             guard $0 is UIPanGestureRecognizer else { return }
             $0.cancelsTouchesInView = false
         }
-        
-        // Add edit menu interaction for link actions
-        addInteraction(editMenuInteraction)
 
         MarkdownTheme.fontScaleDidChange
             .ensureMainThread()
@@ -182,8 +175,14 @@ final class MessageListView: UIView {
         }
         currentTappedLink = link
 
-        let configuration = UIEditMenuConfiguration(identifier: nil, sourcePoint: location)
-        editMenuInteraction.presentEditMenu(with: configuration)
+        let menuController = UIMenuController.shared
+        menuController.menuItems = [
+            UIMenuItem(title: String(localized: "Copy Link"), action: #selector(copyLinkAction)),
+            UIMenuItem(title: String(localized: "Open in Default Browser"), action: #selector(openLinkInBrowserAction)),
+        ]
+
+        becomeFirstResponder()
+        menuController.showMenu(from: self, rect: CGRect(x: location.x, y: location.y, width: 1, height: 1))
     }
 
     func updateList() {
@@ -240,46 +239,31 @@ extension MessageListView: UIScrollViewDelegate {
             updateAutoScrolling()
         }
     }
-
 }
 
-// MARK: - UIEditMenuInteractionDelegate
+// MARK: - UIMenuController Support
 
-extension MessageListView: UIEditMenuInteractionDelegate {
-    func editMenuInteraction(
-        _ interaction: UIEditMenuInteraction,
-        menuFor configuration: UIEditMenuConfiguration,
-        suggestedActions: [UIMenuElement]
-    ) -> UIMenu? {
-        guard let link = currentTappedLink else { return nil }
-        
-        let viewAction = UIAction(
-            title: String(localized: "View"),
-            image: UIImage(systemName: "eye")
-        ) { [weak self] _ in
-            guard let self else { return }
-            Indicator.present(link, referencedView: self)
-            self.currentTappedLink = nil
+extension MessageListView {
+    override var canBecomeFirstResponder: Bool { true }
+
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(copyLinkAction) ||
+            action == #selector(openLinkInBrowserAction)
+        {
+            return currentTappedLink != nil
         }
-        
-        let shareAction = UIAction(
-            title: String(localized: "Share"),
-            image: UIImage(systemName: "square.and.arrow.up")
-        ) { [weak self] _ in
-            guard let self else { return }
-            DisposableExporter(data: Data(link.absoluteString.utf8), pathExtension: "url").run(anchor: self, mode: .text)
-            self.currentTappedLink = nil
-        }
-        
-        let openAction = UIAction(
-            title: String(localized: "Open in Default Browser"),
-            image: UIImage(systemName: "safari")
-        ) { [weak self] _ in
-            guard let self else { return }
-            Indicator.open(link, referencedView: self)
-            self.currentTappedLink = nil
-        }
-        
-        return UIMenu(children: [viewAction, shareAction, openAction])
+        return super.canPerformAction(action, withSender: sender)
+    }
+
+    @objc private func copyLinkAction() {
+        guard let link = currentTappedLink else { return }
+        UIPasteboard.general.string = link.absoluteString
+        currentTappedLink = nil
+    }
+
+    @objc private func openLinkInBrowserAction() {
+        guard let link = currentTappedLink else { return }
+        Indicator.open(link, referencedView: self)
+        currentTappedLink = nil
     }
 }

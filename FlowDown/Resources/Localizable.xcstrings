@@ -2338,6 +2338,16 @@
         }
       }
     },
+    "Copy Link" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制链接"
+          }
+        }
+      }
+    },
     "Copy Message" : {
       "localizations" : {
         "en" : {
@@ -4593,23 +4603,6 @@
         }
       }
     },
-    "Failed" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "失败"
-          }
-        }
-      }
-    },
     "Failed to add event: %@" : {
       "localizations" : {
         "en" : {
@@ -5011,23 +5004,6 @@
         }
       }
     },
-    "Fetch from Server" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fetch from Server"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从服务器获取"
-          }
-        }
-      }
-    },
     "Fetch Updates Now" : {
       "localizations" : {
         "en" : {
@@ -5040,23 +5016,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "立即获取更新"
-          }
-        }
-      }
-    },
-    "Fetching Model List" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fetching Model List"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在获取模型列表"
           }
         }
       }
@@ -5236,23 +5195,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "霜冻 @ 0.0"
-          }
-        }
-      }
-    },
-    "From %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "From %@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "来自 %@"
           }
         }
       }
@@ -7112,23 +7054,6 @@
         }
       }
     },
-    "Message" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Message"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "消息"
-          }
-        }
-      }
-    },
     "Metadata" : {
       "localizations" : {
         "en" : {
@@ -7338,23 +7263,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型已下载，但加载时出现错误。"
-          }
-        }
-      }
-    },
-    "Model List" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Model List"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模型列表"
           }
         }
       }
@@ -7908,23 +7816,6 @@
         }
       }
     },
-    "No models found." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No models found."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到可用模型。"
-          }
-        }
-      }
-    },
     "No response from model." : {
       "localizations" : {
         "en" : {
@@ -8039,23 +7930,6 @@
     },
     "Not Configured (Long Press to Fetch)" : {
 
-    },
-    "Not Configured (Tapped to Fetch)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Configured (Tapped to Fetch)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未配置（轻点来获取）"
-          }
-        }
-      }
     },
     "Not Determined" : {
       "localizations" : {
@@ -8294,23 +8168,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "操作成功完成。"
-          }
-        }
-      }
-    },
-    "Operations" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Operations"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "操作"
           }
         }
       }
