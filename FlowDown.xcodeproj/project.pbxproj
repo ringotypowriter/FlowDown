@@ -686,7 +686,7 @@
 			repositoryURL = "https://github.com/Lakr233/ConfigurableKit";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.2;
+				minimumVersion = 3.0.4;
 			};
 		};
 		50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */ = {

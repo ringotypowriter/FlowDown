@@ -133,7 +133,7 @@ class MCPEditorController: StackScrollController {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView()
-                    .with(footer: server.comment)
+                    .with(rawFooter: server.comment)
             )
         }
 
@@ -408,7 +408,7 @@ extension MCPEditorController {
                             }
                         }
                         self.present(alert, animated: true)
-                        self.testFooterView.with(footer: error.localizedDescription)
+                        self.testFooterView.with(rawFooter: error.localizedDescription)
                     }
                 }
             }
