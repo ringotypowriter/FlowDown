@@ -159,8 +159,8 @@ extension SettingController.SettingContent {
                     documentPicker.modalPresentationStyle = .formSheet
                     controller.present(documentPicker, animated: true)
                 #else
-                    FileExporterHelper(
-                        targetFileURL: fileURL
+                    Exporter(
+                        item: fileURL
                     ).execute(presentingViewController: controller)
                 #endif
             } catch {

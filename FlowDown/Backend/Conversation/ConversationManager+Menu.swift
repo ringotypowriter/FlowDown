@@ -110,11 +110,9 @@ extension ConversationManager {
                                     let png = image.pngData()
                                     FileManager.default.createFile(atPath: url.path(), contents: png)
 
-                                    FileExporterHelper(
-                                        targetFileURL: url,
-                                        exportTitle: String(localized: "Save Image"),
-                                        referencedView: view,
-                                        completion: { try? FileManager.default.removeItem(at: url) }
+                                    Exporter(
+                                        item: url,
+                                        exportTitle: String(localized: "Save Image")
                                     ).run(anchor: view)
                                 }
                             }
@@ -135,11 +133,9 @@ extension ConversationManager {
                                     let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).txt")
                                     do {
                                         try content.write(to: url, atomically: true, encoding: .utf8)
-                                        FileExporterHelper(
-                                            targetFileURL: url,
-                                            exportTitle: String(localized: "Export Plain Text"),
-                                            referencedView: view,
-                                            completion: { try? FileManager.default.removeItem(at: url) }
+                                        Exporter(
+                                            item: url,
+                                            exportTitle: String(localized: "Export Plain Text")
                                         ).run(anchor: view)
                                     } catch {
                                         Indicator.present(
@@ -169,11 +165,9 @@ extension ConversationManager {
                                     let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).md")
                                     do {
                                         try content.write(to: url, atomically: true, encoding: .utf8)
-                                        FileExporterHelper(
-                                            targetFileURL: url,
-                                            exportTitle: String(localized: "Export Markdown"),
-                                            referencedView: view,
-                                            completion: { try? FileManager.default.removeItem(at: url) }
+                                        Exporter(
+                                            item: url,
+                                            exportTitle: String(localized: "Export Markdown")
                                         ).run(anchor: view)
                                     } catch {
                                         Indicator.present(

@@ -184,9 +184,8 @@ final class MessageListView: UIView {
                     let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("url")
                     do {
                         try link.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
-                        FileExporterHelper(
-                            targetFileURL: tempURL,
-                            deleteAfterComplete: true
+                        Exporter(
+                            item: tempURL
                         ).run(anchor: self)
                     } catch {
                         Logger.ui.error("Failed to create temp file for URL sharing: \(error)")

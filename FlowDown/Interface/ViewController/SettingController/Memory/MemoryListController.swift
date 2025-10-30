@@ -208,14 +208,13 @@ extension MemoryListController: UITableViewDelegate {
 
             let shareAction = UIAction(title: String(localized: "Share"), image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
                 guard let self else { return }
-                let activity = UIActivityViewController(activityItems: [memory.content], applicationActivities: nil)
-                #if targetEnvironment(macCatalyst)
-                    activity.popoverPresentationController?.sourceView = view
-                    activity.popoverPresentationController?.sourceRect = view.bounds
-                #else
-                    activity.popoverPresentationController?.sourceView = view
-                #endif
-                present(activity, animated: true)
+                let tempURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString)
+                    .appendingPathExtension("txt")
+                try? memory.content.write(to: tempURL, atomically: true, encoding: .utf8)
+                Exporter(
+                    item: tempURL
+                ).run(anchor: view)
             }
 
             let deleteAction = UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in

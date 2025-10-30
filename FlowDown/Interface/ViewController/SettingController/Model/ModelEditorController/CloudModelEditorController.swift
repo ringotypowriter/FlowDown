@@ -580,14 +580,13 @@ class CloudModelEditorController: StackScrollController {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(model).write(to: tempFile, options: .atomic)
-            let exporter = FileExporterHelper()
-            exporter.targetFileURL = tempFile
-            exporter.referencedView = exportOptionReader
-            exporter.deleteAfterComplete = true
-            exporter.exportTitle = String(localized: "Export Model")
-            exporter.completion = {
-                try? FileManager.default.removeItem(at: tempFileDir)
-            }
+            let exporter = Exporter(
+                item: tempFile,
+                completion: {
+                    try? FileManager.default.removeItem(at: tempFileDir)
+                },
+                exportTitle: String(localized: "Export Model")
+            )
             exporter.execute(presentingViewController: self)
         }
         exportOptionReader = exportOption

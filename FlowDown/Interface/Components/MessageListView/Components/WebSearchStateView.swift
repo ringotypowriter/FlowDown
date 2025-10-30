@@ -73,13 +73,13 @@ final class WebSearchStateView: MessageListRowView {
                 UIMenu(title: String(localized: "Share") + " " + (result.url.host ?? ""), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
                         guard let self else { return }
-                        let shareSheet = UIActivityViewController(activityItems: [result.url], applicationActivities: nil)
-                        shareSheet.popoverPresentationController?.sourceView = self
-                        shareSheet.popoverPresentationController?.sourceRect = .init(
-                            origin: .init(x: center.x, y: center.y - 4),
-                            size: .init(width: 8, height: 8)
-                        )
-                        parentViewController?.present(shareSheet, animated: true)
+                        let tempURL = FileManager.default.temporaryDirectory
+                            .appendingPathComponent(UUID().uuidString)
+                            .appendingPathExtension("txt")
+                        try? result.url.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
+                        Exporter(
+                            item: tempURL
+                        ).run(anchor: self)
                     },
                     UIAction(
                         title: String(localized: "Open in Default Browser"),

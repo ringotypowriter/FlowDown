@@ -1,20 +1,17 @@
 import Foundation
 import UIKit
 
-class FileExporterHelper: NSObject, UIDocumentPickerDelegate {
-    private let targetFileURL: URL
-    private let referencedView: UIView?
+class Exporter: NSObject {
+    private let item: URL
     private let completion: (() -> Void)?
     private let exportTitle: String?
 
     init(
-        targetFileURL: URL,
-        referencedView: UIView? = nil,
+        item: URL,
         completion: (() -> Void)? = nil,
         exportTitle: String? = nil
     ) {
-        self.targetFileURL = targetFileURL
-        self.referencedView = referencedView
+        self.item = item
         self.completion = completion
         self.exportTitle = exportTitle
         super.init()
@@ -22,22 +19,17 @@ class FileExporterHelper: NSObject, UIDocumentPickerDelegate {
 
     func execute(presentingViewController: UIViewController) {
         #if targetEnvironment(macCatalyst)
-            let picker = UIDocumentPickerViewController(forExporting: [targetFileURL])
+            let picker = UIDocumentPickerViewController(forExporting: [item])
             picker.delegate = self
             if let exportTitle { picker.title = exportTitle }
             presentingViewController.present(picker, animated: true, completion: nil)
         #else
-            let activityVC = UIActivityViewController(activityItems: [targetFileURL], applicationActivities: nil)
+            let activityVC = UIActivityViewController(activityItems: [item], applicationActivities: nil)
             activityVC.completionWithItemsHandler = { [weak self] _, _, _, _ in
-                if let self {
-                    // Always clean up the temporary file after sharing
-                    try? FileManager.default.removeItem(at: targetFileURL)
-                    completion?()
-                }
-            }
-            if let popover = activityVC.popoverPresentationController, let refView = referencedView {
-                popover.sourceView = refView
-                popover.sourceRect = refView.bounds
+                guard let self else { return }
+                // Always clean up the temporary file after sharing
+                try? FileManager.default.removeItem(at: item)
+                completion?()
             }
             presentingViewController.present(activityVC, animated: true, completion: nil)
         #endif
@@ -47,12 +39,14 @@ class FileExporterHelper: NSObject, UIDocumentPickerDelegate {
         guard let presentingViewController = toView.parentViewController else { return }
         execute(presentingViewController: presentingViewController)
     }
+}
 
+extension Exporter: UIDocumentPickerDelegate {
     // MARK: - UIDocumentPickerDelegate
 
     #if targetEnvironment(macCatalyst)
         func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt _: [URL]) {
-            try? FileManager.default.removeItem(at: targetFileURL)
+            try? FileManager.default.removeItem(at: item)
             completion?()
         }
 

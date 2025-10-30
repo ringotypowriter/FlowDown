@@ -150,9 +150,8 @@ extension SettingController.SettingContent {
                                     controller.present(documentPicker, animated: true)
                                     self?.documentPickerExportTempItems.append(url)
                                 #else
-                                    FileExporterHelper(
-                                        targetFileURL: url,
-                                        referencedView: exportDatabaseReader
+                                    Exporter(
+                                        item: url
                                     ).execute(presentingViewController: controller)
                                 #endif
                             case let .failure(err):

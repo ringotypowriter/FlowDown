@@ -171,14 +171,13 @@ extension SettingController.SettingContent.ModelController {
             let data = try encoder.encode(model)
             try data.write(to: tempFile, options: .atomic)
 
-            let exporter = FileExporterHelper()
-            exporter.targetFileURL = tempFile
-            exporter.referencedView = view
-            exporter.deleteAfterComplete = true
-            exporter.exportTitle = String(localized: "Export Model")
-            exporter.completion = {
-                try? FileManager.default.removeItem(at: tempFileDir)
-            }
+            let exporter = Exporter(
+                item: tempFile,
+                completion: {
+                    try? FileManager.default.removeItem(at: tempFileDir)
+                },
+                exportTitle: String(localized: "Export Model")
+            )
             exporter.execute(presentingViewController: self)
         } catch {
             Logger.model.errorFile("failed to export model: \(error)")

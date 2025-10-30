@@ -344,7 +344,7 @@ extension MessageListView: ListViewAdapter {
         for messageIdentifier: Message.ID,
         representation: MessageRepresentation,
         isReasoningContent: Bool,
-        touchLocation: CGPoint,
+        touchLocation _: CGPoint,
         referenceView: UIView
     ) -> UIMenu {
         UIMenu(title: String(localized: "Message"), children: [
@@ -452,13 +452,13 @@ extension MessageListView: ListViewAdapter {
                     },
                     UIAction(title: String(localized: "Share"), image: .init(systemName: "doc.on.doc")) { [weak self] _ in
                         guard let self else { return }
-                        let shareSheet = UIActivityViewController(activityItems: [representation.content], applicationActivities: nil)
-                        shareSheet.popoverPresentationController?.sourceView = self
-                        shareSheet.popoverPresentationController?.sourceRect = .init(
-                            origin: .init(x: touchLocation.x - 4, y: touchLocation.y - 4),
-                            size: .init(width: 8, height: 8)
-                        )
-                        parentViewController?.present(shareSheet, animated: true)
+                        let tempURL = FileManager.default.temporaryDirectory
+                            .appendingPathComponent(UUID().uuidString)
+                            .appendingPathExtension("txt")
+                        try? representation.content.write(to: tempURL, atomically: true, encoding: .utf8)
+                        Exporter(
+                            item: tempURL
+                        ).run(anchor: self)
                     },
                 ]),
                 UIMenu(options: [.displayInline], children: [

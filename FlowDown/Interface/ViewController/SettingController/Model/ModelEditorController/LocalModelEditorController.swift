@@ -405,9 +405,8 @@ class LocalModelEditorController: StackScrollController {
                             )
                             return
                         }
-                        let exporter = FileExporterHelper(
-                            targetFileURL: url,
-                            referencedView: exportOptionReader,
+                        let exporter = Exporter(
+                            item: url,
                             completion: {
                                 cleanup()
                             },
