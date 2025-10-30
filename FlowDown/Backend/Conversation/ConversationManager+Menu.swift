@@ -135,7 +135,7 @@ extension ConversationManager {
                                         name: "Exported-\(Int(Date().timeIntervalSince1970))",
                                         pathExtension: "txt",
                                         title: "Export Plain Text"
-                                    ).run(anchor: view)
+                                    ).run(anchor: view, mode: .file)
                                 case .failure:
                                     Indicator.present(
                                         title: String(localized: "Export Failed"),
@@ -158,7 +158,7 @@ extension ConversationManager {
                                         name: "Exported-\(Int(Date().timeIntervalSince1970))",
                                         pathExtension: "md",
                                         title: "Export Markdown"
-                                    ).run(anchor: view)
+                                    ).run(anchor: view, mode: .file)
                                 case .failure:
                                     Indicator.present(
                                         title: String(localized: "Export Failed"),
