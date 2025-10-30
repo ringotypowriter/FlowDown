@@ -181,7 +181,7 @@ extension ConversationManager {
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
-                        title: "Generating New Icon...",
+                        title: "Generating New Icon",
                         controller: controller
                     ) { completion in
                         let sessionManager = ConversationSessionManager.shared
@@ -208,7 +208,7 @@ extension ConversationManager {
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
-                        title: "Generating New Title...",
+                        title: "Generating New Title",
                         controller: controller
                     ) { completion in
                         let sessionManager = ConversationSessionManager.shared
