@@ -37,7 +37,7 @@ class NewChatButton: UIButton {
 
     private func updateMenu() {
         let templates = ChatTemplateManager.shared.templates
-        
+
         if templates.isEmpty {
             // No templates, use direct tap action
             showsMenuAsPrimaryAction = false
@@ -51,7 +51,7 @@ class NewChatButton: UIButton {
             menu = UIMenu(children: buildMenu())
         }
     }
-    
+
     @objc private func createNewConversation() {
         let conv = ConversationManager.shared.createNewConversation()
         delegate?.newChatDidCreated(conv.id)
@@ -115,13 +115,7 @@ class NewChatButton: UIButton {
             children: actions
         )
 
-        return [
-            UIMenu(
-                title: String(localized: "New Chat"),
-                options: [.displayInline],
-                children: [newEmpty, templateMenu]
-            ),
-        ]
+        return [newEmpty, templateMenu]
     }
 }
 
