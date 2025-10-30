@@ -104,18 +104,15 @@ class LocalModelEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let idView = ConfigurableInfoView().setTapBlock { view in
-            view.present(menu: .init(
-                title: "Copy",
-                children: [UIAction(
-                    title: "Identifier",
-                    image: UIImage(systemName: "person.crop.square.filled.and.at.rectangle")
-                ) { _ in
-                    UIPasteboard.general.string = model?.model_identifier
-                    Indicator.present(title: "Copied", referencingView: view)
-                }]
-            ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-        }
+        let idView = ConfigurableInfoView()
+        let idInteraction = UIContextMenuInteraction(delegate: SimpleCopyMenuDelegate(
+            view: idView,
+            title: "Copy",
+            actionTitle: "Identifier",
+            actionIcon: "person.crop.square.filled.and.at.rectangle",
+            copyText: { model?.model_identifier ?? "" }
+        ))
+        idView.valueLabel.addInteraction(idInteraction)
         idView.configure(icon: .init(systemName: "person.crop.square.filled.and.at.rectangle"))
         idView.configure(title: "Identifier")
         idView.configure(description: "Unique identifier of this model.")
@@ -123,17 +120,12 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(idView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let sizeView = ConfigurableInfoView().setTapBlock { view in
-            view.present(menu: .init(children: [UIAction(
-                title: "Calibrate Size",
-                image: UIImage(systemName: "internaldrive")
-            ) { _ in
-                guard let identifier = model?.id else { return }
-                let newSize = ModelManager.shared.calibrateLocalModelSize(identifier: identifier)
-                view.configure(value: ByteCountFormatter.string(fromByteCount: Int64(newSize), countStyle: .file))
-            }]
-            ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-        }
+        let sizeView = ConfigurableInfoView()
+        let sizeInteraction = UIContextMenuInteraction(delegate: CalibrateSizeMenuDelegate(
+            view: sizeView,
+            modelId: identifier
+        ))
+        sizeView.valueLabel.addInteraction(sizeInteraction)
         sizeView.configure(icon: .init(systemName: "internaldrive"))
         sizeView.configure(title: "Size")
         sizeView.configure(description: "Model size on your local disk.")
@@ -141,22 +133,15 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(sizeView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let dateView = ConfigurableInfoView().setTapBlock { view in
-            view.present(menu: .init(
-                title: "Copy",
-                children: [UIAction(
-                    title: "Download Date",
-                    image: UIImage(systemName: "timer")
-                ) { _ in
-                    UIPasteboard.general.string = dateFormatter
-                        .string(from: model?.downloaded ?? .distantPast)
-                    Indicator.present(
-                        title: "Copied",
-                        referencingView: view
-                    )
-                }]
-            ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-        }
+        let dateView = ConfigurableInfoView()
+        let dateInteraction = UIContextMenuInteraction(delegate: SimpleCopyMenuDelegate(
+            view: dateView,
+            title: "Copy",
+            actionTitle: "Download Date",
+            actionIcon: "timer",
+            copyText: { dateFormatter.string(from: model?.downloaded ?? .distantPast) }
+        ))
+        dateView.valueLabel.addInteraction(dateInteraction)
         dateView.configure(icon: .init(systemName: "timer"))
         dateView.configure(title: "Download Date")
         dateView.configure(description: "The date when the model was downloaded.")
@@ -227,10 +212,8 @@ class LocalModelEditorController: StackScrollController {
                     view.configure(value: item.title)
                 }
             }
-            view.present(
-                menu: .init(title: "Context Length", children: children),
-                anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
+            view.valueLabel.menu = UIMenu(title: String(localized: "Context Length"), children: children)
+            view.valueLabel.showsMenuAsPrimaryAction = true
         }
         stackView.addArrangedSubviewWithMargin(contextListViewAnnotation)
         stackView.addArrangedSubview(SeparatorView())
@@ -294,11 +277,8 @@ class LocalModelEditorController: StackScrollController {
                 actions.append(action)
             }
 
-            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
-            view.present(
-                menu: menu,
-                anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
+            view.valueLabel.menu = UIMenu(title: String(localized: "Imagination"), children: actions)
+            view.valueLabel.showsMenuAsPrimaryAction = true
         }
         localTemperatureView.configure(icon: .init(systemName: "sparkles"))
         localTemperatureView.configure(title: "Imagination")
@@ -473,3 +453,69 @@ class LocalModelEditorController: StackScrollController {
         }
     }
 #endif
+
+// MARK: - Menu Delegates
+
+private class SimpleCopyMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+    weak var view: ConfigurableInfoView?
+    let title: String
+    let actionTitle: String
+    let actionIcon: String
+    let copyText: () -> String
+
+    init(view: ConfigurableInfoView, title: String, actionTitle: String, actionIcon: String, copyText: @escaping () -> String) {
+        self.view = view
+        self.title = title
+        self.actionTitle = actionTitle
+        self.actionIcon = actionIcon
+        self.copyText = copyText
+    }
+
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self else { return nil }
+            return UIMenu(title: title, children: [
+                UIAction(
+                    title: actionTitle,
+                    image: UIImage(systemName: actionIcon)
+                ) { [weak self] _ in
+                    guard let self, let view else { return }
+                    UIPasteboard.general.string = copyText()
+                    Indicator.present(title: "Copied", referencingView: view)
+                },
+            ])
+        }
+    }
+}
+
+private class CalibrateSizeMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+    weak var view: ConfigurableInfoView?
+    let modelId: LocalModel.ID
+
+    init(view: ConfigurableInfoView, modelId: LocalModel.ID) {
+        self.view = view
+        self.modelId = modelId
+    }
+
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self else { return nil }
+            return UIMenu(children: [
+                UIAction(
+                    title: String(localized: "Calibrate Size"),
+                    image: UIImage(systemName: "internaldrive")
+                ) { [weak self] _ in
+                    guard let self, let view else { return }
+                    let newSize = ModelManager.shared.calibrateLocalModelSize(identifier: modelId)
+                    view.configure(value: ByteCountFormatter.string(fromByteCount: Int64(newSize), countStyle: .file))
+                },
+            ])
+        }
+    }
+}

@@ -191,11 +191,12 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(headerEditorView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let modelCanFetchList = !(model?.model_list_endpoint.isEmpty ?? true)
-        let modelIdentifierView = ConfigurableInfoView().setTapBlock { [weak self] view in
-            guard let self else { return }
-            guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
-            let presentEditor = {
+        let modelIdentifierView = ConfigurableInfoView()
+        let interaction = UIContextMenuInteraction(delegate: ModelIdentifierMenuDelegate(
+            view: modelIdentifierView,
+            modelId: identifier,
+            onEdit: { [weak self] view in
+                guard let model = ModelManager.shared.cloudModel(identifier: self?.identifier) else { return }
                 let input = AlertInputViewController(
                     title: "Edit Model Identifier",
                     message: "The name of the model to be used.",
@@ -206,121 +207,21 @@ class CloudModelEditorController: StackScrollController {
                         $0.update(\.model_identifier, to: output)
                     }
                     if output.isEmpty {
-                        if modelCanFetchList {
-                            view.configure(value: String(localized: "Not Configured (Tapped to Fetch)"))
-                        } else {
-                            view.configure(value: String(localized: "Not Configured"))
-                        }
+                        view.configure(value: String(localized: "Not Configured (Long Press to Fetch)"))
                     } else {
                         view.configure(value: output)
                     }
                 }
                 view.parentViewController?.present(input, animated: true)
             }
-            if modelCanFetchList {
-                func postProcessList(list: [String]) {
-                    if list.isEmpty {
-                        Indicator.present(
-                            title: "Failed",
-                            message: "No models found.",
-                            preset: .error,
-                            referencingView: view
-                        )
-                    } else {
-                        var buildSections: [String: [(String, String)]] = [:]
-                        for item in list {
-                            var scope = ""
-                            var trimmedName = item
-                            if item.contains("/") {
-                                scope = item.components(separatedBy: "/").first ?? ""
-                                trimmedName = trimmedName.replacingOccurrences(of: scope + "/", with: "")
-                            }
-                            buildSections[scope, default: []].append((trimmedName, item))
-                        }
-
-                        var children: [UIMenu] = []
-                        var options: UIMenu.Options = []
-                        if list.count < 10 { options.insert(.displayInline) }
-                        for key in buildSections.keys.sorted() {
-                            let items = buildSections[key] ?? []
-                            guard !items.isEmpty else { continue }
-                            let key = key.isEmpty ? String(localized: "Ungrouped") : key
-                            children.append(UIMenu(
-                                title: key,
-                                image: UIImage(systemName: "folder"),
-                                options: options,
-                                children: items.map { item in
-                                    UIAction(title: item.0, image: .modelCloud) { _ in
-                                        var modelIdentifier = item.1
-                                        ModelManager.shared.editCloudModel(identifier: model.id) {
-                                            $0.update(\.model_identifier, to: modelIdentifier)
-                                        }
-                                        if modelIdentifier.isEmpty {
-                                            if modelCanFetchList {
-                                                modelIdentifier = String(localized: "Not Configured (Tapped to Fetch)")
-                                            } else {
-                                                modelIdentifier = String(localized: "Not Configured")
-                                            }
-                                        }
-                                        view.configure(value: modelIdentifier)
-                                    }
-                                }
-                            ))
-                        }
-                        let menu = UIMenu(
-                            title: "Model List",
-                            children: children.count > 1 ? children : children.first?.children ?? []
-                        )
-                        view.present(menu: menu, anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-                    }
-                }
-                let fetchFromServer = {
-                    view.isUserInteractionEnabled = false
-                    view.alpha = 0.5
-                    Indicator.progress(
-                        title: "Fetching Model List",
-                        controller: self
-                    ) { completionHandler in
-                        let list = await withCheckedContinuation { continuation in
-                            ModelManager.shared.fetchModelList(identifier: model.id) { list in
-                                continuation.resume(returning: list)
-                            }
-                        }
-                        await completionHandler {
-                            view.isUserInteractionEnabled = true
-                            view.alpha = 1
-                            postProcessList(list: list)
-                        }
-                    }
-                }
-
-                view.present(
-                    menu: .init(title: "Edit Model Identifier", children: [
-                        UIAction(
-                            title: "Edit",
-                            image: UIImage(systemName: "character.cursor.ibeam")
-                        ) { _ in presentEditor() },
-                        UIAction(
-                            title: "Fetch from Server",
-                            image: UIImage(systemName: "icloud.and.arrow.down")
-                        ) { _ in fetchFromServer() },
-                    ]),
-                    anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-                )
-            } else {
-                presentEditor()
-            }
-        }
+        ))
+        modelIdentifierView.valueLabel.addInteraction(interaction)
         modelIdentifierView.configure(icon: .init(systemName: "circle"))
         modelIdentifierView.configure(title: "Model Identifier")
         modelIdentifierView.configure(description: "The name of the model to be used.")
         var modelIdentifier = model?.model_identifier ?? ""
         if modelIdentifier.isEmpty {
-            if modelCanFetchList {
-                modelIdentifier = String(localized: "Not Configured (Tapped to Fetch)")
-            } else {
-                modelIdentifier = String(localized: "Not Configured")
-            }
+            modelIdentifier = String(localized: "Not Configured (Long Press to Fetch)")
         }
         modelIdentifierView.configure(value: modelIdentifier)
         stackView.addArrangedSubviewWithMargin(modelIdentifierView)
@@ -683,3 +584,109 @@ class CloudModelEditorController: StackScrollController {
         }
     }
 #endif
+
+// MARK: - Menu Delegates
+
+private class ModelIdentifierMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+    weak var view: ConfigurableInfoView?
+    let modelId: CloudModel.ID
+    let onEdit: (ConfigurableInfoView) -> Void
+
+    init(view: ConfigurableInfoView, modelId: CloudModel.ID, onEdit: @escaping (ConfigurableInfoView) -> Void) {
+        self.view = view
+        self.modelId = modelId
+        self.onEdit = onEdit
+    }
+
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self else { return nil }
+
+            let editAction = UIAction(
+                title: String(localized: "Edit"),
+                image: UIImage(systemName: "character.cursor.ibeam")
+            ) { [weak self] _ in
+                guard let self, let view else { return }
+                onEdit(view)
+            }
+
+            let deferredElement = UIDeferredMenuElement.uncached { [weak self] completion in
+                guard let self else {
+                    completion([])
+                    return
+                }
+
+                Task { @MainActor in
+                    guard let model = ModelManager.shared.cloudModel(identifier: self.modelId) else {
+                        completion([])
+                        return
+                    }
+
+                    let list = await withCheckedContinuation { continuation in
+                        ModelManager.shared.fetchModelList(identifier: model.id) { list in
+                            continuation.resume(returning: list)
+                        }
+                    }
+
+                    if list.isEmpty {
+                        let emptyAction = UIAction(
+                            title: String(localized: "(无)"),
+                            attributes: .disabled
+                        ) { _ in }
+                        completion([emptyAction])
+                        return
+                    }
+
+                    var buildSections: [String: [(String, String)]] = [:]
+                    for item in list {
+                        var scope = ""
+                        var trimmedName = item
+                        if item.contains("/") {
+                            scope = item.components(separatedBy: "/").first ?? ""
+                            trimmedName = trimmedName.replacingOccurrences(of: scope + "/", with: "")
+                        }
+                        buildSections[scope, default: []].append((trimmedName, item))
+                    }
+
+                    var children: [UIMenuElement] = []
+                    var options: UIMenu.Options = []
+                    if list.count < 10 { options.insert(.displayInline) }
+
+                    for key in buildSections.keys.sorted() {
+                        let items = buildSections[key] ?? []
+                        guard !items.isEmpty else { continue }
+                        let key = key.isEmpty ? String(localized: "Ungrouped") : key
+                        children.append(UIMenu(
+                            title: key,
+                            image: UIImage(systemName: "folder"),
+                            options: options,
+                            children: items.map { item in
+                                UIAction(title: item.0, image: .modelCloud) { [weak self] _ in
+                                    guard let self, let view else { return }
+                                    ModelManager.shared.editCloudModel(identifier: model.id) {
+                                        $0.update(\.model_identifier, to: item.1)
+                                    }
+                                    view.configure(value: item.1)
+                                }
+                            }
+                        ))
+                    }
+
+                    completion(children)
+                }
+            }
+
+            return UIMenu(title: String(localized: "Model Identifier"), children: [
+                editAction,
+                UIMenu(
+                    title: String(localized: "Select from Server"),
+                    image: UIImage(systemName: "icloud.and.arrow.down"),
+                    children: [deferredElement]
+                ),
+            ])
+        }
+    }
+}

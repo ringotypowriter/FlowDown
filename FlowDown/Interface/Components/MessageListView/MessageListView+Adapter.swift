@@ -305,7 +305,7 @@ extension MessageListView: ListViewAdapter {
         referenceView: UIView?
     ) -> UIMenu {
         UIMenu(children: [
-            UIMenu(title: String(localized: "Operations"), options: [.displayInline], children: [
+            UIMenu(options: [.displayInline], children: [
                 { () -> UIAction? in
                     guard let message = session.message(for: messageIdentifier),
                           message.role == .user
@@ -344,7 +344,7 @@ extension MessageListView: ListViewAdapter {
                     }
                 }(),
             ].compactMap(\.self)),
-            UIMenu(title: String(localized: "Message"), options: [.displayInline], children: [
+            UIMenu(options: [.displayInline], children: [
                 UIAction(title: String(localized: "Copy"), image: .init(systemName: "doc.on.doc")) { _ in
                     UIPasteboard.general.string = representation.content
                     Indicator.present(
