@@ -643,7 +643,7 @@ class CloudModelEditorController: StackScrollController {
                 image: UIImage(systemName: "folder"),
                 options: options,
                 children: items.map { item in
-                    UIAction(title: item.0, image: .modelCloud) { _ in
+                    UIAction(title: item.0) { _ in
                         ModelManager.shared.editCloudModel(identifier: modelId) {
                             $0.update(\.model_identifier, to: item.1)
                         }
