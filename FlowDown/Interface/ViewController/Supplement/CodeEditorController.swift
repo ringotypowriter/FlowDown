@@ -31,7 +31,6 @@ class CodeEditorController: UIViewController {
 
     init(language: String? = nil, text: String) {
         super.init(nibName: nil, bundle: nil)
-        edgesForExtendedLayout = []
 
         indicator.startAnimating()
 
@@ -70,22 +69,12 @@ class CodeEditorController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .background
-        navigationController?.navigationBar.backgroundColor = .background
-
-        let sep = SeparatorView()
-        view.addSubview(sep)
-        sep.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.left.right.equalToSuperview()
-            make.height.equalTo(1)
-        }
 
         view.addSubview(textView)
         textView.snp.makeConstraints { make in
-            make.top.equalTo(sep.snp.bottom)
-            make.left.right.equalToSuperview()
-            make.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
+            make.edges.equalToSuperview()
         }
+        textView.textContainerInset.bottom = 400
 
         updateRightBarButtonItems()
     }

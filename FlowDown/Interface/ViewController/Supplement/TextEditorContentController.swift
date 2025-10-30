@@ -26,16 +26,8 @@ class TextEditorContentController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        edgesForExtendedLayout = []
 
         view.backgroundColor = .background
-        let coverView = UIView().with { $0.backgroundColor = .background }
-        view.addSubview(coverView)
-        // fix nav bar blinking
-        coverView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(-250)
-            make.left.right.equalToSuperview()
-        }
 
         textView.font = .monospacedSystemFont(
             ofSize: UIFont.systemFontSize,

@@ -26,23 +26,12 @@ class HTMLPreviewController: UIViewController, WKNavigationDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = .background
-        navigationController?.navigationBar.backgroundColor = .background
-
         view.addSubview(indicator)
         indicator.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
         indicator.startAnimating()
-
-        let sep = SeparatorView()
-        view.addSubview(sep)
-        sep.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.left.right.equalToSuperview()
-            make.height.equalTo(1)
-        }
 
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .nonPersistent()
