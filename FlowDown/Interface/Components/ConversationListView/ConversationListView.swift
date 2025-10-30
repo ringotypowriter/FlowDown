@@ -5,7 +5,6 @@
 //  Created by 秋星桥 on 2/3/25.
 //
 
-import ChidoriMenu
 import Combine
 import Foundation
 import Storage

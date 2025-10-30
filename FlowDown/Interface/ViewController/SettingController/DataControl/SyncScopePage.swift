@@ -74,47 +74,29 @@ final class SyncScopePage: StackScrollController {
             title: "Fetch Updates Now",
             explain: "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete",
             ephemeralAnnotation: .action { controller in
-                guard let controller else { return }
-
                 guard SyncEngine.isSyncEnabled else {
                     let alert = AlertViewController(
-                        title: String(localized: "Error Occurred"),
-                        message: String(localized: "iCloud synchronization is not enabled. You have to enable iCloud sync in settings before fetching updates.")
+                        title: "Error Occurred",
+                        message: "iCloud synchronization is not enabled. You have to enable iCloud sync in settings before fetching updates."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) { context.dispose() }
+                        context.addAction(title: "OK", attribute: .accent) { context.dispose() }
                     }
                     controller.present(alert, animated: true)
                     return
                 }
 
-                Indicator.progress(title: String(localized: "Refreshing..."), controller: controller) { completion in
-                    Task { @MainActor in
-                        do {
-                            try await syncEngine.fetchChanges()
-                            completion {
-                                let alert = AlertViewController(
-                                    title: String(localized: "Update Requested"),
-                                    message: String(localized: "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete.")
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                controller.present(alert, animated: true)
-                            }
-                        } catch {
-                            completion {
-                                let alert = AlertViewController(
-                                    title: String(localized: "Error Occurred"),
-                                    message: error.localizedDescription
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                controller.present(alert, animated: true)
+                Indicator.progress(title: "Refreshing...", controller: controller) { completion in
+                    try await syncEngine.fetchChanges()
+                    await completion {
+                        let alert = AlertViewController(
+                            title: "Update Requested",
+                            message: "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete."
+                        ) { context in
+                            context.addAction(title: "OK", attribute: .accent) {
+                                context.dispose()
                             }
                         }
+                        controller.present(alert, animated: true)
                     }
                 }
             }

@@ -9,6 +9,7 @@ import AlertController
 import ConfigurableKit
 import MarkdownParser
 import MarkdownView
+import UIEffectKit
 import UIKit
 
 class HubModelDetailController: StackScrollController {
@@ -130,7 +131,7 @@ class HubModelDetailController: StackScrollController {
         }
         openHuggingFace.configure(icon: UIImage(systemName: "safari"))
         openHuggingFace.configure(title: "Open in Hugging Face")
-        openHuggingFace.configure(rawDescription: model.id)
+        openHuggingFace.configure(description: "\(model.id)")
         stackView.addArrangedSubviewWithMargin(openHuggingFace)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -221,13 +222,17 @@ class HubModelDetailController: StackScrollController {
             present(downloadController, animated: true)
         } else if model.id.lowercased().hasPrefix("mlx-community/") {
             let alert = AlertViewController(
-                title: String(localized: "Download Model"),
-                message: String(localized: "We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?") + "\n\n" + String(localized: "Estimated download size: \(sizeText)")
+                title: "Download Model",
+                message: """
+                We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?
+
+                Estimated download size: \(sizeText)
+                """
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Download"), attribute: .dangerous) {
+                context.addAction(title: "Download", attribute: .accent) {
                     context.dispose { [weak self] in
                         self?.present(downloadController, animated: true)
                     }
@@ -236,13 +241,17 @@ class HubModelDetailController: StackScrollController {
             present(alert, animated: true)
         } else {
             let alert = AlertViewController(
-                title: String(localized: "Unverified Model"),
-                message: String(localized: "Even if you download this model, it may not work or even crash the app. Do you still want to download this model?") + "\n\n" + String(localized: "Estimated download size: \(sizeText)")
+                title: "Unverified Model",
+                message: """
+                Even if you download this model, it may not work or even crash the app. Do you still want to download this model?
+
+                Estimated download size: \(sizeText)
+                """
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Download"), attribute: .dangerous) {
+                context.addAction(title: "Download", attribute: .accent) {
                     context.dispose { [weak self] in
                         self?.present(downloadController, animated: true)
                     }
@@ -255,6 +264,8 @@ class HubModelDetailController: StackScrollController {
 
 extension HubModelDetailController {
     class ModelCardView: UIView {
+        let shimmerView = ShimmerGridPointsView(frame: .zero)
+
         let background = UIView().with {
             $0.backgroundColor = .accent
         }
@@ -292,6 +303,25 @@ extension HubModelDetailController {
             background.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
+
+            addSubview(shimmerView)
+            shimmerView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+
+            var cfg = ShimmerGridPointsView.Configuration()
+            cfg.spacing = 32.0
+            cfg.baseColor = .init(0.99523, 1.0, 0.94)
+            cfg.waveSpeed = 2.55
+            cfg.waveStrength = 1.48
+            cfg.blurRange = 0.04 ... 0.09
+            cfg.intensityRange = 0.54 ... 0.78
+            cfg.shapeMode = .mixed
+            cfg.enableWiggle = false
+            cfg.enableEDR = false
+            cfg.radiusRange = 3.5 ... 6.5
+            shimmerView.configuration = cfg
+            shimmerView.alpha = 0.25
 
             addSubview(stackView)
             stackView.snp.makeConstraints { make in

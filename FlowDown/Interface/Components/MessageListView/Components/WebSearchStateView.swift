@@ -11,15 +11,22 @@ import UIKit
 final class WebSearchStateView: MessageListRowView {
     private let searchIndicatorView: SearchIndicatorView = .init()
     private var results: [Message.WebSearchStatus.SearchResult] = []
+    private lazy var menuButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.backgroundColor = .clear
+        b.showsMenuAsPrimaryAction = true
+        b.accessibilityLabel = String(localized: "Web Search Results")
+        return b
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         contentView.addSubview(searchIndicatorView)
+        contentView.addSubview(menuButton)
 
-        searchIndicatorView.isUserInteractionEnabled = true
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        searchIndicatorView.addGestureRecognizer(gesture)
+        // Use an overlay button to present system UIMenu
+        searchIndicatorView.isUserInteractionEnabled = false
     }
 
     override func layoutSubviews() {
@@ -32,6 +39,8 @@ final class WebSearchStateView: MessageListRowView {
             width: min(indicatorSize.width, contentView.bounds.width),
             height: contentView.bounds.height
         )
+
+        menuButton.frame = contentView.bounds
     }
 
     @available(*, unavailable)
@@ -73,28 +82,19 @@ final class WebSearchStateView: MessageListRowView {
                 UIMenu(title: String(localized: "Share") + " " + (result.url.host ?? ""), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
                         guard let self else { return }
-                        let shareSheet = UIActivityViewController(activityItems: [result.url], applicationActivities: nil)
-                        shareSheet.popoverPresentationController?.sourceView = self
-                        shareSheet.popoverPresentationController?.sourceRect = .init(
-                            origin: .init(x: center.x, y: center.y - 4),
-                            size: .init(width: 8, height: 8)
-                        )
-                        parentViewController?.present(shareSheet, animated: true)
+                        DisposableExporter(data: Data(result.url.absoluteString.utf8), pathExtension: "txt")
+                            .run(anchor: self, mode: .text)
                     },
                     UIAction(
                         title: String(localized: "Open in Default Browser"),
                         image: UIImage(systemName: "safari")
-                    ) { [weak self] _ in
-                        guard let self else { return }
-                        Indicator.open(result.url, referencedView: self)
+                    ) { _ in
+                        UIApplication.shared.open(result.url)
                     },
                 ]),
             ])
         })
-        searchIndicatorView.present(menu: menu, anchorPoint: .init(
-            x: searchIndicatorView.frame.midX,
-            y: searchIndicatorView.frame.maxY + 16
-        ))
+        menuButton.menu = menu
     }
 }
 

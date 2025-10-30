@@ -68,7 +68,7 @@ extension SettingController.SettingContent {
             navigationItem.rightBarButtonItem = .init(systemItem: .refresh, primaryAction: .init { _ in
                 self.updateValues()
                 Indicator.present(
-                    title: String(localized: "Refreshed"),
+                    title: "Refreshed",
                     referencingView: self.view
                 )
             })
@@ -151,17 +151,18 @@ extension SettingController.SettingContent {
                 if name.isEmpty || name.lowercased() == "localhost" {
                     view.configure(value: String(localized: "Unable to Determine"), isDestructive: true)
                     view.setTapBlock { view in
-                        view.present(menu: UIMenu(children: [
+                        view.valueLabel.menu = UIMenu(children: [
                             UIAction(title: String(localized: "Open Setting")) { _ in
                                 UIApplication.shared.openSettings()
                             },
-                        ]))
+                        ])
+                        view.valueLabel.showsMenuAsPrimaryAction = true
                     }
                 } else {
                     view.configure(value: String(localized: "Authorized"))
                     view.setTapBlock { _ in
                         Indicator.present(
-                            title: String(localized: "Authorized"),
+                            title: "Authorized",
                             referencingView: view
                         )
                     }

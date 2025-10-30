@@ -15,9 +15,6 @@ import UniformTypeIdentifiers
 
 extension SettingController.SettingContent {
     class DataControlController: StackScrollController {
-        #if targetEnvironment(macCatalyst)
-            var documentPickerExportTempItems: [URL] = []
-        #endif
         private var documentPickerImportHandler: (([URL]) -> Void)?
 
         init() {
@@ -35,9 +32,6 @@ extension SettingController.SettingContent {
             view.backgroundColor = .background
         }
 
-        var deletedSeverDataCancellable: AnyCancellable?
-        var deletedSeverDataCompletionHandler: Indicator.CompletionHandler?
-        var pullSeverDataCompletionHandler: Indicator.CompletionHandler?
         override func setupContentViews() {
             super.setupContentViews()
             stackView.addArrangedSubview(SeparatorView())
@@ -113,7 +107,6 @@ extension SettingController.SettingContent {
                 title: "Import Database",
                 explain: "Replace all local data with a previous database export.",
                 ephemeralAnnotation: .action { [weak self] controller in
-                    guard let controller else { return }
                     self?.presentImportConfirmation(from: controller)
                 }
             ).createView()
@@ -133,45 +126,15 @@ extension SettingController.SettingContent {
                 title: "Export Database",
                 explain: "Export the database file.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
                     Indicator.progress(
-                        title: String(localized: "Exporting..."),
+                        title: "Exporting...",
                         controller: controller
                     ) { progressCompletion in
                         let result = sdb.exportZipFile()
-                        progressCompletion { [weak self] in
-                            switch result {
-                            case let .success(url):
-                                #if targetEnvironment(macCatalyst)
-                                    let documentPicker = UIDocumentPickerViewController(forExporting: [url])
-                                    documentPicker.title = String(localized: "Export Model")
-                                    documentPicker.delegate = self
-                                    documentPicker.modalPresentationStyle = .formSheet
-                                    controller.present(documentPicker, animated: true)
-                                    self?.documentPickerExportTempItems.append(url)
-                                #else
-                                    let share = UIActivityViewController(
-                                        activityItems: [url],
-                                        applicationActivities: nil
-                                    )
-                                    share.popoverPresentationController?.sourceView = exportDatabaseReader ?? .init()
-                                    share.popoverPresentationController?.sourceRect = exportDatabaseReader?.bounds ?? .zero
-                                    share.completionWithItemsHandler = { _, _, _, _ in
-                                        try? FileManager.default.removeItem(at: url)
-                                    }
-                                    controller.present(share, animated: true)
-                                #endif
-                            case let .failure(err):
-                                let alert = AlertViewController(
-                                    title: String(localized: "Error Occurred"),
-                                    message: err.localizedDescription
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                controller.present(alert, animated: true)
-                            }
+                        let url = try result.get()
+                        await progressCompletion {
+                            DisposableExporter(deletableItem: url, title: "Export Database")
+                                .run(anchor: exportDatabaseReader ?? controller.view)
                         }
                     }
                 }
@@ -201,22 +164,22 @@ extension SettingController.SettingContent {
                 explain: "Delete all conversations and related data.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Delete All Conversations"),
-                        message: String(localized: "Are you sure you want to delete all conversations and related data?")
+                        title: "Delete All Conversations",
+                        message: "Are you sure you want to delete all conversations and related data?"
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Erase All"), attribute: .dangerous) {
+                        context.addAction(title: "Erase All", attribute: .accent) {
                             context.dispose { ConversationManager.shared.eraseAll()
                                 Indicator.present(
-                                    title: String(localized: "Deleted"),
-                                    referencingView: controller?.view
+                                    title: "Deleted",
+                                    referencingView: controller.view
                                 )
                             }
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(deleteAllConv)
@@ -245,23 +208,23 @@ extension SettingController.SettingContent {
                 explain: "Clean image caches, remove partial downloads and more.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Clean Cache"),
-                        message: String(localized: "Are you sure you want to clean the cache? This will also delete partial downloads.")
+                        title: "Clean Cache",
+                        message: "Are you sure you want to clean the cache? This will also delete partial downloads."
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Clear"), attribute: .dangerous) {
+                        context.addAction(title: "Clear", attribute: .accent) {
                             DiggerCache.cleanDownloadFiles()
                             DiggerCache.cleanDownloadTempFiles()
                             Indicator.present(
-                                title: String(localized: "Cleaned"),
-                                referencingView: controller?.view
+                                title: "Cleaned",
+                                referencingView: controller.view
                             )
                             context.dispose {}
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
 
@@ -274,25 +237,25 @@ extension SettingController.SettingContent {
                 explain: "This will remove all contents inside temporary directory.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Reset Temporary Items"),
-                        message: String(localized: "Are you sure you want to remove all content inside temporary directory?")
+                        title: "Reset Temporary Items",
+                        message: "Are you sure you want to remove all content inside temporary directory?"
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Reset"), attribute: .dangerous) {
+                        context.addAction(title: "Reset", attribute: .accent) {
                             context.dispose {
                                 let tempDir = FileManager.default.temporaryDirectory
                                 try? FileManager.default.removeItem(at: tempDir)
                                 try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
                                 Indicator.present(
-                                    title: String(localized: "Done"),
-                                    referencingView: controller?.view
+                                    title: "Done",
+                                    referencingView: controller.view
                                 )
                             }
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
 
@@ -318,43 +281,32 @@ extension SettingController.SettingContent {
                 icon: "icloud.slash",
                 title: "Delete iCloud Data ...",
                 explain: "Delete data stored in iCloud.",
-                ephemeralAnnotation: .action { [weak self] controller in
-                    guard let self, let controller else { return }
-
+                ephemeralAnnotation: .action { controller in
                     guard SyncEngine.isSyncEnabled else {
-                        showAlert(controller: controller, title: String(localized: "Error Occurred"), message: String(localized: "iCloud synchronization is not enabled"))
+                        let alert = AlertViewController(
+                            title: "Error Occurred",
+                            message: "iCloud synchronization is not enabled"
+                        ) { context in
+                            context.addAction(title: "OK", attribute: .accent) {
+                                context.dispose()
+                            }
+                        }
+                        controller.present(alert, animated: true)
                         return
                     }
 
                     let alert = AlertViewController(
-                        title: String(localized: "Delete iCloud Data"),
-                        message: String(localized: "This will remove your synced data from iCloud for this app. Local data on this device will remain.")
-                    ) { [weak self] context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        title: "Delete iCloud Data",
+                        message: "This will remove your synced data from iCloud for this app. Local data on this device will remain."
+                    ) { context in
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+                        context.addAction(title: "Delete", attribute: .accent) {
                             context.dispose {
-                                Indicator.progress(title: String(localized: "Deleting..."), controller: controller) { [weak self] completion in
-                                    self?.deletedSeverDataCompletionHandler = completion
-                                }
-
-                                self?.deletedSeverDataCancellable = NotificationCenter.default
-                                    .publisher(for: SyncEngine.ServerDataDeleted)
-                                    .receive(on: RunLoop.main)
-                                    .sink { [weak self, weak controller] notification in
-                                        guard let controller, let self else { return }
-                                        let success = notification.userInfo?["success"] as? Bool ?? false
-                                        let error = notification.userInfo?["error"] as? Error
-                                        handleServerDataDeleted(controller: controller, success: success, error: error)
-                                    }
-
-                                Task { @MainActor in
-                                    do {
-                                        try await syncEngine.deleteServerData()
-                                    } catch {
-                                        self?.handleServerDataDeleted(controller: controller, success: false, error: error)
-                                    }
+                                Indicator.progress(title: "Deleting...", controller: controller) { completion in
+                                    try await syncEngine.deleteServerData()
+                                    await completion {}
                                 }
                             }
                         }
@@ -371,36 +323,31 @@ extension SettingController.SettingContent {
                 explain: "If you encounter any issues, you can try to reset the app. This will remove all content and reset the entire database.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Reset App"),
-                        message: String(localized: "Are you sure you want to remove all content and reset the entire database? App will close after reset.")
+                        title: "Reset App",
+                        message: "Are you sure you want to remove all content and reset the entire database? App will close after reset."
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Reset"), attribute: .dangerous) {
+                        context.addAction(title: "Reset", attribute: .accent) {
                             context.dispose {
-                                Task {
-                                    /// 停掉同步,避免同步继续执行会占用db连接，导致后面无法关闭db
-                                    try? await syncEngine.stopSyncIfNeeded()
-                                    SyncEngine.resetCachedState()
+                                /// 停掉同步,避免同步继续执行会占用db连接，导致后面无法关闭db
+                                try? await syncEngine.stopSyncIfNeeded()
+                                SyncEngine.resetCachedState()
+                                try? FileManager.default.removeItem(at: FileManager.default.temporaryDirectory)
+                                try? FileManager.default.removeItem(at: ModelManager.shared.localModelDir)
 
-                                    await MainActor.run {
-                                        try? FileManager.default.removeItem(at: FileManager.default.temporaryDirectory)
-                                        try? FileManager.default.removeItem(at: ModelManager.shared.localModelDir)
-
-                                        /// 在主线程中释放db链接
-                                        sdb.reset()
-                                        // close the app
-                                        UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            exit(0)
-                                        }
-                                    }
+                                /// 在主线程中释放db链接
+                                sdb.reset()
+                                // close the app
+                                UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    exit(0)
                                 }
                             }
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
 
@@ -417,13 +364,13 @@ extension SettingController.SettingContent {
 
         private func presentSyncDisableAlert(confirmHandler: @escaping (Bool) -> Void) {
             let alert = AlertViewController(
-                title: String(localized: "Disable iCloud Sync"),
-                message: String(localized: "Turning off sync only pauses future updates. Existing data stays in place. Re‑enable later to fetch and resume syncing.")
+                title: "Disable iCloud Sync",
+                message: "Turning off sync only pauses future updates. Existing data stays in place. Re‑enable later to fetch and resume syncing."
             ) { context in
-                context.addAction(title: String(localized: "Keep Enabled")) {
+                context.addAction(title: "Keep Enabled") {
                     context.dispose { confirmHandler(false) }
                 }
-                context.addAction(title: String(localized: "Disable"), attribute: .dangerous) {
+                context.addAction(title: "Disable", attribute: .accent) {
                     context.dispose { confirmHandler(true) }
                 }
             }
@@ -442,13 +389,13 @@ extension SettingController.SettingContent {
 
         private func presentImportConfirmation(from controller: UIViewController) {
             let alert = AlertViewController(
-                title: String(localized: "Import Database"),
-                message: String(localized: "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone.")
+                title: "Import Database",
+                message: "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone."
             ) { [weak self] context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Import"), attribute: .dangerous) {
+                context.addAction(title: "Import", attribute: .accent) {
                     context.dispose { self?.presentImportPicker(from: controller) }
                 }
             }
@@ -468,109 +415,40 @@ extension SettingController.SettingContent {
 
         private func performDatabaseImport(from url: URL, controller: UIViewController) {
             Indicator.progress(
-                title: String(localized: "Importing..."),
+                title: "Importing...",
                 controller: controller
             ) { progressCompletion in
-                Task.detached(priority: .userInitiated) {
-                    let securityScoped = url.startAccessingSecurityScopedResource()
-                    defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
+                let securityScoped = url.startAccessingSecurityScopedResource()
+                defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
 
-                    // 停止同步
-                    try? await syncEngine.stopSyncIfNeeded()
+                // 停止同步
+                try? await syncEngine.stopSyncIfNeeded()
 
+                let result = await withCheckedContinuation { continuation in
                     sdb.importDatabase(from: url) { result in
-                        progressCompletion { [weak self] in
-                            switch result {
-                            case .success:
-                                let alert = AlertViewController(
-                                    title: String(localized: "Import Complete"),
-                                    message: String(localized: "FlowDown will restart to apply the imported database.")
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        SyncEngine.resetCachedState()
-                                        context.dispose {
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                                exit(0)
-                                            }
-                                        }
-                                    }
+                        continuation.resume(returning: result)
+                    }
+                }
+
+                try result.get()
+                await progressCompletion { [weak self] in
+                    let alert = AlertViewController(
+                        title: "Import Complete",
+                        message: "FlowDown will restart to apply the imported database."
+                    ) { context in
+                        context.addAction(title: "OK", attribute: .accent) {
+                            SyncEngine.resetCachedState()
+                            context.dispose {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    exit(0)
                                 }
-                                controller.present(alert, animated: true)
-                                self?.documentPickerImportHandler = nil
-                            case let .failure(error):
-                                let alert = AlertViewController(
-                                    title: String(localized: "Error Occurred"),
-                                    message: error.localizedDescription
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                controller.present(alert, animated: true)
-                                self?.documentPickerImportHandler = nil
                             }
                         }
                     }
+                    controller.present(alert, animated: true)
+                    self?.documentPickerImportHandler = nil
                 }
             }
-        }
-
-        private func showAlert(controller: UIViewController, title: String, message: String) {
-            let alert = AlertViewController(
-                title: title,
-                message: message
-            ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                    context.dispose()
-                }
-            }
-            controller.present(alert, animated: true)
-        }
-
-        @MainActor
-        private func handleServerDataDeleted(controller: UIViewController, success: Bool, error: Error?) {
-            deletedSeverDataCancellable = nil
-            deletedSeverDataCompletionHandler? {
-                guard !success else {
-                    return
-                }
-
-                let message = if let error {
-                    error.localizedDescription
-                } else {
-                    String(localized: "Failed to delete iCloud data. Please try again later")
-                }
-
-                let alert = AlertViewController(
-                    title: String(localized: "Error Occurred"),
-                    message: message
-                ) { context in
-                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                        context.dispose()
-                    }
-                }
-                controller.present(alert, animated: true)
-            }
-
-            deletedSeverDataCompletionHandler = nil
-        }
-
-        @MainActor
-        private func handlePullSeverData(controller: UIViewController, error: Error?) {
-            pullSeverDataCompletionHandler? {
-                guard let error else { return }
-                let alert = AlertViewController(
-                    title: String(localized: "Error Occurred"),
-                    message: error.localizedDescription
-                ) { context in
-                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                        context.dispose()
-                    }
-                }
-                controller.present(alert, animated: true)
-            }
-
-            pullSeverDataCompletionHandler = nil
         }
     }
 }
@@ -579,20 +457,9 @@ extension SettingController.SettingContent.DataControlController: UIDocumentPick
     func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         documentPickerImportHandler?(urls)
         documentPickerImportHandler = nil
-        cleanupExportTempItems()
     }
 
     func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         documentPickerImportHandler = nil
-        cleanupExportTempItems()
-    }
-
-    private func cleanupExportTempItems() {
-        #if targetEnvironment(macCatalyst)
-            for cleanableURL in documentPickerExportTempItems {
-                try? FileManager.default.removeItem(at: cleanableURL)
-            }
-            documentPickerExportTempItems.removeAll()
-        #endif
     }
 }

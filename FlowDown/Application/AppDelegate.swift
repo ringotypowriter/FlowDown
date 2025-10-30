@@ -6,7 +6,6 @@
 //
 
 import AlertController
-import ChidoriMenu
 import CloudKit
 import Combine
 import ConfigurableKit
@@ -42,10 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AlertControllerConfiguration.accentColor = .accent
         AlertControllerConfiguration.backgroundColor = .background
         AlertControllerConfiguration.separatorColor = SeparatorView.color
-
-        ChidoriMenuConfiguration.accentColor = UIColor.accent
-        ChidoriMenuConfiguration.backgroundColor = UIColor.background
-        ChidoriMenuConfiguration.suggestedWidth = nil // auto width
 
         templateMenuCancellable = ChatTemplateManager.shared.$templates
             .receive(on: DispatchQueue.main)

@@ -12,7 +12,7 @@ import ZIPFoundation
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
-    formatter.locale = .current
+    formatter.locale = Locale(identifier: "en_US_POSIX")
     return formatter
 }()
 

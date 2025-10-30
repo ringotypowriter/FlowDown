@@ -373,30 +373,24 @@ open class RemoteChatClient: ChatService {
             return choice
         }
 
-        let reasoningContentRef: Reference<String> = .init()
-        let remainingContentRef: Reference<String> = .init()
-        let regex = Regex {
-            ZeroOrMore(.whitespace)
-            REASONING_START_TOKEN
-            Capture(as: reasoningContentRef) {
-                ZeroOrMore(.any)
-            } transform: {
-                String($0.trimmingCharacters(in: .whitespacesAndNewlines))
-            }
-            REASONING_END_TOKEN
-            Capture(as: remainingContentRef) {
-                ZeroOrMore(.any)
-            } transform: {
-                String($0.trimmingCharacters(in: .whitespacesAndNewlines))
-            }
-        }
-        guard let match = content.wholeMatch(of: regex) else {
+        guard let startRange = content.range(of: REASONING_START_TOKEN),
+              let endRange = content.range(of: REASONING_END_TOKEN, range: startRange.upperBound ..< content.endIndex)
+        else {
             // No reasoning content found, return the original choice.
             return choice
         }
 
-        let reasoningContent = match[reasoningContentRef]
-        let remainingContent = match[remainingContentRef]
+        let reasoningRange = startRange.upperBound ..< endRange.lowerBound
+
+        let leading = content[..<startRange.lowerBound]
+        let trailing = content[endRange.upperBound...]
+
+        let reasoningContent = content[reasoningRange]
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let remainingContent = String(
+            (leading + trailing)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        )
 
         var newChoice = choice
         newChoice.content = remainingContent

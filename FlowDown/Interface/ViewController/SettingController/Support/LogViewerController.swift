@@ -34,23 +34,42 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         let fullText: String
 
         init?(from line: String) {
-            // Parse format: "2025-10-30T12:34:56.789Z [DEBUG] [Category] message"
+            guard !line.isEmpty else { return nil }
+
+            // Try to parse format: "2025-10-30T12:34:56.789Z [DEBUG] [Category] message"
             let components = line.components(separatedBy: " ")
-            guard components.count >= 4 else { return nil }
 
-            timestamp = components[0]
+            // Check if it's a properly formatted log line
+            if components.count >= 4,
+               components[0].contains("T"), // Timestamp contains 'T'
+               components[1].hasPrefix("["), components[1].hasSuffix("]"), // Level in brackets
+               components[2].hasPrefix("["), components[2].hasSuffix("]")
+            { // Category in brackets
 
-            // Extract level
-            let levelStr = components[1].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-            guard let parsedLevel = LogLevel(rawValue: levelStr) else { return nil }
-            level = parsedLevel
+                timestamp = components[0]
 
-            // Extract category
-            category = components[2].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+                // Extract level
+                let levelStr = components[1].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+                if let parsedLevel = LogLevel(rawValue: levelStr) {
+                    level = parsedLevel
+                } else {
+                    level = .info // Default to info if level is unknown
+                }
 
-            // Rest is message
-            message = components.dropFirst(3).joined(separator: " ")
-            fullText = line
+                // Extract category
+                category = components[2].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+
+                // Rest is message
+                message = components.dropFirst(3).joined(separator: " ")
+                fullText = line
+            } else {
+                // Fallback: treat as unformatted log line
+                timestamp = ""
+                level = .info
+                category = "System"
+                message = line
+                fullText = line
+            }
         }
     }
 
@@ -77,13 +96,16 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
     }
 
     private func setupMenuButton() {
-        let menuButton = UIBarButtonItem(
-            image: UIImage(systemName: "ellipsis.circle"),
-            style: .plain,
-            target: nil,
-            action: nil
-        )
-        menuButton.menu = createMenu()
+        // Use a custom button to avoid autolayout constraint warnings
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        button.showsMenuAsPrimaryAction = true
+        button.menu = createMenu()
+
+        // Set explicit size to avoid constraint conflicts
+        button.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
+
+        let menuButton = UIBarButtonItem(customView: button)
         navigationItem.rightBarButtonItem = menuButton
     }
 
@@ -172,14 +194,12 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         tableView.estimatedRowHeight = 60
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorStyle = .singleLine
+        tableView.backgroundColor = .systemBackground
         tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 
     private func toggleLevel(_ level: LogLevel) {
@@ -203,7 +223,12 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
     }
 
     private func updateMenu() {
-        navigationItem.rightBarButtonItem?.menu = createMenu()
+        // Update menu for custom button view
+        if let customView = navigationItem.rightBarButtonItem?.customView as? UIButton {
+            customView.menu = createMenu()
+        } else {
+            navigationItem.rightBarButtonItem?.menu = createMenu()
+        }
     }
 
     private func applyFilters() {
@@ -220,7 +245,11 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         var categories = Set<String>()
 
         for line in lines {
-            guard let logLine = LogLine(from: line) else { continue }
+            guard let logLine = LogLine(from: line) else {
+                // Log parsing failure for debugging
+                print("[LogViewer] Failed to parse line: \(line.prefix(100))")
+                continue
+            }
             categories.insert(logLine.category)
 
             // Apply level filter
@@ -235,6 +264,7 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         }
 
         allCategories = categories
+        print("[LogViewer] Parsed \(parsedLines.count) lines from \(lines.count) total lines")
         return parsedLines
     }
 
@@ -245,11 +275,7 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
 
     @objc private func shareLog() {
         let text = LogStore.shared.readTail(maxBytes: 512 * 1024)
-        let vc = UIActivityViewController(activityItems: [text], applicationActivities: nil)
-        if let popover = vc.popoverPresentationController {
-            popover.barButtonItem = navigationItem.rightBarButtonItem
-        }
-        present(vc, animated: true)
+        DisposableExporter(data: Data(text.utf8), pathExtension: "txt").run(anchor: view, mode: .text)
     }
 
     @objc private func clearLog() {
@@ -306,7 +332,11 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         // Configure detail text (timestamp + category)
         cell.detailTextLabel?.font = .monospacedSystemFont(ofSize: 9, weight: .regular)
         cell.detailTextLabel?.numberOfLines = 1
-        cell.detailTextLabel?.text = "\(logLine.timestamp) • \(logLine.category)"
+        if logLine.timestamp.isEmpty {
+            cell.detailTextLabel?.text = logLine.category
+        } else {
+            cell.detailTextLabel?.text = "\(logLine.timestamp) • \(logLine.category)"
+        }
 
         // Color coding by level
         switch logLine.level {

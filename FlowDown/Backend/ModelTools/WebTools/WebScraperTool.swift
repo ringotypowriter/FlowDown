@@ -88,7 +88,7 @@ class MTWebScraperTool: ModelTool, @unchecked Sendable {
     func scrapeWithUserInteraction(url: URL, controller: UIViewController) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             let indicator = AlertProgressIndicatorViewController(
-                title: String(localized: "Fetching Web Content")
+                title: "Fetching Web Content"
             )
 
             controller.present(indicator, animated: true)

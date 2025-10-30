@@ -56,9 +56,8 @@ extension SettingController.SettingContent {
             view.backgroundColor = .background
 
             navigationItem.rightBarButtonItem = UIBarButtonItem(
-                barButtonSystemItem: .add,
-                target: self,
-                action: #selector(addClientTapped)
+                image: UIImage(systemName: "plus"),
+                menu: UIMenu(children: createAddClientMenuItems())
             )
 
             dataSource.defaultRowAnimation = .fade
@@ -127,7 +126,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
         let delete = UIContextualAction(
             style: .destructive,
-            title: String(localized: "Delete")
+            title: "Delete"
         ) { _, _, completion in
             MCPService.shared.remove(clientId)
             completion(true)
@@ -136,28 +135,37 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [delete])
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
+        guard let clientId = dataSource.itemIdentifier(for: indexPath),
+              let server = MCPService.shared.server(with: clientId) else { return nil }
 
-        let menu = UIMenu(options: [.displayInline], children: [
-            UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
-                self.exportServer(clientId)
-            },
-            UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                MCPService.shared.remove(clientId)
-            },
+        let menu = UIMenu(children: [
+            UIMenu(options: [.displayInline], children: [
+                UIAction(
+                    title: server.isEnabled ? String(localized: "Disable") : String(localized: "Enable"),
+                    image: UIImage(systemName: server.isEnabled ? "pause.circle" : "play.circle")
+                ) { _ in
+                    MCPService.shared.edit(identifier: clientId) {
+                        $0.update(\.isEnabled, to: !$0.isEnabled)
+                    }
+                    self.tableView.reloadData()
+                },
+            ]),
+            UIMenu(options: [.displayInline], children: [
+                UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                    self.exportServer(clientId)
+                },
+            ]),
+            UIMenu(options: [.displayInline], children: [
+                UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    MCPService.shared.remove(clientId)
+                },
+            ]),
         ])
 
-        #if targetEnvironment(macCatalyst)
-            if let cell = tableView.cellForRow(at: indexPath) {
-                cell.present(menu: menu, anchorPoint: point)
-            }
-            return nil
-        #else
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                menu
-            }
-        #endif
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            menu
+        }
     }
 }
 
@@ -166,7 +174,7 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
         guard !urls.isEmpty else { return }
 
         Indicator.progress(
-            title: String(localized: "Importing MCP Servers"),
+            title: "Importing MCP Servers",
             controller: self
         ) { completionHandler in
             var success = 0
@@ -178,7 +186,7 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
                     defer { url.stopAccessingSecurityScopedResource() }
                     let data = try Data(contentsOf: url)
                     let server = try ModelContextServer.decodeCompatible(from: data)
-                    DispatchQueue.main.asyncAndWait {
+                    await MainActor.run {
                         MCPService.shared.insert(server)
                     }
                     success += 1
@@ -187,26 +195,25 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
                 }
             }
 
-            completionHandler {
+            if success == 0, let firstError = failure.first {
+                throw firstError
+            }
+
+            await completionHandler {
                 if !failure.isEmpty {
                     let alert = AlertViewController(
-                        title: String(localized: "Import Failed"),
-                        message: String(
-                            format: String(localized: "%d servers imported successfully, %d failed."),
-                            success,
-                            failure.count
-                        )
+                        title: "Import Failed",
+                        message: "\(success) servers imported successfully, \(failure.count) failed."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
                     self.present(alert, animated: true)
                 } else {
                     Indicator.present(
-                        title: String(localized: "Imported \(success) servers."),
+                        title: "Imported \(success) servers.",
                         preset: .done,
-                        haptic: .success,
                         referencingView: self.view
                     )
                 }
@@ -347,15 +354,7 @@ extension SettingController.SettingContent.MCPController {
             let data = try encoder.encode(server)
             try data.write(to: tempFile, options: .atomic)
 
-            let exporter = FileExporterHelper()
-            exporter.targetFileURL = tempFile
-            exporter.referencedView = view
-            exporter.deleteAfterComplete = true
-            exporter.exportTitle = String(localized: "Export MCP Server")
-            exporter.completion = {
-                try? FileManager.default.removeItem(at: tempFileDir)
-            }
-            exporter.execute(presentingViewController: self)
+            DisposableExporter(deletableItem: tempFile, title: "Export MCP Server").run(anchor: view)
         } catch {
             Logger.app.errorFile("failed to export MCP server: \(error)")
         }

@@ -564,7 +564,7 @@ int hashmap_rehash_helper(struct hashmap_s *const m) {
 
 // for a name
 Tag *for_name(za_Allocator *A, struct hashmap_s *m, const ekstring *name) {
-  TagType type = hashmap_get(m, name->buf, name->length);
+  TagType type = (unsigned int)hashmap_get(m, name->buf, (unsigned int)name->length);
   if (type != 0) {
     Tag *t = (Tag *)za_Alloc(A, sizeof(Tag));
     t->type = type;

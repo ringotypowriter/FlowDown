@@ -20,17 +20,11 @@ public class QuickSettingBar: EditorSectionView {
         text: NSLocalizedString("Tools", bundle: .module, comment: ""),
         icon: "tools"
     )
-    let toolsToggleRightClickFinder = RightClickFinder()
-    let ephemeralChatToggle = ToggleBlockButton(
-        text: NSLocalizedString("Ephemeral Chat", bundle: .module, comment: ""),
-        icon: "beaker"
-    )
 
     lazy var buttons: [BlockButton] = [
         modelPicker,
         browsingToggle,
         toolsToggle,
-//        ephemeralChatToggle, // removed for now
     ]
     var modelIdentifier: String = ""
     var modelSupportsToolCall = false {
@@ -75,24 +69,37 @@ public class QuickSettingBar: EditorSectionView {
 
         setModelName(nil)
 
-        modelPicker.actionBlock = { [weak self] in
-            self?.delegate?.quickSettingBarPickModel()
-            self?.scrollToBeforeModelItem()
-        }
-        modelPickerRightClickFinder.install(on: modelPicker) { [weak self] in
-            self?.delegate?.quickSettingBarShowAlternativeModelMenu()
-        }
+        modelPicker.showsMenuAsPrimaryAction = true
+        modelPicker.menu = UIMenu(children: [
+            UIDeferredMenuElement.uncached { [weak self] completion in
+                guard let self else {
+                    completion([])
+                    return
+                }
+                scrollToBeforeModelItem()
+                let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
+                completion(elements)
+            },
+        ])
+        modelPicker.actionBlock = {}
 
-        toolsToggleRightClickFinder.install(on: toolsToggle) { [weak self] in
-            self?.delegate?.quickSettingBarShowAlternativeToolsMenu()
+        var requestReload: ((Bool) -> Void)!
+        requestReload = { [weak self] input in
+            self?.toolsToggle.isOn = input
+            self?.toolsToggle.menu = .init(children: [UIDeferredMenuElement.uncached { [weak self] provider in
+                let isEnabled = self?.toolsToggle.isOn ?? false
+                let elements = self?.delegate?.quickSettingBarBuildAlternativeToolsMenu(
+                    isEnabled: isEnabled,
+                    requestReload: requestReload
+                ) ?? []
+                provider(elements)
+            }])
         }
-
-        toolsToggle.contextMenuChecker = { [weak toolsToggleRightClickFinder] in
-            toolsToggleRightClickFinder?.isContextMenuActive ?? false
-        }
+        requestReload(false)
+        toolsToggle.showsMenuAsPrimaryAction = true
+        toolsToggle.actionBlock = {}
 
         heightPublisher.send(height)
-
         updateToolCallAvailability(false)
     }
 
@@ -139,10 +146,10 @@ public class QuickSettingBar: EditorSectionView {
     func setModelName(_ name: String?) {
         defer { setNeedsLayout() }
         guard let name, !name.isEmpty else {
-            modelPicker.titleLabel.text = NSLocalizedString("No Model", bundle: .module, comment: "")
+            modelPicker.textLabel.text = NSLocalizedString("No Model", bundle: .module, comment: "")
             return
         }
-        modelPicker.titleLabel.text = name
+        modelPicker.textLabel.text = name
     }
 
     func updateToolCallAvailability(_ availability: Bool) {
@@ -176,8 +183,69 @@ public class QuickSettingBar: EditorSectionView {
     func show() {
         isOpen = true
     }
+}
 
-    @objc func longPressOnModelPicker() {
-        delegate?.quickSettingBarShowAlternativeModelMenu()
+// MARK: - UIContextMenuInteractionDelegate
+
+extension QuickSettingBar: UIContextMenuInteractionDelegate {
+    public func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        // Determine which view triggered the interaction
+        let view = interaction.view
+
+        if view === modelPicker {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] in
+                self?.makePreviewController(for: self?.modelPicker)
+            }) { [weak self] _ in
+                guard let self else { return nil }
+                return UIMenu(children: [
+                    UIDeferredMenuElement.uncached { [weak self] completion in
+                        guard let self else {
+                            completion([])
+                            return
+                        }
+                        let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
+                        completion(elements)
+                    },
+                ])
+            }
+        }
+
+        return nil
+    }
+
+    private func makePreviewController(for view: UIView?) -> UIViewController? {
+        guard let view else { return nil }
+        guard let snapshot = view.snapshotView(afterScreenUpdates: false) else {
+            return nil
+        }
+
+        let controller = UIViewController()
+        controller.preferredContentSize = .init(
+            width: view.bounds.size.width + 16,
+            height: view.bounds.size.height + 16
+        )
+        controller.view.backgroundColor = .systemBackground
+        controller.view.addSubview(snapshot)
+        snapshot.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            snapshot.topAnchor.constraint(equalTo: controller.view.topAnchor, constant: 8),
+            snapshot.leadingAnchor.constraint(equalTo: controller.view.leadingAnchor, constant: 8),
+            snapshot.trailingAnchor.constraint(equalTo: controller.view.trailingAnchor, constant: -8),
+            snapshot.bottomAnchor.constraint(equalTo: controller.view.bottomAnchor, constant: -8),
+        ])
+        return controller
+    }
+
+    public func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        willDisplayMenuFor _: UIContextMenuConfiguration,
+        animator _: UIContextMenuInteractionAnimating?
+    ) {
+        if interaction.view === modelPicker {
+            scrollToBeforeModelItem()
+        }
     }
 }

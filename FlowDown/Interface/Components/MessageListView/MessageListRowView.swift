@@ -17,7 +17,7 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
     }
 
     let contentView = UIView()
-    var handleContextMenu: ((_ location: CGPoint) -> Void)?
+    var contextMenuProvider: ((CGPoint) -> UIMenu?)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,7 +50,7 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        handleContextMenu = nil
+        contextMenuProvider = nil
 
         // clear any LTXLabel selection
         var queue = subviews
@@ -67,7 +67,22 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
         _: UIContextMenuInteraction,
         configurationForMenuAtLocation location: CGPoint
     ) -> UIContextMenuConfiguration? {
-        handleContextMenu?(location)
-        return nil
+        guard let menu = contextMenuProvider?(location) else { return nil }
+        return .init {
+            guard let snapshot = self.contentView.snapshotView(afterScreenUpdates: false) else {
+                return nil
+            }
+
+            let controller = UIViewController()
+            controller.preferredContentSize = self.contentView.bounds.size + CGSize(width: 16, height: 16)
+            controller.view.backgroundColor = .systemBackground
+            controller.view.addSubview(snapshot)
+            snapshot.snp.makeConstraints { make in
+                make.edges.equalToSuperview().inset(8)
+            }
+            return controller
+        } actionProvider: { _ in
+            menu
+        }
     }
 }

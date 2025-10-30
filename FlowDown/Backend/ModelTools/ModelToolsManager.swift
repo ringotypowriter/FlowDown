@@ -156,13 +156,13 @@ class ModelToolsManager {
         } else {
             DispatchQueue.main.async {
                 let setupContext: (ActionContext) -> Void = { context in
-                    context.addAction(title: String(localized: "Cancel")) {
+                    context.addAction(title: "Cancel") {
                         context.dispose {
                             ans = String(localized: "Tool execution cancelled by user")
                             sem.signal()
                         }
                     }
-                    context.addAction(title: String(localized: "Use Tool"), attribute: .dangerous) {
+                    context.addAction(title: "Use Tool", attribute: .accent) {
                         context.dispose {
                             Task.detached { await execution() }
                         }
@@ -171,14 +171,14 @@ class ModelToolsManager {
 
                 let alert = if let tool = tool as? MCPTool {
                     AlertViewController(
-                        title: String(localized: "Execute MCP Tool"),
-                        message: String(localized: "The model wants to execute '\(tool.toolInfo.name)' from \(tool.toolInfo.serverName). This tool can access external resources.\n\nDescription: \(tool.toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")"),
+                        title: "Execute MCP Tool",
+                        message: "The model wants to execute '\(tool.toolInfo.name)' from \(tool.toolInfo.serverName). This tool can access external resources.\n\nDescription: \(tool.toolInfo.description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "No description available")",
                         setupActions: setupContext
                     )
                 } else {
                     AlertViewController(
-                        title: String(localized: "Tool Call"),
-                        message: String(localized: "Your model is calling a tool: \(tool.interfaceName)"),
+                        title: "Tool Call",
+                        message: "Your model is calling a tool: \(tool.interfaceName)",
                         setupActions: setupContext
                     )
                 }

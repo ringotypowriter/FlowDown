@@ -130,17 +130,23 @@ extension MessageListView: ListViewAdapter {
         return contentHeight + bottomInset
     }
 
-    func listView(_ listView: ListViewKit.ListView, configureRowView rowView: ListViewKit.ListRowView, for item: ItemType, at index: Int) {
+    func listView(_ listView: ListViewKit.ListView, configureRowView rowView: ListViewKit.ListRowView, for item: ItemType, at _: Int) {
         guard let entry = item as? Entry else {
             assertionFailure("Invalid item type")
             return
         }
 
         if let rowView = rowView as? MessageListRowView {
-            rowView.handleContextMenu = { pointInRowContentView in
+            // Capture the concrete row view so the menu actions (eg. Copy as Image)
+            // can render the correct view without needing to query snapshots/indexes.
+            let provider: ((CGPoint) -> UIMenu?) = { [weak self] pointInRowContentView in
+                guard let self else { return nil }
                 let pointInListView = listView.convert(pointInRowContentView, from: rowView.contentView)
-                self.processContextMenu(listView, anchor: pointInListView, for: item, at: index)
+                let hasActivateEvent = hasActivatedEventOnLabel(listView: listView, location: pointInListView)
+                guard !hasActivateEvent else { return nil }
+                return contextMenu(for: item, referenceView: rowView)
             }
+            rowView.contextMenuProvider = provider
         }
 
         if let userMessageView = rowView as? UserMessageView {
@@ -260,95 +266,46 @@ extension MessageListView: ListViewAdapter {
         return false
     }
 
-    private func processContextMenu(
-        _ listView: ListViewKit.ListView,
-        anchor point: CGPoint,
-        for item: ItemType,
-        at index: Int
-    ) {
-        let hasActivateEvent = hasActivatedEventOnLabel(listView: listView, location: point)
-        Logger.ui.debugFile("context menu checking event \(hasActivateEvent)")
-        guard !hasActivateEvent else { return }
-        guard let view = listView.rowView(at: index) else { return }
+    private func contextMenu(for item: ItemType, referenceView: UIView?) -> UIMenu? {
+        guard let entry = item as? Entry else { return nil }
 
-        var isHandled = false
-        defer {
-            if isHandled {
-                UIView.animate(withDuration: 0.15) {
-                    view.alpha = 0.5
-                } completion: { _ in
-                    UIView.animate(withDuration: 0.5, delay: 0.25) {
-                        view.alpha = 1
-                    }
-                }
-            }
-        }
-
-        Logger.ui.debugFile("item \(item) presenting context menu at \(point) for index \(index)")
-        guard let entry = item as? Entry else {
-            assertionFailure("Invalid item type")
-            return
-        }
+        let messageIdentifier: Message.ID
+        let representation: MessageRepresentation
+        let isReasoningContent: Bool
 
         switch entry {
-        // MARK: - 用户消息
-
         case let .userContent(msgID, messageRepresentation):
-            let menu = menu(
-                for: msgID,
-                representation: messageRepresentation,
-                isReasoningContent: false,
-                touchLocation: point,
-                referenceView: view
-            )
-            listView.present(menu: menu, anchorPoint: point)
-            isHandled = true
-            return
-
-        // MARK: - 推理内容
-
+            messageIdentifier = msgID
+            representation = messageRepresentation
+            isReasoningContent = false
         case let .reasoningContent(msgID, messageRepresentation):
-            let menu = menu(
-                for: msgID,
-                representation: messageRepresentation,
-                isReasoningContent: true,
-                touchLocation: point,
-                referenceView: view
-            )
-            listView.present(menu: menu, anchorPoint: point)
-            isHandled = true
-            return
-
-        // MARK: - 助手消息
-
+            messageIdentifier = msgID
+            representation = messageRepresentation
+            isReasoningContent = true
         case let .aiContent(msgID, messageRepresentation):
-            let menu = menu(
-                for: msgID,
-                representation: messageRepresentation,
-                isReasoningContent: false,
-                touchLocation: point,
-                referenceView: view
-            )
-            listView.present(menu: menu, anchorPoint: point)
-            isHandled = true
-            return
-
-        // MARK: - 活动状态
-
-        case .hint, .activityReporting, .webSearchContent, .userAttachment, .toolCallStatus:
-            return
+            messageIdentifier = msgID
+            representation = messageRepresentation
+            isReasoningContent = false
+        default:
+            return nil
         }
+
+        return buildMenu(
+            for: messageIdentifier,
+            representation: representation,
+            isReasoningContent: isReasoningContent,
+            referenceView: referenceView
+        )
     }
 
-    func menu(
+    private func buildMenu(
         for messageIdentifier: Message.ID,
         representation: MessageRepresentation,
         isReasoningContent: Bool,
-        touchLocation: CGPoint,
-        referenceView: UIView
+        referenceView: UIView?
     ) -> UIMenu {
-        UIMenu(title: String(localized: "Message"), children: [
-            UIMenu(title: String(localized: "Operations"), options: [.displayInline], children: [
+        UIMenu(children: [
+            UIMenu(options: [.displayInline], children: [
                 { () -> UIAction? in
                     guard let message = session.message(for: messageIdentifier),
                           message.role == .user
@@ -387,13 +344,12 @@ extension MessageListView: ListViewAdapter {
                     }
                 }(),
             ].compactMap(\.self)),
-            UIMenu(title: String(localized: "Message"), options: [.displayInline], children: [
+            UIMenu(options: [.displayInline], children: [
                 UIAction(title: String(localized: "Copy"), image: .init(systemName: "doc.on.doc")) { _ in
                     UIPasteboard.general.string = representation.content
                     Indicator.present(
-                        title: String(localized: "Copied"),
+                        title: "Copied",
                         preset: .done,
-                        haptic: .success,
                         referencingView: self
                     )
                 },
@@ -415,16 +371,17 @@ extension MessageListView: ListViewAdapter {
             ].flatMap(\.self).compactMap(\.self)),
             UIMenu(title: String(localized: "More"), image: .init(systemName: "ellipsis.circle"), children: [
                 UIMenu(title: String(localized: "More"), options: [.displayInline], children: [
-                    UIAction(title: String(localized: "Copy as Image"), image: .init(systemName: "text.below.photo")) { _ in
-                        let render = UIGraphicsImageRenderer(bounds: referenceView.bounds)
+                    UIAction(title: String(localized: "Copy as Image"), image: .init(systemName: "text.below.photo")) { [weak self] _ in
+                        guard let self else { return }
+                        guard let rowView = referenceView else { return }
+                        let render = UIGraphicsImageRenderer(bounds: rowView.bounds)
                         let image = render.image { ctx in
-                            referenceView.layer.render(in: ctx.cgContext)
+                            rowView.layer.render(in: ctx.cgContext)
                         }
                         UIPasteboard.general.image = image
                         Indicator.present(
-                            title: String(localized: "Copied"),
+                            title: "Copied",
                             preset: .done,
-                            haptic: .success,
                             referencingView: self
                         )
                     },
@@ -452,13 +409,8 @@ extension MessageListView: ListViewAdapter {
                     },
                     UIAction(title: String(localized: "Share"), image: .init(systemName: "doc.on.doc")) { [weak self] _ in
                         guard let self else { return }
-                        let shareSheet = UIActivityViewController(activityItems: [representation.content], applicationActivities: nil)
-                        shareSheet.popoverPresentationController?.sourceView = self
-                        shareSheet.popoverPresentationController?.sourceRect = .init(
-                            origin: .init(x: touchLocation.x - 4, y: touchLocation.y - 4),
-                            size: .init(width: 8, height: 8)
-                        )
-                        parentViewController?.present(shareSheet, animated: true)
+                        DisposableExporter(data: Data(representation.content.utf8), pathExtension: "txt")
+                            .run(anchor: self, mode: .text)
                     },
                 ]),
                 UIMenu(options: [.displayInline], children: [

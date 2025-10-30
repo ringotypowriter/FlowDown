@@ -266,9 +266,13 @@ extension ChatView {
         }
 
         let menuButton = EasyMenuButton().with {
-            $0.image = UIImage(systemName: "chevron.down")
+            var config = UIButton.Configuration.plain()
+            config.image = UIImage(systemName: "chevron.down")
+            $0.imageView?.contentMode = .scaleAspectFit
+            $0.configuration = config
             $0.tintColor = .gray.withAlphaComponent(0.5)
             $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.showsMenuAsPrimaryAction = true
         }
 
         let bg = UIView().with { $0.backgroundColor = .background }
@@ -323,15 +327,11 @@ extension ChatView {
                 icon.alpha = 0
             #endif
 
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
-            #if targetEnvironment(macCatalyst)
-                menuButton.addGestureRecognizer(gesture)
-                menuButton.isUserInteractionEnabled = true
-            #else
-                addGestureRecognizer(gesture)
-                isUserInteractionEnabled = true
-            #endif
-            rightClick.install(on: self) { [weak self] in self?.tapped() }
+            menuButton.menu = UIMenu(children: [
+                UIDeferredMenuElement.uncached { [weak self] completion in
+                    completion(self?.buildMenu()?.children ?? [])
+                },
+            ])
 
             ConversationManager.shared.conversations
                 .ensureMainThread()
@@ -360,84 +360,99 @@ extension ChatView {
             icon.image = conversation?.interfaceImage
         }
 
-        @objc func tapped() {
-            guard let conv else { return }
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            configurationForMenuAtLocation _: CGPoint
+        ) -> UIContextMenuConfiguration? {
+            UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                self?.buildMenu()
+            }
+        }
+
+        private func buildMenu() -> UIMenu? {
+            guard let conv else { return nil }
             guard let convMenu = ConversationManager.shared.menu(
                 forConversation: conv,
                 view: self,
                 suggestNewSelection: onSuggestSelection ?? { _ in }
-            ) else { return }
+            ) else { return nil }
 
             #if targetEnvironment(macCatalyst)
                 // On Catalyst, only show conversation menu (new chat button is handled by sidebar)
                 if let mainController = parentViewController as? MainController,
                    mainController.isSidebarCollapsed
                 {
-                    menuButton.present(menu: .init(children: [
+                    return UIMenu(children: [
                         convMenu,
                         UIAction(title: String(localized: "Show Sidebar"), image: UIImage(systemName: "sidebar.left")) { _ in
                             mainController.openSidebar()
                         },
-                    ]))
+                    ])
                 } else {
-                    menuButton.present(menu: convMenu)
+                    return convMenu
                 }
             #else
                 // On iOS, show both new chat options and conversation menu
-                let templates = ChatTemplateManager.shared.templates
-                var newChatOptions: [UIMenuElement] = []
-
-                if templates.isEmpty {
-                    // No templates, just show "Start New Chat"
-                    newChatOptions.append(UIAction(
-                        title: String(localized: "Start New Chat"),
-                        image: UIImage(systemName: "plus")
-                    ) { [weak self] _ in
-                        self?.onCreateNewChat?()
-                    })
-                } else {
-                    // Show template options
-                    newChatOptions.append(UIAction(
-                        title: String(localized: "Start New Chat"),
-                        image: UIImage(systemName: "plus")
-                    ) { [weak self] _ in
-                        self?.onCreateNewChat?()
-                    })
-
-                    var templatesMenuActions: [UIAction] = []
-                    for template in templates.values {
-                        templatesMenuActions.append(UIAction(
-                            title: template.name,
-                            image: UIImage(data: template.avatar)
-                        ) { [weak self] _ in
-                            let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
-                            self?.onSuggestSelection?(convId)
-                        })
+                let mainMenu = UIDeferredMenuElement.uncached { [weak self] completion in
+                    guard let self else {
+                        completion([])
+                        return
                     }
-                    newChatOptions.append(UIMenu(
-                        title: String(localized: "Choose Template"),
-                        image: UIImage(systemName: "folder"),
-                        children: templatesMenuActions
-                    ))
-                }
 
-                menuButton.present(menu: .init(
-                    children: [
+                    let templates = ChatTemplateManager.shared.templates
+                    var newChatOptions: [UIMenuElement] = []
+
+                    if templates.isEmpty {
+                        // No templates, just show "Start New Chat"
+                        newChatOptions.append(UIAction(
+                            title: String(localized: "Start New Chat"),
+                            image: UIImage(systemName: "plus")
+                        ) { [weak self] _ in
+                            self?.onCreateNewChat?()
+                        })
+                    } else {
+                        // Show template options
+                        newChatOptions.append(UIAction(
+                            title: String(localized: "Start New Chat"),
+                            image: UIImage(systemName: "plus")
+                        ) { [weak self] _ in
+                            self?.onCreateNewChat?()
+                        })
+
+                        var templatesMenuActions: [UIAction] = []
+                        for template in templates.values {
+                            templatesMenuActions.append(UIAction(
+                                title: template.name,
+                                image: UIImage(data: template.avatar)
+                            ) { [weak self] _ in
+                                let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
+                                self?.onSuggestSelection?(convId)
+                            })
+                        }
+                        newChatOptions.append(UIMenu(
+                            title: String(localized: "Choose Template"),
+                            image: UIImage(systemName: "folder"),
+                            children: templatesMenuActions
+                        ))
+                    }
+
+                    completion([
                         UIMenu(
                             title: String(localized: "New Conversation"),
                             options: [.displayInline],
                             children: newChatOptions
                         ),
                         convMenu,
-                    ]
-                ))
+                    ])
+                }
+                return .init(children: [mainMenu])
             #endif
         }
     }
 }
 
 extension ChatView.TitleBar {
-    class EasyMenuButton: UIImageView {
+    class EasyMenuButton: UIButton {
         open var easyHitInsets: UIEdgeInsets = .init(top: -16, left: -16, bottom: -16, right: -16)
 
         override open func point(inside point: CGPoint, with _: UIEvent?) -> Bool {

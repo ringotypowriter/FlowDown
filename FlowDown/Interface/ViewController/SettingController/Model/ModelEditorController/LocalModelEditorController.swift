@@ -76,13 +76,13 @@ class LocalModelEditorController: StackScrollController {
 
     @objc func deleteTapped() {
         let alert = AlertViewController(
-            title: String(localized: "Delete Model"),
-            message: String(localized: "Are you sure you want to delete this model? This action cannot be undone.")
+            title: "Delete Model",
+            message: "Are you sure you want to delete this model? This action cannot be undone."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+            context.addAction(title: "Delete", attribute: .accent) {
                 context.dispose { [weak self] in
                     guard let self else { return }
                     ModelManager.shared.removeLocalModel(identifier: identifier)
@@ -104,21 +104,15 @@ class LocalModelEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let idView = ConfigurableInfoView().setTapBlock { view in
-            view.present(menu: .init(
-                title: String(localized: "Copy"),
-                children: [UIAction(
-                    title: String(localized: "Identifier"),
-                    image: UIImage(systemName: "person.crop.square.filled.and.at.rectangle")
-                ) { _ in
-                    UIPasteboard.general.string = model?.model_identifier
-                    Indicator.present(
-                        title: String(localized: "Copied"),
-                        referencingView: view
-                    )
-                }]
-            ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-        }
+        let idView = ConfigurableInfoView()
+        let idInteraction = UIContextMenuInteraction(delegate: SimpleCopyMenuDelegate(
+            view: idView,
+            title: "Copy",
+            actionTitle: "Identifier",
+            actionIcon: "person.crop.square.filled.and.at.rectangle",
+            copyText: { model?.model_identifier ?? "" }
+        ))
+        idView.valueLabel.addInteraction(idInteraction)
         idView.configure(icon: .init(systemName: "person.crop.square.filled.and.at.rectangle"))
         idView.configure(title: "Identifier")
         idView.configure(description: "Unique identifier of this model.")
@@ -126,17 +120,12 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(idView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let sizeView = ConfigurableInfoView().setTapBlock { view in
-            view.present(menu: .init(children: [UIAction(
-                title: String(localized: "Calibrate Size"),
-                image: UIImage(systemName: "internaldrive")
-            ) { _ in
-                guard let identifier = model?.id else { return }
-                let newSize = ModelManager.shared.calibrateLocalModelSize(identifier: identifier)
-                view.configure(value: ByteCountFormatter.string(fromByteCount: Int64(newSize), countStyle: .file))
-            }]
-            ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-        }
+        let sizeView = ConfigurableInfoView()
+        let sizeInteraction = UIContextMenuInteraction(delegate: CalibrateSizeMenuDelegate(
+            view: sizeView,
+            modelId: identifier
+        ))
+        sizeView.valueLabel.addInteraction(sizeInteraction)
         sizeView.configure(icon: .init(systemName: "internaldrive"))
         sizeView.configure(title: "Size")
         sizeView.configure(description: "Model size on your local disk.")
@@ -144,22 +133,15 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(sizeView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let dateView = ConfigurableInfoView().setTapBlock { view in
-            view.present(menu: .init(
-                title: String(localized: "Copy"),
-                children: [UIAction(
-                    title: String(localized: "Download Date"),
-                    image: UIImage(systemName: "timer")
-                ) { _ in
-                    UIPasteboard.general.string = dateFormatter
-                        .string(from: model?.downloaded ?? .distantPast)
-                    Indicator.present(
-                        title: String(localized: "Copied"),
-                        referencingView: view
-                    )
-                }]
-            ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
-        }
+        let dateView = ConfigurableInfoView()
+        let dateInteraction = UIContextMenuInteraction(delegate: SimpleCopyMenuDelegate(
+            view: dateView,
+            title: "Copy",
+            actionTitle: "Download Date",
+            actionIcon: "timer",
+            copyText: { dateFormatter.string(from: model?.downloaded ?? .distantPast) }
+        ))
+        dateView.valueLabel.addInteraction(dateInteraction)
         dateView.configure(icon: .init(systemName: "timer"))
         dateView.configure(title: "Download Date")
         dateView.configure(description: "The date when the model was downloaded.")
@@ -230,10 +212,8 @@ class LocalModelEditorController: StackScrollController {
                     view.configure(value: item.title)
                 }
             }
-            view.present(
-                menu: .init(title: String(localized: "Context Length"), children: children),
-                anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
+            view.valueLabel.menu = UIMenu(title: String(localized: "Context Length"), children: children)
+            view.valueLabel.showsMenuAsPrimaryAction = true
         }
         stackView.addArrangedSubviewWithMargin(contextListViewAnnotation)
         stackView.addArrangedSubview(SeparatorView())
@@ -297,11 +277,8 @@ class LocalModelEditorController: StackScrollController {
                 actions.append(action)
             }
 
-            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
-            view.present(
-                menu: menu,
-                anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
+            view.valueLabel.menu = UIMenu(title: String(localized: "Imagination"), children: actions)
+            view.valueLabel.showsMenuAsPrimaryAction = true
         }
         localTemperatureView.configure(icon: .init(systemName: "sparkles"))
         localTemperatureView.configure(title: "Imagination")
@@ -328,30 +305,22 @@ class LocalModelEditorController: StackScrollController {
             verifyButtonReader?.isUserInteractionEnabled = false
             verifyButtonReader?.alpha = 0.5
             Indicator.progress(
-                title: String(localized: "Verifying Model"),
+                title: "Verifying Model",
                 controller: self
             ) { completionHandler in
-                ModelManager.shared.testLocalModel(model) { result in
-                    DispatchQueue.main.async {
-                        verifyButtonReader?.isUserInteractionEnabled = true
-                        verifyButtonReader?.alpha = 1
-                        completionHandler {
-                            switch result {
-                            case .success:
-                                Indicator.present(
-                                    title: String(localized: "Model Verified"),
-                                    referencingView: self.view
-                                )
-                            case let .failure(failure):
-                                Indicator.present(
-                                    title: String(localized: "Failed"),
-                                    message: failure.localizedDescription,
-                                    preset: .error,
-                                    referencingView: self.view
-                                )
-                            }
-                        }
+                let result = await withCheckedContinuation { continuation in
+                    ModelManager.shared.testLocalModel(model) { result in
+                        continuation.resume(returning: result)
                     }
+                }
+                try result.get()
+                await completionHandler {
+                    verifyButtonReader?.isUserInteractionEnabled = true
+                    verifyButtonReader?.alpha = 1
+                    Indicator.present(
+                        title: "Model Verified",
+                        referencingView: self.view
+                    )
                 }
             }
         }
@@ -386,39 +355,25 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(openHuggingFace)
         stackView.addArrangedSubview(SeparatorView())
 
-        var exportOptionReader: UIView?
-        let exportOption = ConfigurableActionView { [weak self] _ in
+        let exportOption = ConfigurableActionView { [weak self] controller in
             guard let self else { return }
             guard let model = ModelManager.shared.localModel(identifier: identifier) else { return }
             Indicator.progress(
-                title: String(localized: "Exporting Model"),
+                title: "Exporting Model",
                 controller: self
             ) { completionHandler in
-                ModelManager.shared.pack(model: model) { url, cleanup in
-                    completionHandler {
-                        guard let url else {
-                            Indicator.present(
-                                title: String(localized: "Failed to Export"),
-                                preset: .error,
-                                haptic: .error,
-                                referencingView: exportOptionReader
-                            )
-                            return
-                        }
-                        let exporter = FileExporterHelper()
-                        exporter.targetFileURL = url
-                        exporter.referencedView = exportOptionReader
-                        exporter.deleteAfterComplete = true
-                        exporter.exportTitle = String(localized: "Export Model")
-                        exporter.completion = {
-                            cleanup()
-                        }
-                        exporter.execute(presentingViewController: self)
+                let (url, _) = await withCheckedContinuation { continuation in
+                    ModelManager.shared.pack(model: model) { url, error in
+                        continuation.resume(returning: (url, error))
                     }
+                }
+                guard let url else { throw NSError() }
+                await completionHandler {
+                    DisposableExporter(deletableItem: url, title: "Export Model")
+                        .run(anchor: controller.view)
                 }
             }
         }
-        exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Model")
         exportOption.configure(description: "Export this model to share with others.")
@@ -474,10 +429,10 @@ class LocalModelEditorController: StackScrollController {
         super.viewDidAppear(animated)
         if !MLX.GPU.isSupported {
             let alert = AlertViewController(
-                title: String(localized: "Unsupporte"),
-                message: String(localized: "Your device does not support MLX.")
+                title: "Unsupporte",
+                message: "Your device does not support MLX."
             ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.addAction(title: "OK", attribute: .accent) {
                     context.dispose {
                         self.navigationController?.popViewController()
                     }
@@ -498,3 +453,69 @@ class LocalModelEditorController: StackScrollController {
         }
     }
 #endif
+
+// MARK: - Menu Delegates
+
+private class SimpleCopyMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+    weak var view: ConfigurableInfoView?
+    let title: String
+    let actionTitle: String
+    let actionIcon: String
+    let copyText: () -> String
+
+    init(view: ConfigurableInfoView, title: String, actionTitle: String, actionIcon: String, copyText: @escaping () -> String) {
+        self.view = view
+        self.title = title
+        self.actionTitle = actionTitle
+        self.actionIcon = actionIcon
+        self.copyText = copyText
+    }
+
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self else { return nil }
+            return UIMenu(title: title, children: [
+                UIAction(
+                    title: actionTitle,
+                    image: UIImage(systemName: actionIcon)
+                ) { [weak self] _ in
+                    guard let self, let view else { return }
+                    UIPasteboard.general.string = copyText()
+                    Indicator.present(title: "Copied", referencingView: view)
+                },
+            ])
+        }
+    }
+}
+
+private class CalibrateSizeMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+    weak var view: ConfigurableInfoView?
+    let modelId: LocalModel.ID
+
+    init(view: ConfigurableInfoView, modelId: LocalModel.ID) {
+        self.view = view
+        self.modelId = modelId
+    }
+
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self else { return nil }
+            return UIMenu(children: [
+                UIAction(
+                    title: String(localized: "Calibrate Size"),
+                    image: UIImage(systemName: "internaldrive")
+                ) { [weak self] _ in
+                    guard let self, let view else { return }
+                    let newSize = ModelManager.shared.calibrateLocalModelSize(identifier: modelId)
+                    view.configure(value: ByteCountFormatter.string(fromByteCount: Int64(newSize), countStyle: .file))
+                },
+            ])
+        }
+    }
+}

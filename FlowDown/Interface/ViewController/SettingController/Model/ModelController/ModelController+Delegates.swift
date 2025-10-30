@@ -46,7 +46,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
         return UISwipeActionsConfiguration(actions: [delete])
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath) else {
             return nil
         }
@@ -89,16 +89,9 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
                 ModelManager.shared.removeCloudModel(identifier: itemIdentifier.identifier)
             }
         })
-        #if targetEnvironment(macCatalyst)
-            let cell = tableView.cellForRow(at: indexPath)
-            let point = tableView.convert(point, to: cell)
-            cell?.present(menu: .init(children: actions), anchorPoint: point)
-            return nil
-        #else
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                .init(children: actions)
-            }
-        #endif
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            .init(children: actions)
+        }
     }
 }
 
@@ -171,15 +164,7 @@ extension SettingController.SettingContent.ModelController {
             let data = try encoder.encode(model)
             try data.write(to: tempFile, options: .atomic)
 
-            let exporter = FileExporterHelper()
-            exporter.targetFileURL = tempFile
-            exporter.referencedView = view
-            exporter.deleteAfterComplete = true
-            exporter.exportTitle = String(localized: "Export Model")
-            exporter.completion = {
-                try? FileManager.default.removeItem(at: tempFileDir)
-            }
-            exporter.execute(presentingViewController: self)
+            DisposableExporter(deletableItem: tempFile, title: "Export Model").run(anchor: view)
         } catch {
             Logger.model.errorFile("failed to export model: \(error)")
         }

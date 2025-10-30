@@ -86,10 +86,7 @@ extension SettingController.SettingContent {
                 title: "Export Memories",
                 explain: "Export all memories as JSON file.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
-                    Task {
-                        await self.exportMemories(from: controller)
-                    }
+                    await self.exportMemories(from: controller)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(exportMemories)
@@ -101,10 +98,7 @@ extension SettingController.SettingContent {
                 title: "Clear All Memories",
                 explain: "Delete all stored memories permanently.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
-                    Task {
-                        await self.clearAllMemories(from: controller)
-                    }
+                    await self.clearAllMemories(from: controller)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(clearMemories)
@@ -125,10 +119,10 @@ extension SettingController.SettingContent {
 
                 guard !memories.isEmpty else {
                     let alert = AlertViewController(
-                        title: String(localized: "No Memories"),
-                        message: String(localized: "There are no memories to export.")
+                        title: "No Memories",
+                        message: "There are no memories to export."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
@@ -153,29 +147,14 @@ extension SettingController.SettingContent {
 
                 try jsonData.write(to: fileURL)
 
-                #if targetEnvironment(macCatalyst)
-                    let documentPicker = UIDocumentPickerViewController(forExporting: [fileURL])
-                    documentPicker.title = String(localized: "Export Memories")
-                    documentPicker.modalPresentationStyle = .formSheet
-                    controller.present(documentPicker, animated: true)
-                #else
-                    let share = UIActivityViewController(
-                        activityItems: [fileURL],
-                        applicationActivities: nil
-                    )
-                    share.popoverPresentationController?.sourceView = controller.view
-                    share.popoverPresentationController?.sourceRect = controller.view.bounds
-                    share.completionWithItemsHandler = { _, _, _, _ in
-                        try? FileManager.default.removeItem(at: fileURL)
-                    }
-                    controller.present(share, animated: true)
-                #endif
+                DisposableExporter(deletableItem: fileURL, title: "Export Memories")
+                    .run(anchor: controller.view)
             } catch {
                 let alert = AlertViewController(
-                    title: String(localized: "Export Failed"),
-                    message: String(localized: "Failed to export memories: \(error.localizedDescription)")
+                    title: "Export Failed",
+                    message: "Failed to export memories: \(error.localizedDescription)"
                 ) { context in
-                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                    context.addAction(title: "OK", attribute: .accent) {
                         context.dispose()
                     }
                 }
@@ -186,35 +165,33 @@ extension SettingController.SettingContent {
         @MainActor
         private func clearAllMemories(from controller: UIViewController) async {
             let alert = AlertViewController(
-                title: String(localized: "Clear All Memories"),
-                message: String(localized: "Are you sure you want to delete all stored memories? This action cannot be undone.")
+                title: "Clear All Memories",
+                message: "Are you sure you want to delete all stored memories? This action cannot be undone."
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Clear All"), attribute: .dangerous) {
+                context.addAction(title: "Clear All", attribute: .accent) {
                     context.dispose {
-                        Task {
-                            do {
-                                try await MemoryStore.shared.deleteAllMemoriesAsync()
-                                await MainActor.run {
-                                    Indicator.present(
-                                        title: String(localized: "Memories Cleared"),
-                                        referencingView: controller.view
-                                    )
-                                }
-                            } catch {
-                                await MainActor.run {
-                                    let errorAlert = AlertViewController(
-                                        title: String(localized: "Error"),
-                                        message: String(localized: "Failed to clear memories: \(error.localizedDescription)")
-                                    ) { context in
-                                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                            context.dispose()
-                                        }
+                        do {
+                            try await MemoryStore.shared.deleteAllMemoriesAsync()
+                            await MainActor.run {
+                                Indicator.present(
+                                    title: "Memories Cleared",
+                                    referencingView: controller.view
+                                )
+                            }
+                        } catch {
+                            await MainActor.run {
+                                let errorAlert = AlertViewController(
+                                    title: "Error",
+                                    message: "Failed to clear memories: \(error.localizedDescription)"
+                                ) { context in
+                                    context.addAction(title: "OK", attribute: .accent) {
+                                        context.dispose()
                                     }
-                                    controller.present(errorAlert, animated: true)
                                 }
+                                controller.present(errorAlert, animated: true)
                             }
                         }
                     }

@@ -283,7 +283,7 @@ class ModelManager: NSObject {
 
     func importModels(at urls: [URL], controller: UIViewController) {
         Indicator.progress(
-            title: String(localized: "Importing Model"),
+            title: "Importing Model",
             controller: controller
         ) { completionHandler in
             assert(!Thread.isMainThread)
@@ -311,25 +311,16 @@ class ModelManager: NSObject {
                 }
                 errors.append(url.lastPathComponent)
             }
-            completionHandler {
-                if let error = errors.first {
-                    let alert = AlertViewController(
-                        title: String(localized: "Error Occurred"),
-                        message: error
-                    ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                            context.dispose()
-                        }
-                    }
-                    controller.present(alert, animated: true)
-                } else {
-                    Indicator.present(
-                        title: String(
-                            format: String(localized: "Imported %d Models"),
-                            success.count
-                        )
-                    )
-                }
+            if let error = errors.first {
+                throw NSError(domain: "ModelImport", code: -1, userInfo: [NSLocalizedDescriptionKey: error])
+            }
+            let count = success.count
+            await completionHandler {
+                let message = String(
+                    format: String(localized: "Imported %d Models"),
+                    count
+                )
+                Indicator.present(title: "\(message)")
             }
         }
     }
@@ -356,6 +347,9 @@ extension ModelManager.ModelIdentifier {
         }
         set { ModelManager.shared.defaultModelForAuxiliaryTask = newValue }
     }
+
+    /// Returns the stored auxiliary model identifier, ignoring the "use chat model" setting
+    static var storedAuxiliaryTaskModel: Self { ModelManager.shared.defaultModelForAuxiliaryTask }
 
     static var defaultModelForAuxiliaryVisualTask: Self {
         get { ModelManager.shared.defaultModelForAuxiliaryVisualTask }

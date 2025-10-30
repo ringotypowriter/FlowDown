@@ -65,10 +65,10 @@ extension RewriteAction {
     func send(to session: ConversationSession, message: Message.ID, bindView: MessageListView) {
         guard let model = session.models.chat else {
             let alert = AlertViewController(
-                title: String(localized: "Model Not Available"),
-                message: String(localized: "Please select a model to rewrite this message.")
+                title: "Model Not Available",
+                message: "Please select a model to rewrite this message."
             ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.addAction(title: "OK", attribute: .accent) {
                     context.dispose()
                 }
             }
@@ -96,40 +96,21 @@ extension RewriteAction {
         ]
 
         Indicator.progress(
-            title: String(localized: "Rewriting Message"),
+            title: "Rewriting Message",
             controller: controller
         ) { completionHandler in
-            Task.detached {
-                do {
-                    let stream = try await ModelManager.shared.streamingInfer(
-                        with: model,
-                        input: messageBody
-                    )
-                    for try await resp in stream {
-                        message.update(\.document, to: resp.content)
-                        session.notifyMessagesDidChange(scrolling: false)
-                        session.save()
-                    }
-                    session.save()
-                    await MainActor.run {
-                        session.notifyMessagesDidChange(scrolling: false)
-                        completionHandler {}
-                    }
-                } catch {
-                    await MainActor.run {
-                        completionHandler {
-                            let alert = AlertViewController(
-                                title: String(localized: "Rewrite Failed"),
-                                message: String(localized: "An error occurred while rewriting the message: \(error.localizedDescription)")
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                    context.dispose()
-                                }
-                            }
-                            controller.present(alert, animated: true)
-                        }
-                    }
-                }
+            let stream = try await ModelManager.shared.streamingInfer(
+                with: model,
+                input: messageBody
+            )
+            for try await resp in stream {
+                message.update(\.document, to: resp.content)
+                session.notifyMessagesDidChange(scrolling: false)
+                session.save()
+            }
+            session.save()
+            await completionHandler {
+                session.notifyMessagesDidChange(scrolling: false)
             }
         }
     }

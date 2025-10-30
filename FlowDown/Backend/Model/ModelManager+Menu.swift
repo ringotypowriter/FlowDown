@@ -11,6 +11,12 @@ import Foundation
 import Storage
 import UIKit
 
+#if targetEnvironment(macCatalyst)
+    let modelGroupImage: UIImage? = .init(systemName: "folder")
+#else
+    let modelGroupImage: UIImage? = nil
+#endif
+
 extension ModelManager {
     private func openModelManagementPage(controller: UIViewController?) {
         guard let controller else { return }
@@ -24,20 +30,14 @@ extension ModelManager {
         }
     }
 
-    func presentModelSelectionMenu(
-        anchoringView: UIView,
+    func buildModelSelectionMenu(
         currentSelection: ModelIdentifier? = nil,
         requiresCapabilities: Set<ModelCapabilities> = [],
         allowSelectionWithNone: Bool = false,
         onCompletion: @escaping (ModelIdentifier) -> Void
-    ) {
-        guard let controller = anchoringView.parentViewController else {
-            assertionFailure()
-            return
-        }
-
+    ) -> [UIMenuElement] {
         let localModels = ModelManager.shared.localModels.value.filter {
-            !$0.model_identifier.isEmpty // just in case
+            !$0.model_identifier.isEmpty
         }.filter { requiresCapabilities.isSubset(of: $0.capabilities) }
         let cloudModels = ModelManager.shared.cloudModels.value.filter {
             !$0.model_identifier.isEmpty
@@ -54,30 +54,7 @@ extension ModelManager {
         }
 
         if localModels.isEmpty, cloudModels.isEmpty, !appleIntelligenceAvailable {
-            let alert = AlertViewController(
-                title: String(localized: "No Model Available"),
-                message: requiresCapabilities.isEmpty
-                    ? String(localized: "Please add some models to use. You can choose to download models, or use cloud model from well known service providers.")
-                    : String(localized: "No model is available for the required capabilities.")
-            ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
-                    context.dispose()
-                }
-                context.addAction(title: String(localized: "Add"), attribute: .dangerous) {
-                    context.dispose {
-                        if let nav = controller.navigationController {
-                            let controller = SettingController.SettingContent.ModelController()
-                            nav.pushViewController(controller, animated: true)
-                        } else {
-                            let setting = SettingController()
-                            SettingController.setNextEntryPage(.modelManagement)
-                            controller.present(setting, animated: true)
-                        }
-                    }
-                }
-            }
-            controller.present(alert, animated: true)
-            return
+            return []
         }
 
         var localBuildSections: [String: [(String, LocalModel)]] = [:]
@@ -104,7 +81,7 @@ extension ModelManager {
             let key = key.isEmpty ? String(localized: "Ungrouped") : key
             localMenuChildren.append(UIMenu(
                 title: key,
-                image: UIImage(systemName: "folder"),
+                image: modelGroupImage,
                 options: localMenuChildrenOptions,
                 children: items.map { item in
                     UIAction(title: item.0, state: item.1.id == currentSelection ? .on : .off) { _ in
@@ -120,7 +97,7 @@ extension ModelManager {
             let key = key.isEmpty ? String(localized: "Ungrouped") : key
             cloudMenuChildren.append(UIMenu(
                 title: key,
-                image: UIImage(systemName: "folder"),
+                image: modelGroupImage,
                 options: cloudMenuChildrenOptions,
                 children: items.map { item in
                     UIAction(title: item.0, state: item.1.id == currentSelection ? .on : .off) { _ in
@@ -174,11 +151,6 @@ extension ModelManager {
             ))
         }
 
-        let menu = UIMenu(
-            title: String(localized: "Choose Model"),
-            options: .displayInline,
-            children: finalChildren
-        )
-        anchoringView.present(menu: menu)
+        return finalChildren
     }
 }

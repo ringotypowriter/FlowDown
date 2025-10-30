@@ -83,14 +83,19 @@ class HubModelDownloadController: UIViewController {
     }
 
     private func updateRightBarButtons() {
-        var items: [UIBarButtonItem] = [
-            .init(
-                title: nil,
-                image: .init(systemName: "ellipsis"),
-                target: self,
-                action: #selector(showFilterMenu)
-            ),
-        ]
+        let deferredMenu = UIDeferredMenuElement.uncached { [weak self] completion in
+            guard let self else {
+                completion([])
+                return
+            }
+            completion(createFilterMenuItems())
+        }
+        let filterItem = UIBarButtonItem(
+            image: .init(systemName: "ellipsis"),
+            menu: UIMenu(children: [deferredMenu])
+        )
+
+        var items: [UIBarButtonItem] = [filterItem]
         if activityIndicator.isAnimating {
             items.append(.init(customView: activityIndicator))
         }
@@ -103,16 +108,15 @@ class HubModelDownloadController: UIViewController {
         guard isFirstAppear else { return }
         isFirstAppear = false
         let warning = AlertViewController(
-            title: String(localized: "Warning"),
-            message: String(localized: "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution.")
-                + "\n\n" + String(localized: "Ready to dive in? Select a model to see its size and details.")
+            title: "Warning",
+            message: "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution.\n\nReady to dive in? Select a model to see its size and details."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
             }
-            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+            context.addAction(title: "OK", attribute: .accent) {
                 context.dispose {}
             }
         }
@@ -136,33 +140,28 @@ class HubModelDownloadController: UIViewController {
         }
     }
 
-    @objc func showFilterMenu() {
-        guard let bar = navigationController?.navigationBar else { return }
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        let menu = UIMenu(
-            children: [
-                UIMenu(
-                    title: String(localized: "Filter Options"),
-                    options: [.displayInline],
-                    children: [
-                        UIAction(
-                            title: String(localized: "Text Model Only"),
-                            image: UIImage(systemName: "text.append"),
-                            state: anchorToTextGenerationModels ? .on : .off
-                        ) { [weak self] _ in
-                            self?.anchorToTextGenerationModels.toggle()
-                        },
-                        UIAction(
-                            title: String(localized: "Verified Model Only"),
-                            image: UIImage(systemName: "rosette"),
-                            state: anchorToVerifiedAuthorMLX ? .on : .off
-                        ) { [weak self] _ in
-                            self?.anchorToVerifiedAuthorMLX.toggle()
-                        },
-                    ]
-                ),
-            ]
-        )
-        bar.present(menu: menu, anchorPoint: point)
+    func createFilterMenuItems() -> [UIMenuElement] {
+        [
+            UIMenu(
+                title: String(localized: "Filter Options"),
+                options: [.displayInline],
+                children: [
+                    UIAction(
+                        title: String(localized: "Text Model Only"),
+                        image: UIImage(systemName: "text.append"),
+                        state: anchorToTextGenerationModels ? .on : .off
+                    ) { [weak self] _ in
+                        self?.anchorToTextGenerationModels.toggle()
+                    },
+                    UIAction(
+                        title: String(localized: "Verified Model Only"),
+                        image: UIImage(systemName: "rosette"),
+                        state: anchorToVerifiedAuthorMLX ? .on : .off
+                    ) { [weak self] _ in
+                        self?.anchorToVerifiedAuthorMLX.toggle()
+                    },
+                ]
+            ),
+        ]
     }
 }

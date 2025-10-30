@@ -28,13 +28,13 @@ extension ChatView: RichEditorView.Delegate {
                ModelManager.shared.cloudModels.value.isEmpty
             {
                 let alert = AlertViewController(
-                    title: String(localized: "Error"),
-                    message: String(localized: "You need to add a model to use.")
+                    title: "Error",
+                    message: "You need to add a model to use."
                 ) { context in
-                    context.addAction(title: String(localized: "Cancel")) {
+                    context.addAction(title: "Cancel") {
                         context.dispose()
                     }
-                    context.addAction(title: String(localized: "Add Model"), attribute: .dangerous) {
+                    context.addAction(title: "Add Model", attribute: .accent) {
                         context.dispose {
                             SettingController.setNextEntryPage(.modelManagement)
                             let setting = SettingController()
@@ -45,13 +45,11 @@ extension ChatView: RichEditorView.Delegate {
                 parentViewController?.present(alert, animated: true)
             } else {
                 let alert = AlertViewController(
-                    title: String(localized: "Error"),
-                    message: String(localized: "You need to select a model to use.")
+                    title: "Error",
+                    message: "You need to select a model to use."
                 ) { context in
-                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                        context.dispose { [weak self] in
-                            self?.editor.scheduleModelSelection()
-                        }
+                    context.addAction(title: "OK", attribute: .accent) {
+                        context.dispose()
                     }
                 }
                 parentViewController?.present(alert, animated: true)
@@ -67,13 +65,13 @@ extension ChatView: RichEditorView.Delegate {
                   !auxModel.isEmpty
             else {
                 let alert = AlertViewController(
-                    title: String(localized: "Error"),
-                    message: String(localized: "A tool model is required for browsing.")
+                    title: "Error",
+                    message: "A tool model is required for browsing."
                 ) { context in
-                    context.addAction(title: String(localized: "Close")) {
+                    context.addAction(title: "Close") {
                         context.dispose()
                     }
-                    context.addAction(title: String(localized: "Configure"), attribute: .dangerous) {
+                    context.addAction(title: "Configure", attribute: .accent) {
                         context.dispose { [weak self] in
                             SettingController.setNextEntryPage(.inference)
                             let setting = SettingController()
@@ -94,13 +92,13 @@ extension ChatView: RichEditorView.Delegate {
             let auxModelExists = !(session.models.visualAuxiliary?.isEmpty ?? true)
             guard currentModelCanSee || auxModelExists else {
                 let alert = AlertViewController(
-                    title: String(localized: "Error"),
-                    message: String(localized: "A visual model is required for image attachments.")
+                    title: "Error",
+                    message: "A visual model is required for image attachments."
                 ) { context in
-                    context.addAction(title: String(localized: "Close")) {
+                    context.addAction(title: "Close") {
                         context.dispose()
                     }
-                    context.addAction(title: String(localized: "Configure"), attribute: .dangerous) {
+                    context.addAction(title: "Configure", attribute: .accent) {
                         context.dispose { [weak self] in
                             SettingController.setNextEntryPage(.inference)
                             let setting = SettingController()
@@ -132,9 +130,8 @@ extension ChatView: RichEditorView.Delegate {
 
     func onRichEditorError(_ error: String) {
         Indicator.present(
-            title: error,
+            title: "\(error)",
             preset: .error,
-            haptic: .error,
             referencingView: self
         )
     }
@@ -188,13 +185,12 @@ extension ChatView: RichEditorView.Delegate {
         modelIdentifier()
     }
 
-    func onRichEditorPickModel(anchor: UIView, completion: @escaping () -> Void) {
-        guard let conversationIdentifier else { return }
+    func onRichEditorBuildModelSelectionMenu(completion: @escaping () -> Void) -> [UIMenuElement] {
+        guard let conversationIdentifier else { return [] }
         let modelIdentifier = ConversationManager.shared.conversation(
             identifier: conversationIdentifier
         )?.modelId
-        ModelManager.shared.presentModelSelectionMenu(
-            anchoringView: anchor,
+        return ModelManager.shared.buildModelSelectionMenu(
             currentSelection: modelIdentifier
         ) { modelIdentifier in
             ConversationManager.shared.editConversation(identifier: conversationIdentifier) {
@@ -207,7 +203,7 @@ extension ChatView: RichEditorView.Delegate {
         }
     }
 
-    func onRichEditorShowAlternativeModelMenu(anchor: UIView) {
+    func onRichEditorBuildAlternativeModelMenu() -> [UIMenuElement] {
         let isAppleIntelligence: Bool = {
             guard let id = modelIdentifier(), !id.isEmpty else { return false }
             if #available(iOS 26.0, macCatalyst 26.0, *) {
@@ -215,28 +211,40 @@ extension ChatView: RichEditorView.Delegate {
             }
             return false
         }()
-        let menu = UIMenu(title: String(localized: "Shortcuts"), children: [
+        return [
             { () -> UIAction? in
                 guard !isAppleIntelligence, let id = modelIdentifier(), !id.isEmpty else { return nil }
-                return UIAction(title: String(localized: "Edit Model")) { [weak self] _ in
+                return UIAction(
+                    title: String(localized: "Edit Model"),
+                    image: UIImage(systemName: "slider.horizontal.3")
+                ) { [weak self] _ in
                     SettingController.setNextEntryPage(.modelEditor(model: id))
                     let settingController = SettingController()
                     self?.parentViewController?.present(settingController, animated: true)
                 }
             }(),
-            UIAction(title: String(localized: "Inference Settings")) { [weak self] _ in
+            UIAction(
+                title: String(localized: "Inference Settings"),
+                image: UIImage(systemName: "gearshape")
+            ) { [weak self] _ in
                 SettingController.setNextEntryPage(.inference)
                 let settingController = SettingController()
                 self?.parentViewController?.present(settingController, animated: true)
             },
-        ].compactMap(\.self))
-        anchor.present(menu: menu)
+        ].compactMap(\.self)
     }
 
-    func onRichEditorShowAlternativeToolsMenu(anchor: UIView) {
+    func onRichEditorBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement] {
         let mcpServers = MCPService.shared.servers.value
-
-        var toolMenuItems: [UIMenuElement] = []
+        var toolMenuItems: [UIMenuElement] = [
+            UIAction(
+                title: String(localized: "Enabled"),
+                image: UIImage(systemName: "hammer"),
+                state: isEnabled ? .on : .off
+            ) { _ in
+                requestReload(!isEnabled)
+            },
+        ]
 
         func createAction(for tools: [ModelTool]) -> [UIAction] {
             tools.map { tool in
@@ -245,29 +253,42 @@ extension ChatView: RichEditorView.Delegate {
                     image: .init(systemName: tool.interfaceIcon),
                     attributes: [.keepsMenuPresented],
                     state: tool.isEnabled ? .on : .off
-                ) { action in
+                ) { _ in
                     tool.isEnabled.toggle()
-                    action.state = tool.isEnabled ? .on : .off
+                    requestReload(isEnabled)
                 }
             }
         }
 
+        let memoryTools = ModelToolsManager.shared.tools.filter { tool in
+            false
+                || tool is MTStoreMemoryTool
+                || tool is MTRecallMemoryTool
+                || tool is MTListMemoriesTool
+                || tool is MTUpdateMemoryTool
+                || tool is MTDeleteMemoryTool
+        }
+        let memoryToolsHasOneEnabled = memoryTools.contains { $0.isEnabled }
+
+        let builtin: [UIAction] = [
+            createAction(for: ModelToolsManager.shared.configurableTools),
+            [UIAction(
+                title: String(localized: "Memory Tools"),
+                image: UIImage(systemName: "memorychip"),
+                state: memoryToolsHasOneEnabled ? .on : .off
+            ) { _ in
+                let target = !memoryToolsHasOneEnabled
+                for tool in memoryTools {
+                    tool.isEnabled = target
+                }
+                requestReload(isEnabled)
+            }],
+        ].flatMap(\.self)
+
         toolMenuItems.append(UIMenu(
             title: String(localized: "Built-in Tools"),
             options: [.displayInline],
-            children: createAction(for: ModelToolsManager.shared.configurableTools)
-        ))
-        toolMenuItems.append(UIMenu(
-            title: String(localized: "Memory Tools"),
-//            options: [.displayInline],
-            children: createAction(for: ModelToolsManager.shared.tools.filter { tool in
-                false
-                    || tool is MTStoreMemoryTool
-                    || tool is MTRecallMemoryTool
-                    || tool is MTListMemoriesTool
-                    || tool is MTUpdateMemoryTool
-                    || tool is MTDeleteMemoryTool
-            })
+            children: builtin
         ))
 
         if !mcpServers.isEmpty {
@@ -283,11 +304,11 @@ extension ChatView: RichEditorView.Delegate {
                         image: UIImage(systemName: "server.rack"),
                         attributes: [.keepsMenuPresented],
                         state: server.isEnabled ? .on : .off
-                    ) { action in
+                    ) { _ in
                         MCPService.shared.edit(identifier: server.id) {
                             $0.update(\.isEnabled, to: !$0.isEnabled)
-                            action.state = $0.isEnabled ? .on : .off
                         }
+                        requestReload(isEnabled)
                     }
                 }
             )
@@ -297,12 +318,18 @@ extension ChatView: RichEditorView.Delegate {
         let settingsMenu = UIMenu(
             title: String(localized: "Shortcuts"),
             children: [
-                UIAction(title: String(localized: "MCP Settings")) { [weak self] _ in
+                UIAction(
+                    title: String(localized: "MCP Settings"),
+                    image: UIImage(systemName: "server.rack")
+                ) { [weak self] _ in
                     SettingController.setNextEntryPage(.mcp)
                     let settingController = SettingController()
                     self?.parentViewController?.present(settingController, animated: true)
                 },
-                UIAction(title: String(localized: "Tools Settings")) { [weak self] _ in
+                UIAction(
+                    title: String(localized: "Tools Settings"),
+                    image: UIImage(systemName: "wrench.and.screwdriver")
+                ) { [weak self] _ in
                     SettingController.setNextEntryPage(.tools)
                     let settingController = SettingController()
                     self?.parentViewController?.present(settingController, animated: true)
@@ -311,7 +338,7 @@ extension ChatView: RichEditorView.Delegate {
         )
         toolMenuItems.append(settingsMenu)
 
-        anchor.present(menu: .init(options: [.displayInline], children: toolMenuItems))
+        return toolMenuItems
     }
 
     func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool {

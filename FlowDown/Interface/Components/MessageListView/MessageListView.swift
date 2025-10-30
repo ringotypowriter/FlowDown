@@ -4,7 +4,6 @@
 //
 
 import AlertController
-import ChidoriMenu
 import Combine
 import ListViewKit
 import Litext
@@ -151,20 +150,19 @@ final class MessageListView: UIView {
         }
     }
 
-    private func processLinkTapped(link: URL?, rawValue: String, location: CGPoint) {
+    private func processLinkTapped(link: URL?, rawValue: String, location _: CGPoint) {
         guard let link,
-              let host = link.host,
               let scheme = link.scheme,
               ["http", "https"].contains(scheme)
         else {
             let alert = AlertViewController(
-                title: String(localized: "Unable to open link."),
-                message: String(localized: "We are unable to process the link you tapped, either it is invalid or not supported.")
+                title: "Unable to open link.",
+                message: "We are unable to process the link you tapped, either it is invalid or not supported."
             ) { context in
-                context.addAction(title: String(localized: "Dismiss")) {
+                context.addAction(title: "Dismiss") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Copy Content"), attribute: .dangerous) {
+                context.addAction(title: "Copy Content", attribute: .accent) {
                     UIPasteboard.general.string = rawValue
                     context.dispose()
                 }
@@ -172,30 +170,21 @@ final class MessageListView: UIView {
             parentViewController?.present(alert, animated: true)
             return
         }
-        let menu = UIMenu(children: [
-            UIMenu(title: String(localized: "From \(host)"), options: [.displayInline], children: [
-                UIAction(title: String(localized: "View"), image: UIImage(systemName: "eye")) { [weak self] _ in
-                    guard let self else { return }
-                    Indicator.present(link, referencedView: self)
-                },
-            ]),
-            UIMenu(options: [.displayInline], children: [
-                UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
-                    let shareSheet = UIActivityViewController(activityItems: [link], applicationActivities: nil)
-                    shareSheet.popoverPresentationController?.sourceView = self
-                    shareSheet.popoverPresentationController?.sourceRect = .init(
-                        origin: .init(x: location.x, y: location.y - 4),
-                        size: .init(width: 8, height: 8)
-                    )
-                    self?.parentViewController?.present(shareSheet, animated: true)
-                },
-                UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
-                    guard let self else { return }
-                    Indicator.open(link, referencedView: self)
-                },
-            ]),
-        ])
-        present(menu: menu, anchorPoint: .init(x: location.x, y: location.y + 4))
+
+        let alert = AlertViewController(
+            title: "Open Link",
+            message: "Do you want to open this link in your default browser?\n\n\(link.absoluteString)"
+        ) { context in
+            context.addAction(title: "Cancel") {
+                context.dispose()
+            }
+            context.addAction(title: "Open", attribute: .accent) {
+                context.dispose {
+                    UIApplication.shared.open(link)
+                }
+            }
+        }
+        parentViewController?.present(alert, animated: true)
     }
 
     func updateList() {

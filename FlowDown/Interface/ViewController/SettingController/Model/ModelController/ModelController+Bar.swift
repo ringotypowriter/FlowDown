@@ -6,7 +6,6 @@
 //
 
 import AlertController
-import ChidoriMenu
 import ConfigurableKit
 import MLX
 import Storage
@@ -26,9 +25,8 @@ extension SettingController.SettingContent.ModelController {
                     ) { [weak self] _ in
                         _ = ModelManager.shared.newCloudModel(profile: model)
                         Indicator.present(
-                            title: String(localized: "Model Added"),
+                            title: "Model Added",
                             preset: .done,
-                            haptic: .success,
                             referencingView: self?.view
                         )
                     }
@@ -55,10 +53,10 @@ extension SettingController.SettingContent.ModelController {
             ) { [weak self] _ in
                 guard MLX.GPU.isSupported else {
                     let alert = AlertViewController(
-                        title: String(localized: "Unsupporte"),
-                        message: String(localized: "Your device does not support MLX.")
+                        title: "Unsupported",
+                        message: "Your device does not support MLX."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
@@ -89,68 +87,55 @@ extension SettingController.SettingContent.ModelController {
         ]
     }
 
-    @objc func addModelBarItemTapped() {
-        guard let bar = navigationController?.navigationBar else { return }
-
-        let menu = UIMenu(
-            title: String(localized: "Select Model Type"),
-            options: [.displayInline],
-            children: [
-                UIMenu(
-                    title: String(localized: "Cloud Model"),
-                    options: [.displayInline],
-                    children: createCloudModelMenuItems()
-                ),
-                UIMenu(
-                    title: String(localized: "Local Model"),
-                    options: [.displayInline],
-                    children: createLocalModelMenuItems()
-                ),
-                UIMenu(
-                    title: String(localized: "Import Model"),
-                    options: [.displayInline],
-                    children: [
-                        UIAction(
-                            title: String(localized: "Import from File"),
-                            image: .init(systemName: "arrow.down.doc")
-                        ) { [weak self] _ in
-                            guard let self else { return }
-                            let picker = UIDocumentPickerViewController(forOpeningContentTypes: [
-                                .zip, .propertyList, UTType(filenameExtension: "fdmodel") ?? .data,
-                            ], asCopy: true)
-                            picker.title = String(localized: "Import Model")
-                            picker.delegate = self
-                            picker.allowsMultipleSelection = true
-                            picker.modalPresentationStyle = .formSheet
-                            present(picker, animated: true)
-                        },
-                    ]
-                ),
-            ]
-        )
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+    func createAddModelMenuItems() -> [UIMenuElement] {
+        [
+            UIMenu(
+                title: String(localized: "Cloud Model"),
+                options: [.displayInline],
+                children: createCloudModelMenuItems()
+            ),
+            UIMenu(
+                title: String(localized: "Local Model"),
+                options: [.displayInline],
+                children: createLocalModelMenuItems()
+            ),
+            UIMenu(
+                title: String(localized: "Import Model"),
+                options: [.displayInline],
+                children: [
+                    UIAction(
+                        title: String(localized: "Import from File"),
+                        image: .init(systemName: "arrow.down.doc")
+                    ) { [weak self] _ in
+                        guard let self else { return }
+                        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [
+                            .zip, .propertyList, UTType(filenameExtension: "fdmodel") ?? .data,
+                        ], asCopy: true)
+                        picker.title = String(localized: "Import Model")
+                        picker.delegate = self
+                        picker.allowsMultipleSelection = true
+                        picker.modalPresentationStyle = .formSheet
+                        present(picker, animated: true)
+                    },
+                ]
+            ),
+        ]
     }
 
-    @objc func filterBarItemTapped() {
-        guard let bar = navigationController?.navigationBar else { return }
-        let menu = UIMenu(title: String(localized: "Filter Options"), children: [
+    func createFilterMenuItems() -> [UIMenuElement] {
+        [
             UIAction(
                 title: String(localized: "Show Local Models"),
-                image: .modelLocal,
                 state: showLocalModels ? .on : .off
             ) { [weak self] _ in
                 self?.showLocalModels.toggle()
             },
             UIAction(
                 title: String(localized: "Show Cloud Models"),
-                image: .modelCloud,
                 state: showCloudModels ? .on : .off
             ) { [weak self] _ in
                 self?.showCloudModels.toggle()
             },
-        ])
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+        ]
     }
 }

@@ -27,10 +27,10 @@ class JsonStringMapEditorController: CodeEditorController {
         let requiredDecodableType = [String: String].self
         guard let data = textView.text.data(using: .utf8) else {
             let alert = AlertViewController(
-                title: String(localized: "Error"),
-                message: String(localized: "Unable to decode text into data.")
+                title: "Error",
+                message: "Unable to decode text into data."
             ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.addAction(title: "OK", attribute: .accent) {
                     context.dispose()
                 }
             }
@@ -42,10 +42,10 @@ class JsonStringMapEditorController: CodeEditorController {
             Logger.ui.infoFile("JsonStringMapEditorController done with object: \(object)")
         } catch {
             let alert = AlertViewController(
-                title: String(localized: "Error"),
-                message: String(localized: "Unable to decode string key value map from text: \(error.localizedDescription)")
+                title: "Error",
+                message: "Unable to decode string key value map from text: \(error.localizedDescription)"
             ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.addAction(title: "OK", attribute: .accent) {
                     context.dispose()
                 }
             }

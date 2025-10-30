@@ -38,14 +38,14 @@ extension HubModelDownloadController {
             if name.lowercased().hasPrefix(model.author.lowercased() + "/") {
                 name = String(name.dropFirst(model.author.count + 1))
             }
-            content.configure(rawTitle: name)
+            content.configure(title: "\(name)")
             let desc = [
                 model.author,
                 model.pipeline_tag.capitalized,
             ]
             .filter { !$0.isEmpty }
             .joined(separator: ", ")
-            content.configure(rawDescription: desc)
+            content.configure(description: "\(desc)")
         }
     }
 }

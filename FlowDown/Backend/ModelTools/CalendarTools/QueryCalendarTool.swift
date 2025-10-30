@@ -183,17 +183,17 @@ class MTQueryCalendarTool: ModelTool, @unchecked Sendable {
         dateFormatter.locale = Locale.current
 
         let alert = AlertViewController(
-            title: String(localized: "Calendar Events"),
-            message: displayText
+            title: "Calendar Events",
+            message: "\(displayText)"
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose {
                     continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
                         NSLocalizedDescriptionKey: String(localized: "User cancelled sharing calendar events."),
                     ]))
                 }
             }
-            context.addAction(title: String(localized: "Share"), attribute: .dangerous) {
+            context.addAction(title: "Share", attribute: .accent) {
                 context.dispose {
                     // 返回原始的带格式的结果给AI
                     continuation.resume(returning: result)

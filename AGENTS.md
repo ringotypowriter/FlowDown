@@ -1,4 +1,4 @@
-# CLAUDE.md
+# FlowDown Agent Guide
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -11,15 +11,15 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Reach for `xcbeautify -qq` when running `xcodebuild` locally to keep logs concise.
 
 ## Platform Requirements & Dependencies
-- Target platforms reflect framework minimums: iOS 16.0+, macCatalyst 16.0+, macOS 13.3+ (ChatClientKit).
+- Target platforms reflect framework minimums: iOS 17.0+, macCatalyst 17.0+.
 - Toolchain: Swift 5.9+ is required to satisfy package manifests (`swift-tools-version: 5.9`).
 - Core dependencies (via SwiftPM): MLX/MLX-examples for on-device models, WCDB for storage, MarkdownView for rendering, and dedicated UI/editor libraries like RichEditor and RunestoneEditor.
 - MLX GPU support is automatically detected and disabled in simulator/x86_64 builds (see `main.swift`)
 
 ## Project Structure
 - `FlowDown.xcworkspace`: Entry point with app and frameworks.
-- `FlowDown/`: Application sources divided into `Application/` (entry surfaces), `Backend/` (conversations, models, storage, security), `Interface/` (SwiftUI plus UIKit bridges), and `PlatformSupport/` (macOS/Catalyst glue).
-- `Frameworks/`: Shared Swift packages (`ChatClientKit`, `Storage`, `RichEditor`, `RunestoneEditor`). Each package owns its manifest and dependency graph.
+- `FlowDown/`: Application sources divided into `Application/` (entry surfaces), `Backend/` (conversations, models, storage, security), `Interface/` (SwiftUI plus UIKit bridges), `PlatformSupport/` (macOS/Catalyst glue), and `BundledResources/` (curated assets shipped with the app).
+- `Frameworks/`: Shared Swift packages (`ChatClientKit`, `Storage`, `RichEditor`, `RunestoneEditor`, `Logger`). Each package owns its manifest and dependency graph.
 - `Resources/`: Shared assets, localization collateral, privacy documents, and DevKit utilities.
 - `Playgrounds/`: Exploratory prototypes; do not assume production readiness.
 
@@ -78,5 +78,6 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 
 ## Localization Guidelines
 - Always use `String(localized: "text")` for user-facing strings instead of hardcoded text
-- Add new localized strings to `Resources/CommunityEdition/FlowDown/Resources/Localizable.xcstrings` when introducing new UI text
+- Add new localized strings to `FlowDown/Resources/Localizable.xcstrings` when introducing new UI text
+- Run `python3 Resources/DevKit/scripts/update_missing_i18n.py FlowDown/Resources/Localizable.xcstrings` after adding strings, then audit results with `check_translations.py`
 - Follow existing localization patterns and maintain consistency with the codebase

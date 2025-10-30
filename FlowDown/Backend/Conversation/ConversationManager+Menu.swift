@@ -12,7 +12,7 @@ import UIKit
 
 private let dateFormatter = DateFormatter().with {
     $0.locale = .current
-    $0.dateStyle = .medium
+    $0.dateStyle = .short
     $0.timeStyle = .short
 }
 
@@ -33,8 +33,6 @@ extension ConversationManager {
 
         let mainMenu = UIMenu(
             title: [
-                String(localized: "Conversation"),
-                "@",
                 dateFormatter.string(from: conv.creation),
             ].joined(separator: " "),
             options: [.displayInline],
@@ -44,9 +42,9 @@ extension ConversationManager {
                     image: UIImage(systemName: "pencil.tip.crop.circle.badge.arrow.forward")
                 ) { _ in
                     let alert = AlertInputViewController(
-                        title: String(localized: "Rename"),
-                        message: String(localized: "Set a new title for the conversation. Leave empty to keep unchanged. This will disable auto-renaming."),
-                        placeholder: String(localized: "Title"),
+                        title: "Rename",
+                        message: "Set a new title for the conversation. Leave empty to keep unchanged. This will disable auto-renaming.",
+                        placeholder: "Title",
                         text: conv.title
                     ) { text in
                         guard !text.isEmpty else { return }
@@ -83,43 +81,25 @@ extension ConversationManager {
                     let captureView = ConversationCaptureView(session: session)
                     guard let controller = view.parentViewController else { return }
                     Indicator.progress(
-                        title: String(localized: "Rendering Content"),
+                        title: "Rendering Content",
                         controller: controller
-                    ) { completionHandler in
-                        DispatchQueue.main.async {
-                            captureView.capture(controller: controller) { image in
-                                completionHandler {
-                                    guard let image else {
-                                        Indicator.present(
-                                            title: String(localized: "Unable to Export"),
-                                            preset: .error,
-                                            haptic: .error,
-                                            referencingView: view
-                                        )
-                                        return
-                                    }
-                                    let url = FileManager.default
-                                        .temporaryDirectory
-                                        .appendingPathComponent("DisposableResources")
-                                        .appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970))".sanitizedFileName)
-                                        .appendingPathExtension("png")
-                                    try? FileManager.default.createDirectory(
-                                        at: url.deletingLastPathComponent(),
-                                        withIntermediateDirectories: true
-                                    )
-                                    let png = image.pngData()
-                                    FileManager.default.createFile(atPath: url.path(), contents: png)
-
-                                    let helper = FileExporterHelper()
-                                    helper.targetFileURL = url
-                                    helper.deleteAfterComplete = true
-                                    helper.exportTitle = String(localized: "Save Image")
-                                    helper.referencedView = view
-                                    helper.completion = { try? FileManager.default.removeItem(at: url) }
-                                    helper.execute(presentingViewController: controller)
+                    ) { completion in
+                        let image = await withCheckedContinuation { continuation in
+                            DispatchQueue.main.async {
+                                captureView.capture(controller: controller) { image in
+                                    continuation.resume(returning: image)
                                 }
                             }
                         }
+
+                        guard let image, let png = image.pngData() else { throw NSError() }
+                        let exporter = DisposableExporter(
+                            data: png,
+                            name: "Exported-\(Int(Date().timeIntervalSince1970))".sanitizedFileName,
+                            pathExtension: "png",
+                            title: "Export Image"
+                        )
+                        await completion { exporter.run(anchor: view) }
                     }
                 },
                 UIMenu(
@@ -133,29 +113,16 @@ extension ConversationManager {
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .plainText) { result in
                                 switch result {
                                 case let .success(content):
-                                    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).txt")
-                                    do {
-                                        try content.write(to: url, atomically: true, encoding: .utf8)
-                                        let helper = FileExporterHelper()
-                                        helper.targetFileURL = url
-                                        helper.deleteAfterComplete = true
-                                        helper.exportTitle = String(localized: "Export Plain Text")
-                                        helper.referencedView = view
-                                        helper.completion = { try? FileManager.default.removeItem(at: url) }
-                                        helper.execute(presentingViewController: controller)
-                                    } catch {
-                                        Indicator.present(
-                                            title: String(localized: "Export Failed"),
-                                            preset: .error,
-                                            haptic: .error,
-                                            referencingView: view
-                                        )
-                                    }
+                                    DisposableExporter(
+                                        data: Data(content.utf8),
+                                        name: "Exported-\(Int(Date().timeIntervalSince1970))",
+                                        pathExtension: "txt",
+                                        title: "Export Plain Text"
+                                    ).run(anchor: view, mode: .file)
                                 case .failure:
                                     Indicator.present(
-                                        title: String(localized: "Export Failed"),
+                                        title: "Export Failed",
                                         preset: .error,
-                                        haptic: .error,
                                         referencingView: view
                                     )
                                 }
@@ -168,29 +135,16 @@ extension ConversationManager {
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .markdown) { result in
                                 switch result {
                                 case let .success(content):
-                                    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).md")
-                                    do {
-                                        try content.write(to: url, atomically: true, encoding: .utf8)
-                                        let helper = FileExporterHelper()
-                                        helper.targetFileURL = url
-                                        helper.deleteAfterComplete = true
-                                        helper.exportTitle = String(localized: "Export Markdown")
-                                        helper.referencedView = view
-                                        helper.completion = { try? FileManager.default.removeItem(at: url) }
-                                        helper.execute(presentingViewController: controller)
-                                    } catch {
-                                        Indicator.present(
-                                            title: String(localized: "Export Failed"),
-                                            preset: .error,
-                                            haptic: .error,
-                                            referencingView: view
-                                        )
-                                    }
+                                    DisposableExporter(
+                                        data: Data(content.utf8),
+                                        name: "Exported-\(Int(Date().timeIntervalSince1970))",
+                                        pathExtension: "md",
+                                        title: "Export Markdown"
+                                    ).run(anchor: view, mode: .file)
                                 case .failure:
                                     Indicator.present(
-                                        title: String(localized: "Export Failed"),
+                                        title: "Export Failed",
                                         preset: .error,
-                                        haptic: .error,
                                         referencingView: view
                                     )
                                 }
@@ -210,27 +164,24 @@ extension ConversationManager {
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
-                        title: String(localized: "Generating New Icon") + "...",
+                        title: "Generating New Icon",
                         controller: controller
                     ) { completion in
-                        Task.detached {
-                            let sessionManager = ConversationSessionManager.shared
-                            let session = sessionManager.session(for: conv.id)
-                            if let emoji = await session.generateConversationIcon() {
+                        let sessionManager = ConversationSessionManager.shared
+                        let session = sessionManager.session(for: conv.id)
+                        let emoji = await session.generateConversationIcon()
+                        await completion {
+                            if let emoji {
                                 ConversationManager.shared.editConversation(identifier: conv.id) { conversation in
                                     let icon = emoji.textToImage(size: 128)?.pngData() ?? .init()
                                     conversation.update(\.icon, to: icon)
                                 }
                             } else {
                                 Indicator.present(
-                                    title: String(localized: "Unable to generate icon"),
+                                    title: "Unable to generate icon",
                                     preset: .error,
-                                    haptic: .error,
                                     referencingView: view
                                 )
-                            }
-                            DispatchQueue.main.async {
-                                completion {}
                             }
                         }
                     }
@@ -240,26 +191,23 @@ extension ConversationManager {
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
-                        title: String(localized: "Generating New Title") + "...",
+                        title: "Generating New Title",
                         controller: controller
                     ) { completion in
-                        Task.detached {
-                            let sessionManager = ConversationSessionManager.shared
-                            let session = sessionManager.session(for: conv.id)
-                            if let title = await session.generateConversationTitle() {
+                        let sessionManager = ConversationSessionManager.shared
+                        let session = sessionManager.session(for: conv.id)
+                        let title = await session.generateConversationTitle()
+                        await completion {
+                            if let title {
                                 ConversationManager.shared.editConversation(identifier: conv.id) { conversation in
                                     conversation.update(\.title, to: title)
                                 }
                             } else {
                                 Indicator.present(
-                                    title: String(localized: "Unable to generate tittle"),
+                                    title: "Unable to generate title",
                                     preset: .error,
-                                    haptic: .error,
                                     referencingView: view
                                 )
-                            }
-                            DispatchQueue.main.async {
-                                completion {}
                             }
                         }
                     }
@@ -316,10 +264,10 @@ extension ConversationManager {
                             let name = ModelManager.shared.modelName(identifier: model)
                             guard let model, !name.isEmpty else {
                                 let alert = AlertViewController(
-                                    title: String(localized: "Model Not Available"),
-                                    message: String(localized: "Please select a model to generate chat template.")
+                                    title: "Model Not Available",
+                                    message: "Please select a model to generate chat template."
                                 ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.addAction(title: "OK", attribute: .accent) {
                                         context.dispose()
                                     }
                                 }
@@ -327,45 +275,40 @@ extension ConversationManager {
                                 return
                             }
                             let alert = AlertViewController(
-                                title: String(localized: "Compress to New Chat"),
-                                message: String(localized: "This will use \(name) compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged.")
+                                title: "Compress to New Chat",
+                                message: "This will use \(name) compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged."
                             ) { context in
-                                context.addAction(title: String(localized: "Cancel")) {
+                                context.addAction(title: "Cancel") {
                                     context.dispose()
                                 }
-                                context.addAction(title: String(localized: "Compress"), attribute: .dangerous) {
+                                context.addAction(title: "Compress", attribute: .accent) {
                                     context.dispose {
                                         Indicator.progress(
-                                            title: String(localized: "Compressing"),
+                                            title: "Compressing",
                                             controller: controller
-                                        ) { completionHandler in
-                                            ConversationManager.shared.compressConversation(
-                                                identifier: conv.id,
-                                                model: model
-                                            ) { convId in
-                                                suggestNewSelection(convId)
-                                            } completion: { result in
-                                                completionHandler {
-                                                    switch result {
-                                                    case .success:
-                                                        Indicator.present(
-                                                            title: String(localized: "Conversation Compressed"),
-                                                            preset: .done,
-                                                            haptic: .success,
-                                                            referencingView: view
-                                                        )
-                                                    case let .failure(failure):
-                                                        let alert = AlertViewController(
-                                                            title: String(localized: "Failed to Compress Conversation"),
-                                                            message: failure.localizedDescription
-                                                        ) { context in
-                                                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                                                context.dispose()
-                                                            }
-                                                        }
-                                                        controller.present(alert, animated: true)
-                                                    }
+                                        ) { completion in
+                                            let result = await withCheckedContinuation { continuation in
+                                                ConversationManager.shared.compressConversation(
+                                                    identifier: conv.id,
+                                                    model: model
+                                                ) { convId in
+                                                    suggestNewSelection(convId)
+                                                } completion: { result in
+                                                    continuation.resume(returning: result)
                                                 }
+                                            }
+
+                                            switch result {
+                                            case .success:
+                                                await completion {
+                                                    Indicator.present(
+                                                        title: "Conversation Compressed",
+                                                        preset: .done,
+                                                        referencingView: view
+                                                    )
+                                                }
+                                            case let .failure(failure):
+                                                throw failure
                                             }
                                         }
                                     }
@@ -381,10 +324,10 @@ extension ConversationManager {
                             let name = ModelManager.shared.modelName(identifier: model)
                             guard let model, !name.isEmpty else {
                                 let alert = AlertViewController(
-                                    title: String(localized: "Model Not Available"),
-                                    message: String(localized: "Please select a model to generate chat template.")
+                                    title: "Model Not Available",
+                                    message: "Please select a model to generate chat template."
                                 ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.addAction(title: "OK", attribute: .accent) {
                                         context.dispose()
                                     }
                                 }
@@ -392,51 +335,43 @@ extension ConversationManager {
                                 return
                             }
                             let alert = AlertViewController(
-                                title: String(localized: "Generate Chat Template"),
-                                message: String(localized: "This will extract your requests from the current conversation using \(name) and save it as a template for later use. This may take some time.")
+                                title: "Generate Chat Template",
+                                message: "This will extract your requests from the current conversation using \(name) and save it as a template for later use. This may take some time."
                             ) { context in
-                                context.addAction(title: String(localized: "Cancel")) {
+                                context.addAction(title: "Cancel") {
                                     context.dispose()
                                 }
-                                context.addAction(title: String(localized: "Generate"), attribute: .dangerous) {
+                                context.addAction(title: "Generate", attribute: .accent) {
                                     context.dispose {
                                         Indicator.progress(
-                                            title: String(localized: "Generating Template"),
+                                            title: "Generating Template",
                                             controller: controller
-                                        ) { completionHandler in
-                                            ChatTemplateManager.shared.createTemplateFromConversation(conv, model: model) { result in
-                                                completionHandler {
-                                                    switch result {
-                                                    case let .success(success):
-                                                        ChatTemplateManager.shared.addTemplate(success)
-                                                        let alert = AlertViewController(
-                                                            title: String(localized: "Template Generated"),
-                                                            message: String(localized: "Template \(success.name) has been successfully generated and saved.")
-                                                        ) { context in
-                                                            context.addAction(title: String(localized: "OK")) {
-                                                                context.dispose()
-                                                            }
-                                                            context.addAction(title: String(localized: "Edit"), attribute: .dangerous) {
-                                                                context.dispose {
-                                                                    let setting = SettingController()
-                                                                    SettingController.setNextEntryPage(.chatTemplateEditor(templateIdentifier: success.id))
-                                                                    controller.present(setting, animated: true)
-                                                                }
-                                                            }
+                                        ) { completion in
+                                            let result = await withCheckedContinuation { continuation in
+                                                ChatTemplateManager.shared.createTemplateFromConversation(conv, model: model) { result in
+                                                    continuation.resume(returning: result)
+                                                }
+                                            }
+
+                                            let template = try result.get()
+                                            await completion {
+                                                ChatTemplateManager.shared.addTemplate(template)
+                                                let alert = AlertViewController(
+                                                    title: "Template Generated",
+                                                    message: "Template \(template.name) has been successfully generated and saved."
+                                                ) { context in
+                                                    context.addAction(title: "OK") {
+                                                        context.dispose()
+                                                    }
+                                                    context.addAction(title: "Edit", attribute: .accent) {
+                                                        context.dispose {
+                                                            let setting = SettingController()
+                                                            SettingController.setNextEntryPage(.chatTemplateEditor(templateIdentifier: template.id))
+                                                            controller.present(setting, animated: true)
                                                         }
-                                                        controller.present(alert, animated: true)
-                                                    case let .failure(failure):
-                                                        let alert = AlertViewController(
-                                                            title: String(localized: "Failed to Generate Template"),
-                                                            message: failure.localizedDescription
-                                                        ) { context in
-                                                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                                                context.dispose()
-                                                            }
-                                                        }
-                                                        controller.present(alert, animated: true)
                                                     }
                                                 }
+                                                controller.present(alert, animated: true)
                                             }
                                         }
                                     }
@@ -528,11 +463,6 @@ extension ConversationManager {
         if !convHasEmptyContent { finalChildren.append(automationMenu) }
         if !management.children.isEmpty { finalChildren.append(management) }
 
-        return UIMenu(
-            title: String(localized: "Edit Conversation"),
-            image: UIImage(systemName: "pencil"),
-            options: [.displayInline],
-            children: finalChildren
-        )
+        return UIMenu(options: [.displayInline], children: finalChildren)
     }
 }

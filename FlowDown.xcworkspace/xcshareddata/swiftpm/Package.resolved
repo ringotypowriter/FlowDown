@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/AlertController",
       "state" : {
-        "revision" : "2d6ab3046655205d035a1e7ac96c867875a26344",
-        "version" : "1.1.5"
+        "revision" : "f4c1a26ed1de2e6fe6d759a9f91eb00e9b47d66e",
+        "version" : "2.0.0"
       }
     },
     {
@@ -25,15 +25,6 @@
       "state" : {
         "revision" : "61153170668db7a46a20a87e35e70f80b24d4eb5",
         "version" : "0.4.0"
-      }
-    },
-    {
-      "identity" : "chidorimenu",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lakr233/ChidoriMenu",
-      "state" : {
-        "revision" : "8fa8bead4054862109723c1c9d52dff97f948ff0",
-        "version" : "4.0.1"
       }
     },
     {
@@ -68,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ConfigurableKit",
       "state" : {
-        "revision" : "ce50f70f9cf8a62534c8dc32a940cfd255ea1c68",
-        "version" : "3.0.4"
+        "revision" : "566ba435393836b67aba81be235961b1a6559565",
+        "version" : "3.0.9"
       }
     },
     {
@@ -149,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/MarkdownView",
       "state" : {
-        "revision" : "4f3b9f03c2704efb657b34d5622e7ff7d141a3fa",
-        "version" : "3.4.3"
+        "revision" : "7ca2450579f88b0a8f165db93e4b6acf5646720b",
+        "version" : "3.4.5"
       }
     },
     {
@@ -349,6 +340,15 @@
       "state" : {
         "revision" : "4206bc7b8bd9a4ff8e9511211e1b4bff979ef9c4",
         "version" : "2.11.1"
+      }
+    },
+    {
+      "identity" : "uieffectkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/UIEffectKit",
+      "state" : {
+        "revision" : "12d834a0c97415a8952ea92c4cba35c336ce87d4",
+        "version" : "0.1.0"
       }
     },
     {

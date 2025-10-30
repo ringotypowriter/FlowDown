@@ -66,7 +66,7 @@ extension SettingController.SettingContent.MCPController {
             }
 
             configurableView.configure(icon: icon)
-            configurableView.configure(rawTitle: client.displayName)
+            configurableView.configure(title: "\(client.displayName)")
 
             var descriptions: [String] = []
             descriptions.append(client.type.rawValue.uppercased())
@@ -81,7 +81,8 @@ extension SettingController.SettingContent.MCPController {
                 configurableView.iconView.tintColor = .systemGray
             }
 
-            configurableView.configure(rawDescription: descriptions.joined(separator: " • "))
+            let desc = descriptions.joined(separator: " • ")
+            configurableView.configure(description: "\(desc)")
         }
 
         private func getConnectionStatusText(_ status: ModelContextServer.ConnectionStatus) -> String {
@@ -112,7 +113,7 @@ extension SettingController.SettingContent.MCPController {
 
         func contextMenuInteraction(
             _: UIContextMenuInteraction,
-            configurationForMenuAtLocation location: CGPoint
+            configurationForMenuAtLocation _: CGPoint
         ) -> UIContextMenuConfiguration? {
             guard let clientId else { return nil }
             let menu = UIMenu(options: [.displayInline], children: [
@@ -123,20 +124,13 @@ extension SettingController.SettingContent.MCPController {
                     MCPService.shared.remove(clientId)
                 },
             ])
-            #if targetEnvironment(macCatalyst)
-                present(menu: menu, anchorPoint: location)
-                return nil
-            #else
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                    menu
-                }
-            #endif
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                menu
+            }
         }
 
         private func exportServer(_ serverId: ModelContextServer.ID) {
-            guard let server = MCPService.shared.server(with: serverId),
-                  let parentViewController
-            else { return }
+            guard let server = MCPService.shared.server(with: serverId) else { return }
 
             let tempFileDir = FileManager.default.temporaryDirectory
                 .appendingPathComponent("DisposableResources")
@@ -151,15 +145,7 @@ extension SettingController.SettingContent.MCPController {
             encoder.outputFormat = .xml
             try? encoder.encode(server).write(to: tempFile, options: .atomic)
 
-            let exporter = FileExporterHelper()
-            exporter.targetFileURL = tempFile
-            exporter.referencedView = self
-            exporter.deleteAfterComplete = true
-            exporter.exportTitle = String(localized: "Export MCP Server")
-            exporter.completion = {
-                try? FileManager.default.removeItem(at: tempFileDir)
-            }
-            exporter.execute(presentingViewController: parentViewController)
+            DisposableExporter(deletableItem: tempFile, title: "Export MCP Server").run(anchor: self)
         }
     }
 }

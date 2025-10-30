@@ -6,12 +6,12 @@
 //
 
 import Foundation
+import UIKit
 
 extension QuickSettingBar {
     protocol Delegate: AnyObject {
         func quickSettingBarOnValueChagned()
-        func quickSettingBarPickModel()
-        func quickSettingBarShowAlternativeModelMenu()
-        func quickSettingBarShowAlternativeToolsMenu()
+        func quickSettingBarBuildModelSelectionMenu() -> [UIMenuElement]
+        func quickSettingBarBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement]
     }
 }

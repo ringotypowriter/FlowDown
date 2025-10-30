@@ -27,18 +27,4 @@ extension ConversationListView: UITableViewDelegate {
             $0.updateTitle(date: sectionIdentifier)
         }
     }
-
-    func tableView(
-        _ tableView: UITableView,
-        contextMenuConfigurationForRowAt indexPath: IndexPath,
-        point _: CGPoint
-    ) -> UIContextMenuConfiguration? {
-        guard let identifier = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        let cell = tableView.cellForRow(at: indexPath)
-        if let cell = cell as? Cell {
-            selection.send(identifier)
-            cell.presentMenu()
-        }
-        return nil
-    }
 }

@@ -71,13 +71,13 @@ public extension RichEditorView {
         let cancelButton = ActionButton()
         cancelButton.action = {
             let alert = AlertViewController(
-                title: String(localized: "Terminate", bundle: .module),
-                message: String(localized: "Are you sure you want to terminate this request?", bundle: .module)
+                title: "Terminate",
+                message: "Are you sure you want to terminate this request?"
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Terminate", bundle: .module), attribute: .dangerous) {
+                context.addAction(title: "Terminate", attribute: .accent) {
                     onUserRequestCancellation()
                     context.dispose()
                 }

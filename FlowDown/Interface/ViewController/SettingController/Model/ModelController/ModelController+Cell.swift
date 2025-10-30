@@ -45,8 +45,9 @@ extension SettingController.SettingContent.ModelController {
 
         func update(type: ModelType, name: String, descriptions: [String]) {
             content.configure(icon: type.image)
-            content.configure(rawTitle: name)
-            content.configure(rawDescription: descriptions.joined(separator: ", "))
+            content.configure(title: "\(name)")
+            let desc = descriptions.joined(separator: ", ")
+            content.configure(description: "\(desc)")
         }
 
         override func layoutSubviews() {

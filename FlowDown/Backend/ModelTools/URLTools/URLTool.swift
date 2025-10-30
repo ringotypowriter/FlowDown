@@ -110,10 +110,10 @@ class MTURLTool: ModelTool, @unchecked Sendable {
             }
 
             let alert = AlertViewController(
-                title: String(localized: "Open \(urlTypeDescription.capitalized)"),
-                message: String(localized: "The AI assistant suggests opening this URL:\n\n\(url.absoluteString)\n\nReason: \(reason)")
+                title: "Open \(urlTypeDescription.capitalized)",
+                message: "The AI assistant suggests opening this URL:\n\n\(url.absoluteString)\n\nReason: \(reason)"
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose {
                         continuation.resume(
                             throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
@@ -122,14 +122,10 @@ class MTURLTool: ModelTool, @unchecked Sendable {
                         )
                     }
                 }
-                context.addAction(title: String(localized: "Open"), attribute: .dangerous) {
+                context.addAction(title: "Open", attribute: .accent) {
                     context.dispose {
                         if isWebURL {
-                            Indicator.present(
-                                url,
-                                showThirdPartyContentWarning: false,
-                                referencedView: referencedView
-                            )
+                            Indicator.present(url, referencedView: referencedView)
                         } else {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
                         }

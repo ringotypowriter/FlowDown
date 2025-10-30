@@ -27,14 +27,14 @@ class ImageCircleButton: UIView {
             layer.shadowOffset = .zero
             layer.shadowRadius = 8
             layer.shadowOpacity = 0.1
+            backgroundColor = .background
         case .border:
             layer.borderWidth = 2
             layer.borderColor = UIColor.gray.withAlphaComponent(0.1).cgColor
+            backgroundColor = .background
         case .none:
             break
         }
-
-        backgroundColor = .background
 
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .label

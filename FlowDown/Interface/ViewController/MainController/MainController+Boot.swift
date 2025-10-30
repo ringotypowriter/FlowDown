@@ -26,10 +26,10 @@ extension MainController {
         bootMessages.removeAll()
 
         let alert = AlertViewController(
-            title: String(localized: "External Resources"),
-            message: text
+            title: "External Resources",
+            message: "\(text)"
         ) { context in
-            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+            context.addAction(title: "OK", attribute: .accent) {
                 context.dispose {}
             }
         }

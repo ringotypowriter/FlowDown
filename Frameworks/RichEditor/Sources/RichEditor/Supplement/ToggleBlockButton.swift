@@ -19,7 +19,7 @@ class ToggleBlockButton: BlockButton {
 
     override var actionBlock: () -> Void {
         get { super.actionBlock }
-        set { fatalError() }
+        set { super.actionBlock = newValue }
     }
 
     override init(text: String, icon: String) {
@@ -29,10 +29,6 @@ class ToggleBlockButton: BlockButton {
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
             self.updateUI()
         }
-    }
-
-    var strikeThrough: Bool = false {
-        didSet { updateUI() }
     }
 
     @available(*, unavailable)
@@ -52,22 +48,12 @@ class ToggleBlockButton: BlockButton {
         borderView.layer.borderColor = UIColor.accent.cgColor
         borderView.backgroundColor = .accent
         iconView.tintColor = .white
-        titleLabel.textColor = .white
+        textLabel.textColor = .white
         updateStrikes()
     }
 
     override func applyDefaultAppearance() {
         super.applyDefaultAppearance()
         updateStrikes()
-    }
-
-    func updateStrikes() {
-        let attrText = titleLabel.attributedText?.mutableCopy() as? NSMutableAttributedString
-        attrText?.addAttribute(
-            .strikethroughStyle,
-            value: strikeThrough ? 1 : 0,
-            range: NSRange(location: 0, length: attrText?.length ?? 0)
-        )
-        titleLabel.attributedText = attrText
     }
 }

@@ -19,17 +19,17 @@ class BrandingLabel: GlyphixTextLabel {
         defaultValue: .init(String(localized: "FlowDown")),
         annotation: .action { controller in
             let alert = AlertInputViewController(
-                title: String(localized: "Edit Branding Name"),
-                message: String(localized: "Change the branding name display in the app. Leave it empty to use FlowDown."),
-                placeholder: String(localized: "FlowDown"),
+                title: "Edit Branding Name",
+                message: "Change the branding name display in the app. Leave it empty to use FlowDown.",
+                placeholder: "FlowDown",
                 text: BrandingLabel.readBrandingValue(),
-                cancelButtonText: String(localized: "Cancel"),
-                doneButtonText: String(localized: "Set")
+                cancelButtonText: "Cancel",
+                doneButtonText: "Set"
             ) { text in
                 BrandingLabel.setBrandingValue(text)
                 NotificationCenter.default.post(name: .brandingLabelNeedsUpdate, object: nil)
             }
-            controller?.present(alert, animated: true)
+            controller.present(alert, animated: true)
         }
     )
 

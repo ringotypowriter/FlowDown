@@ -216,9 +216,9 @@ extension SettingController.SettingContent {
                 if !AppleIntelligenceModel.shared.isAvailable {
                     defaultConversationModel.configure(description: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)")
                 }
-                defaultConversationModel.setTapBlock { [weak self] view in
-                    ModelManager.shared.presentModelSelectionMenu(
-                        anchoringView: view.valueLabel,
+                defaultConversationModel.use { [weak self] in
+                    guard let self else { return [] }
+                    return ModelManager.shared.buildModelSelectionMenu(
                         currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
                         allowSelectionWithNone: true
                     ) { [weak self] identifier in
@@ -236,9 +236,9 @@ extension SettingController.SettingContent {
                 } else {
                     defaultConversationModel.configure(value: String(localized: "Not Configured"))
                 }
-                defaultConversationModel.setTapBlock { [weak self] view in
-                    ModelManager.shared.presentModelSelectionMenu(
-                        anchoringView: view.valueLabel,
+                defaultConversationModel.use { [weak self] in
+                    guard let self else { return [] }
+                    return ModelManager.shared.buildModelSelectionMenu(
                         currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
                         allowSelectionWithNone: true
                     ) { [weak self] identifier in
@@ -248,7 +248,14 @@ extension SettingController.SettingContent {
                 }
             }
 
-            let devAuxId = ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask
+            // When "Use Chat Model" is enabled, show the chat model
+            // Otherwise, show the actual stored auxiliary model
+            let devAuxId: String = if defaultAuxiliaryModelAlignWithChatModel.boolValue {
+                ModelManager.ModelIdentifier.defaultModelForConversation
+            } else {
+                ModelManager.ModelIdentifier.storedAuxiliaryTaskModel
+            }
+
             var handledAuxModel = false
             if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
                 defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
@@ -268,13 +275,13 @@ extension SettingController.SettingContent {
                 }
             }
 
-            defaultAuxiliaryModel.setTapBlock { [weak self] view in
-                if self?.defaultAuxiliaryModelAlignWithChatModel.boolValue == true {
-                    return
+            defaultAuxiliaryModel.use { [weak self] in
+                guard let self else { return [] }
+                if defaultAuxiliaryModelAlignWithChatModel.boolValue == true {
+                    return []
                 }
-                ModelManager.shared.presentModelSelectionMenu(
-                    anchoringView: view.valueLabel,
-                    currentSelection: ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask,
+                return ModelManager.shared.buildModelSelectionMenu(
+                    currentSelection: ModelManager.ModelIdentifier.storedAuxiliaryTaskModel,
                     allowSelectionWithNone: true
                 ) { [weak self] identifier in
                     ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask = identifier
@@ -304,9 +311,9 @@ extension SettingController.SettingContent {
                 defaultAuxiliaryVisualModel.configure(value: String(localized: "Not Configured"))
             }
 
-            defaultAuxiliaryVisualModel.setTapBlock { [weak self] view in
-                ModelManager.shared.presentModelSelectionMenu(
-                    anchoringView: view.valueLabel,
+            defaultAuxiliaryVisualModel.use { [weak self] in
+                guard let self else { return [] }
+                return ModelManager.shared.buildModelSelectionMenu(
                     currentSelection: ModelManager.ModelIdentifier.defaultModelForAuxiliaryVisualTask,
                     requiresCapabilities: [.visual],
                     allowSelectionWithNone: true

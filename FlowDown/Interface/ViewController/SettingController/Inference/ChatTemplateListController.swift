@@ -68,9 +68,8 @@ class ChatTemplateListController: UIViewController {
         }
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addTemplate)
+            image: UIImage(systemName: "plus"),
+            menu: UIMenu(children: createAddTemplateMenuItems())
         )
 
         ChatTemplateManager.shared.$templates
@@ -98,8 +97,8 @@ class ChatTemplateListController: UIViewController {
         }
     }
 
-    @objc func addTemplate() {
-        let menu = UIMenu(children: [
+    func createAddTemplateMenuItems() -> [UIMenuElement] {
+        [
             UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
                 UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Create Template"), image: UIImage(systemName: "plus")) { [weak self] _ in
@@ -119,10 +118,7 @@ class ChatTemplateListController: UIViewController {
                     },
                 ]),
             ]),
-        ])
-        guard let bar = navigationController?.navigationBar else { return }
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+        ]
     }
 
     func presentDocumentPicker() {
@@ -142,7 +138,7 @@ extension ChatTemplateListController: UITableViewDelegate {
         }
         let delete = UIContextualAction(
             style: .destructive,
-            title: String(localized: "Delete")
+            title: "Delete"
         ) { _, _, completion in
             guard let template = ChatTemplateManager.shared.template(for: itemIdentifier) else {
                 assertionFailure()
@@ -198,8 +194,8 @@ extension ChatTemplateListController {
             } else {
                 view.configure(icon: UIImage(systemName: "person.crop.circle.fill"))
             }
-            view.configure(rawTitle: template.name)
-            view.configure(rawDescription: template.prompt)
+            view.configure(title: "\(template.name)")
+            view.configure(description: "\(template.prompt)")
         }
 
         func load(_ itemIdentifier: ChatTemplate.ID) {
@@ -213,22 +209,17 @@ extension ChatTemplateListController {
 
         func contextMenuInteraction(
             _: UIContextMenuInteraction,
-            configurationForMenuAtLocation location: CGPoint
+            configurationForMenuAtLocation _: CGPoint
         ) -> UIContextMenuConfiguration? {
             guard let identifier else { return nil }
             let menu = UIMenu(options: [.displayInline], children: [
-                UIAction(title: String(localized: "Delete"), attributes: .destructive) { _ in
+                UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                     ChatTemplateManager.shared.remove(for: identifier)
                 },
             ])
-            #if targetEnvironment(macCatalyst)
-                present(menu: menu, anchorPoint: location)
-                return nil
-            #else
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                    menu
-                }
-            #endif
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                menu
+            }
         }
     }
 }
@@ -241,7 +232,7 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
         guard !urls.isEmpty else { return }
 
         Indicator.progress(
-            title: String(localized: "Importing Templates"),
+            title: "Importing Templates",
             controller: self
         ) { completionHandler in
             var success = 0
@@ -254,7 +245,7 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
                     let data = try Data(contentsOf: url)
                     let decoder = PropertyListDecoder()
                     let template = try decoder.decode(ChatTemplate.self, from: data)
-                    DispatchQueue.main.asyncAndWait {
+                    await MainActor.run {
                         ChatTemplateManager.shared.addTemplate(template)
                     }
                     success += 1
@@ -263,26 +254,25 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
                 }
             }
 
-            completionHandler {
+            if success == 0, let firstError = failure.first {
+                throw firstError
+            }
+
+            await completionHandler {
                 if !failure.isEmpty {
                     let alert = AlertViewController(
-                        title: String(localized: "Import Failed"),
-                        message: String(
-                            format: String(localized: "%d templates imported successfully, %d failed."),
-                            success,
-                            failure.count
-                        )
+                        title: "Import Failed",
+                        message: "\(success) templates imported successfully, \(failure.count) failed."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
                     self.present(alert, animated: true)
                 } else {
                     Indicator.present(
-                        title: String(localized: "Imported \(success) templates."),
+                        title: "Imported \(success) templates.",
                         preset: .done,
-                        haptic: .success,
                         referencingView: self.view
                     )
                 }

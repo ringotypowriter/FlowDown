@@ -33,9 +33,9 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
     lazy var nameView = ConfigurableInfoView().setTapBlock { view in
         let input = AlertInputViewController(
-            title: String(localized: "Edit Name"),
-            message: String(localized: "The display name of this chat template."),
-            placeholder: String(localized: "Enter template name"),
+            title: "Edit Name",
+            message: "The display name of this chat template.",
+            placeholder: "Enter template name",
             text: self.template.name
         ) { output in
             self.template = self.template.with { $0.name = output }
@@ -107,10 +107,10 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         guard !defaultModel.isEmpty else {
             let alert = AlertViewController(
-                title: String(localized: "No Model Selected"),
-                message: String(localized: "Please select a default chat model in settings before using rewrite features.")
+                title: "No Model Selected",
+                message: "Please select a default chat model in settings before using rewrite features."
             ) { context in
-                context.addAction(title: String(localized: "OK")) {
+                context.addAction(title: "OK") {
                     context.dispose()
                 }
             }
@@ -121,40 +121,31 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         let modelName = ModelManager.shared.modelName(identifier: defaultModel)
 
         let input = AlertInputViewController(
-            title: String(localized: "Rewrite"),
-            message: String(localized: "You can use \(modelName) to rewrite this template, e.g., 'Add more instructions to the template.', or 'Make it more concise.'..."),
-            placeholder: String(localized: "Enter instructions..."),
+            title: "Rewrite",
+            message: "You can use \(modelName) to rewrite this template, e.g., 'Add more instructions to the template.', or 'Make it more concise.'...",
+            placeholder: "Enter instructions...",
             text: ""
         ) { [self] instructions in
             guard !instructions.isEmpty else { return }
             Indicator.progress(
-                title: String(localized: "Rewriting Template") + "...",
+                title: "Rewriting Template",
                 controller: self
             ) { completionHandler in
-                ChatTemplateManager.shared.rewriteTemplate(
-                    template: self.template,
-                    request: instructions,
-                    model: defaultModel
-                ) { result in
-                    completionHandler {
-                        switch result {
-                        case let .success(success):
-                            self.template = success
-                            self.title = success.name
-                            self.nameView.configure(value: success.name)
-                            self.textEditor.text = success.prompt
-                        case let .failure(failure):
-                            let alert = AlertViewController(
-                                title: String(localized: "Rewrite Failed"),
-                                message: failure.localizedDescription
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                    context.dispose()
-                                }
-                            }
-                            self.present(alert, animated: true)
-                        }
+                let result = await withCheckedContinuation { continuation in
+                    ChatTemplateManager.shared.rewriteTemplate(
+                        template: self.template,
+                        request: instructions,
+                        model: defaultModel
+                    ) { result in
+                        continuation.resume(returning: result)
                     }
+                }
+                let newTemplate = try result.get()
+                await completionHandler {
+                    self.template = newTemplate
+                    self.title = newTemplate.name
+                    self.nameView.configure(value: newTemplate.name)
+                    self.textEditor.text = newTemplate.prompt
                 }
             }
         }
@@ -163,13 +154,13 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
     @objc func deleteTapped() {
         let alert = AlertViewController(
-            title: String(localized: "Delete Template"),
-            message: String(localized: "Are you sure you want to delete this template? This action cannot be undone.")
+            title: "Delete Template",
+            message: "Are you sure you want to delete this template? This action cannot be undone."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+            context.addAction(title: "Delete", attribute: .accent) {
                 context.dispose { [weak self] in
                     guard let self else { return }
                     ChatTemplateManager.shared.remove(for: templateIdentifier)
@@ -249,27 +240,23 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         promptBehaviorView.configure(description: "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template.")
         let behaviorTitle = template.inheritApplicationPrompt ? String(localized: "Inherit") : String(localized: "Ignore")
         promptBehaviorView.configure(value: behaviorTitle)
-        promptBehaviorView.setTapBlock { view in
-            let children = [
+        promptBehaviorView.use {
+            [
                 UIAction(
                     title: String(localized: "Inherit"),
                     image: UIImage(systemName: "arrow.down.circle")
                 ) { _ in
                     self.template = self.template.with { $0.inheritApplicationPrompt = true }
-                    view.configure(value: String(localized: "Inherit"))
+                    promptBehaviorView.configure(value: String(localized: "Inherit"))
                 },
                 UIAction(
                     title: String(localized: "Ignore"),
                     image: UIImage(systemName: "xmark.circle")
                 ) { _ in
                     self.template = self.template.with { $0.inheritApplicationPrompt = false }
-                    view.configure(value: String(localized: "Ignore"))
+                    promptBehaviorView.configure(value: String(localized: "Ignore"))
                 },
             ]
-            view.present(
-                menu: .init(title: String(localized: "Prompt Behavior"), children: children),
-                anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
         }
         stackView.addArrangedSubviewWithMargin(promptBehaviorView)
         stackView.addArrangedSubview(SeparatorView())
@@ -295,31 +282,19 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         stackView.addArrangedSubviewWithMargin(copyAction)
         stackView.addArrangedSubview(SeparatorView())
 
-        var exportOptionReader: UIView?
-        let exportOption = ConfigurableActionView { [weak self] _ in
+        let exportOption = ConfigurableActionView { [weak self] controller in
             guard let self else { return }
-            let tempFileDir = FileManager.default.temporaryDirectory
-                .appendingPathComponent("DisposableResources")
-                .appendingPathComponent(UUID().uuidString)
-            let tempFile = tempFileDir
-                .appendingPathComponent("Export-\(template.name.sanitizedFileName)")
-                .appendingPathExtension("fdtemplate")
-            try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
-            FileManager.default.createFile(atPath: tempFile.path, contents: nil)
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
-            try? encoder.encode(template).write(to: tempFile, options: .atomic)
-            let exporter = FileExporterHelper()
-            exporter.targetFileURL = tempFile
-            exporter.referencedView = exportOptionReader
-            exporter.deleteAfterComplete = true
-            exporter.exportTitle = String(localized: "Export Template")
-            exporter.completion = {
-                try? FileManager.default.removeItem(at: tempFileDir)
-            }
-            exporter.execute(presentingViewController: self)
+            guard let data = try? encoder.encode(template) else { return }
+            let fileName = "Export-\(template.name.sanitizedFileName)"
+            DisposableExporter(
+                data: data,
+                name: fileName,
+                pathExtension: "fdtemplate",
+                title: "Export Template"
+            ).run(anchor: controller.view)
         }
-        exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Template")
         exportOption.configure(description: "Export this chat template as a .fdtemplate file for sharing or backup.")

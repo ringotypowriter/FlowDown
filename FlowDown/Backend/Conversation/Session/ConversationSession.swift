@@ -286,9 +286,14 @@ final class ConversationSession: Identifiable {
 
         // task auxiliary model
         if ModelManager.ModelIdentifier.defaultModelForAuxiliaryTaskWillUseCurrentChatModel {
+            // When "Use Chat Model" is enabled, always use the chat model
             models.auxiliary = models.chat ?? .defaultModelForAuxiliaryTask
-        } else if models.auxiliary == nil || models.auxiliary!.isEmpty {
-            models.auxiliary = .defaultModelForAuxiliaryTask
+        } else {
+            // When "Use Chat Model" is disabled, use the stored auxiliary model
+            // Only update if current value is nil or empty
+            if models.auxiliary == nil || models.auxiliary!.isEmpty {
+                models.auxiliary = .defaultModelForAuxiliaryTask
+            }
         }
 
         // visual auxiliary model

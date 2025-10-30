@@ -91,16 +91,6 @@
         }
       }
     },
-    "Ephemeral Chat" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "临时聊天"
-          }
-        }
-      }
-    },
     "Error" : {
       "localizations" : {
         "zh-Hans" : {
@@ -180,6 +170,9 @@
           }
         }
       }
+    },
+    "https://" : {
+      "shouldTranslate" : false
     },
     "Image" : {
       "localizations" : {
