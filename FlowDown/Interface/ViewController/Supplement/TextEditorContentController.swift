@@ -38,11 +38,7 @@ class TextEditorContentController: UIViewController {
         textView.textColor = .label
         textView.textAlignment = .natural
         textView.backgroundColor = .clear
-        if #available(iOS 26.0, macCatalyst 26.0, *) {
-            textView.textContainerInset = .init(top: 32, left: 10, bottom: 0, right: 10)
-        } else {
-            textView.textContainerInset = .init(top: 0, left: 10, bottom: 0, right: 10)
-        }
+        textView.textContainerInset = .init(inset: 10)
         textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.textContainer.lineFragmentPadding = .zero
         textView.textContainer.maximumNumberOfLines = 0
