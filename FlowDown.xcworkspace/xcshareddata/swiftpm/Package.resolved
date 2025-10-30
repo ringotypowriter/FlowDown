@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "chidorimenu",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/ChidoriMenu",
+      "state" : {
+        "revision" : "8fa8bead4054862109723c1c9d52dff97f948ff0",
+        "version" : "4.0.1"
+      }
+    },
+    {
       "identity" : "choreographer",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/unixzii/Choreographer",

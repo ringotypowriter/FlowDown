@@ -124,14 +124,9 @@ extension SettingController.SettingContent.MCPController {
                     MCPService.shared.remove(clientId)
                 },
             ])
-            #if targetEnvironment(macCatalyst)
-                present(menu: menu, anchorPoint: location)
-                return nil
-            #else
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                    menu
-                }
-            #endif
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                menu
+            }
         }
 
         private func exportServer(_ serverId: ModelContextServer.ID) {

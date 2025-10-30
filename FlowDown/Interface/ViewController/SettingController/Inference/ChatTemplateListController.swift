@@ -217,18 +217,13 @@ extension ChatTemplateListController {
         ) -> UIContextMenuConfiguration? {
             guard let identifier else { return nil }
             let menu = UIMenu(options: [.displayInline], children: [
-                UIAction(title: String(localized: "Delete"), attributes: .destructive) { _ in
+                UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                     ChatTemplateManager.shared.remove(for: identifier)
                 },
             ])
-            #if targetEnvironment(macCatalyst)
-                present(menu: menu, anchorPoint: location)
-                return nil
-            #else
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                    menu
-                }
-            #endif
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                menu
+            }
         }
     }
 }

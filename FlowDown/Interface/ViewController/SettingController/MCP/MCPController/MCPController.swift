@@ -148,16 +148,9 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
             },
         ])
 
-        #if targetEnvironment(macCatalyst)
-            if let cell = tableView.cellForRow(at: indexPath) {
-                cell.present(menu: menu, anchorPoint: point)
-            }
-            return nil
-        #else
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                menu
-            }
-        #endif
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            menu
+        }
     }
 }
 
