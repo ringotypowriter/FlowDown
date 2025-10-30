@@ -150,16 +150,10 @@ extension SettingController.SettingContent {
                                     controller.present(documentPicker, animated: true)
                                     self?.documentPickerExportTempItems.append(url)
                                 #else
-                                    let share = UIActivityViewController(
-                                        activityItems: [url],
-                                        applicationActivities: nil
-                                    )
-                                    share.popoverPresentationController?.sourceView = exportDatabaseReader ?? .init()
-                                    share.popoverPresentationController?.sourceRect = exportDatabaseReader?.bounds ?? .zero
-                                    share.completionWithItemsHandler = { _, _, _, _ in
-                                        try? FileManager.default.removeItem(at: url)
-                                    }
-                                    controller.present(share, animated: true)
+                                    FileExporterHelper(
+                                        targetFileURL: url,
+                                        referencedView: exportDatabaseReader
+                                    ).execute(presentingViewController: controller)
                                 #endif
                             case let .failure(err):
                                 let alert = AlertViewController(

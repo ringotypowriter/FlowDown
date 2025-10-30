@@ -159,16 +159,9 @@ extension SettingController.SettingContent {
                     documentPicker.modalPresentationStyle = .formSheet
                     controller.present(documentPicker, animated: true)
                 #else
-                    let share = UIActivityViewController(
-                        activityItems: [fileURL],
-                        applicationActivities: nil
-                    )
-                    share.popoverPresentationController?.sourceView = controller.view
-                    share.popoverPresentationController?.sourceRect = controller.view.bounds
-                    share.completionWithItemsHandler = { _, _, _, _ in
-                        try? FileManager.default.removeItem(at: fileURL)
-                    }
-                    controller.present(share, animated: true)
+                    FileExporterHelper(
+                        targetFileURL: fileURL
+                    ).execute(presentingViewController: controller)
                 #endif
             } catch {
                 let alert = AlertViewController(

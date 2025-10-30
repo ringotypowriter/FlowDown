@@ -405,14 +405,14 @@ class LocalModelEditorController: StackScrollController {
                             )
                             return
                         }
-                        let exporter = FileExporterHelper()
-                        exporter.targetFileURL = url
-                        exporter.referencedView = exportOptionReader
-                        exporter.deleteAfterComplete = true
-                        exporter.exportTitle = String(localized: "Export Model")
-                        exporter.completion = {
-                            cleanup()
-                        }
+                        let exporter = FileExporterHelper(
+                            targetFileURL: url,
+                            referencedView: exportOptionReader,
+                            completion: {
+                                cleanup()
+                            },
+                            exportTitle: String(localized: "Export Model")
+                        )
                         exporter.execute(presentingViewController: self)
                     }
                 }

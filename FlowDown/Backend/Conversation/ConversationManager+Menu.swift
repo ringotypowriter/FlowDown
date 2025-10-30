@@ -110,13 +110,12 @@ extension ConversationManager {
                                     let png = image.pngData()
                                     FileManager.default.createFile(atPath: url.path(), contents: png)
 
-                                    let helper = FileExporterHelper()
-                                    helper.targetFileURL = url
-                                    helper.deleteAfterComplete = true
-                                    helper.exportTitle = String(localized: "Save Image")
-                                    helper.referencedView = view
-                                    helper.completion = { try? FileManager.default.removeItem(at: url) }
-                                    helper.execute(presentingViewController: controller)
+                                    FileExporterHelper(
+                                        targetFileURL: url,
+                                        exportTitle: String(localized: "Save Image"),
+                                        referencedView: view,
+                                        completion: { try? FileManager.default.removeItem(at: url) }
+                                    ).run(anchor: view)
                                 }
                             }
                         }
@@ -136,13 +135,12 @@ extension ConversationManager {
                                     let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).txt")
                                     do {
                                         try content.write(to: url, atomically: true, encoding: .utf8)
-                                        let helper = FileExporterHelper()
-                                        helper.targetFileURL = url
-                                        helper.deleteAfterComplete = true
-                                        helper.exportTitle = String(localized: "Export Plain Text")
-                                        helper.referencedView = view
-                                        helper.completion = { try? FileManager.default.removeItem(at: url) }
-                                        helper.execute(presentingViewController: controller)
+                                        FileExporterHelper(
+                                            targetFileURL: url,
+                                            exportTitle: String(localized: "Export Plain Text"),
+                                            referencedView: view,
+                                            completion: { try? FileManager.default.removeItem(at: url) }
+                                        ).run(anchor: view)
                                     } catch {
                                         Indicator.present(
                                             title: String(localized: "Export Failed"),
@@ -171,13 +169,12 @@ extension ConversationManager {
                                     let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).md")
                                     do {
                                         try content.write(to: url, atomically: true, encoding: .utf8)
-                                        let helper = FileExporterHelper()
-                                        helper.targetFileURL = url
-                                        helper.deleteAfterComplete = true
-                                        helper.exportTitle = String(localized: "Export Markdown")
-                                        helper.referencedView = view
-                                        helper.completion = { try? FileManager.default.removeItem(at: url) }
-                                        helper.execute(presentingViewController: controller)
+                                        FileExporterHelper(
+                                            targetFileURL: url,
+                                            exportTitle: String(localized: "Export Markdown"),
+                                            referencedView: view,
+                                            completion: { try? FileManager.default.removeItem(at: url) }
+                                        ).run(anchor: view)
                                     } catch {
                                         Indicator.present(
                                             title: String(localized: "Export Failed"),

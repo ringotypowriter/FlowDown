@@ -180,13 +180,17 @@ final class MessageListView: UIView {
             ]),
             UIMenu(options: [.displayInline], children: [
                 UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
-                    let shareSheet = UIActivityViewController(activityItems: [link], applicationActivities: nil)
-                    shareSheet.popoverPresentationController?.sourceView = self
-                    shareSheet.popoverPresentationController?.sourceRect = .init(
-                        origin: .init(x: location.x, y: location.y - 4),
-                        size: .init(width: 8, height: 8)
-                    )
-                    self?.parentViewController?.present(shareSheet, animated: true)
+                    guard let self else { return }
+                    let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("url")
+                    do {
+                        try link.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
+                        FileExporterHelper(
+                            targetFileURL: tempURL,
+                            deleteAfterComplete: true
+                        ).run(anchor: self)
+                    } catch {
+                        Logger.ui.error("Failed to create temp file for URL sharing: \(error)")
+                    }
                 },
                 UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }

@@ -245,11 +245,15 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
 
     @objc private func shareLog() {
         let text = LogStore.shared.readTail(maxBytes: 512 * 1024)
-        let vc = UIActivityViewController(activityItems: [text], applicationActivities: nil)
-        if let popover = vc.popoverPresentationController {
-            popover.barButtonItem = navigationItem.rightBarButtonItem
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("txt")
+        do {
+            try text.write(to: tempURL, atomically: true, encoding: .utf8)
+            FileExporterHelper(
+                targetFileURL: tempURL
+            ).execute(presentingViewController: self)
+        } catch {
+            Logger.ui.error("Failed to create temp file for log sharing: \(error)")
         }
-        present(vc, animated: true)
     }
 
     @objc private func clearLog() {

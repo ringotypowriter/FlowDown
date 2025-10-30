@@ -2,30 +2,36 @@ import Foundation
 import UIKit
 
 class FileExporterHelper: NSObject, UIDocumentPickerDelegate {
-    var targetFileURL: URL?
-    var referencedView: UIView?
-    var deleteAfterComplete: Bool = false
-    var completion: (() -> Void)?
-    var exportTitle: String?
+    private let targetFileURL: URL
+    private let referencedView: UIView?
+    private let completion: (() -> Void)?
+    private let exportTitle: String?
 
-    override init() {
+    init(
+        targetFileURL: URL,
+        referencedView: UIView? = nil,
+        completion: (() -> Void)? = nil,
+        exportTitle: String? = nil
+    ) {
+        self.targetFileURL = targetFileURL
+        self.referencedView = referencedView
+        self.completion = completion
+        self.exportTitle = exportTitle
         super.init()
     }
 
     func execute(presentingViewController: UIViewController) {
-        guard let fileURL = targetFileURL else { return }
         #if targetEnvironment(macCatalyst)
-            let picker = UIDocumentPickerViewController(forExporting: [fileURL])
+            let picker = UIDocumentPickerViewController(forExporting: [targetFileURL])
             picker.delegate = self
             if let exportTitle { picker.title = exportTitle }
             presentingViewController.present(picker, animated: true, completion: nil)
         #else
-            let activityVC = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-            activityVC.completionWithItemsHandler = { [weak self] _, completed, _, _ in
+            let activityVC = UIActivityViewController(activityItems: [targetFileURL], applicationActivities: nil)
+            activityVC.completionWithItemsHandler = { [weak self] _, _, _, _ in
                 if let self {
-                    if completed, deleteAfterComplete {
-                        try? FileManager.default.removeItem(at: fileURL)
-                    }
+                    // Always clean up the temporary file after sharing
+                    try? FileManager.default.removeItem(at: targetFileURL)
                     completion?()
                 }
             }
@@ -37,13 +43,16 @@ class FileExporterHelper: NSObject, UIDocumentPickerDelegate {
         #endif
     }
 
+    func run(anchor toView: UIView) {
+        guard let presentingViewController = toView.parentViewController else { return }
+        execute(presentingViewController: presentingViewController)
+    }
+
     // MARK: - UIDocumentPickerDelegate
 
     #if targetEnvironment(macCatalyst)
         func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt _: [URL]) {
-            if deleteAfterComplete, let fileURL = targetFileURL {
-                try? FileManager.default.removeItem(at: fileURL)
-            }
+            try? FileManager.default.removeItem(at: targetFileURL)
             completion?()
         }
 
