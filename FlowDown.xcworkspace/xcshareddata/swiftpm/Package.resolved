@@ -343,6 +343,15 @@
       }
     },
     {
+      "identity" : "uieffectkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/UIEffectKit",
+      "state" : {
+        "revision" : "12d834a0c97415a8952ea92c4cba35c336ce87d4",
+        "version" : "0.1.0"
+      }
+    },
+    {
       "identity" : "wcdb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Tencent/wcdb",

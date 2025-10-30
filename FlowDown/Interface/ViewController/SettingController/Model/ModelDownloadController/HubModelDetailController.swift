@@ -9,6 +9,7 @@ import AlertController
 import ConfigurableKit
 import MarkdownParser
 import MarkdownView
+import UIEffectKit
 import UIKit
 
 class HubModelDetailController: StackScrollController {
@@ -263,6 +264,8 @@ class HubModelDetailController: StackScrollController {
 
 extension HubModelDetailController {
     class ModelCardView: UIView {
+        let shimmerView = ShimmerGridPointsView(frame: .zero)
+
         let background = UIView().with {
             $0.backgroundColor = .accent
         }
@@ -300,6 +303,25 @@ extension HubModelDetailController {
             background.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
+
+            addSubview(shimmerView)
+            shimmerView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+
+            var cfg = ShimmerGridPointsView.Configuration()
+            cfg.spacing = 32.0
+            cfg.baseColor = .init(0.99523, 1.0, 0.94)
+            cfg.waveSpeed = 2.55
+            cfg.waveStrength = 1.48
+            cfg.blurRange = 0.04 ... 0.09
+            cfg.intensityRange = 0.54 ... 0.78
+            cfg.shapeMode = .mixed
+            cfg.enableWiggle = false
+            cfg.enableEDR = false
+            cfg.radiusRange = 3.5 ... 6.5
+            shimmerView.configuration = cfg
+            shimmerView.alpha = 0.25
 
             addSubview(stackView)
             stackView.snp.makeConstraints { make in
