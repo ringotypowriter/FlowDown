@@ -12,7 +12,7 @@ import UIKit
 
 private let dateFormatter = DateFormatter().with {
     $0.locale = .current
-    $0.dateStyle = .medium
+    $0.dateStyle = .short
     $0.timeStyle = .short
 }
 
@@ -33,8 +33,6 @@ extension ConversationManager {
 
         let mainMenu = UIMenu(
             title: [
-                String(localized: "Conversation"),
-                "@",
                 dateFormatter.string(from: conv.creation),
             ].joined(separator: " "),
             options: [.displayInline],
