@@ -206,13 +206,17 @@ extension QuickSettingBar: UIContextMenuInteractionDelegate {
         let view = interaction.view
 
         if view === modelPicker {
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] in
+                self?.makePreviewController(for: self?.modelPicker)
+            }) { [weak self] _ in
                 guard let self else { return nil }
                 let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
                 return elements.isEmpty ? nil : UIMenu(children: elements)
             }
         } else if view === toolsToggle {
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] in
+                self?.makePreviewController(for: self?.toolsToggle)
+            }) { [weak self] _ in
                 guard let self else { return nil }
                 let elements = delegate?.quickSettingBarBuildAlternativeToolsMenu() ?? []
                 return elements.isEmpty ? nil : UIMenu(children: elements)
@@ -220,6 +224,26 @@ extension QuickSettingBar: UIContextMenuInteractionDelegate {
         }
 
         return nil
+    }
+    
+    private func makePreviewController(for view: UIView?) -> UIViewController? {
+        guard let view else { return nil }
+        guard let snapshot = view.snapshotView(afterScreenUpdates: false) else {
+            return nil
+        }
+        
+        let controller = UIViewController()
+        controller.preferredContentSize = view.bounds.size + CGSize(width: 16, height: 16)
+        controller.view.backgroundColor = .systemBackground
+        controller.view.addSubview(snapshot)
+        snapshot.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            snapshot.topAnchor.constraint(equalTo: controller.view.topAnchor, constant: 8),
+            snapshot.leadingAnchor.constraint(equalTo: controller.view.leadingAnchor, constant: 8),
+            snapshot.trailingAnchor.constraint(equalTo: controller.view.trailingAnchor, constant: -8),
+            snapshot.bottomAnchor.constraint(equalTo: controller.view.bottomAnchor, constant: -8),
+        ])
+        return controller
     }
 
     public func contextMenuInteraction(
