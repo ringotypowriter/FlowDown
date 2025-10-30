@@ -18,9 +18,6 @@ final class MessageListView: UIView {
 
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
 
-    // Temporary storage for link menu actions
-    private var currentTappedLink: URL?
-
     private var entryCount = 0
     private let updateQueue = DispatchQueue(label: "MessageListView.UpdateQueue", qos: .userInteractive)
 
@@ -153,7 +150,7 @@ final class MessageListView: UIView {
         }
     }
 
-    private func processLinkTapped(link: URL?, rawValue: String, location: CGPoint) {
+    private func processLinkTapped(link: URL?, rawValue: String, location _: CGPoint) {
         guard let link,
               let scheme = link.scheme,
               ["http", "https"].contains(scheme)
@@ -173,16 +170,24 @@ final class MessageListView: UIView {
             parentViewController?.present(alert, animated: true)
             return
         }
-        currentTappedLink = link
 
-        let menuController = UIMenuController.shared
-        menuController.menuItems = [
-            UIMenuItem(title: String(localized: "Copy Link"), action: #selector(copyLinkAction)),
-            UIMenuItem(title: String(localized: "Open in Default Browser"), action: #selector(openLinkInBrowserAction)),
-        ]
-
-        becomeFirstResponder()
-        menuController.showMenu(from: self, rect: CGRect(x: location.x, y: location.y, width: 1, height: 1))
+        let alert = AlertViewController(
+            title: "Open Link",
+            message: "Do you want to open this link in your browser?\n\n\(link.absoluteString)"
+        ) { context in
+            context.addAction(title: "Cancel") {
+                context.dispose()
+            }
+            context.addAction(title: "Copy Link") {
+                UIPasteboard.general.string = link.absoluteString
+                context.dispose()
+            }
+            context.addAction(title: "Open", attribute: .accent) {
+                Indicator.open(link, referencedView: self)
+                context.dispose()
+            }
+        }
+        parentViewController?.present(alert, animated: true)
     }
 
     func updateList() {
@@ -238,32 +243,5 @@ extension MessageListView: UIScrollViewDelegate {
         if !decelerate {
             updateAutoScrolling()
         }
-    }
-}
-
-// MARK: - UIMenuController Support
-
-extension MessageListView {
-    override var canBecomeFirstResponder: Bool { true }
-
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if action == #selector(copyLinkAction) ||
-            action == #selector(openLinkInBrowserAction)
-        {
-            return currentTappedLink != nil
-        }
-        return super.canPerformAction(action, withSender: sender)
-    }
-
-    @objc private func copyLinkAction() {
-        guard let link = currentTappedLink else { return }
-        UIPasteboard.general.string = link.absoluteString
-        currentTappedLink = nil
-    }
-
-    @objc private func openLinkInBrowserAction() {
-        guard let link = currentTappedLink else { return }
-        Indicator.open(link, referencedView: self)
-        currentTappedLink = nil
     }
 }

@@ -560,8 +560,7 @@ class CloudModelEditorController: StackScrollController {
         let editAction = UIAction(
             title: String(localized: "Edit"),
             image: UIImage(systemName: "character.cursor.ibeam")
-        ) { [weak self] _ in
-            guard let self else { return }
+        ) { _ in
             guard let model = ModelManager.shared.cloudModel(identifier: modelId) else { return }
             let input = AlertInputViewController(
                 title: "Edit Model Identifier",

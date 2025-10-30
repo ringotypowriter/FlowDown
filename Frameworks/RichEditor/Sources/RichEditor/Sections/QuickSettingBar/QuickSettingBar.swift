@@ -101,31 +101,15 @@ public class QuickSettingBar: EditorSectionView {
             },
         ])
 
-        // Disable the original tap gesture since we're using the button
         modelPicker.actionBlock = {}
 
-        // Setup alternative model menu (right-click/long-press) with UIContextMenuInteraction
         let modelPickerInteraction = UIContextMenuInteraction(delegate: self)
         modelPicker.addInteraction(modelPickerInteraction)
 
-        modelPickerRightClickFinder.install(on: modelPicker) { [weak self] in
-            // Right-click will be handled by UIContextMenuInteraction
-        }
-
-        // Setup tools menu with UIContextMenuInteraction
         let toolsToggleInteraction = UIContextMenuInteraction(delegate: self)
         toolsToggle.addInteraction(toolsToggleInteraction)
 
-        toolsToggleRightClickFinder.install(on: toolsToggle) { [weak self] in
-            // Right-click will be handled by UIContextMenuInteraction
-        }
-
-        toolsToggle.contextMenuChecker = { [weak toolsToggleRightClickFinder] in
-            toolsToggleRightClickFinder?.isContextMenuActive ?? false
-        }
-
         heightPublisher.send(height)
-
         updateToolCallAvailability(false)
     }
 

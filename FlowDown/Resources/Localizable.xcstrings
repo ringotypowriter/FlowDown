@@ -1543,22 +1543,6 @@
         }
       }
     },
-    "Choose Model" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose Model"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择模型"
-          }
-        }
-      }
-    },
     "Choose Template" : {
       "localizations" : {
         "en" : {
@@ -7787,22 +7771,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无可用模型"
-          }
-        }
-      }
-    },
-    "No model is available for the required capabilities." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No model is available for the required capabilities."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有模型能够提供此能力。"
           }
         }
       }

@@ -147,48 +147,4 @@ extension ModelManager {
 
         return finalChildren
     }
-
-    func presentModelSelectionMenu(
-        anchoringView: UIView,
-        currentSelection: ModelIdentifier? = nil,
-        requiresCapabilities: Set<ModelCapabilities> = [],
-        allowSelectionWithNone: Bool = false,
-        onCompletion: @escaping (ModelIdentifier) -> Void
-    ) {
-        guard let controller = anchoringView.parentViewController else {
-            assertionFailure()
-            return
-        }
-
-        let elements = buildModelSelectionMenu(
-            currentSelection: currentSelection,
-            requiresCapabilities: requiresCapabilities,
-            allowSelectionWithNone: allowSelectionWithNone,
-            onCompletion: onCompletion
-        )
-
-        if !elements.isEmpty {
-            let menu = UIMenu(title: "Choose Model", options: .displayInline, children: elements)
-            anchoringView.present(menu: menu)
-            return
-        }
-
-        // No models available
-        let alert = AlertViewController(
-            title: "No Model Available",
-            message: requiresCapabilities.isEmpty
-                ? "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
-                : "No model is available for the required capabilities."
-        ) { context in
-            context.addAction(title: "Cancel") {
-                context.dispose()
-            }
-            context.addAction(title: "Add", attribute: .accent) {
-                context.dispose {
-                    self.openModelManagementPage(controller: controller)
-                }
-            }
-        }
-        controller.present(alert, animated: true)
-    }
 }
