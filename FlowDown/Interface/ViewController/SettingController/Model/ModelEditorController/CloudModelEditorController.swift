@@ -390,7 +390,7 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         var verifyButtonReader: UIView?
-        let verifyButton = ConfigurableActionView { [weak self] _ in
+        let verifyButton = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             guard let model = ModelManager.shared.cloudModel(identifier: identifier) else { return }
             verifyButtonReader?.isUserInteractionEnabled = false
@@ -434,7 +434,7 @@ class CloudModelEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let exportOption = ConfigurableActionView { [weak self] controller in
+        let exportOption = ConfigurableActionView { @MainActor [weak self] controller in
             guard let self,
                   let model = ModelManager.shared.cloudModel(identifier: identifier)
             else { return }
@@ -455,7 +455,7 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
-        let duplicateModel = ConfigurableActionView { [weak self] _ in
+        let duplicateModel = ConfigurableActionView { @MainActor [weak self] _ in
             guard let nav = self?.navigationController else { return }
             let newIdentifier = UUID().uuidString
             ModelManager.shared.editCloudModel(identifier: self?.identifier) {
@@ -487,7 +487,7 @@ class CloudModelEditorController: StackScrollController {
                 .with(header: "Management")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
-        let deleteAction = ConfigurableActionView { [weak self] _ in
+        let deleteAction = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             deleteModel()
         }

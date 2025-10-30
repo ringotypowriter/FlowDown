@@ -267,7 +267,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let copyAction = ConfigurableActionView { [weak self] _ in
+        let copyAction = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             var newTemplate = template
             newTemplate.id = UUID()
@@ -282,7 +282,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         stackView.addArrangedSubviewWithMargin(copyAction)
         stackView.addArrangedSubview(SeparatorView())
 
-        let exportOption = ConfigurableActionView { [weak self] controller in
+        let exportOption = ConfigurableActionView { @MainActor [weak self] controller in
             guard let self else { return }
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
@@ -301,7 +301,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
-        let deleteAction = ConfigurableActionView { [weak self] _ in
+        let deleteAction = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             deleteTapped()
         }

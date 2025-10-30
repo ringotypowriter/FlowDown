@@ -275,6 +275,7 @@ extension ChatView: RichEditorView.Delegate {
             [UIAction(
                 title: String(localized: "Memory Tools"),
                 image: UIImage(systemName: "memorychip"),
+                attributes: [.keepsMenuPresented],
                 state: memoryToolsHasOneEnabled ? .on : .off
             ) { _ in
                 let target = !memoryToolsHasOneEnabled

@@ -267,7 +267,7 @@ class MCPEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let testAction = ConfigurableActionView { [weak self] _ in
+        let testAction = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             testConfiguration()
         }
@@ -287,7 +287,7 @@ class MCPEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let exportOption = ConfigurableActionView { [weak self] _ in
+        let exportOption = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             exportTapped()
         }
@@ -297,7 +297,7 @@ class MCPEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
-        let deleteAction = ConfigurableActionView { [weak self] _ in
+        let deleteAction = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             deleteTapped()
         }
