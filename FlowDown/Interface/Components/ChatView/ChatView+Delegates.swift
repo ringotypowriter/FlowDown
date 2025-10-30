@@ -234,93 +234,111 @@ extension ChatView: RichEditorView.Delegate {
         ].compactMap(\.self)
     }
 
-    func onRichEditorBuildAlternativeToolsMenu() -> [UIMenuElement] {
-        [
-            UIDeferredMenuElement.uncached { completion in
-                let mcpServers = MCPService.shared.servers.value
-                var toolMenuItems: [UIMenuElement] = []
-
-                func createAction(for tools: [ModelTool]) -> [UIAction] {
-                    tools.map { tool in
-                        UIAction(
-                            title: tool.interfaceName,
-                            image: .init(systemName: tool.interfaceIcon),
-                            attributes: [.keepsMenuPresented],
-                            state: tool.isEnabled ? .on : .off
-                        ) { action in
-                            tool.isEnabled.toggle()
-                            action.state = tool.isEnabled ? .on : .off
-                        }
-                    }
-                }
-
-                toolMenuItems.append(UIMenu(
-                    title: String(localized: "Built-in Tools"),
-                    options: [.displayInline],
-                    children: createAction(for: ModelToolsManager.shared.configurableTools)
-                ))
-                toolMenuItems.append(UIMenu(
-                    title: String(localized: "Memory Tools"),
-                    children: createAction(for: ModelToolsManager.shared.tools.filter { tool in
-                        false
-                            || tool is MTStoreMemoryTool
-                            || tool is MTRecallMemoryTool
-                            || tool is MTListMemoriesTool
-                            || tool is MTUpdateMemoryTool
-                            || tool is MTDeleteMemoryTool
-                    })
-                ))
-
-                if !mcpServers.isEmpty {
-                    let mcpServersMenu = UIMenu(
-                        title: String(localized: "MCP Servers"),
-                        options: mcpServers.count < 5 ? [.displayInline] : [],
-                        children: mcpServers.map { server in
-                            let name = server.name.isEmpty
-                                ? URL(string: server.endpoint)?.host ?? String(localized: "Unknown Server")
-                                : server.name
-                            return UIAction(
-                                title: name,
-                                image: UIImage(systemName: "server.rack"),
-                                attributes: [.keepsMenuPresented],
-                                state: server.isEnabled ? .on : .off
-                            ) { action in
-                                MCPService.shared.edit(identifier: server.id) {
-                                    $0.update(\.isEnabled, to: !$0.isEnabled)
-                                    action.state = $0.isEnabled ? .on : .off
-                                }
-                            }
-                        }
-                    )
-                    toolMenuItems.append(mcpServersMenu)
-                }
-
-                let settingsMenu = UIMenu(
-                    title: String(localized: "Shortcuts"),
-                    children: [
-                        UIAction(
-                            title: String(localized: "MCP Settings"),
-                            image: UIImage(systemName: "server.rack")
-                        ) { [weak self] _ in
-                            SettingController.setNextEntryPage(.mcp)
-                            let settingController = SettingController()
-                            self?.parentViewController?.present(settingController, animated: true)
-                        },
-                        UIAction(
-                            title: String(localized: "Tools Settings"),
-                            image: UIImage(systemName: "wrench.and.screwdriver")
-                        ) { [weak self] _ in
-                            SettingController.setNextEntryPage(.tools)
-                            let settingController = SettingController()
-                            self?.parentViewController?.present(settingController, animated: true)
-                        },
-                    ]
-                )
-                toolMenuItems.append(settingsMenu)
-
-                completion(toolMenuItems)
+    func onRichEditorBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement] {
+        let mcpServers = MCPService.shared.servers.value
+        var toolMenuItems: [UIMenuElement] = [
+            UIAction(
+                title: String(localized: "Enabled"),
+                image: UIImage(systemName: "hammer"),
+                state: isEnabled ? .on : .off
+            ) { _ in
+                requestReload(!isEnabled)
             },
         ]
+
+        func createAction(for tools: [ModelTool]) -> [UIAction] {
+            tools.map { tool in
+                UIAction(
+                    title: tool.interfaceName,
+                    image: .init(systemName: tool.interfaceIcon),
+                    attributes: [.keepsMenuPresented],
+                    state: tool.isEnabled ? .on : .off
+                ) { _ in
+                    tool.isEnabled.toggle()
+                    requestReload(isEnabled)
+                }
+            }
+        }
+
+        let memoryTools = ModelToolsManager.shared.tools.filter { tool in
+            false
+                || tool is MTStoreMemoryTool
+                || tool is MTRecallMemoryTool
+                || tool is MTListMemoriesTool
+                || tool is MTUpdateMemoryTool
+                || tool is MTDeleteMemoryTool
+        }
+        let memoryToolsHasOneEnabled = memoryTools.contains { $0.isEnabled }
+
+        let builtin: [UIAction] = [
+            createAction(for: ModelToolsManager.shared.configurableTools),
+            [UIAction(
+                title: String(localized: "Memory Tools"),
+                image: UIImage(systemName: "memorychip"),
+                state: memoryToolsHasOneEnabled ? .on : .off
+            ) { _ in
+                let target = !memoryToolsHasOneEnabled
+                for tool in memoryTools {
+                    tool.isEnabled = target
+                }
+                requestReload(isEnabled)
+            }],
+        ].flatMap(\.self)
+
+        toolMenuItems.append(UIMenu(
+            title: String(localized: "Built-in Tools"),
+            options: [.displayInline],
+            children: builtin
+        ))
+
+        if !mcpServers.isEmpty {
+            let mcpServersMenu = UIMenu(
+                title: String(localized: "MCP Servers"),
+                options: mcpServers.count < 5 ? [.displayInline] : [],
+                children: mcpServers.map { server in
+                    let name = server.name.isEmpty
+                        ? URL(string: server.endpoint)?.host ?? String(localized: "Unknown Server")
+                        : server.name
+                    return UIAction(
+                        title: name,
+                        image: UIImage(systemName: "server.rack"),
+                        attributes: [.keepsMenuPresented],
+                        state: server.isEnabled ? .on : .off
+                    ) { _ in
+                        MCPService.shared.edit(identifier: server.id) {
+                            $0.update(\.isEnabled, to: !$0.isEnabled)
+                        }
+                        requestReload(isEnabled)
+                    }
+                }
+            )
+            toolMenuItems.append(mcpServersMenu)
+        }
+
+        let settingsMenu = UIMenu(
+            title: String(localized: "Shortcuts"),
+            children: [
+                UIAction(
+                    title: String(localized: "MCP Settings"),
+                    image: UIImage(systemName: "server.rack")
+                ) { [weak self] _ in
+                    SettingController.setNextEntryPage(.mcp)
+                    let settingController = SettingController()
+                    self?.parentViewController?.present(settingController, animated: true)
+                },
+                UIAction(
+                    title: String(localized: "Tools Settings"),
+                    image: UIImage(systemName: "wrench.and.screwdriver")
+                ) { [weak self] _ in
+                    SettingController.setNextEntryPage(.tools)
+                    let settingController = SettingController()
+                    self?.parentViewController?.present(settingController, animated: true)
+                },
+            ]
+        )
+        toolMenuItems.append(settingsMenu)
+
+        return toolMenuItems
     }
 
     func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool {

@@ -19,6 +19,6 @@ public extension RichEditorView {
         func onRichEditorBuildModelSelectionMenu(completion: @escaping () -> Void) -> [UIMenuElement]
         func onRichEditorBuildAlternativeModelMenu() -> [UIMenuElement]
         func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool
-        func onRichEditorBuildAlternativeToolsMenu() -> [UIMenuElement]
+        func onRichEditorBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement]
     }
 }

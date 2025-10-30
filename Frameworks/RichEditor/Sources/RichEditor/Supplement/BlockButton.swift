@@ -7,22 +7,25 @@
 
 import UIKit
 
-class BlockButton: UIView {
+class BlockButton: UIButton {
     let borderView = UIView()
     let iconView = UIImageView()
-    let titleLabel = UILabel()
-    private let tapGesture = UITapGestureRecognizer()
+    let textLabel = UILabel()
+
+    override var titleLabel: UILabel? {
+        get { nil }
+        set { assertionFailure() }
+    }
 
     var actionBlock: () -> Void = {}
-    var contextMenuChecker: (() -> Bool)?
 
     let font = UIFont.systemFont(ofSize: 14, weight: .semibold)
     let spacing: CGFloat = 8
     let inset: CGFloat = 8
     let iconSize: CGFloat = 16
 
-    var tapGestureRecognizer: UITapGestureRecognizer {
-        tapGesture
+    var strikeThrough: Bool = false {
+        didSet { updateStrikes() }
     }
 
     init(text: String, icon: String) {
@@ -30,15 +33,13 @@ class BlockButton: UIView {
 
         addSubview(borderView)
         addSubview(iconView)
-        addSubview(titleLabel)
+        addSubview(textLabel)
         iconView.image = UIImage(named: icon, in: .module, with: nil)?
             .withRenderingMode(.alwaysTemplate)
-        titleLabel.text = text
+        textLabel.text = text
         applyDefaultAppearance()
 
-        tapGesture.addTarget(self, action: #selector(onTapped))
-        addGestureRecognizer(tapGesture)
-        isUserInteractionEnabled = true
+        addTarget(self, action: #selector(onTapped), for: .touchUpInside)
 
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
             self.applyDefaultAppearance()
@@ -52,8 +53,8 @@ class BlockButton: UIView {
 
     override var intrinsicContentSize: CGSize {
         .init(
-            width: ceil(inset + iconSize + spacing + titleLabel.intrinsicContentSize.width + inset),
-            height: ceil(max(iconSize, titleLabel.intrinsicContentSize.height) + inset * 2)
+            width: ceil(inset + iconSize + spacing + textLabel.intrinsicContentSize.width + inset),
+            height: ceil(max(iconSize, textLabel.intrinsicContentSize.height) + inset * 2)
         )
     }
 
@@ -66,7 +67,7 @@ class BlockButton: UIView {
             width: iconSize,
             height: iconSize
         )
-        titleLabel.frame = .init(
+        textLabel.frame = .init(
             x: iconView.frame.maxX + spacing,
             y: inset,
             width: bounds.width - iconView.frame.maxX - spacing - inset,
@@ -75,9 +76,6 @@ class BlockButton: UIView {
     }
 
     @objc private func onTapped() {
-        if let checker = contextMenuChecker, checker() {
-            return
-        }
         puddingAnimate()
         actionBlock()
     }
@@ -90,9 +88,19 @@ class BlockButton: UIView {
         borderView.layer.cornerCurve = .continuous
         iconView.tintColor = .label
         iconView.contentMode = .scaleAspectFit
-        titleLabel.font = font
-        titleLabel.textColor = .label
-        titleLabel.numberOfLines = 1
-        titleLabel.textAlignment = .center
+        textLabel.font = font
+        textLabel.textColor = .label
+        textLabel.numberOfLines = 1
+        textLabel.textAlignment = .center
+    }
+
+    func updateStrikes() {
+        let attrText = textLabel.attributedText?.mutableCopy() as? NSMutableAttributedString
+        attrText?.addAttribute(
+            .strikethroughStyle,
+            value: strikeThrough ? 1 : 0,
+            range: NSRange(location: 0, length: attrText?.length ?? 0)
+        )
+        textLabel.attributedText = attrText
     }
 }

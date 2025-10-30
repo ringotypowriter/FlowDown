@@ -12,7 +12,6 @@ extension QuickSettingBar {
     protocol Delegate: AnyObject {
         func quickSettingBarOnValueChagned()
         func quickSettingBarBuildModelSelectionMenu() -> [UIMenuElement]
-        func quickSettingBarBuildAlternativeModelMenu() -> [UIMenuElement]
-        func quickSettingBarBuildAlternativeToolsMenu() -> [UIMenuElement]
+        func quickSettingBarBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement]
     }
 }

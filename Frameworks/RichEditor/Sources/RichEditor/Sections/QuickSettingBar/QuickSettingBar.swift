@@ -20,17 +20,11 @@ public class QuickSettingBar: EditorSectionView {
         text: NSLocalizedString("Tools", bundle: .module, comment: ""),
         icon: "tools"
     )
-    let toolsToggleRightClickFinder = RightClickFinder()
-    let ephemeralChatToggle = ToggleBlockButton(
-        text: NSLocalizedString("Ephemeral Chat", bundle: .module, comment: ""),
-        icon: "beaker"
-    )
 
     lazy var buttons: [BlockButton] = [
         modelPicker,
         browsingToggle,
         toolsToggle,
-//        ephemeralChatToggle, // removed for now
     ]
     var modelIdentifier: String = ""
     var modelSupportsToolCall = false {
@@ -75,21 +69,8 @@ public class QuickSettingBar: EditorSectionView {
 
         setModelName(nil)
 
-        // Setup model picker menu - add a transparent button overlay for menu
-        let modelPickerMenuButton = UIButton(type: .system)
-        modelPickerMenuButton.backgroundColor = .clear
-        modelPickerMenuButton.showsMenuAsPrimaryAction = true
-        modelPicker.addSubview(modelPickerMenuButton)
-        modelPickerMenuButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            modelPickerMenuButton.topAnchor.constraint(equalTo: modelPicker.topAnchor),
-            modelPickerMenuButton.leadingAnchor.constraint(equalTo: modelPicker.leadingAnchor),
-            modelPickerMenuButton.trailingAnchor.constraint(equalTo: modelPicker.trailingAnchor),
-            modelPickerMenuButton.bottomAnchor.constraint(equalTo: modelPicker.bottomAnchor),
-        ])
-
-        // Build menu dynamically
-        modelPickerMenuButton.menu = UIMenu(children: [
+        modelPicker.showsMenuAsPrimaryAction = true
+        modelPicker.menu = UIMenu(children: [
             UIDeferredMenuElement.uncached { [weak self] completion in
                 guard let self else {
                     completion([])
@@ -100,14 +81,23 @@ public class QuickSettingBar: EditorSectionView {
                 completion(elements)
             },
         ])
-
         modelPicker.actionBlock = {}
 
-        let modelPickerInteraction = UIContextMenuInteraction(delegate: self)
-        modelPicker.addInteraction(modelPickerInteraction)
-
-        let toolsToggleInteraction = UIContextMenuInteraction(delegate: self)
-        toolsToggle.addInteraction(toolsToggleInteraction)
+        var requestReload: ((Bool) -> Void)!
+        requestReload = { [weak self] input in
+            self?.toolsToggle.isOn = input
+            self?.toolsToggle.menu = .init(children: [UIDeferredMenuElement.uncached { [weak self] provider in
+                let isEnabled = self?.toolsToggle.isOn ?? false
+                let elements = self?.delegate?.quickSettingBarBuildAlternativeToolsMenu(
+                    isEnabled: isEnabled,
+                    requestReload: requestReload
+                ) ?? []
+                provider(elements)
+            }])
+        }
+        requestReload(false)
+        toolsToggle.showsMenuAsPrimaryAction = true
+        toolsToggle.actionBlock = {}
 
         heightPublisher.send(height)
         updateToolCallAvailability(false)
@@ -156,10 +146,10 @@ public class QuickSettingBar: EditorSectionView {
     func setModelName(_ name: String?) {
         defer { setNeedsLayout() }
         guard let name, !name.isEmpty else {
-            modelPicker.titleLabel.text = NSLocalizedString("No Model", bundle: .module, comment: "")
+            modelPicker.textLabel.text = NSLocalizedString("No Model", bundle: .module, comment: "")
             return
         }
-        modelPicker.titleLabel.text = name
+        modelPicker.textLabel.text = name
     }
 
     func updateToolCallAvailability(_ availability: Bool) {
@@ -210,16 +200,16 @@ extension QuickSettingBar: UIContextMenuInteractionDelegate {
                 self?.makePreviewController(for: self?.modelPicker)
             }) { [weak self] _ in
                 guard let self else { return nil }
-                let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
-                return elements.isEmpty ? nil : UIMenu(children: elements)
-            }
-        } else if view === toolsToggle {
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] in
-                self?.makePreviewController(for: self?.toolsToggle)
-            }) { [weak self] _ in
-                guard let self else { return nil }
-                let elements = delegate?.quickSettingBarBuildAlternativeToolsMenu() ?? []
-                return elements.isEmpty ? nil : UIMenu(children: elements)
+                return UIMenu(children: [
+                    UIDeferredMenuElement.uncached { [weak self] completion in
+                        guard let self else {
+                            completion([])
+                            return
+                        }
+                        let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
+                        completion(elements)
+                    },
+                ])
             }
         }
 
