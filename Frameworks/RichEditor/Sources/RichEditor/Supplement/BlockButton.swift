@@ -39,6 +39,7 @@ class BlockButton: UIButton {
         textLabel.text = text
         applyDefaultAppearance()
 
+        isUserInteractionEnabled = true
         addTarget(self, action: #selector(onTapped), for: .touchUpInside)
 
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
@@ -76,6 +77,8 @@ class BlockButton: UIButton {
     }
 
     @objc private func onTapped() {
+        let text = textLabel.text ?? ""
+        logger.info("BlockButton tapped: \(text)")
         puddingAnimate()
         actionBlock()
     }
