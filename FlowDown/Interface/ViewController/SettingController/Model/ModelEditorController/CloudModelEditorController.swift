@@ -192,38 +192,19 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         let modelIdentifierView = ConfigurableInfoView()
-        let interaction = UIContextMenuInteraction(delegate: ModelIdentifierMenuDelegate(
-            view: modelIdentifierView,
-            modelId: identifier,
-            onEdit: { [weak self] view in
-                guard let model = ModelManager.shared.cloudModel(identifier: self?.identifier) else { return }
-                let input = AlertInputViewController(
-                    title: "Edit Model Identifier",
-                    message: "The name of the model to be used.",
-                    placeholder: "Model Identifier",
-                    text: model.model_identifier
-                ) { output in
-                    ModelManager.shared.editCloudModel(identifier: model.id) {
-                        $0.update(\.model_identifier, to: output)
-                    }
-                    if output.isEmpty {
-                        view.configure(value: String(localized: "Not Configured (Long Press to Fetch)"))
-                    } else {
-                        view.configure(value: output)
-                    }
-                }
-                view.parentViewController?.present(input, animated: true)
-            }
-        ))
-        modelIdentifierView.valueLabel.addInteraction(interaction)
         modelIdentifierView.configure(icon: .init(systemName: "circle"))
         modelIdentifierView.configure(title: "Model Identifier")
         modelIdentifierView.configure(description: "The name of the model to be used.")
         var modelIdentifier = model?.model_identifier ?? ""
         if modelIdentifier.isEmpty {
-            modelIdentifier = String(localized: "Not Configured (Long Press to Fetch)")
+            modelIdentifier = String(localized: "Not Configured")
         }
         modelIdentifierView.configure(value: modelIdentifier)
+
+        modelIdentifierView.use { [weak self] in
+            guard let self else { return [] }
+            return buildModelIdentifierMenu(for: identifier, view: modelIdentifierView)
+        }
         stackView.addArrangedSubviewWithMargin(modelIdentifierView)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -572,6 +553,108 @@ class CloudModelEditorController: StackScrollController {
         }
         present(alert, animated: true)
     }
+
+    // MARK: - Menu Builders
+
+    private func buildModelIdentifierMenu(for modelId: CloudModel.ID, view: ConfigurableInfoView) -> [UIMenuElement] {
+        let editAction = UIAction(
+            title: String(localized: "Edit"),
+            image: UIImage(systemName: "character.cursor.ibeam")
+        ) { [weak self] _ in
+            guard let self else { return }
+            guard let model = ModelManager.shared.cloudModel(identifier: modelId) else { return }
+            let input = AlertInputViewController(
+                title: "Edit Model Identifier",
+                message: "The name of the model to be used.",
+                placeholder: "Model Identifier",
+                text: model.model_identifier
+            ) { output in
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.model_identifier, to: output)
+                }
+                if output.isEmpty {
+                    view.configure(value: String(localized: "Not Configured"))
+                } else {
+                    view.configure(value: output)
+                }
+            }
+            view.parentViewController?.present(input, animated: true)
+        }
+
+        let deferredElement = UIDeferredMenuElement.uncached { completion in
+            Task { @MainActor in
+                guard let model = ModelManager.shared.cloudModel(identifier: modelId) else {
+                    completion([])
+                    return
+                }
+
+                let list = await withCheckedContinuation { continuation in
+                    ModelManager.shared.fetchModelList(identifier: model.id) { list in
+                        continuation.resume(returning: list)
+                    }
+                }
+
+                if list.isEmpty {
+                    let emptyAction = UIAction(
+                        title: String(localized: "(None)"),
+                        attributes: .disabled
+                    ) { _ in }
+                    completion([emptyAction])
+                    return
+                }
+
+                let menuElements = self.buildModelSelectionMenu(from: list, modelId: modelId, view: view)
+                completion(menuElements)
+            }
+        }
+
+        return [
+            editAction,
+            UIMenu(
+                title: String(localized: "Select from Server"),
+                image: UIImage(systemName: "icloud.and.arrow.down"),
+                children: [deferredElement]
+            ),
+        ]
+    }
+
+    private func buildModelSelectionMenu(from list: [String], modelId: CloudModel.ID, view: ConfigurableInfoView) -> [UIMenuElement] {
+        var buildSections: [String: [(String, String)]] = [:]
+        for item in list {
+            var scope = ""
+            var trimmedName = item
+            if item.contains("/") {
+                scope = item.components(separatedBy: "/").first ?? ""
+                trimmedName = trimmedName.replacingOccurrences(of: scope + "/", with: "")
+            }
+            buildSections[scope, default: []].append((trimmedName, item))
+        }
+
+        var children: [UIMenuElement] = []
+        var options: UIMenu.Options = []
+        if list.count < 10 { options.insert(.displayInline) }
+
+        for key in buildSections.keys.sorted() {
+            let items = buildSections[key] ?? []
+            guard !items.isEmpty else { continue }
+            let key = key.isEmpty ? String(localized: "Ungrouped") : key
+            children.append(UIMenu(
+                title: key,
+                image: UIImage(systemName: "folder"),
+                options: options,
+                children: items.map { item in
+                    UIAction(title: item.0, image: .modelCloud) { _ in
+                        ModelManager.shared.editCloudModel(identifier: modelId) {
+                            $0.update(\.model_identifier, to: item.1)
+                        }
+                        view.configure(value: item.1)
+                    }
+                }
+            ))
+        }
+
+        return children
+    }
 }
 
 #if targetEnvironment(macCatalyst)
@@ -584,109 +667,3 @@ class CloudModelEditorController: StackScrollController {
         }
     }
 #endif
-
-// MARK: - Menu Delegates
-
-private class ModelIdentifierMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
-    weak var view: ConfigurableInfoView?
-    let modelId: CloudModel.ID
-    let onEdit: (ConfigurableInfoView) -> Void
-
-    init(view: ConfigurableInfoView, modelId: CloudModel.ID, onEdit: @escaping (ConfigurableInfoView) -> Void) {
-        self.view = view
-        self.modelId = modelId
-        self.onEdit = onEdit
-    }
-
-    func contextMenuInteraction(
-        _: UIContextMenuInteraction,
-        configurationForMenuAtLocation _: CGPoint
-    ) -> UIContextMenuConfiguration? {
-        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            guard let self else { return nil }
-
-            let editAction = UIAction(
-                title: String(localized: "Edit"),
-                image: UIImage(systemName: "character.cursor.ibeam")
-            ) { [weak self] _ in
-                guard let self, let view else { return }
-                onEdit(view)
-            }
-
-            let deferredElement = UIDeferredMenuElement.uncached { [weak self] completion in
-                guard let self else {
-                    completion([])
-                    return
-                }
-
-                Task { @MainActor in
-                    guard let model = ModelManager.shared.cloudModel(identifier: self.modelId) else {
-                        completion([])
-                        return
-                    }
-
-                    let list = await withCheckedContinuation { continuation in
-                        ModelManager.shared.fetchModelList(identifier: model.id) { list in
-                            continuation.resume(returning: list)
-                        }
-                    }
-
-                    if list.isEmpty {
-                        let emptyAction = UIAction(
-                            title: String(localized: "(无)"),
-                            attributes: .disabled
-                        ) { _ in }
-                        completion([emptyAction])
-                        return
-                    }
-
-                    var buildSections: [String: [(String, String)]] = [:]
-                    for item in list {
-                        var scope = ""
-                        var trimmedName = item
-                        if item.contains("/") {
-                            scope = item.components(separatedBy: "/").first ?? ""
-                            trimmedName = trimmedName.replacingOccurrences(of: scope + "/", with: "")
-                        }
-                        buildSections[scope, default: []].append((trimmedName, item))
-                    }
-
-                    var children: [UIMenuElement] = []
-                    var options: UIMenu.Options = []
-                    if list.count < 10 { options.insert(.displayInline) }
-
-                    for key in buildSections.keys.sorted() {
-                        let items = buildSections[key] ?? []
-                        guard !items.isEmpty else { continue }
-                        let key = key.isEmpty ? String(localized: "Ungrouped") : key
-                        children.append(UIMenu(
-                            title: key,
-                            image: UIImage(systemName: "folder"),
-                            options: options,
-                            children: items.map { item in
-                                UIAction(title: item.0, image: .modelCloud) { [weak self] _ in
-                                    guard let self, let view else { return }
-                                    ModelManager.shared.editCloudModel(identifier: model.id) {
-                                        $0.update(\.model_identifier, to: item.1)
-                                    }
-                                    view.configure(value: item.1)
-                                }
-                            }
-                        ))
-                    }
-
-                    completion(children)
-                }
-            }
-
-            return UIMenu(title: String(localized: "Model Identifier"), children: [
-                editAction,
-                UIMenu(
-                    title: String(localized: "Select from Server"),
-                    image: UIImage(systemName: "icloud.and.arrow.down"),
-                    children: [deferredElement]
-                ),
-            ])
-        }
-    }
-}

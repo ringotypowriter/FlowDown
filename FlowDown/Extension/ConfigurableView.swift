@@ -52,6 +52,17 @@ class ConfigurableInfoView: ConfigurableView {
     override class func createContentView() -> UIView {
         EasyHitButton()
     }
+
+    func use(menu: @escaping () -> [UIMenuElement]) {
+        valueLabel.removeTarget(self, action: #selector(tapped), for: .touchUpInside)
+        valueLabel.showsMenuAsPrimaryAction = true
+        valueLabel.menu = .init(children: [
+            UIDeferredMenuElement.uncached { completion in
+                let menuElements = menu()
+                completion(menuElements)
+            },
+        ])
+    }
 }
 
 class ConfigurableToggleActionView: ConfigurableView {
