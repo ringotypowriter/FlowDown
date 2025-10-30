@@ -258,6 +258,9 @@
         }
       }
     },
+    "All Categories" : {
+
+    },
     "All day" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1431,6 +1434,9 @@
           }
         }
       }
+    },
+    "Copy Message" : {
+
     },
     "Could not determine current location." : {
       "localizations" : {
@@ -3168,6 +3174,12 @@
         }
       }
     },
+    "Filter by Category" : {
+
+    },
+    "Filter by Level" : {
+
+    },
     "Filter Options" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4810,6 +4822,9 @@
         }
       }
     },
+    "No categories" : {
+
+    },
     "No Chat Templates" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5646,6 +5661,9 @@
         }
       }
     },
+    "Refresh" : {
+
+    },
     "Refresh from iCloud" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5927,6 +5945,9 @@
           }
         }
       }
+    },
+    "Search logs..." : {
+
     },
     "Search memories..." : {
       "localizations" : {
