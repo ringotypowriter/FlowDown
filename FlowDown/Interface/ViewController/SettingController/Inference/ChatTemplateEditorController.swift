@@ -33,9 +33,9 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
     lazy var nameView = ConfigurableInfoView().setTapBlock { view in
         let input = AlertInputViewController(
-            title: String(localized: "Edit Name"),
-            message: String(localized: "The display name of this chat template."),
-            placeholder: String(localized: "Enter template name"),
+            title: "Edit Name",
+            message: "The display name of this chat template.",
+            placeholder: "Enter template name",
             text: self.template.name
         ) { output in
             self.template = self.template.with { $0.name = output }
@@ -107,10 +107,10 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         guard !defaultModel.isEmpty else {
             let alert = AlertViewController(
-                title: String(localized: "No Model Selected"),
-                message: String(localized: "Please select a default chat model in settings before using rewrite features.")
+                title: "No Model Selected",
+                message: "Please select a default chat model in settings before using rewrite features."
             ) { context in
-                context.addAction(title: String(localized: "OK")) {
+                context.addAction(title: "OK") {
                     context.dispose()
                 }
             }
@@ -121,9 +121,9 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         let modelName = ModelManager.shared.modelName(identifier: defaultModel)
 
         let input = AlertInputViewController(
-            title: String(localized: "Rewrite"),
-            message: String(localized: "You can use \(modelName) to rewrite this template, e.g., 'Add more instructions to the template.', or 'Make it more concise.'..."),
-            placeholder: String(localized: "Enter instructions..."),
+            title: "Rewrite",
+            message: "You can use \(modelName) to rewrite this template, e.g., 'Add more instructions to the template.', or 'Make it more concise.'...",
+            placeholder: "Enter instructions...",
             text: ""
         ) { [self] instructions in
             guard !instructions.isEmpty else { return }
@@ -154,13 +154,13 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
     @objc func deleteTapped() {
         let alert = AlertViewController(
-            title: String(localized: "Delete Template"),
-            message: String(localized: "Are you sure you want to delete this template? This action cannot be undone.")
+            title: "Delete Template",
+            message: "Are you sure you want to delete this template? This action cannot be undone."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+            context.addAction(title: "Delete", attribute: .accent) {
                 context.dispose { [weak self] in
                     guard let self else { return }
                     ChatTemplateManager.shared.remove(for: templateIdentifier)
@@ -243,14 +243,14 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         promptBehaviorView.setTapBlock { view in
             let children = [
                 UIAction(
-                    title: String(localized: "Inherit"),
+                    title: "Inherit",
                     image: UIImage(systemName: "arrow.down.circle")
                 ) { _ in
                     self.template = self.template.with { $0.inheritApplicationPrompt = true }
                     view.configure(value: String(localized: "Inherit"))
                 },
                 UIAction(
-                    title: String(localized: "Ignore"),
+                    title: "Ignore",
                     image: UIImage(systemName: "xmark.circle")
                 ) { _ in
                     self.template = self.template.with { $0.inheritApplicationPrompt = false }
@@ -258,7 +258,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
                 },
             ]
             view.present(
-                menu: .init(title: String(localized: "Prompt Behavior"), children: children),
+                menu: .init(title: "Prompt Behavior", children: children),
                 anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
             )
         }
@@ -288,18 +288,16 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         let exportOption = ConfigurableActionView { [weak self] controller in
             guard let self else { return }
-            let tempFileDir = FileManager.default.temporaryDirectory
-                .appendingPathComponent("DisposableResources")
-                .appendingPathComponent(UUID().uuidString)
-            let tempFile = tempFileDir
-                .appendingPathComponent("Export-\(template.name.sanitizedFileName)")
-                .appendingPathExtension("fdtemplate")
-            try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
-            FileManager.default.createFile(atPath: tempFile.path, contents: nil)
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
-            try? encoder.encode(template).write(to: tempFile, options: .atomic)
-            DisposableExporter(deletableItem: tempFile, title: "Export Template").run(anchor: controller.view)
+            guard let data = try? encoder.encode(template) else { return }
+            let fileName = "Export-\(template.name.sanitizedFileName)"
+            DisposableExporter(
+                data: data,
+                name: fileName,
+                pathExtension: "fdtemplate",
+                title: "Export Template"
+            ).run(anchor: controller.view)
         }
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Template")

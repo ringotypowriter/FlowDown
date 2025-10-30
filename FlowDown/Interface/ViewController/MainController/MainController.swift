@@ -326,7 +326,7 @@ class MainController: UIViewController {
         guard !modelID.isEmpty else {
             Logger.app.errorFile("no default model configured")
             showErrorAlert(
-                title: String(localized: "No Model Available"),
+                title: "No Model Available",
                 message: String(
                     localized:
                     "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
@@ -345,7 +345,7 @@ class MainController: UIViewController {
         let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedMessage.isEmpty else {
             showErrorAlert(
-                title: String(localized: "Error"), message: String(localized: "Empty message.")
+                title: "Error", message: "Empty message."
             )
             return
         }
@@ -364,8 +364,8 @@ class MainController: UIViewController {
     private func showErrorAlert(title: String, message: String) {
         DispatchQueue.main.async {
             let alert = AlertViewController(
-                title: title,
-                message: message
+                title: "\(title)",
+                message: "\(message)"
             ) { context in
                 context.addAction(title: "OK") {
                     context.dispose()

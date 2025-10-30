@@ -38,13 +38,13 @@ extension ConversationManager {
         explain: "This will delete all edits, including unsent conversation text and attachments.",
         ephemeralAnnotation: .action { controller in
             let alert = AlertViewController(
-                title: String(localized: "Clear Editing"),
-                message: String(localized: "This will delete all edits, including unsent conversation text and attachments.")
+                title: "Clear Editing",
+                message: "This will delete all edits, including unsent conversation text and attachments."
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Clear"), attribute: .dangerous) {
+                context.addAction(title: "Clear", attribute: .accent) {
                     context.dispose {
                         ConversationManager.shared.clearRichEditorObject()
                         removeAllEditorObjectsPublisher.send(())

@@ -125,10 +125,10 @@ class MemoryListController: UIViewController {
             } catch {
                 await MainActor.run {
                     let errorAlert = AlertViewController(
-                        title: String(localized: "Error"),
-                        message: String(localized: "Failed to delete memory: \(error.localizedDescription)")
+                        title: "Error",
+                        message: "Failed to delete memory: \(error.localizedDescription)"
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
@@ -169,13 +169,13 @@ extension MemoryListController: UITableViewDelegate {
     ) -> UISwipeActionsConfiguration? {
         let memory = currentMemories()[indexPath.row]
 
-        let delete = UIContextualAction(style: .destructive, title: String(localized: "Delete")) { [weak self] _, _, completion in
+        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
             self?.deleteMemory(at: indexPath)
             completion(true)
         }
         delete.image = UIImage(systemName: "trash")
 
-        let edit = UIContextualAction(style: .normal, title: String(localized: "Edit")) { [weak self] _, _, completion in
+        let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
             self?.presentEditor(for: memory)
             completion(true)
         }
@@ -198,20 +198,20 @@ extension MemoryListController: UITableViewDelegate {
             previewProvider: { nil }
         ) { [weak self] _ in
             guard let self else { return nil }
-            let editAction = UIAction(title: String(localized: "Edit"), image: UIImage(systemName: "square.and.pencil")) { _ in
+            let editAction = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
                 self.presentEditor(for: memory)
             }
 
-            let copyAction = UIAction(title: String(localized: "Copy"), image: UIImage(systemName: "doc.on.doc")) { _ in
+            let copyAction = UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
                 UIPasteboard.general.string = memory.content
             }
 
-            let shareAction = UIAction(title: String(localized: "Share"), image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
+            let shareAction = UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
                 guard let self else { return }
                 DisposableExporter(data: Data(memory.content.utf8), pathExtension: "txt").run(anchor: view, mode: .text)
             }
 
-            let deleteAction = UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+            let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
                 guard let self else { return }
                 if let currentIndexPath = self.indexPath(for: memory) {
                     deleteMemory(at: currentIndexPath)
@@ -349,10 +349,10 @@ private extension MemoryListController {
                 } catch {
                     await MainActor.run {
                         let errorAlert = AlertViewController(
-                            title: String(localized: "Error"),
-                            message: String(localized: "Failed to update memory: \(error.localizedDescription)")
+                            title: "Error",
+                            message: "Failed to update memory: \(error.localizedDescription)"
                         ) { context in
-                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                            context.addAction(title: "OK", attribute: .accent) {
                                 context.dispose()
                             }
                         }

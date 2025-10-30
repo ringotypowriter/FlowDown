@@ -164,13 +164,13 @@ extension SettingController.SettingContent {
                 explain: "Delete all conversations and related data.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Delete All Conversations"),
-                        message: String(localized: "Are you sure you want to delete all conversations and related data?")
+                        title: "Delete All Conversations",
+                        message: "Are you sure you want to delete all conversations and related data?"
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Erase All"), attribute: .dangerous) {
+                        context.addAction(title: "Erase All", attribute: .accent) {
                             context.dispose { ConversationManager.shared.eraseAll()
                                 Indicator.present(
                                     title: "Deleted",
@@ -208,13 +208,13 @@ extension SettingController.SettingContent {
                 explain: "Clean image caches, remove partial downloads and more.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Clean Cache"),
-                        message: String(localized: "Are you sure you want to clean the cache? This will also delete partial downloads.")
+                        title: "Clean Cache",
+                        message: "Are you sure you want to clean the cache? This will also delete partial downloads."
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Clear"), attribute: .dangerous) {
+                        context.addAction(title: "Clear", attribute: .accent) {
                             DiggerCache.cleanDownloadFiles()
                             DiggerCache.cleanDownloadTempFiles()
                             Indicator.present(
@@ -237,13 +237,13 @@ extension SettingController.SettingContent {
                 explain: "This will remove all contents inside temporary directory.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Reset Temporary Items"),
-                        message: String(localized: "Are you sure you want to remove all content inside temporary directory?")
+                        title: "Reset Temporary Items",
+                        message: "Are you sure you want to remove all content inside temporary directory?"
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Reset"), attribute: .dangerous) {
+                        context.addAction(title: "Reset", attribute: .accent) {
                             context.dispose {
                                 let tempDir = FileManager.default.temporaryDirectory
                                 try? FileManager.default.removeItem(at: tempDir)
@@ -284,10 +284,10 @@ extension SettingController.SettingContent {
                 ephemeralAnnotation: .action { controller in
                     guard SyncEngine.isSyncEnabled else {
                         let alert = AlertViewController(
-                            title: String(localized: "Error Occurred"),
-                            message: String(localized: "iCloud synchronization is not enabled")
+                            title: "Error Occurred",
+                            message: "iCloud synchronization is not enabled"
                         ) { context in
-                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                            context.addAction(title: "OK", attribute: .accent) {
                                 context.dispose()
                             }
                         }
@@ -296,13 +296,13 @@ extension SettingController.SettingContent {
                     }
 
                     let alert = AlertViewController(
-                        title: String(localized: "Delete iCloud Data"),
-                        message: String(localized: "This will remove your synced data from iCloud for this app. Local data on this device will remain.")
+                        title: "Delete iCloud Data",
+                        message: "This will remove your synced data from iCloud for this app. Local data on this device will remain."
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+                        context.addAction(title: "Delete", attribute: .accent) {
                             context.dispose {
                                 Indicator.progress(title: "Deleting...", controller: controller) { completion in
                                     try await syncEngine.deleteServerData()
@@ -323,13 +323,13 @@ extension SettingController.SettingContent {
                 explain: "If you encounter any issues, you can try to reset the app. This will remove all content and reset the entire database.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
-                        title: String(localized: "Reset App"),
-                        message: String(localized: "Are you sure you want to remove all content and reset the entire database? App will close after reset.")
+                        title: "Reset App",
+                        message: "Are you sure you want to remove all content and reset the entire database? App will close after reset."
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Reset"), attribute: .dangerous) {
+                        context.addAction(title: "Reset", attribute: .accent) {
                             context.dispose {
                                 /// 停掉同步,避免同步继续执行会占用db连接，导致后面无法关闭db
                                 try? await syncEngine.stopSyncIfNeeded()
@@ -364,13 +364,13 @@ extension SettingController.SettingContent {
 
         private func presentSyncDisableAlert(confirmHandler: @escaping (Bool) -> Void) {
             let alert = AlertViewController(
-                title: String(localized: "Disable iCloud Sync"),
-                message: String(localized: "Turning off sync only pauses future updates. Existing data stays in place. Re‑enable later to fetch and resume syncing.")
+                title: "Disable iCloud Sync",
+                message: "Turning off sync only pauses future updates. Existing data stays in place. Re‑enable later to fetch and resume syncing."
             ) { context in
-                context.addAction(title: String(localized: "Keep Enabled")) {
+                context.addAction(title: "Keep Enabled") {
                     context.dispose { confirmHandler(false) }
                 }
-                context.addAction(title: String(localized: "Disable"), attribute: .dangerous) {
+                context.addAction(title: "Disable", attribute: .accent) {
                     context.dispose { confirmHandler(true) }
                 }
             }
@@ -389,13 +389,13 @@ extension SettingController.SettingContent {
 
         private func presentImportConfirmation(from controller: UIViewController) {
             let alert = AlertViewController(
-                title: String(localized: "Import Database"),
-                message: String(localized: "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone.")
+                title: "Import Database",
+                message: "Importing a database backup will replace all current conversations, memories, and cloud model settings. This action cannot be undone."
             ) { [weak self] context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Import"), attribute: .dangerous) {
+                context.addAction(title: "Import", attribute: .accent) {
                     context.dispose { self?.presentImportPicker(from: controller) }
                 }
             }
@@ -433,10 +433,10 @@ extension SettingController.SettingContent {
                 try result.get()
                 await progressCompletion { [weak self] in
                     let alert = AlertViewController(
-                        title: String(localized: "Import Complete"),
-                        message: String(localized: "FlowDown will restart to apply the imported database.")
+                        title: "Import Complete",
+                        message: "FlowDown will restart to apply the imported database."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             SyncEngine.resetCachedState()
                             context.dispose {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

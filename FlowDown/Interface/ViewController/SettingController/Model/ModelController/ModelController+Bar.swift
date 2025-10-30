@@ -16,7 +16,7 @@ extension SettingController.SettingContent.ModelController {
     private func createCloudModelMenuItems() -> [UIMenuElement] {
         [
             UIMenu(
-                title: String(localized: "pollinations.ai (free)"),
+                title: "pollinations.ai (free)",
                 image: .init(systemName: "network"),
                 children: CloudModel.BuiltinModel.allCases.map(\.model).map { model in
                     UIAction(
@@ -33,7 +33,7 @@ extension SettingController.SettingContent.ModelController {
                 }
             ),
             UIAction(
-                title: String(localized: "Empty Model"),
+                title: "Empty Model",
                 image: .init(systemName: "square.dashed")
             ) { [weak self] _ in
                 guard let self else { return }
@@ -48,15 +48,15 @@ extension SettingController.SettingContent.ModelController {
     private func createLocalModelMenuItems() -> [UIMenuElement] {
         [
             UIAction(
-                title: String(localized: "Download @ Hugging Face"),
+                title: "Download @ Hugging Face",
                 image: .init(systemName: "icloud.and.arrow.down")
             ) { [weak self] _ in
                 guard MLX.GPU.isSupported else {
                     let alert = AlertViewController(
-                        title: String(localized: "Unsupporte"),
-                        message: String(localized: "Your device does not support MLX.")
+                        title: "Unsupporte",
+                        message: "Your device does not support MLX."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
@@ -67,7 +67,7 @@ extension SettingController.SettingContent.ModelController {
                 nav.pushViewController(HubModelDownloadController(), animated: true)
             },
             UIAction(
-                title: String(localized: "Connect @ OLLAMA"),
+                title: "Connect @ OLLAMA",
                 image: .init(systemName: "cable.connector.horizontal")
             ) { [weak self] _ in
                 let profile = CloudModel(deviceId: Storage.deviceId)
@@ -76,7 +76,7 @@ extension SettingController.SettingContent.ModelController {
                 self?.navigationController?.pushViewController(controller, animated: true)
             },
             UIAction(
-                title: String(localized: "Connect @ LM Studio"),
+                title: "Connect @ LM Studio",
                 image: .init(systemName: "cable.connector.horizontal")
             ) { [weak self] _ in
                 let profile = CloudModel(deviceId: Storage.deviceId)
@@ -91,25 +91,25 @@ extension SettingController.SettingContent.ModelController {
         guard let bar = navigationController?.navigationBar else { return }
 
         let menu = UIMenu(
-            title: String(localized: "Select Model Type"),
+            title: "Select Model Type",
             options: [.displayInline],
             children: [
                 UIMenu(
-                    title: String(localized: "Cloud Model"),
+                    title: "Cloud Model",
                     options: [.displayInline],
                     children: createCloudModelMenuItems()
                 ),
                 UIMenu(
-                    title: String(localized: "Local Model"),
+                    title: "Local Model",
                     options: [.displayInline],
                     children: createLocalModelMenuItems()
                 ),
                 UIMenu(
-                    title: String(localized: "Import Model"),
+                    title: "Import Model",
                     options: [.displayInline],
                     children: [
                         UIAction(
-                            title: String(localized: "Import from File"),
+                            title: "Import from File",
                             image: .init(systemName: "arrow.down.doc")
                         ) { [weak self] _ in
                             guard let self else { return }
@@ -132,16 +132,16 @@ extension SettingController.SettingContent.ModelController {
 
     @objc func filterBarItemTapped() {
         guard let bar = navigationController?.navigationBar else { return }
-        let menu = UIMenu(title: String(localized: "Filter Options"), children: [
+        let menu = UIMenu(title: "Filter Options", children: [
             UIAction(
-                title: String(localized: "Show Local Models"),
+                title: "Show Local Models",
                 image: .modelLocal,
                 state: showLocalModels ? .on : .off
             ) { [weak self] _ in
                 self?.showLocalModels.toggle()
             },
             UIAction(
-                title: String(localized: "Show Cloud Models"),
+                title: "Show Cloud Models",
                 image: .modelCloud,
                 state: showCloudModels ? .on : .off
             ) { [weak self] _ in

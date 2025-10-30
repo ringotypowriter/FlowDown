@@ -181,6 +181,9 @@
         }
       }
     },
+    "https://" : {
+
+    },
     "Image" : {
       "localizations" : {
         "zh-Hans" : {

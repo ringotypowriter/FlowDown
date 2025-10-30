@@ -168,14 +168,14 @@ class HubModelDetailController: StackScrollController {
                         countStyle: .file
                     )
                     navigationItem.rightBarButtonItem = .init(
-                        title: String(localized: "Download (\(byteText))"),
+                        title: "Download (\(byteText))",
                         style: .plain,
                         target: self,
                         action: #selector(download)
                     )
                 } else {
                     navigationItem.rightBarButtonItem = .init(
-                        title: String(localized: "Download (Unknown Size)"),
+                        title: "Download (Unknown Size)",
                         style: .plain,
                         target: self,
                         action: #selector(download)
@@ -221,13 +221,17 @@ class HubModelDetailController: StackScrollController {
             present(downloadController, animated: true)
         } else if model.id.lowercased().hasPrefix("mlx-community/") {
             let alert = AlertViewController(
-                title: String(localized: "Download Model"),
-                message: String(localized: "We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?") + "\n\n" + String(localized: "Estimated download size: \(sizeText)")
+                title: "Download Model",
+                message: """
+                We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?
+
+                Estimated download size: \(sizeText)
+                """
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Download"), attribute: .dangerous) {
+                context.addAction(title: "Download", attribute: .accent) {
                     context.dispose { [weak self] in
                         self?.present(downloadController, animated: true)
                     }
@@ -236,13 +240,17 @@ class HubModelDetailController: StackScrollController {
             present(alert, animated: true)
         } else {
             let alert = AlertViewController(
-                title: String(localized: "Unverified Model"),
-                message: String(localized: "Even if you download this model, it may not work or even crash the app. Do you still want to download this model?") + "\n\n" + String(localized: "Estimated download size: \(sizeText)")
+                title: "Unverified Model",
+                message: """
+                Even if you download this model, it may not work or even crash the app. Do you still want to download this model?
+
+                Estimated download size: \(sizeText)
+                """
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Download"), attribute: .dangerous) {
+                context.addAction(title: "Download", attribute: .accent) {
                     context.dispose { [weak self] in
                         self?.present(downloadController, animated: true)
                     }

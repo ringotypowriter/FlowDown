@@ -26,6 +26,7 @@ final class DisposableExporter: NSObject {
         title: String.LocalizationValue? = nil
     ) {
         let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("DisposableResources")
             .appendingPathComponent(name)
             .appendingPathExtension(pathExtension)
         try? data.write(to: tempURL)

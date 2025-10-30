@@ -150,17 +150,17 @@ class MTAddCalendarTool: ModelTool, @unchecked Sendable {
         }
 
         let alert = AlertViewController(
-            title: String(localized: "Add To Calendar"),
-            message: eventDetails.joined(separator: "\n")
+            title: "Add To Calendar",
+            message: "\(eventDetails.joined(separator: "\n"))"
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose {
                     continuation.resume(throwing: NSError(domain: String(localized: "Tool"), code: -1, userInfo: [
                         NSLocalizedDescriptionKey: String(localized: "User cancelled the operation."),
                     ]))
                 }
             }
-            context.addAction(title: String(localized: "Add"), attribute: .dangerous) {
+            context.addAction(title: "Add", attribute: .accent) {
                 context.dispose {
                     self.importICSToCalendar(icsContent: icsFile) { success, error in
                         if success {

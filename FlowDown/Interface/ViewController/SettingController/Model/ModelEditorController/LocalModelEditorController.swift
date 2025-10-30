@@ -76,13 +76,13 @@ class LocalModelEditorController: StackScrollController {
 
     @objc func deleteTapped() {
         let alert = AlertViewController(
-            title: String(localized: "Delete Model"),
-            message: String(localized: "Are you sure you want to delete this model? This action cannot be undone.")
+            title: "Delete Model",
+            message: "Are you sure you want to delete this model? This action cannot be undone."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+            context.addAction(title: "Delete", attribute: .accent) {
                 context.dispose { [weak self] in
                     guard let self else { return }
                     ModelManager.shared.removeLocalModel(identifier: identifier)
@@ -106,9 +106,9 @@ class LocalModelEditorController: StackScrollController {
 
         let idView = ConfigurableInfoView().setTapBlock { view in
             view.present(menu: .init(
-                title: String(localized: "Copy"),
+                title: "Copy",
                 children: [UIAction(
-                    title: String(localized: "Identifier"),
+                    title: "Identifier",
                     image: UIImage(systemName: "person.crop.square.filled.and.at.rectangle")
                 ) { _ in
                     UIPasteboard.general.string = model?.model_identifier
@@ -125,7 +125,7 @@ class LocalModelEditorController: StackScrollController {
 
         let sizeView = ConfigurableInfoView().setTapBlock { view in
             view.present(menu: .init(children: [UIAction(
-                title: String(localized: "Calibrate Size"),
+                title: "Calibrate Size",
                 image: UIImage(systemName: "internaldrive")
             ) { _ in
                 guard let identifier = model?.id else { return }
@@ -143,9 +143,9 @@ class LocalModelEditorController: StackScrollController {
 
         let dateView = ConfigurableInfoView().setTapBlock { view in
             view.present(menu: .init(
-                title: String(localized: "Copy"),
+                title: "Copy",
                 children: [UIAction(
-                    title: String(localized: "Download Date"),
+                    title: "Download Date",
                     image: UIImage(systemName: "timer")
                 ) { _ in
                     UIPasteboard.general.string = dateFormatter
@@ -228,7 +228,7 @@ class LocalModelEditorController: StackScrollController {
                 }
             }
             view.present(
-                menu: .init(title: String(localized: "Context Length"), children: children),
+                menu: .init(title: "Context Length", children: children),
                 anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
             )
         }
@@ -262,7 +262,7 @@ class LocalModelEditorController: StackScrollController {
             var actions: [UIMenuElement] = []
 
             let inheritAction = UIAction(
-                title: String(localized: "Inference default"),
+                title: "Inference default",
                 image: UIImage(systemName: "circle.dashed")
             ) { _ in
                 ModelManager.shared.editLocalModel(identifier: latestModel.id) { item in
@@ -294,7 +294,7 @@ class LocalModelEditorController: StackScrollController {
                 actions.append(action)
             }
 
-            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
+            let menu = UIMenu(title: "Imagination", children: actions)
             view.present(
                 menu: menu,
                 anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)
@@ -375,8 +375,7 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(openHuggingFace)
         stackView.addArrangedSubview(SeparatorView())
 
-        var exportOptionReader: UIView?
-        let exportOption = ConfigurableActionView { [weak self] _ in
+        let exportOption = ConfigurableActionView { [weak self] controller in
             guard let self else { return }
             guard let model = ModelManager.shared.localModel(identifier: identifier) else { return }
             Indicator.progress(
@@ -388,21 +387,13 @@ class LocalModelEditorController: StackScrollController {
                         continuation.resume(returning: (url, error))
                     }
                 }
+                guard let url else { throw NSError() }
                 await completionHandler {
-                    guard let url else {
-                        Indicator.present(
-                            title: "Failed to Export",
-                            preset: .error,
-                            referencingView: exportOptionReader
-                        )
-                        return
-                    }
                     DisposableExporter(deletableItem: url, title: "Export Model")
-                        .run(anchor: exportOptionReader ?? self.view)
+                        .run(anchor: controller.view)
                 }
             }
         }
-        exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Model")
         exportOption.configure(description: "Export this model to share with others.")
@@ -458,10 +449,10 @@ class LocalModelEditorController: StackScrollController {
         super.viewDidAppear(animated)
         if !MLX.GPU.isSupported {
             let alert = AlertViewController(
-                title: String(localized: "Unsupporte"),
-                message: String(localized: "Your device does not support MLX.")
+                title: "Unsupporte",
+                message: "Your device does not support MLX."
             ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.addAction(title: "OK", attribute: .accent) {
                     context.dispose {
                         self.navigationController?.popViewController()
                     }

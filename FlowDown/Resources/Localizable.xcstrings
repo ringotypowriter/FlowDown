@@ -50,6 +50,38 @@
         }
       }
     },
+    "%lld servers imported successfully, %lld failed." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld servers imported successfully, %2$lld failed."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功导入了 %1$lld 个服务器，%2$lld 失败。"
+          }
+        }
+      }
+    },
+    "%lld templates imported successfully, %lld failed." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld templates imported successfully, %2$lld failed."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld 个模版已成功导入，%2$lld失败。"
+          }
+        }
+      }
+    },
     "%lld%% Finished" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2570,22 +2602,12 @@
         }
       }
     },
-    "Estimated download size: %@" : {
+    "Even if you download this model, it may not work or even crash the app. Do you still want to download this model?\n\nEstimated download size: %@" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "预计下载的大小：%@"
-          }
-        }
-      }
-    },
-    "Even if you download this model, it may not work or even crash the app. Do you still want to download this model?" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "即使成功下载了模型，也可能无法运行或使程序崩溃。你依然要下载这个模型吗？"
+            "value" : "即使成功下载了模型，也可能无法运行或使程序崩溃。你依然要下载这个模型吗？\n\n预计下载的大小：%@"
           }
         }
       }
@@ -2961,16 +2983,6 @@
         }
       }
     },
-    "Failed to Export" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法导出"
-          }
-        }
-      }
-    },
     "Failed to export memories: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3121,12 +3133,12 @@
         }
       }
     },
-    "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution." : {
+    "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution.\n\nReady to dive in? Select a model to see its size and details." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此页面的操作仅适合对部署大语言模型有经验的用户。在设备上运行超出设备资源的模型可能会导致应用程序或者系统崩溃。请谨慎操作。"
+            "value" : "此页面的操作仅适合对部署大语言模型有经验的用户。在设备上运行超出设备资源的模型可能会导致应用程序或者系统崩溃。请谨慎操作。\n\n准备好出发了？选择一个模型来查看他的详情（含尺寸）。"
           }
         }
       }
@@ -3434,6 +3446,9 @@
           }
         }
       }
+    },
+    "https://" : {
+      "shouldTranslate" : false
     },
     "Huge" : {
       "comment" : "Model Context",
@@ -5627,16 +5642,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查看文档"
-          }
-        }
-      }
-    },
-    "Ready to dive in? Select a model to see its size and details." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "准备好出发了？选择一个模型来查看他的详情（含尺寸）。"
           }
         }
       }
@@ -8016,12 +8021,12 @@
         }
       }
     },
-    "We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?" : {
+    "We are not responsible for the model you are about to download. If we are unable to load this model, the app may crash. Do you want to continue?\n\nEstimated download size: %@" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我们不对你所下载的模型负责。如果此模型无法加载，应用程序可能会崩溃。你确定要继续吗？"
+            "value" : "我们不对你即将下载的模型负责。如果此模型加载失败，软件可能会崩溃。你确定要继续？\n\n预计的下载大小为：%@"
           }
         }
       }
@@ -8286,6 +8291,9 @@
           }
         }
       }
+    },
+    "workgroup-xxx" : {
+      "shouldTranslate" : false
     },
     "Would you like to apply the new workgroup to all? This requires the inference endpoint and the old workgroup equal to the current editing." : {
       "localizations" : {

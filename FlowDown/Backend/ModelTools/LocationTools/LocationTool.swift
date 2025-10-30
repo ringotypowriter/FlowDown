@@ -120,7 +120,7 @@ class MTLocationTool: ModelTool, @unchecked Sendable {
         }
 
         let indicator = AlertProgressIndicatorViewController(
-            title: String(localized: "Retrieving Location")
+            title: "Retrieving Location"
         )
 
         controller.present(indicator, animated: true)

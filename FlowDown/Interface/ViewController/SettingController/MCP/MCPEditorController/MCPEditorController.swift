@@ -64,9 +64,6 @@ class MCPEditorController: StackScrollController {
     @objc func exportTapped() {
         guard let server = MCPService.shared.server(with: serverId) else { return }
 
-        let tempFileDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("DisposableResources")
-            .appendingPathComponent(UUID().uuidString)
         let serverName = if let url = URL(string: server.endpoint), let host = url.host {
             host
         } else if !server.name.isEmpty {
@@ -74,19 +71,19 @@ class MCPEditorController: StackScrollController {
         } else {
             "MCPServer"
         }
-        let tempFile = tempFileDir
-            .appendingPathComponent("Export-\(serverName.sanitizedFileName)")
-            .appendingPathExtension("fdmcp")
-        try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
-        FileManager.default.createFile(atPath: tempFile.path, contents: nil)
 
         do {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             let data = try encoder.encode(server)
-            try data.write(to: tempFile, options: .atomic)
+            let fileName = "Export-\(serverName.sanitizedFileName)"
 
-            DisposableExporter(deletableItem: tempFile, title: "Export MCP Server").run(anchor: view)
+            DisposableExporter(
+                data: data,
+                name: fileName,
+                pathExtension: "fdmcp",
+                title: "Export MCP Server"
+            ).run(anchor: view)
         } catch {
             Logger.app.errorFile("failed to export MCP server: \(error)")
         }
@@ -94,13 +91,13 @@ class MCPEditorController: StackScrollController {
 
     @objc func deleteTapped() {
         let alert = AlertViewController(
-            title: String(localized: "Delete Server"),
-            message: String(localized: "Are you sure you want to delete this MCP server? This action cannot be undone.")
+            title: "Delete Server",
+            message: "Are you sure you want to delete this MCP server? This action cannot be undone."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+            context.addAction(title: "Delete", attribute: .accent) {
                 context.dispose { [weak self] in
                     guard let self else { return }
                     MCPService.shared.remove(serverId)
@@ -165,7 +162,7 @@ class MCPEditorController: StackScrollController {
         typeView.setTapBlock { view in
             let children = [
                 UIAction(
-                    title: String(localized: "Streamble HTTP"),
+                    title: "Streamble HTTP",
                     image: UIImage(systemName: "network")
                 ) { _ in
                     MCPService.shared.edit(identifier: self.serverId) {
@@ -176,7 +173,7 @@ class MCPEditorController: StackScrollController {
                 },
             ]
             view.present(
-                menu: .init(title: String(localized: "Connection Type"), children: children),
+                menu: .init(title: "Connection Type", children: children),
                 anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
             )
         }
@@ -184,26 +181,24 @@ class MCPEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         let endpointView = ConfigurableInfoView().setTapBlock { view in
-            let placeholder = "https://"
-
             let input = AlertInputViewController(
-                title: String(localized: "Edit Endpoint"),
-                message: String(localized: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix."),
-                placeholder: placeholder,
+                title: "Edit Endpoint",
+                message: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix.",
+                placeholder: "https://",
                 text: server.endpoint.isEmpty ? "https://" : server.endpoint
             ) { output in
                 MCPService.shared.edit(identifier: self.serverId) {
                     $0.update(\.endpoint, to: output)
                 }
                 self.refreshUI()
-                view.configure(value: output.isEmpty ? String(localized: "Not Configured") : output)
+                view.configure(value: output.isEmpty ? "Not Configured" : output)
             }
             view.parentViewController?.present(input, animated: true)
         }
         endpointView.configure(icon: .init(systemName: "link"))
         endpointView.configure(title: "Endpoint")
         endpointView.configure(description: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix.")
-        endpointView.configure(value: server.endpoint.isEmpty ? String(localized: "Not Configured") : server.endpoint)
+        endpointView.configure(value: server.endpoint.isEmpty ? "Not Configured" : server.endpoint)
         stackView.addArrangedSubviewWithMargin(endpointView)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -246,9 +241,9 @@ class MCPEditorController: StackScrollController {
         let nicknameView = ConfigurableInfoView().setTapBlock { view in
             guard let client = MCPService.shared.server(with: self.serverId) else { return }
             let input = AlertInputViewController(
-                title: String(localized: "Edit Nickname"),
-                message: String(localized: "Custom display name for this MCP server."),
-                placeholder: String(localized: "Nickname (Optional)"),
+                title: "Edit Nickname",
+                message: "Custom display name for this MCP server.",
+                placeholder: "Nickname (Optional)",
                 text: client.name
             ) { output in
                 MCPService.shared.edit(identifier: self.serverId) {

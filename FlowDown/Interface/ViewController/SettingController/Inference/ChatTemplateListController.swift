@@ -100,9 +100,9 @@ class ChatTemplateListController: UIViewController {
 
     @objc func addTemplate() {
         let menu = UIMenu(children: [
-            UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
-                UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
-                    UIAction(title: String(localized: "Create Template"), image: UIImage(systemName: "plus")) { [weak self] _ in
+            UIMenu(title: "Chat Template", options: [.displayInline], children: [
+                UIMenu(title: "Chat Template", options: [.displayInline], children: [
+                    UIAction(title: "Create Template", image: UIImage(systemName: "plus")) { [weak self] _ in
                         var template = ChatTemplate()
                         template.name = String(localized: "Template \(ChatTemplateManager.shared.templates.count + 1)")
                         ChatTemplateManager.shared.addTemplate(template)
@@ -113,8 +113,8 @@ class ChatTemplateListController: UIViewController {
                         }
                     },
                 ]),
-                UIMenu(title: String(localized: "Import"), options: [.displayInline], children: [
-                    UIAction(title: String(localized: "Import from File"), image: UIImage(systemName: "doc")) { [weak self] _ in
+                UIMenu(title: "Import", options: [.displayInline], children: [
+                    UIAction(title: "Import from File", image: UIImage(systemName: "doc")) { [weak self] _ in
                         self?.presentDocumentPicker()
                     },
                 ]),
@@ -142,7 +142,7 @@ extension ChatTemplateListController: UITableViewDelegate {
         }
         let delete = UIContextualAction(
             style: .destructive,
-            title: String(localized: "Delete")
+            title: "Delete"
         ) { _, _, completion in
             guard let template = ChatTemplateManager.shared.template(for: itemIdentifier) else {
                 assertionFailure()
@@ -217,7 +217,7 @@ extension ChatTemplateListController {
         ) -> UIContextMenuConfiguration? {
             guard let identifier else { return nil }
             let menu = UIMenu(options: [.displayInline], children: [
-                UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                     ChatTemplateManager.shared.remove(for: identifier)
                 },
             ])
@@ -265,14 +265,10 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
             await completionHandler {
                 if !failure.isEmpty {
                     let alert = AlertViewController(
-                        title: String(localized: "Import Failed"),
-                        message: String(
-                            format: String(localized: "%d templates imported successfully, %d failed."),
-                            success,
-                            failure.count
-                        )
+                        title: "Import Failed",
+                        message: "\(success) templates imported successfully, \(failure.count) failed."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }

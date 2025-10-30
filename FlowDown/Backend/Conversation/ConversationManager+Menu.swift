@@ -40,13 +40,13 @@ extension ConversationManager {
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: String(localized: "Rename"),
+                    title: "Rename",
                     image: UIImage(systemName: "pencil.tip.crop.circle.badge.arrow.forward")
                 ) { _ in
                     let alert = AlertInputViewController(
-                        title: String(localized: "Rename"),
-                        message: String(localized: "Set a new title for the conversation. Leave empty to keep unchanged. This will disable auto-renaming."),
-                        placeholder: String(localized: "Title"),
+                        title: "Rename",
+                        message: "Set a new title for the conversation. Leave empty to keep unchanged. This will disable auto-renaming.",
+                        placeholder: "Title",
                         text: conv.title
                     ) { text in
                         guard !text.isEmpty else { return }
@@ -58,7 +58,7 @@ extension ConversationManager {
                     controller.present(alert, animated: true)
                 },
                 UIAction(
-                    title: String(localized: "Pick New Icon"),
+                    title: "Pick New Icon",
                     image: UIImage(systemName: "person.crop.circle.badge.plus")
                 ) { _ in
                     let picker = EmojiPickerViewController(sourceView: view) { emoji in
@@ -77,7 +77,7 @@ extension ConversationManager {
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: String(localized: "Save Image"),
+                    title: "Save Image",
                     image: UIImage(systemName: "text.below.photo")
                 ) { _ in
                     let captureView = ConversationCaptureView(session: session)
@@ -120,11 +120,11 @@ extension ConversationManager {
                     }
                 },
                 UIMenu(
-                    title: String(localized: "Export Document"),
+                    title: "Export Document",
                     image: UIImage(systemName: "doc"),
                     children: [
                         UIAction(
-                            title: String(localized: "Export Plain Text"),
+                            title: "Export Plain Text",
                             image: UIImage(systemName: "doc.plaintext")
                         ) { _ in
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .plainText) { result in
@@ -146,7 +146,7 @@ extension ConversationManager {
                             }
                         },
                         UIAction(
-                            title: String(localized: "Export Markdown"),
+                            title: "Export Markdown",
                             image: UIImage(systemName: "doc.richtext")
                         ) { _ in
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .markdown) { result in
@@ -173,11 +173,11 @@ extension ConversationManager {
         )
 
         let automationMenu = UIMenu(
-            title: String(localized: "Automation"),
+            title: "Automation",
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: String(localized: "Generate New Icon"),
+                    title: "Generate New Icon",
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
@@ -204,7 +204,7 @@ extension ConversationManager {
                     }
                 },
                 UIAction(
-                    title: String(localized: "Generate New Title"),
+                    title: "Generate New Title",
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
@@ -236,7 +236,7 @@ extension ConversationManager {
             { () -> UIMenuElement? in
                 if conv.isFavorite {
                     return UIAction(
-                        title: String(localized: "Unfavorite"),
+                        title: "Unfavorite",
                         image: UIImage(systemName: "star.slash")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
@@ -250,7 +250,7 @@ extension ConversationManager {
             { () -> UIMenuElement? in
                 if !conv.isFavorite {
                     return UIAction(
-                        title: String(localized: "Favorite"),
+                        title: "Favorite",
                         image: UIImage(systemName: "star")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
@@ -274,17 +274,17 @@ extension ConversationManager {
                 } else {
                     return UIMenu(options: [.displayInline], children: [
                         UIAction(
-                            title: String(localized: "Compress to New Chat"),
+                            title: "Compress to New Chat",
                             image: UIImage(systemName: "arrow.down.doc")
                         ) { _ in
                             let model = session.models.chat
                             let name = ModelManager.shared.modelName(identifier: model)
                             guard let model, !name.isEmpty else {
                                 let alert = AlertViewController(
-                                    title: String(localized: "Model Not Available"),
-                                    message: String(localized: "Please select a model to generate chat template.")
+                                    title: "Model Not Available",
+                                    message: "Please select a model to generate chat template."
                                 ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.addAction(title: "OK", attribute: .accent) {
                                         context.dispose()
                                     }
                                 }
@@ -292,13 +292,13 @@ extension ConversationManager {
                                 return
                             }
                             let alert = AlertViewController(
-                                title: String(localized: "Compress to New Chat"),
-                                message: String(localized: "This will use \(name) compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged.")
+                                title: "Compress to New Chat",
+                                message: "This will use \(name) compress the current conversation into a short summary and create a new chat with it. The original conversation will remain unchanged."
                             ) { context in
-                                context.addAction(title: String(localized: "Cancel")) {
+                                context.addAction(title: "Cancel") {
                                     context.dispose()
                                 }
-                                context.addAction(title: String(localized: "Compress"), attribute: .dangerous) {
+                                context.addAction(title: "Compress", attribute: .accent) {
                                     context.dispose {
                                         Indicator.progress(
                                             title: "Compressing",
@@ -334,17 +334,17 @@ extension ConversationManager {
                             controller.present(alert, animated: true)
                         },
                         UIAction(
-                            title: String(localized: "Generate Chat Template"),
+                            title: "Generate Chat Template",
                             image: UIImage(systemName: "wind")
                         ) { _ in
                             let model = session.models.chat
                             let name = ModelManager.shared.modelName(identifier: model)
                             guard let model, !name.isEmpty else {
                                 let alert = AlertViewController(
-                                    title: String(localized: "Model Not Available"),
-                                    message: String(localized: "Please select a model to generate chat template.")
+                                    title: "Model Not Available",
+                                    message: "Please select a model to generate chat template."
                                 ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.addAction(title: "OK", attribute: .accent) {
                                         context.dispose()
                                     }
                                 }
@@ -352,13 +352,13 @@ extension ConversationManager {
                                 return
                             }
                             let alert = AlertViewController(
-                                title: String(localized: "Generate Chat Template"),
-                                message: String(localized: "This will extract your requests from the current conversation using \(name) and save it as a template for later use. This may take some time.")
+                                title: "Generate Chat Template",
+                                message: "This will extract your requests from the current conversation using \(name) and save it as a template for later use. This may take some time."
                             ) { context in
-                                context.addAction(title: String(localized: "Cancel")) {
+                                context.addAction(title: "Cancel") {
                                     context.dispose()
                                 }
-                                context.addAction(title: String(localized: "Generate"), attribute: .dangerous) {
+                                context.addAction(title: "Generate", attribute: .accent) {
                                     context.dispose {
                                         Indicator.progress(
                                             title: "Generating Template",
@@ -374,13 +374,13 @@ extension ConversationManager {
                                             await completion {
                                                 ChatTemplateManager.shared.addTemplate(template)
                                                 let alert = AlertViewController(
-                                                    title: String(localized: "Template Generated"),
-                                                    message: String(localized: "Template \(template.name) has been successfully generated and saved.")
+                                                    title: "Template Generated",
+                                                    message: "Template \(template.name) has been successfully generated and saved."
                                                 ) { context in
-                                                    context.addAction(title: String(localized: "OK")) {
+                                                    context.addAction(title: "OK") {
                                                         context.dispose()
                                                     }
-                                                    context.addAction(title: String(localized: "Edit"), attribute: .dangerous) {
+                                                    context.addAction(title: "Edit", attribute: .accent) {
                                                         context.dispose {
                                                             let setting = SettingController()
                                                             SettingController.setNextEntryPage(.chatTemplateEditor(templateIdentifier: template.id))
@@ -397,7 +397,7 @@ extension ConversationManager {
                             controller.present(alert, animated: true)
                         },
                         UIAction(
-                            title: String(localized: "Duplicate"),
+                            title: "Duplicate",
                             image: UIImage(systemName: "doc.on.doc")
                         ) { _ in
                             if let id = ConversationManager.shared.duplicateConversation(identifier: conv.id) {
@@ -410,7 +410,7 @@ extension ConversationManager {
             { () -> UIMenuElement? in
                 if convHasEmptyContent {
                     return UIAction(
-                        title: String(localized: "Delete"),
+                        title: "Delete",
                         image: UIImage(systemName: "trash"),
                         attributes: .destructive
                     ) { _ in
@@ -421,13 +421,13 @@ extension ConversationManager {
                     }
                 } else {
                     return UIMenu(
-                        title: String(localized: "Delete"),
+                        title: "Delete",
                         options: [.displayInline],
                         children: [
                             { () -> UIAction? in
                                 if !conv.icon.isEmpty {
                                     UIAction(
-                                        title: String(localized: "Delete Icon"),
+                                        title: "Delete Icon",
                                         image: UIImage(systemName: "trash"),
                                         attributes: .destructive
                                     ) { _ in
@@ -438,7 +438,7 @@ extension ConversationManager {
                                 } else { nil }
                             }(),
                             UIAction(
-                                title: String(localized: "Delete Conversation"),
+                                title: "Delete Conversation",
                                 image: UIImage(systemName: "trash"),
                                 attributes: .destructive
                             ) { _ in
@@ -454,7 +454,7 @@ extension ConversationManager {
         ].compactMap(\.self)
 
         let management = UIMenu(
-            title: String(localized: "Other"),
+            title: "Other",
             image: UIImage(systemName: "ellipsis.circle"),
             options: managementGroup.count <= 1 ? .displayInline : [],
             children: managementGroup
@@ -466,7 +466,7 @@ extension ConversationManager {
             finalChildren.append(
                 UIMenu(options: [.displayInline], children: [
                     UIAction(
-                        title: String(localized: "Terminate"),
+                        title: "Terminate",
                         image: UIImage(systemName: "stop.circle"),
                         attributes: [.destructive]
                     ) { _ in
@@ -481,7 +481,7 @@ extension ConversationManager {
         if !management.children.isEmpty { finalChildren.append(management) }
 
         return UIMenu(
-            title: String(localized: "Edit Conversation"),
+            title: "Edit Conversation",
             image: UIImage(systemName: "pencil"),
             options: [.displayInline],
             children: finalChildren

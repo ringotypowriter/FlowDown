@@ -127,7 +127,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
         let delete = UIContextualAction(
             style: .destructive,
-            title: String(localized: "Delete")
+            title: "Delete"
         ) { _, _, completion in
             MCPService.shared.remove(clientId)
             completion(true)
@@ -140,10 +140,10 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
 
         let menu = UIMenu(options: [.displayInline], children: [
-            UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
+            UIAction(title: "Export Server", image: UIImage(systemName: "square.and.arrow.up")) { _ in
                 self.exportServer(clientId)
             },
-            UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+            UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                 MCPService.shared.remove(clientId)
             },
         ])
@@ -187,14 +187,10 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
             await completionHandler {
                 if !failure.isEmpty {
                     let alert = AlertViewController(
-                        title: String(localized: "Import Failed"),
-                        message: String(
-                            format: String(localized: "%d servers imported successfully, %d failed."),
-                            success,
-                            failure.count
-                        )
+                        title: "Import Failed",
+                        message: "\(success) servers imported successfully, \(failure.count) failed."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }

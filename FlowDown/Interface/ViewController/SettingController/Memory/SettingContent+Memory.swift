@@ -119,10 +119,10 @@ extension SettingController.SettingContent {
 
                 guard !memories.isEmpty else {
                     let alert = AlertViewController(
-                        title: String(localized: "No Memories"),
-                        message: String(localized: "There are no memories to export.")
+                        title: "No Memories",
+                        message: "There are no memories to export."
                     ) { context in
-                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                        context.addAction(title: "OK", attribute: .accent) {
                             context.dispose()
                         }
                     }
@@ -151,10 +151,10 @@ extension SettingController.SettingContent {
                     .run(anchor: controller.view)
             } catch {
                 let alert = AlertViewController(
-                    title: String(localized: "Export Failed"),
-                    message: String(localized: "Failed to export memories: \(error.localizedDescription)")
+                    title: "Export Failed",
+                    message: "Failed to export memories: \(error.localizedDescription)"
                 ) { context in
-                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                    context.addAction(title: "OK", attribute: .accent) {
                         context.dispose()
                     }
                 }
@@ -165,13 +165,13 @@ extension SettingController.SettingContent {
         @MainActor
         private func clearAllMemories(from controller: UIViewController) async {
             let alert = AlertViewController(
-                title: String(localized: "Clear All Memories"),
-                message: String(localized: "Are you sure you want to delete all stored memories? This action cannot be undone.")
+                title: "Clear All Memories",
+                message: "Are you sure you want to delete all stored memories? This action cannot be undone."
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Clear All"), attribute: .dangerous) {
+                context.addAction(title: "Clear All", attribute: .accent) {
                     context.dispose {
                         do {
                             try await MemoryStore.shared.deleteAllMemoriesAsync()
@@ -184,10 +184,10 @@ extension SettingController.SettingContent {
                         } catch {
                             await MainActor.run {
                                 let errorAlert = AlertViewController(
-                                    title: String(localized: "Error"),
-                                    message: String(localized: "Failed to clear memories: \(error.localizedDescription)")
+                                    title: "Error",
+                                    message: "Failed to clear memories: \(error.localizedDescription)"
                                 ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.addAction(title: "OK", attribute: .accent) {
                                         context.dispose()
                                     }
                                 }

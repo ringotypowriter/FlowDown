@@ -157,13 +157,13 @@ final class MessageListView: UIView {
               ["http", "https"].contains(scheme)
         else {
             let alert = AlertViewController(
-                title: String(localized: "Unable to open link."),
-                message: String(localized: "We are unable to process the link you tapped, either it is invalid or not supported.")
+                title: "Unable to open link.",
+                message: "We are unable to process the link you tapped, either it is invalid or not supported."
             ) { context in
-                context.addAction(title: String(localized: "Dismiss")) {
+                context.addAction(title: "Dismiss") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Copy Content"), attribute: .dangerous) {
+                context.addAction(title: "Copy Content", attribute: .accent) {
                     UIPasteboard.general.string = rawValue
                     context.dispose()
                 }
@@ -172,18 +172,18 @@ final class MessageListView: UIView {
             return
         }
         let menu = UIMenu(children: [
-            UIMenu(title: String(localized: "From \(host)"), options: [.displayInline], children: [
-                UIAction(title: String(localized: "View"), image: UIImage(systemName: "eye")) { [weak self] _ in
+            UIMenu(title: "From \(host)", options: [.displayInline], children: [
+                UIAction(title: "View", image: UIImage(systemName: "eye")) { [weak self] _ in
                     guard let self else { return }
                     Indicator.present(link, referencedView: self)
                 },
             ]),
             UIMenu(options: [.displayInline], children: [
-                UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
+                UIAction(title: "Share", image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }
                     DisposableExporter(data: Data(link.absoluteString.utf8), pathExtension: "url").run(anchor: self, mode: .text)
                 },
-                UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
+                UIAction(title: "Open in Default Browser", image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }
                     Indicator.open(link, referencedView: self)
                 },

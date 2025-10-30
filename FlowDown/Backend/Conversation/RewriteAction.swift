@@ -65,10 +65,10 @@ extension RewriteAction {
     func send(to session: ConversationSession, message: Message.ID, bindView: MessageListView) {
         guard let model = session.models.chat else {
             let alert = AlertViewController(
-                title: String(localized: "Model Not Available"),
-                message: String(localized: "Please select a model to rewrite this message.")
+                title: "Model Not Available",
+                message: "Please select a model to rewrite this message."
             ) { context in
-                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                context.addAction(title: "OK", attribute: .accent) {
                     context.dispose()
                 }
             }

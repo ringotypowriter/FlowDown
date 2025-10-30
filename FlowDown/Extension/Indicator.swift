@@ -55,8 +55,8 @@ enum Indicator {
             let titleString = String(localized: title)
             let messageString = String(localized: message ?? "")
             let alert = AlertProgressIndicatorViewController(
-                title: titleString,
-                message: messageString
+                title: "\(titleString)",
+                message: "\(messageString)"
             )
             controller.present(alert, animated: true) {
                 Task.detached(priority: .userInitiated) {
@@ -65,10 +65,10 @@ enum Indicator {
                         await alert.dismiss()
                         if let error = capturedError {
                             let errorAlert = AlertViewController(
-                                title: String(localized: "Error"),
-                                message: String(localized: "An error occurred: \(error.localizedDescription)")
+                                title: "Error",
+                                message: "An error occurred: \(error.localizedDescription)"
                             ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                context.addAction(title: "OK", attribute: .accent) {
                                     context.dispose()
                                 }
                             }
@@ -90,13 +90,13 @@ enum Indicator {
     static func present(_ url: URL, showThirdPartyContentWarning: Bool = true, referencedView: UIView?) {
         if showThirdPartyContentWarning {
             let alert = AlertViewController(
-                title: String(localized: "Third Party Content"),
-                message: String(localized: "We are not responsible for the content of this website you are about to visit.")
+                title: "Third Party Content",
+                message: "We are not responsible for the content of this website you are about to visit."
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Open"), attribute: .dangerous) {
+                context.addAction(title: "Open", attribute: .accent) {
                     context.dispose {
                         #if targetEnvironment(macCatalyst)
                             UIApplication.shared.open(url)
@@ -125,13 +125,13 @@ enum Indicator {
     static func open(_ url: URL, showThirdPartyContentWarning: Bool = true, referencedView: UIView?) {
         if showThirdPartyContentWarning {
             let alert = AlertViewController(
-                title: String(localized: "Third Party Content"),
-                message: String(localized: "We are not responsible for the content of this website you are about to visit.")
+                title: "Third Party Content",
+                message: "We are not responsible for the content of this website you are about to visit."
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Open"), attribute: .dangerous) {
+                context.addAction(title: "Open", attribute: .accent) {
                     context.dispose {
                         UIApplication.shared.open(url)
                     }

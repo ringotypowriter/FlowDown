@@ -108,13 +108,13 @@ class UpdateManager: NSObject {
 
     private func presentUpdateAlert(controller: UIViewController, package: DistributionChannel.RemotePackage) {
         let alert = AlertViewController(
-            title: String(localized: "Update Available"),
-            message: String(localized: "A new version \(package.tag) is available. Would you like to download it?")
+            title: "Update Available",
+            message: "A new version \(package.tag) is available. Would you like to download it?"
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Download"), attribute: .dangerous) {
+            context.addAction(title: "Download", attribute: .accent) {
                 context.dispose {
                     UIApplication.shared.open(package.downloadURL, options: [:])
                 }

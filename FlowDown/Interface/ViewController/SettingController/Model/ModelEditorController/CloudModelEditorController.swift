@@ -92,8 +92,8 @@ class CloudModelEditorController: StackScrollController {
         let endpointView = ConfigurableInfoView().setTapBlock { view in
             guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
             let input = AlertInputViewController(
-                title: String(localized: "Edit Endpoint"),
-                message: String(localized: "This endpoint is used to send inference requests."),
+                title: "Edit Endpoint",
+                message: "This endpoint is used to send inference requests.",
                 placeholder: "https://",
                 text: model.endpoint.isEmpty ? "https://" : model.endpoint
             ) { output in
@@ -117,8 +117,8 @@ class CloudModelEditorController: StackScrollController {
             guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
             let oldToken = model.token
             let input = AlertInputViewController(
-                title: String(localized: "Edit Workgroup (Optional)"),
-                message: String(localized: "This value will be added to the request to distinguish the workgroup on the remote. This part is optional, if not used, leave it blank."),
+                title: "Edit Workgroup (Optional)",
+                message: "This value will be added to the request to distinguish the workgroup on the remote. This part is optional, if not used, leave it blank.",
                 placeholder: "workgroup-xxx",
                 text: model.token
             ) { newToken in
@@ -131,13 +131,13 @@ class CloudModelEditorController: StackScrollController {
                 }
                 if !list.isEmpty {
                     let alert = AlertViewController(
-                        title: String(localized: "Update All Models"),
-                        message: String(localized: "Would you like to apply the new workgroup to all? This requires the inference endpoint and the old workgroup equal to the current editing.")
+                        title: "Update All Models",
+                        message: "Would you like to apply the new workgroup to all? This requires the inference endpoint and the old workgroup equal to the current editing."
                     ) { context in
-                        context.addAction(title: String(localized: "Cancel")) {
+                        context.addAction(title: "Cancel") {
                             context.dispose()
                         }
-                        context.addAction(title: String(localized: "Update All"), attribute: .dangerous) {
+                        context.addAction(title: "Update All", attribute: .accent) {
                             context.dispose {
                                 for item in list {
                                     ModelManager.shared.editCloudModel(identifier: item.id) {
@@ -197,9 +197,9 @@ class CloudModelEditorController: StackScrollController {
             guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
             let presentEditor = {
                 let input = AlertInputViewController(
-                    title: String(localized: "Edit Model Identifier"),
-                    message: String(localized: "The name of the model to be used."),
-                    placeholder: String(localized: "Model Identifier"),
+                    title: "Edit Model Identifier",
+                    message: "The name of the model to be used.",
+                    placeholder: "Model Identifier",
                     text: model.model_identifier
                 ) { output in
                     ModelManager.shared.editCloudModel(identifier: model.id) {
@@ -268,7 +268,7 @@ class CloudModelEditorController: StackScrollController {
                             ))
                         }
                         let menu = UIMenu(
-                            title: String(localized: "Model List"),
+                            title: "Model List",
                             children: children.count > 1 ? children : children.first?.children ?? []
                         )
                         view.present(menu: menu, anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
@@ -295,13 +295,13 @@ class CloudModelEditorController: StackScrollController {
                 }
 
                 view.present(
-                    menu: .init(title: String(localized: "Edit Model Identifier"), children: [
+                    menu: .init(title: "Edit Model Identifier", children: [
                         UIAction(
-                            title: String(localized: "Edit"),
+                            title: "Edit",
                             image: UIImage(systemName: "character.cursor.ibeam")
                         ) { _ in presentEditor() },
                         UIAction(
-                            title: String(localized: "Fetch from Server"),
+                            title: "Fetch from Server",
                             image: UIImage(systemName: "icloud.and.arrow.down")
                         ) { _ in fetchFromServer() },
                     ]),
@@ -398,7 +398,7 @@ class CloudModelEditorController: StackScrollController {
                 }
             }
             view.present(
-                menu: .init(title: String(localized: "Context Length"), children: children),
+                menu: .init(title: "Context Length", children: children),
                 anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
             )
         }
@@ -420,9 +420,9 @@ class CloudModelEditorController: StackScrollController {
         let nameView = ConfigurableInfoView().setTapBlock { view in
             guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
             let input = AlertInputViewController(
-                title: String(localized: "Edit Model Name"),
-                message: String(localized: "Custom display name for this model."),
-                placeholder: String(localized: "Nickname (Optional)"),
+                title: "Edit Model Name",
+                message: "Custom display name for this model.",
+                placeholder: "Nickname (Optional)",
                 text: model.name
             ) { output in
                 ModelManager.shared.editCloudModel(identifier: model.id) {
@@ -460,7 +460,7 @@ class CloudModelEditorController: StackScrollController {
             var actions: [UIMenuElement] = []
 
             let inheritAction = UIAction(
-                title: String(localized: "Inference default"),
+                title: "Inference default",
                 image: UIImage(systemName: "circle.dashed")
             ) { _ in
                 ModelManager.shared.editCloudModel(identifier: model.id) { item in
@@ -492,7 +492,7 @@ class CloudModelEditorController: StackScrollController {
                 actions.append(action)
             }
 
-            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
+            let menu = UIMenu(title: "Imagination", children: actions)
             view.present(
                 menu: menu,
                 anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)
@@ -564,18 +564,16 @@ class CloudModelEditorController: StackScrollController {
             guard let self,
                   let model = ModelManager.shared.cloudModel(identifier: identifier)
             else { return }
-            let tempFileDir = FileManager.default.temporaryDirectory
-                .appendingPathComponent("DisposableResources")
-                .appendingPathComponent(UUID().uuidString)
-            let tempFile = tempFileDir
-                .appendingPathComponent("Export-\(model.modelDisplayName.sanitizedFileName)\(model.auxiliaryIdentifier)")
-                .appendingPathExtension(ModelManager.flowdownModelConfigurationExtension)
-            try? FileManager.default.createDirectory(at: tempFileDir, withIntermediateDirectories: true)
-            FileManager.default.createFile(atPath: tempFile.path, contents: nil)
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
-            try? encoder.encode(model).write(to: tempFile, options: .atomic)
-            DisposableExporter(deletableItem: tempFile, title: "Export Model").run(anchor: controller.view)
+            guard let data = try? encoder.encode(model) else { return }
+            let fileName = "Export-\(model.modelDisplayName.sanitizedFileName)\(model.auxiliaryIdentifier)"
+            DisposableExporter(
+                data: data,
+                name: fileName,
+                pathExtension: ModelManager.flowdownModelConfigurationExtension,
+                title: "Export Model"
+            ).run(anchor: controller.view)
         }
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Model")
@@ -657,13 +655,13 @@ class CloudModelEditorController: StackScrollController {
 
     @objc func deleteModel() {
         let alert = AlertViewController(
-            title: String(localized: "Delete Model"),
-            message: String(localized: "Are you sure you want to delete this model? This action cannot be undone.")
+            title: "Delete Model",
+            message: "Are you sure you want to delete this model? This action cannot be undone."
         ) { context in
-            context.addAction(title: String(localized: "Cancel")) {
+            context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: String(localized: "Delete"), attribute: .dangerous) {
+            context.addAction(title: "Delete", attribute: .accent) {
                 context.dispose { [weak self] in
                     guard let self else { return }
                     ModelManager.shared.removeCloudModel(identifier: identifier)

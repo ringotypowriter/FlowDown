@@ -55,15 +55,15 @@ extension ModelManager {
 
         if localModels.isEmpty, cloudModels.isEmpty, !appleIntelligenceAvailable {
             let alert = AlertViewController(
-                title: String(localized: "No Model Available"),
+                title: "No Model Available",
                 message: requiresCapabilities.isEmpty
-                    ? String(localized: "Please add some models to use. You can choose to download models, or use cloud model from well known service providers.")
-                    : String(localized: "No model is available for the required capabilities.")
+                    ? "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
+                    : "No model is available for the required capabilities."
             ) { context in
-                context.addAction(title: String(localized: "Cancel")) {
+                context.addAction(title: "Cancel") {
                     context.dispose()
                 }
-                context.addAction(title: String(localized: "Add"), attribute: .dangerous) {
+                context.addAction(title: "Add", attribute: .accent) {
                     context.dispose {
                         if let nav = controller.navigationController {
                             let controller = SettingController.SettingContent.ModelController()
@@ -138,7 +138,7 @@ extension ModelManager {
 
         if allowSelectionWithNone {
             finalChildren.append(UIAction(
-                title: String(localized: "Use None"),
+                title: "Use None",
                 image: .init(systemName: "circle.dashed")
             ) { _ in
                 onCompletion("")
@@ -159,7 +159,7 @@ extension ModelManager {
 
         if !localMenuChildren.isEmpty {
             finalChildren.append(UIMenu(
-                title: String(localized: "Local Models"),
+                title: "Local Models",
                 image: .modelLocal,
                 options: finalOptions,
                 children: localMenuChildren
@@ -167,7 +167,7 @@ extension ModelManager {
         }
         if !cloudMenuChildren.isEmpty {
             finalChildren.append(UIMenu(
-                title: String(localized: "Cloud Models"),
+                title: "Cloud Models",
                 image: .modelCloud,
                 options: finalOptions,
                 children: cloudMenuChildren
@@ -175,7 +175,7 @@ extension ModelManager {
         }
 
         let menu = UIMenu(
-            title: String(localized: "Choose Model"),
+            title: "Choose Model",
             options: .displayInline,
             children: finalChildren
         )
