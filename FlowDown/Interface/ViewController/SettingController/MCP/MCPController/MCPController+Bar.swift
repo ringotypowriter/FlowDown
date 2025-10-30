@@ -10,8 +10,8 @@ import UIKit
 import UniformTypeIdentifiers
 
 extension SettingController.SettingContent.MCPController {
-    @objc func addClientTapped() {
-        let menu = UIMenu(children: [
+    func createAddClientMenuItems() -> [UIMenuElement] {
+        [
             UIMenu(title: String(localized: "MCP Server"), options: [.displayInline], children: [
                 UIMenu(title: String(localized: "MCP Server"), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Create Server"), image: UIImage(systemName: "plus")) { [weak self] _ in
@@ -26,10 +26,7 @@ extension SettingController.SettingContent.MCPController {
                     },
                 ]),
             ]),
-        ])
-        guard let bar = navigationController?.navigationBar else { return }
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+        ]
     }
 
     func presentDocumentPicker() {

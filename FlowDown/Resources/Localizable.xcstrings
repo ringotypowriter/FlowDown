@@ -9625,22 +9625,6 @@
         }
       }
     },
-    "Select Model Type" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select Model Type"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择模型类型"
-          }
-        }
-      }
-    },
     "Send us an email." : {
       "localizations" : {
         "en" : {

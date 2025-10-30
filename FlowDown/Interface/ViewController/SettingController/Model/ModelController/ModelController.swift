@@ -87,19 +87,28 @@ extension SettingController.SettingContent {
             cancellable.removeAll()
         }
 
-        lazy var addItem: UIBarButtonItem = .init(
-            image: .init(systemName: "plus"),
-            style: .plain,
-            target: self,
-            action: #selector(addModelBarItemTapped)
-        )
+        lazy var addItem: UIBarButtonItem = {
+            let item = UIBarButtonItem(
+                image: .init(systemName: "plus"),
+                menu: UIMenu(children: createAddModelMenuItems())
+            )
+            return item
+        }()
 
-        lazy var filterBarItem: UIBarButtonItem = .init(
-            image: .init(systemName: "line.3.horizontal.decrease.circle"),
-            style: .plain,
-            target: self,
-            action: #selector(filterBarItemTapped)
-        )
+        lazy var filterBarItem: UIBarButtonItem = {
+            let deferredMenu = UIDeferredMenuElement.uncached { [weak self] completion in
+                guard let self else {
+                    completion([])
+                    return
+                }
+                completion(createFilterMenuItems())
+            }
+            let item = UIBarButtonItem(
+                image: .init(systemName: "line.3.horizontal.decrease.circle"),
+                menu: UIMenu(title: String(localized: "Filter Options"), children: [deferredMenu])
+            )
+            return item
+        }()
 
         var searchKey: String { navigationItem.searchController?.searchBar.text ?? "" }
 

@@ -87,68 +87,55 @@ extension SettingController.SettingContent.ModelController {
         ]
     }
 
-    @objc func addModelBarItemTapped() {
-        guard let bar = navigationController?.navigationBar else { return }
-
-        let menu = UIMenu(
-            title: "Select Model Type",
-            options: [.displayInline],
-            children: [
-                UIMenu(
-                    title: "Cloud Model",
-                    options: [.displayInline],
-                    children: createCloudModelMenuItems()
-                ),
-                UIMenu(
-                    title: "Local Model",
-                    options: [.displayInline],
-                    children: createLocalModelMenuItems()
-                ),
-                UIMenu(
-                    title: "Import Model",
-                    options: [.displayInline],
-                    children: [
-                        UIAction(
-                            title: "Import from File",
-                            image: .init(systemName: "arrow.down.doc")
-                        ) { [weak self] _ in
-                            guard let self else { return }
-                            let picker = UIDocumentPickerViewController(forOpeningContentTypes: [
-                                .zip, .propertyList, UTType(filenameExtension: "fdmodel") ?? .data,
-                            ], asCopy: true)
-                            picker.title = String(localized: "Import Model")
-                            picker.delegate = self
-                            picker.allowsMultipleSelection = true
-                            picker.modalPresentationStyle = .formSheet
-                            present(picker, animated: true)
-                        },
-                    ]
-                ),
-            ]
-        )
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+    func createAddModelMenuItems() -> [UIMenuElement] {
+        [
+            UIMenu(
+                title: "Cloud Model",
+                options: [.displayInline],
+                children: createCloudModelMenuItems()
+            ),
+            UIMenu(
+                title: "Local Model",
+                options: [.displayInline],
+                children: createLocalModelMenuItems()
+            ),
+            UIMenu(
+                title: "Import Model",
+                options: [.displayInline],
+                children: [
+                    UIAction(
+                        title: "Import from File",
+                        image: .init(systemName: "arrow.down.doc")
+                    ) { [weak self] _ in
+                        guard let self else { return }
+                        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [
+                            .zip, .propertyList, UTType(filenameExtension: "fdmodel") ?? .data,
+                        ], asCopy: true)
+                        picker.title = String(localized: "Import Model")
+                        picker.delegate = self
+                        picker.allowsMultipleSelection = true
+                        picker.modalPresentationStyle = .formSheet
+                        present(picker, animated: true)
+                    },
+                ]
+            ),
+        ]
     }
 
-    @objc func filterBarItemTapped() {
-        guard let bar = navigationController?.navigationBar else { return }
-        let menu = UIMenu(title: String(localized: "Filter Options"), children: [
+    func createFilterMenuItems() -> [UIMenuElement] {
+        [
             UIAction(
                 title: String(localized: "Show Local Models"),
-                image: .modelLocal,
                 state: showLocalModels ? .on : .off
             ) { [weak self] _ in
                 self?.showLocalModels.toggle()
             },
             UIAction(
                 title: String(localized: "Show Cloud Models"),
-                image: .modelCloud,
                 state: showCloudModels ? .on : .off
             ) { [weak self] _ in
                 self?.showCloudModels.toggle()
             },
-        ])
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+        ]
     }
 }

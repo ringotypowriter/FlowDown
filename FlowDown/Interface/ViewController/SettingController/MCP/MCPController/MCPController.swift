@@ -56,9 +56,8 @@ extension SettingController.SettingContent {
             view.backgroundColor = .background
 
             navigationItem.rightBarButtonItem = UIBarButtonItem(
-                barButtonSystemItem: .add,
-                target: self,
-                action: #selector(addClientTapped)
+                image: UIImage(systemName: "plus"),
+                menu: UIMenu(children: createAddClientMenuItems())
             )
 
             dataSource.defaultRowAnimation = .fade

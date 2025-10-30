@@ -68,9 +68,8 @@ class ChatTemplateListController: UIViewController {
         }
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addTemplate)
+            image: UIImage(systemName: "plus"),
+            menu: UIMenu(children: createAddTemplateMenuItems())
         )
 
         ChatTemplateManager.shared.$templates
@@ -98,8 +97,8 @@ class ChatTemplateListController: UIViewController {
         }
     }
 
-    @objc func addTemplate() {
-        let menu = UIMenu(children: [
+    func createAddTemplateMenuItems() -> [UIMenuElement] {
+        [
             UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
                 UIMenu(title: String(localized: "Chat Template"), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Create Template"), image: UIImage(systemName: "plus")) { [weak self] _ in
@@ -119,10 +118,7 @@ class ChatTemplateListController: UIViewController {
                     },
                 ]),
             ]),
-        ])
-        guard let bar = navigationController?.navigationBar else { return }
-        let point: CGPoint = .init(x: bar.bounds.maxX, y: bar.bounds.midY - 16)
-        bar.present(menu: menu, anchorPoint: point)
+        ]
     }
 
     func presentDocumentPicker() {
