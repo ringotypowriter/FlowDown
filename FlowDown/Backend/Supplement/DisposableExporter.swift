@@ -30,11 +30,11 @@ final class DisposableExporter: NSObject {
         let tempURL = tempDir
             .appendingPathComponent(name)
             .appendingPathExtension(pathExtension)
-        
+
         // Ensure parent directory exists
         try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
         try? data.write(to: tempURL)
-        
+
         self.init(deletableItem: tempURL, title: title)
     }
 

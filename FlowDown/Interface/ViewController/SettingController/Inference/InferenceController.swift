@@ -250,13 +250,12 @@ extension SettingController.SettingContent {
 
             // When "Use Chat Model" is enabled, show the chat model
             // Otherwise, show the actual stored auxiliary model
-            let devAuxId: String
-            if defaultAuxiliaryModelAlignWithChatModel.boolValue {
-                devAuxId = ModelManager.ModelIdentifier.defaultModelForConversation
+            let devAuxId: String = if defaultAuxiliaryModelAlignWithChatModel.boolValue {
+                ModelManager.ModelIdentifier.defaultModelForConversation
             } else {
-                devAuxId = ModelManager.shared.defaultModelForAuxiliaryTask
+                ModelManager.ModelIdentifier.storedAuxiliaryTaskModel
             }
-            
+
             var handledAuxModel = false
             if #available(iOS 26.0, macCatalyst 26.0, *), devAuxId == AppleIntelligenceModel.shared.modelIdentifier {
                 defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
@@ -282,7 +281,7 @@ extension SettingController.SettingContent {
                     return []
                 }
                 return ModelManager.shared.buildModelSelectionMenu(
-                    currentSelection: ModelManager.shared.defaultModelForAuxiliaryTask,
+                    currentSelection: ModelManager.ModelIdentifier.storedAuxiliaryTaskModel,
                     allowSelectionWithNone: true
                 ) { [weak self] identifier in
                     ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask = identifier

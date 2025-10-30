@@ -348,6 +348,9 @@ extension ModelManager.ModelIdentifier {
         set { ModelManager.shared.defaultModelForAuxiliaryTask = newValue }
     }
 
+    /// Returns the stored auxiliary model identifier, ignoring the "use chat model" setting
+    static var storedAuxiliaryTaskModel: Self { ModelManager.shared.defaultModelForAuxiliaryTask }
+
     static var defaultModelForAuxiliaryVisualTask: Self {
         get { ModelManager.shared.defaultModelForAuxiliaryVisualTask }
         set { ModelManager.shared.defaultModelForAuxiliaryVisualTask = newValue }
