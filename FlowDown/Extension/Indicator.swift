@@ -23,43 +23,66 @@ enum Indicator {
     }
 
     static func present(
-        title: String,
-        message: String? = nil,
+        title: String.LocalizationValue,
+        message: String.LocalizationValue? = nil,
         preset: SPIndicatorIconPreset = .done,
-        haptic: SPIndicatorHaptic = .success,
         referencingView: UIView? = nil
     ) {
         ensureMainThread {
-            let view = SPIndicatorView(title: title, message: message, preset: preset)
+            let titleString = String(localized: title)
+            let messageString = message.map { String(localized: $0) }
+            let view = SPIndicatorView(title: titleString, message: messageString, preset: preset)
             if let window = referencingView as? UIWindow {
                 view.presentWindow = window
             } else if let window = referencingView?.window {
                 view.presentWindow = window
             }
-            view.present(haptic: haptic, completion: nil)
+            view.present(haptic: .success, completion: nil)
         }
     }
 
-    typealias CompletionHandler = (_ dismissComplete: @escaping @MainActor () -> Void) -> Void
-    typealias CompletionExecutor = (_ completionHandler: @escaping CompletionHandler) -> Void
+    typealias CompletionDismissRequest = @MainActor () async -> Void
+    typealias CompletionCallback = (CompletionDismissRequest) async -> Void
+    typealias ExecutionWithCompletion = (CompletionCallback) async throws -> Void
+
     static func progress(
-        title: String,
-        message: String? = nil,
+        title: String.LocalizationValue,
+        message: String.LocalizationValue? = nil,
         controller: UIViewController,
-        completionExecutor: @escaping CompletionExecutor
+        completionExecutor: @escaping ExecutionWithCompletion
     ) {
-        ensureMainThread {
-            let alert = AlertProgressIndicatorViewController(title: title, message: message ?? "")
-            controller.present(alert, animated: true)
-            let handler: (_ dismissComplete: @escaping () -> Void) -> Void = { block in
-                ensureMainThread {
-                    alert.dismiss(animated: true) {
-                        block()
+        Task { @MainActor in
+            let titleString = String(localized: title)
+            let messageString = String(localized: message ?? "")
+            let alert = AlertProgressIndicatorViewController(
+                title: titleString,
+                message: messageString
+            )
+            controller.present(alert, animated: true) {
+                Task.detached(priority: .userInitiated) {
+                    var capturedError: Error?
+                    let completion: CompletionCallback = { @MainActor callerCompletionItem in
+                        await alert.dismiss()
+                        if let error = capturedError {
+                            let errorAlert = AlertViewController(
+                                title: String(localized: "Error"),
+                                message: String(localized: "An error occurred: \(error.localizedDescription)")
+                            ) { context in
+                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                    context.dispose()
+                                }
+                            }
+                            controller.present(errorAlert, animated: true)
+                        }
+                        await callerCompletionItem()
+                    }
+                    do {
+                        try await completionExecutor(completion)
+                    } catch {
+                        capturedError = error
+                        await completion {}
                     }
                 }
-            }
-            DispatchQueue.global().async {
-                completionExecutor(handler)
             }
         }
     }
@@ -117,6 +140,17 @@ enum Indicator {
             referencedView?.parentViewController?.present(alert, animated: true)
         } else {
             UIApplication.shared.open(url)
+        }
+    }
+}
+
+private extension UIViewController {
+    @MainActor
+    func dismiss() async {
+        await withCheckedContinuation { cont in
+            dismiss(animated: true) {
+                cont.resume(returning: ())
+            }
         }
     }
 }

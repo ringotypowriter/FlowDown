@@ -17,6 +17,9 @@
         }
       }
     },
+    "%@" : {
+
+    },
     "%@ Copy" : {
       "localizations" : {
         "zh-Hans" : {
@@ -409,6 +412,7 @@
       }
     },
     "An error occurred while rewriting the message: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -417,6 +421,9 @@
           }
         }
       }
+    },
+    "An error occurred: %@" : {
+
     },
     "Analyze the conversation and generate a reusable chat template. Extract the core purpose, create a concise name, suggest an appropriate emoji, and write a system prompt that captures the essence of the conversation pattern." : {
       "localizations" : {
@@ -2888,6 +2895,7 @@
       }
     },
     "Failed to Compress Conversation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3009,6 +3017,7 @@
       }
     },
     "Failed to Generate Template" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3373,6 +3382,7 @@
       }
     },
     "Generating New Icon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3382,7 +3392,11 @@
         }
       }
     },
+    "Generating New Icon..." : {
+
+    },
     "Generating New Title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3391,6 +3405,9 @@
           }
         }
       }
+    },
+    "Generating New Title..." : {
+
     },
     "Generating Template" : {
       "localizations" : {
@@ -5892,6 +5909,7 @@
       }
     },
     "Rewrite Failed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -7453,7 +7471,11 @@
         }
       }
     },
+    "Unable to generate title" : {
+
+    },
     "Unable to generate tittle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -7854,6 +7876,7 @@
       }
     },
     "Verification Failed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

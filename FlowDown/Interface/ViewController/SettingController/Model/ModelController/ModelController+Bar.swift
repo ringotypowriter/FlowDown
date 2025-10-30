@@ -25,9 +25,8 @@ extension SettingController.SettingContent.ModelController {
                     ) { [weak self] _ in
                         _ = ModelManager.shared.newCloudModel(profile: model)
                         Indicator.present(
-                            title: String(localized: "Model Added"),
+                            title: "Model Added",
                             preset: .done,
-                            haptic: .success,
                             referencingView: self?.view
                         )
                     }

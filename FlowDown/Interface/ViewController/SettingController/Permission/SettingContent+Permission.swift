@@ -68,7 +68,7 @@ extension SettingController.SettingContent {
             navigationItem.rightBarButtonItem = .init(systemItem: .refresh, primaryAction: .init { _ in
                 self.updateValues()
                 Indicator.present(
-                    title: String(localized: "Refreshed"),
+                    title: "Refreshed",
                     referencingView: self.view
                 )
             })
@@ -161,7 +161,7 @@ extension SettingController.SettingContent {
                     view.configure(value: String(localized: "Authorized"))
                     view.setTapBlock { _ in
                         Indicator.present(
-                            title: String(localized: "Authorized"),
+                            title: "Authorized",
                             referencingView: view
                         )
                     }

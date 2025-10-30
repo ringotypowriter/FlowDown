@@ -112,10 +112,7 @@ class LocalModelEditorController: StackScrollController {
                     image: UIImage(systemName: "person.crop.square.filled.and.at.rectangle")
                 ) { _ in
                     UIPasteboard.general.string = model?.model_identifier
-                    Indicator.present(
-                        title: String(localized: "Copied"),
-                        referencingView: view
-                    )
+                    Indicator.present(title: "Copied", referencingView: view)
                 }]
             ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
         }
@@ -154,7 +151,7 @@ class LocalModelEditorController: StackScrollController {
                     UIPasteboard.general.string = dateFormatter
                         .string(from: model?.downloaded ?? .distantPast)
                     Indicator.present(
-                        title: String(localized: "Copied"),
+                        title: "Copied",
                         referencingView: view
                     )
                 }]
@@ -328,30 +325,22 @@ class LocalModelEditorController: StackScrollController {
             verifyButtonReader?.isUserInteractionEnabled = false
             verifyButtonReader?.alpha = 0.5
             Indicator.progress(
-                title: String(localized: "Verifying Model"),
+                title: "Verifying Model",
                 controller: self
             ) { completionHandler in
-                ModelManager.shared.testLocalModel(model) { result in
-                    DispatchQueue.main.async {
-                        verifyButtonReader?.isUserInteractionEnabled = true
-                        verifyButtonReader?.alpha = 1
-                        completionHandler {
-                            switch result {
-                            case .success:
-                                Indicator.present(
-                                    title: String(localized: "Model Verified"),
-                                    referencingView: self.view
-                                )
-                            case let .failure(failure):
-                                Indicator.present(
-                                    title: String(localized: "Failed"),
-                                    message: failure.localizedDescription,
-                                    preset: .error,
-                                    referencingView: self.view
-                                )
-                            }
-                        }
+                let result = await withCheckedContinuation { continuation in
+                    ModelManager.shared.testLocalModel(model) { result in
+                        continuation.resume(returning: result)
                     }
+                }
+                try result.get()
+                await completionHandler {
+                    verifyButtonReader?.isUserInteractionEnabled = true
+                    verifyButtonReader?.alpha = 1
+                    Indicator.present(
+                        title: "Model Verified",
+                        referencingView: self.view
+                    )
                 }
             }
         }
@@ -391,23 +380,25 @@ class LocalModelEditorController: StackScrollController {
             guard let self else { return }
             guard let model = ModelManager.shared.localModel(identifier: identifier) else { return }
             Indicator.progress(
-                title: String(localized: "Exporting Model"),
+                title: "Exporting Model",
                 controller: self
             ) { completionHandler in
-                ModelManager.shared.pack(model: model) { url, _ in
-                    completionHandler {
-                        guard let url else {
-                            Indicator.present(
-                                title: String(localized: "Failed to Export"),
-                                preset: .error,
-                                haptic: .error,
-                                referencingView: exportOptionReader
-                            )
-                            return
-                        }
-                        DisposableExporter(deletableItem: url, title: "Export Model")
-                            .run(anchor: exportOptionReader ?? self.view)
+                let (url, _) = await withCheckedContinuation { continuation in
+                    ModelManager.shared.pack(model: model) { url, error in
+                        continuation.resume(returning: (url, error))
                     }
+                }
+                await completionHandler {
+                    guard let url else {
+                        Indicator.present(
+                            title: "Failed to Export",
+                            preset: .error,
+                            referencingView: exportOptionReader
+                        )
+                        return
+                    }
+                    DisposableExporter(deletableItem: url, title: "Export Model")
+                        .run(anchor: exportOptionReader ?? self.view)
                 }
             }
         }

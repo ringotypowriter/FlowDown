@@ -153,14 +153,8 @@ extension SettingController.SettingContent {
 
                 try jsonData.write(to: fileURL)
 
-                #if targetEnvironment(macCatalyst)
-                    let documentPicker = UIDocumentPickerViewController(forExporting: [fileURL])
-                    documentPicker.title = String(localized: "Export Memories")
-                    documentPicker.modalPresentationStyle = .formSheet
-                    controller.present(documentPicker, animated: true)
-                #else
-                    DisposableExporter(deletableItem: fileURL).run(anchor: controller.view)
-                #endif
+                DisposableExporter(deletableItem: fileURL, title: "Export Memories")
+                    .run(anchor: controller.view)
             } catch {
                 let alert = AlertViewController(
                     title: String(localized: "Export Failed"),
@@ -190,7 +184,7 @@ extension SettingController.SettingContent {
                                 try await MemoryStore.shared.deleteAllMemoriesAsync()
                                 await MainActor.run {
                                     Indicator.present(
-                                        title: String(localized: "Memories Cleared"),
+                                        title: "Memories Cleared",
                                         referencingView: controller.view
                                     )
                                 }

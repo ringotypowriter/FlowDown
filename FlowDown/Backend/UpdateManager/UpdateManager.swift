@@ -63,9 +63,8 @@ class UpdateManager: NSObject {
                     self.presentUpdateAlert(controller: controller, package: package)
                 } else {
                     Indicator.present(
-                        title: String(localized: "No Update Available"),
+                        title: "No Update Available",
                         preset: .done,
-                        haptic: .success,
                         referencingView: controller.view
                     )
                 }
@@ -73,22 +72,20 @@ class UpdateManager: NSObject {
         }
 
         Indicator.progress(
-            title: String(localized: "Checking for Updates"),
+            title: "Checking for Updates",
             controller: controller
         ) { completionHandler in
-            Task.detached {
-                var package: DistributionChannel.RemotePackage?
-                do {
-                    let packages = try await self.currentChannel.getRemoteVersion()
-                    package = self.newestPackage(from: packages)
-                    package = self.updatePackage(from: package)
-                    Logger.app.infoFile("remote packages: \(packages)")
-                } catch {
-                    Logger.app.errorFile("failed to check for updates: \(error.localizedDescription)")
-                }
-                completionHandler {
-                    completion(package: package)
-                }
+            var package: DistributionChannel.RemotePackage?
+            do {
+                let packages = try await self.currentChannel.getRemoteVersion()
+                package = self.newestPackage(from: packages)
+                package = self.updatePackage(from: package)
+                Logger.app.infoFile("remote packages: \(packages)")
+            } catch {
+                Logger.app.errorFile("failed to check for updates: \(error.localizedDescription)")
+            }
+            await completionHandler {
+                completion(package: package)
             }
         }
     }

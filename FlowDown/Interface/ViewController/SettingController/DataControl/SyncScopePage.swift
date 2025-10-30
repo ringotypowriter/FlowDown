@@ -87,34 +87,18 @@ final class SyncScopePage: StackScrollController {
                     return
                 }
 
-                Indicator.progress(title: String(localized: "Refreshing..."), controller: controller) { completion in
-                    Task { @MainActor in
-                        do {
-                            try await syncEngine.fetchChanges()
-                            completion {
-                                let alert = AlertViewController(
-                                    title: String(localized: "Update Requested"),
-                                    message: String(localized: "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete.")
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                controller.present(alert, animated: true)
-                            }
-                        } catch {
-                            completion {
-                                let alert = AlertViewController(
-                                    title: String(localized: "Error Occurred"),
-                                    message: error.localizedDescription
-                                ) { context in
-                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                        context.dispose()
-                                    }
-                                }
-                                controller.present(alert, animated: true)
+                Indicator.progress(title: "Refreshing...", controller: controller) { completion in
+                    try await syncEngine.fetchChanges()
+                    await completion {
+                        let alert = AlertViewController(
+                            title: String(localized: "Update Requested"),
+                            message: String(localized: "The request to fetch updates has been sent. Depending on the amount of data, it may take some time to complete.")
+                        ) { context in
+                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                context.dispose()
                             }
                         }
+                        controller.present(alert, animated: true)
                     }
                 }
             }

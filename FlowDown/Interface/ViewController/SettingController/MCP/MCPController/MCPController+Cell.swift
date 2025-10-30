@@ -134,9 +134,7 @@ extension SettingController.SettingContent.MCPController {
         }
 
         private func exportServer(_ serverId: ModelContextServer.ID) {
-            guard let server = MCPService.shared.server(with: serverId),
-                  let parentViewController
-            else { return }
+            guard let server = MCPService.shared.server(with: serverId) else { return }
 
             let tempFileDir = FileManager.default.temporaryDirectory
                 .appendingPathComponent("DisposableResources")

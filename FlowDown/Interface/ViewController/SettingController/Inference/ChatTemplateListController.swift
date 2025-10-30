@@ -241,7 +241,7 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
         guard !urls.isEmpty else { return }
 
         Indicator.progress(
-            title: String(localized: "Importing Templates"),
+            title: "Importing Templates",
             controller: self
         ) { completionHandler in
             var success = 0
@@ -254,7 +254,7 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
                     let data = try Data(contentsOf: url)
                     let decoder = PropertyListDecoder()
                     let template = try decoder.decode(ChatTemplate.self, from: data)
-                    DispatchQueue.main.asyncAndWait {
+                    await MainActor.run {
                         ChatTemplateManager.shared.addTemplate(template)
                     }
                     success += 1
@@ -263,7 +263,11 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
                 }
             }
 
-            completionHandler {
+            if success == 0, let firstError = failure.first {
+                throw firstError
+            }
+
+            await completionHandler {
                 if !failure.isEmpty {
                     let alert = AlertViewController(
                         title: String(localized: "Import Failed"),
@@ -280,9 +284,8 @@ extension ChatTemplateListController: UIDocumentPickerDelegate {
                     self.present(alert, animated: true)
                 } else {
                     Indicator.present(
-                        title: String(localized: "Imported \(success) templates."),
+                        title: "Imported \(success) templates.",
                         preset: .done,
-                        haptic: .success,
                         referencingView: self.view
                     )
                 }

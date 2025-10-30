@@ -132,9 +132,8 @@ extension ChatView: RichEditorView.Delegate {
 
     func onRichEditorError(_ error: String) {
         Indicator.present(
-            title: error,
+            title: "\(error)",
             preset: .error,
-            haptic: .error,
             referencingView: self
         )
     }

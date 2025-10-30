@@ -96,40 +96,21 @@ extension RewriteAction {
         ]
 
         Indicator.progress(
-            title: String(localized: "Rewriting Message"),
+            title: "Rewriting Message",
             controller: controller
         ) { completionHandler in
-            Task.detached {
-                do {
-                    let stream = try await ModelManager.shared.streamingInfer(
-                        with: model,
-                        input: messageBody
-                    )
-                    for try await resp in stream {
-                        message.update(\.document, to: resp.content)
-                        session.notifyMessagesDidChange(scrolling: false)
-                        session.save()
-                    }
-                    session.save()
-                    await MainActor.run {
-                        session.notifyMessagesDidChange(scrolling: false)
-                        completionHandler {}
-                    }
-                } catch {
-                    await MainActor.run {
-                        completionHandler {
-                            let alert = AlertViewController(
-                                title: String(localized: "Rewrite Failed"),
-                                message: String(localized: "An error occurred while rewriting the message: \(error.localizedDescription)")
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                    context.dispose()
-                                }
-                            }
-                            controller.present(alert, animated: true)
-                        }
-                    }
-                }
+            let stream = try await ModelManager.shared.streamingInfer(
+                with: model,
+                input: messageBody
+            )
+            for try await resp in stream {
+                message.update(\.document, to: resp.content)
+                session.notifyMessagesDidChange(scrolling: false)
+                session.save()
+            }
+            session.save()
+            await completionHandler {
+                session.notifyMessagesDidChange(scrolling: false)
             }
         }
     }

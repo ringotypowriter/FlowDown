@@ -221,8 +221,8 @@ class CloudModelEditorController: StackScrollController {
                 func postProcessList(list: [String]) {
                     if list.isEmpty {
                         Indicator.present(
-                            title: String(localized: "Failed"),
-                            message: String(localized: "No models found."),
+                            title: "Failed",
+                            message: "No models found.",
                             preset: .error,
                             referencingView: view
                         )
@@ -278,15 +278,18 @@ class CloudModelEditorController: StackScrollController {
                     view.isUserInteractionEnabled = false
                     view.alpha = 0.5
                     Indicator.progress(
-                        title: String(localized: "Fetching Model List"),
+                        title: "Fetching Model List",
                         controller: self
                     ) { completionHandler in
-                        ModelManager.shared.fetchModelList(identifier: model.id) { list in
-                            DispatchQueue.main.async {
-                                view.isUserInteractionEnabled = true
-                                view.alpha = 1
-                                completionHandler { postProcessList(list: list) }
+                        let list = await withCheckedContinuation { continuation in
+                            ModelManager.shared.fetchModelList(identifier: model.id) { list in
+                                continuation.resume(returning: list)
                             }
+                        }
+                        await completionHandler {
+                            view.isUserInteractionEnabled = true
+                            view.alpha = 1
+                            postProcessList(list: list)
                         }
                     }
                 }
@@ -519,30 +522,22 @@ class CloudModelEditorController: StackScrollController {
             verifyButtonReader?.isUserInteractionEnabled = false
             verifyButtonReader?.alpha = 0.5
             Indicator.progress(
-                title: String(localized: "Verifying Model"),
+                title: "Verifying Model",
                 controller: self
             ) { completionHandler in
-                ModelManager.shared.testCloudModel(model) { result in
-                    DispatchQueue.main.async {
-                        verifyButtonReader?.isUserInteractionEnabled = true
-                        verifyButtonReader?.alpha = 1
-                        completionHandler {
-                            switch result {
-                            case .success:
-                                Indicator.present(
-                                    title: String(localized: "Model Verified"),
-                                    referencingView: self.view
-                                )
-                            case let .failure(failure):
-                                Indicator.present(
-                                    title: String(localized: "Failed"),
-                                    message: failure.localizedDescription,
-                                    preset: .error,
-                                    referencingView: self.view
-                                )
-                            }
-                        }
+                let result = await withCheckedContinuation { continuation in
+                    ModelManager.shared.testCloudModel(model) { result in
+                        continuation.resume(returning: result)
                     }
+                }
+                try result.get()
+                await completionHandler {
+                    verifyButtonReader?.isUserInteractionEnabled = true
+                    verifyButtonReader?.alpha = 1
+                    Indicator.present(
+                        title: "Model Verified",
+                        referencingView: self.view
+                    )
                 }
             }
         }

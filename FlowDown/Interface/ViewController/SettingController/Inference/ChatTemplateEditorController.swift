@@ -128,33 +128,24 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         ) { [self] instructions in
             guard !instructions.isEmpty else { return }
             Indicator.progress(
-                title: String(localized: "Rewriting Template") + "...",
+                title: "Rewriting Template",
                 controller: self
             ) { completionHandler in
-                ChatTemplateManager.shared.rewriteTemplate(
-                    template: self.template,
-                    request: instructions,
-                    model: defaultModel
-                ) { result in
-                    completionHandler {
-                        switch result {
-                        case let .success(success):
-                            self.template = success
-                            self.title = success.name
-                            self.nameView.configure(value: success.name)
-                            self.textEditor.text = success.prompt
-                        case let .failure(failure):
-                            let alert = AlertViewController(
-                                title: String(localized: "Rewrite Failed"),
-                                message: failure.localizedDescription
-                            ) { context in
-                                context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                    context.dispose()
-                                }
-                            }
-                            self.present(alert, animated: true)
-                        }
+                let result = await withCheckedContinuation { continuation in
+                    ChatTemplateManager.shared.rewriteTemplate(
+                        template: self.template,
+                        request: instructions,
+                        model: defaultModel
+                    ) { result in
+                        continuation.resume(returning: result)
                     }
+                }
+                let newTemplate = try result.get()
+                await completionHandler {
+                    self.template = newTemplate
+                    self.title = newTemplate.name
+                    self.nameView.configure(value: newTemplate.name)
+                    self.textEditor.text = newTemplate.prompt
                 }
             }
         }

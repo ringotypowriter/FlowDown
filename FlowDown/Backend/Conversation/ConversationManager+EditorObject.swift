@@ -49,9 +49,8 @@ extension ConversationManager {
                         ConversationManager.shared.clearRichEditorObject()
                         removeAllEditorObjectsPublisher.send(())
                         Indicator.present(
-                            title: String(localized: "Done"),
+                            title: "Done",
                             preset: .done,
-                            haptic: .success,
                             referencingView: controller?.view
                         )
                     }

@@ -391,9 +391,8 @@ extension MessageListView: ListViewAdapter {
                 UIAction(title: String(localized: "Copy"), image: .init(systemName: "doc.on.doc")) { _ in
                     UIPasteboard.general.string = representation.content
                     Indicator.present(
-                        title: String(localized: "Copied"),
+                        title: "Copied",
                         preset: .done,
-                        haptic: .success,
                         referencingView: self
                     )
                 },
@@ -422,9 +421,8 @@ extension MessageListView: ListViewAdapter {
                         }
                         UIPasteboard.general.image = image
                         Indicator.present(
-                            title: String(localized: "Copied"),
+                            title: "Copied",
                             preset: .done,
-                            haptic: .success,
                             referencingView: self
                         )
                     },

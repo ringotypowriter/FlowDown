@@ -166,7 +166,7 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
         guard !urls.isEmpty else { return }
 
         Indicator.progress(
-            title: String(localized: "Importing MCP Servers"),
+            title: "Importing MCP Servers",
             controller: self
         ) { completionHandler in
             var success = 0
@@ -178,7 +178,7 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
                     defer { url.stopAccessingSecurityScopedResource() }
                     let data = try Data(contentsOf: url)
                     let server = try ModelContextServer.decodeCompatible(from: data)
-                    DispatchQueue.main.asyncAndWait {
+                    await MainActor.run {
                         MCPService.shared.insert(server)
                     }
                     success += 1
@@ -187,7 +187,11 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
                 }
             }
 
-            completionHandler {
+            if success == 0, let firstError = failure.first {
+                throw firstError
+            }
+
+            await completionHandler {
                 if !failure.isEmpty {
                     let alert = AlertViewController(
                         title: String(localized: "Import Failed"),
@@ -204,9 +208,8 @@ extension SettingController.SettingContent.MCPController: UIDocumentPickerDelega
                     self.present(alert, animated: true)
                 } else {
                     Indicator.present(
-                        title: String(localized: "Imported \(success) servers."),
+                        title: "Imported \(success) servers.",
                         preset: .done,
-                        haptic: .success,
                         referencingView: self.view
                     )
                 }

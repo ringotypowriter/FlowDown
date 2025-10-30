@@ -375,34 +375,23 @@ extension MCPEditorController {
 
     func testConfiguration() {
         Indicator.progress(
-            title: String(localized: "Verifying Configuration"),
+            title: "Verifying Configuration",
             controller: self
         ) { completionHandler in
-            MCPService.shared.testConnection(
-                serverID: self.serverId
-            ) { result in
-                completionHandler {
-                    switch result {
-                    case let .success(tools):
-                        Indicator.present(
-                            title: String(localized: "Configuration Verified"),
-                            haptic: .success,
-                            referencingView: self.view
-                        )
-                        self.testFooterView.with(footer: "Available tool(s): \(tools)")
-                    case let .failure(error):
-                        let alert = AlertViewController(
-                            title: String(localized: "Verification Failed"),
-                            message: error.localizedDescription
-                        ) { context in
-                            context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                context.dispose()
-                            }
-                        }
-                        self.present(alert, animated: true)
-                        self.testFooterView.with(rawFooter: error.localizedDescription)
-                    }
+            let result = await withCheckedContinuation { continuation in
+                MCPService.shared.testConnection(
+                    serverID: self.serverId
+                ) { result in
+                    continuation.resume(returning: result)
                 }
+            }
+            let tools = try result.get()
+            await completionHandler {
+                Indicator.present(
+                    title: "Configuration Verified",
+                    referencingView: self.view
+                )
+                self.testFooterView.with(footer: "Available tool(s): \(tools)")
             }
         }
     }
