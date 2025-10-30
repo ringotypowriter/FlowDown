@@ -115,6 +115,7 @@ open class MLXChatClient: ChatService {
         var userInput = userInput(body: body)
         let generateParameters = generateParameters(body: body)
         let container: ModelContainer
+        let modelConfiguration = modelConfiguration
         do {
             logger.debug("attempting to load LLM model from \(modelConfiguration.modelDirectory().absoluteString)")
             container = try await LLMModelFactory.shared.loadContainer(configuration: modelConfiguration)
