@@ -247,8 +247,9 @@ extension ChatView: RichEditorView.Delegate {
                             image: .init(systemName: tool.interfaceIcon),
                             attributes: [.keepsMenuPresented],
                             state: tool.isEnabled ? .on : .off
-                        ) { _ in
+                        ) { action in
                             tool.isEnabled.toggle()
+                            action.state = tool.isEnabled ? .on : .off
                         }
                     }
                 }
@@ -260,7 +261,6 @@ extension ChatView: RichEditorView.Delegate {
                 ))
                 toolMenuItems.append(UIMenu(
                     title: String(localized: "Memory Tools"),
-//                    options: [.displayInline],
                     children: createAction(for: ModelToolsManager.shared.tools.filter { tool in
                         false
                             || tool is MTStoreMemoryTool
