@@ -18,6 +18,13 @@ final class MessageListView: UIView {
 
     lazy var dataSource: ListViewDiffableDataSource<Entry> = .init(listView: listView)
 
+    // Temporary storage for link menu actions
+    private var currentTappedLink: URL?
+    private lazy var editMenuInteraction: UIEditMenuInteraction = {
+        let interaction = UIEditMenuInteraction(delegate: self)
+        return interaction
+    }()
+
     private var entryCount = 0
     private let updateQueue = DispatchQueue(label: "MessageListView.UpdateQueue", qos: .userInteractive)
 
@@ -91,6 +98,9 @@ final class MessageListView: UIView {
             guard $0 is UIPanGestureRecognizer else { return }
             $0.cancelsTouchesInView = false
         }
+        
+        // Add edit menu interaction for link actions
+        addInteraction(editMenuInteraction)
 
         MarkdownTheme.fontScaleDidChange
             .ensureMainThread()
@@ -152,7 +162,6 @@ final class MessageListView: UIView {
 
     private func processLinkTapped(link: URL?, rawValue: String, location: CGPoint) {
         guard let link,
-              let host = link.host,
               let scheme = link.scheme,
               ["http", "https"].contains(scheme)
         else {
@@ -171,25 +180,10 @@ final class MessageListView: UIView {
             parentViewController?.present(alert, animated: true)
             return
         }
-        let menu = UIMenu(children: [
-            UIMenu(title: String(localized: "From \(host)"), options: [.displayInline], children: [
-                UIAction(title: String(localized: "View"), image: UIImage(systemName: "eye")) { [weak self] _ in
-                    guard let self else { return }
-                    Indicator.present(link, referencedView: self)
-                },
-            ]),
-            UIMenu(options: [.displayInline], children: [
-                UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
-                    guard let self else { return }
-                    DisposableExporter(data: Data(link.absoluteString.utf8), pathExtension: "url").run(anchor: self, mode: .text)
-                },
-                UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
-                    guard let self else { return }
-                    Indicator.open(link, referencedView: self)
-                },
-            ]),
-        ])
-        present(menu: menu, anchorPoint: .init(x: location.x, y: location.y + 4))
+        currentTappedLink = link
+
+        let configuration = UIEditMenuConfiguration(identifier: nil, sourcePoint: location)
+        editMenuInteraction.presentEditMenu(with: configuration)
     }
 
     func updateList() {
@@ -245,5 +239,47 @@ extension MessageListView: UIScrollViewDelegate {
         if !decelerate {
             updateAutoScrolling()
         }
+    }
+
+}
+
+// MARK: - UIEditMenuInteractionDelegate
+
+extension MessageListView: UIEditMenuInteractionDelegate {
+    func editMenuInteraction(
+        _ interaction: UIEditMenuInteraction,
+        menuFor configuration: UIEditMenuConfiguration,
+        suggestedActions: [UIMenuElement]
+    ) -> UIMenu? {
+        guard let link = currentTappedLink else { return nil }
+        
+        let viewAction = UIAction(
+            title: String(localized: "View"),
+            image: UIImage(systemName: "eye")
+        ) { [weak self] _ in
+            guard let self else { return }
+            Indicator.present(link, referencedView: self)
+            self.currentTappedLink = nil
+        }
+        
+        let shareAction = UIAction(
+            title: String(localized: "Share"),
+            image: UIImage(systemName: "square.and.arrow.up")
+        ) { [weak self] _ in
+            guard let self else { return }
+            DisposableExporter(data: Data(link.absoluteString.utf8), pathExtension: "url").run(anchor: self, mode: .text)
+            self.currentTappedLink = nil
+        }
+        
+        let openAction = UIAction(
+            title: String(localized: "Open in Default Browser"),
+            image: UIImage(systemName: "safari")
+        ) { [weak self] _ in
+            guard let self else { return }
+            Indicator.open(link, referencedView: self)
+            self.currentTappedLink = nil
+        }
+        
+        return UIMenu(children: [viewAction, shareAction, openAction])
     }
 }
