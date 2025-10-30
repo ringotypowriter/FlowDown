@@ -130,7 +130,7 @@ class HubModelDetailController: StackScrollController {
         }
         openHuggingFace.configure(icon: UIImage(systemName: "safari"))
         openHuggingFace.configure(title: "Open in Hugging Face")
-        openHuggingFace.configure(rawDescription: model.id)
+        openHuggingFace.configure(description: "\(model.id)")
         stackView.addArrangedSubviewWithMargin(openHuggingFace)
         stackView.addArrangedSubview(SeparatorView())
 

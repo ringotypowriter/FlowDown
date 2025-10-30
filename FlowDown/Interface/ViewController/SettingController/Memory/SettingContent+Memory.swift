@@ -86,7 +86,6 @@ extension SettingController.SettingContent {
                 title: "Export Memories",
                 explain: "Export all memories as JSON file.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
                     Task {
                         await self.exportMemories(from: controller)
                     }
@@ -101,7 +100,6 @@ extension SettingController.SettingContent {
                 title: "Clear All Memories",
                 explain: "Delete all stored memories permanently.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
                     Task {
                         await self.clearAllMemories(from: controller)
                     }

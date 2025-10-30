@@ -198,8 +198,8 @@ extension ChatTemplateListController {
             } else {
                 view.configure(icon: UIImage(systemName: "person.crop.circle.fill"))
             }
-            view.configure(rawTitle: template.name)
-            view.configure(rawDescription: template.prompt)
+            view.configure(title: "\(template.name)")
+            view.configure(description: "\(template.prompt)")
         }
 
         func load(_ itemIdentifier: ChatTemplate.ID) {

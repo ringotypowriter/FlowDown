@@ -102,7 +102,7 @@ extension SettingController.SettingContent.SupportController {
                 title: "View Logs",
                 explain: "Inspect recent application logs for troubleshooting.",
                 ephemeralAnnotation: .action { controller in
-                    controller?.navigationController?.pushViewController(LogViewerController(), animated: true)
+                    controller.navigationController?.pushViewController(LogViewerController(), animated: true)
                 }
             ),
         ]
@@ -116,7 +116,7 @@ extension SettingController.SettingContent.SupportController {
                 title: "Open Source Licenses",
                 explain: "These are the open-source licenses for the frameworks used in this app.",
                 ephemeralAnnotation: .action { controller in
-                    controller?.navigationController?.pushViewController(OpenSourceLicenseController(), animated: true)
+                    controller.navigationController?.pushViewController(OpenSourceLicenseController(), animated: true)
                 }
             ),
         ]
@@ -130,7 +130,7 @@ extension SettingController.SettingContent.SupportController {
                 title: "Privacy Policy",
                 explain: "Tells you how we handle your data.",
                 ephemeralAnnotation: .action { controller in
-                    controller?.navigationController?.pushViewController(PrivacyPolicyController(), animated: true)
+                    controller.navigationController?.pushViewController(PrivacyPolicyController(), animated: true)
                 }
             ),
         ]

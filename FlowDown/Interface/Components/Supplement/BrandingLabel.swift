@@ -29,7 +29,7 @@ class BrandingLabel: GlyphixTextLabel {
                 BrandingLabel.setBrandingValue(text)
                 NotificationCenter.default.post(name: .brandingLabelNeedsUpdate, object: nil)
             }
-            controller?.present(alert, animated: true)
+            controller.present(alert, animated: true)
         }
     )
 

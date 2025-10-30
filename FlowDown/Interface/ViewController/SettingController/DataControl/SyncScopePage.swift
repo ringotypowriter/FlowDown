@@ -74,8 +74,6 @@ final class SyncScopePage: StackScrollController {
             title: "Fetch Updates Now",
             explain: "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete",
             ephemeralAnnotation: .action { controller in
-                guard let controller else { return }
-
                 guard SyncEngine.isSyncEnabled else {
                     let alert = AlertViewController(
                         title: String(localized: "Error Occurred"),

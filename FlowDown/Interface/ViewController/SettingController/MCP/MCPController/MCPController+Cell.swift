@@ -66,7 +66,7 @@ extension SettingController.SettingContent.MCPController {
             }
 
             configurableView.configure(icon: icon)
-            configurableView.configure(rawTitle: client.displayName)
+            configurableView.configure(title: "\(client.displayName)")
 
             var descriptions: [String] = []
             descriptions.append(client.type.rawValue.uppercased())
@@ -81,7 +81,8 @@ extension SettingController.SettingContent.MCPController {
                 configurableView.iconView.tintColor = .systemGray
             }
 
-            configurableView.configure(rawDescription: descriptions.joined(separator: " • "))
+            let desc = descriptions.joined(separator: " • ")
+            configurableView.configure(description: "\(desc)")
         }
 
         private func getConnectionStatusText(_ status: ModelContextServer.ConnectionStatus) -> String {

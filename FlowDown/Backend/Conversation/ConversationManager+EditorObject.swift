@@ -51,12 +51,12 @@ extension ConversationManager {
                         Indicator.present(
                             title: "Done",
                             preset: .done,
-                            referencingView: controller?.view
+                            referencingView: controller.view
                         )
                     }
                 }
             }
-            controller?.present(alert, animated: true)
+            controller.present(alert, animated: true)
         }
     )
 }

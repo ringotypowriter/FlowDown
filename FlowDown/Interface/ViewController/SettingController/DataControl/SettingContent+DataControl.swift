@@ -107,7 +107,6 @@ extension SettingController.SettingContent {
                 title: "Import Database",
                 explain: "Replace all local data with a previous database export.",
                 ephemeralAnnotation: .action { [weak self] controller in
-                    guard let controller else { return }
                     self?.presentImportConfirmation(from: controller)
                 }
             ).createView()
@@ -127,7 +126,6 @@ extension SettingController.SettingContent {
                 title: "Export Database",
                 explain: "Export the database file.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
                     Indicator.progress(
                         title: "Exporting...",
                         controller: controller
@@ -176,12 +174,12 @@ extension SettingController.SettingContent {
                             context.dispose { ConversationManager.shared.eraseAll()
                                 Indicator.present(
                                     title: "Deleted",
-                                    referencingView: controller?.view
+                                    referencingView: controller.view
                                 )
                             }
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(deleteAllConv)
@@ -221,12 +219,12 @@ extension SettingController.SettingContent {
                             DiggerCache.cleanDownloadTempFiles()
                             Indicator.present(
                                 title: "Cleaned",
-                                referencingView: controller?.view
+                                referencingView: controller.view
                             )
                             context.dispose {}
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
 
@@ -252,12 +250,12 @@ extension SettingController.SettingContent {
                                 try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
                                 Indicator.present(
                                     title: "Done",
-                                    referencingView: controller?.view
+                                    referencingView: controller.view
                                 )
                             }
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
 
@@ -284,8 +282,6 @@ extension SettingController.SettingContent {
                 title: "Delete iCloud Data ...",
                 explain: "Delete data stored in iCloud.",
                 ephemeralAnnotation: .action { controller in
-                    guard let controller else { return }
-
                     guard SyncEngine.isSyncEnabled else {
                         let alert = AlertViewController(
                             title: String(localized: "Error Occurred"),
@@ -356,7 +352,7 @@ extension SettingController.SettingContent {
                             }
                         }
                     }
-                    controller?.present(alert, animated: true)
+                    controller.present(alert, animated: true)
                 }
             ).createView()
 
