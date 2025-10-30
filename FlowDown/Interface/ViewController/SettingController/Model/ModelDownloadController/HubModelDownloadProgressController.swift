@@ -255,17 +255,18 @@ class HubModelDownloadProgressController: UIViewController {
         progressBarContainer.addSubview(progressBarFill)
         progressBarFillWidthConstraint = progressBarFill.widthAnchor.constraint(equalTo: progressBarContainer.widthAnchor, multiplier: 0)
 
-        NSLayoutConstraint.activate([
-            progressBarFill.leadingAnchor.constraint(equalTo: progressBarContainer.leadingAnchor),
-            progressBarFill.topAnchor.constraint(equalTo: progressBarContainer.topAnchor),
-            progressBarFill.bottomAnchor.constraint(equalTo: progressBarContainer.bottomAnchor),
-            progressBarFillWidthConstraint!,
+        progressBarFill.snp.makeConstraints { make in
+            make.leading.top.bottom.equalToSuperview()
+        }
+        progressBarFillWidthConstraint?.isActive = true
 
-            progressBarContainer.heightAnchor.constraint(equalToConstant: 4),
+        progressBarContainer.snp.makeConstraints { make in
+            make.height.equalTo(4)
+        }
 
-            statusImageView.widthAnchor.constraint(equalToConstant: 48),
-            statusImageView.heightAnchor.constraint(equalToConstant: 48),
-        ])
+        statusImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(48)
+        }
 
         // Setup progress header
         progressHeaderStackView.addArrangedSubview(percentageLabel)
@@ -277,36 +278,27 @@ class HubModelDownloadProgressController: UIViewController {
         progressContentStackView.addArrangedSubview(currentFileLabel)
         progressContentStackView.addArrangedSubview(keepRunningLabel)
 
-        NSLayoutConstraint.activate([
-            progressHeaderStackView.widthAnchor.constraint(equalTo: progressContentStackView.widthAnchor),
-            progressBarContainer.widthAnchor.constraint(equalTo: progressContentStackView.widthAnchor),
-            currentFileLabel.widthAnchor.constraint(equalTo: progressContentStackView.widthAnchor),
-            keepRunningLabel.widthAnchor.constraint(equalTo: progressContentStackView.widthAnchor),
-        ])
-
-        // Setup bottom stack
         bottomStackView.addArrangedSubview(cancelButton)
         bottomStackView.addArrangedSubview(modelIdLabel)
 
-        // Setup container
         view.addSubview(containerStackView)
         view.addSubview(bottomStackView)
         view.addSubview(oversizeWarningLabel)
 
-        NSLayoutConstraint.activate([
-            containerStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            containerStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            containerStackView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 32),
-            containerStackView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -32),
+        containerStackView.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(32)
+        }
 
-            bottomStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            bottomStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            bottomStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32),
+        bottomStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(32)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-32)
+        }
 
-            oversizeWarningLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            oversizeWarningLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            oversizeWarningLabel.bottomAnchor.constraint(equalTo: bottomStackView.topAnchor, constant: -16),
-        ])
+        oversizeWarningLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(32)
+            make.bottom.equalTo(bottomStackView.snp.top).offset(-16)
+        }
 
         modelIdLabel.text = model.id
 

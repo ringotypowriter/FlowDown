@@ -168,14 +168,14 @@ class HubModelDetailController: StackScrollController {
                         countStyle: .file
                     )
                     navigationItem.rightBarButtonItem = .init(
-                        title: "Download (\(byteText))",
+                        title: String(localized: "Download (\(byteText))"),
                         style: .plain,
                         target: self,
                         action: #selector(download)
                     )
                 } else {
                     navigationItem.rightBarButtonItem = .init(
-                        title: "Download (Unknown Size)",
+                        title: String(localized: "Download (Unknown Size)"),
                         style: .plain,
                         target: self,
                         action: #selector(download)
