@@ -207,8 +207,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         // MARK: - NAME
 
         nameView.configure(icon: .init(systemName: "rosette"))
-        nameView.configure(title: String(localized: "Name"))
-        nameView.configure(description: String(localized: "The display name of this chat template."))
+        nameView.configure(title: "Name")
+        nameView.configure(description: "The display name of this chat template.")
         nameView.configure(value: template.name)
         stackView.addArrangedSubviewWithMargin(nameView)
         stackView.addArrangedSubview(SeparatorView())
@@ -217,7 +217,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Prompt"))
+                .with(header: "Prompt")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -233,20 +233,20 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "The prompt serves as the initial instruction for the language model. It defines the character, behavior, and context for the conversation."))
+                .with(footer: "The prompt serves as the initial instruction for the language model. It defines the character, behavior, and context for the conversation.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Configuration"))
+                .with(header: "Configuration")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         let promptBehaviorView = ConfigurableInfoView()
         promptBehaviorView.configure(icon: .init(systemName: "gear"))
-        promptBehaviorView.configure(title: String(localized: "Application Prompt Behavior"))
-        promptBehaviorView.configure(description: String(localized: "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template."))
+        promptBehaviorView.configure(title: "Application Prompt Behavior")
+        promptBehaviorView.configure(description: "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template.")
         let behaviorTitle = template.inheritApplicationPrompt ? String(localized: "Inherit") : String(localized: "Ignore")
         promptBehaviorView.configure(value: behaviorTitle)
         promptBehaviorView.setTapBlock { view in
@@ -276,7 +276,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Management"))
+                .with(header: "Management")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -290,8 +290,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             navigationController?.pushViewController(editor, animated: true)
         }
         copyAction.configure(icon: UIImage(systemName: "doc.on.doc"))
-        copyAction.configure(title: String(localized: "Create Copy"))
-        copyAction.configure(description: String(localized: "Create a duplicate of this template for further editing."))
+        copyAction.configure(title: "Create Copy")
+        copyAction.configure(description: "Create a duplicate of this template for further editing.")
         stackView.addArrangedSubviewWithMargin(copyAction)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -321,8 +321,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         }
         exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
-        exportOption.configure(title: String(localized: "Export Template"))
-        exportOption.configure(description: String(localized: "Export this chat template as a .fdtemplate file for sharing or backup."))
+        exportOption.configure(title: "Export Template")
+        exportOption.configure(description: "Export this chat template as a .fdtemplate file for sharing or backup.")
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -331,8 +331,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             deleteTapped()
         }
         deleteAction.configure(icon: UIImage(systemName: "trash"))
-        deleteAction.configure(title: String(localized: "Delete Template"))
-        deleteAction.configure(description: String(localized: "Delete this template permanently."))
+        deleteAction.configure(title: "Delete Template")
+        deleteAction.configure(description: "Delete this template permanently.")
         deleteAction.titleLabel.textColor = .systemRed
         deleteAction.iconView.tintColor = .systemRed
         deleteAction.descriptionLabel.textColor = .systemRed

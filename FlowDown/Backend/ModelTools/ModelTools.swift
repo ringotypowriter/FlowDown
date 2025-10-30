@@ -39,8 +39,10 @@ class ModelTool: NSObject, @unchecked Sendable {
         fatalError("must be overridden")
     }
 
-    func createConfigurableObjectView() -> UIView {
-        Self.controlObject.createView()
+    nonisolated func createConfigurableObjectView() -> UIView {
+        MainActor.assumeIsolated {
+            Self.controlObject.createView()
+        }
     }
 
     var isEnabled: Bool {

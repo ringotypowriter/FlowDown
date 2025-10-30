@@ -28,38 +28,38 @@ extension SettingController.SettingContent {
 
         let cameraUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "camera"))
-            $0.configure(title: String(localized: "Camera"))
-            $0.configure(description: String(localized: "We use your camera to take picture. Your photo may be uploaded by your choice."))
+            $0.configure(title: "Camera")
+            $0.configure(description: "We use your camera to take picture. Your photo may be uploaded by your choice.")
         }
 
         let microphoneUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "mic"))
-            $0.configure(title: String(localized: "Microphone"))
-            $0.configure(description: String(localized: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation."))
+            $0.configure(title: "Microphone")
+            $0.configure(description: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.")
         }
 
         let speechRecognizeUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "waveform"))
-            $0.configure(title: String(localized: "Speech Recognition"))
-            $0.configure(description: String(localized: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation."))
+            $0.configure(title: "Speech Recognition")
+            $0.configure(description: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.")
         }
 
         let lanUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "network"))
-            $0.configure(title: String(localized: "Local Area Network"))
-            $0.configure(description: String(localized: "We requires LAN access for interact with local service providers. We do not collect any information from your LAN."))
+            $0.configure(title: "Local Area Network")
+            $0.configure(description: "We requires LAN access for interact with local service providers. We do not collect any information from your LAN.")
         }
 
         let calendarUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "calendar"))
-            $0.configure(title: String(localized: "Calendar"))
-            $0.configure(description: String(localized: "We use calendar access to allow the assistant to view, create and modify events in your calendar. Calendar data is only accessed when you explicitly use calendar-related features."))
+            $0.configure(title: "Calendar")
+            $0.configure(description: "We use calendar access to allow the assistant to view, create and modify events in your calendar. Calendar data is only accessed when you explicitly use calendar-related features.")
         }
 
         let locationUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "location.circle"))
-            $0.configure(title: String(localized: "Location"))
-            $0.configure(description: String(localized: "We use your location data to provide location-based services when requested. Your location is only accessed when you explicitly use location-related features."))
+            $0.configure(title: "Location")
+            $0.configure(description: "We use your location data to provide location-based services when requested. Your location is only accessed when you explicitly use location-related features.")
         }
 
         override func viewDidLoad() {
@@ -181,8 +181,8 @@ extension SettingController.SettingContent {
                 UIApplication.shared.openSettings()
             }.with {
                 $0.configure(icon: UIImage(systemName: "gearshape"))
-                $0.configure(title: String(localized: "Open Setting"))
-                $0.configure(description: String(localized: "Open the setting page."))
+                $0.configure(title: "Open Setting")
+                $0.configure(description: "Open the setting page.")
             }
             stackView.addArrangedSubviewWithMargin(openSetting)
             stackView.addArrangedSubview(SeparatorView())

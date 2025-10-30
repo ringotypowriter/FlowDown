@@ -49,8 +49,8 @@ class MTUpdateMemoryTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "pencil.circle",
-            title: String(localized: "Update Memory"),
-            explain: String(localized: "Allows AI to update existing memory content."),
+            title: "Update Memory",
+            explain: "Allows AI to update existing memory content.",
             key: "wiki.qaq.ModelTools.UpdateMemoryTool.enabled",
             defaultValue: true,
             annotation: .boolean

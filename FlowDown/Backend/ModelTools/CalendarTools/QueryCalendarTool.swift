@@ -62,8 +62,8 @@ class MTQueryCalendarTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "calendar",
-            title: String(localized: "Query Calendar"),
-            explain: String(localized: "Allows LLM to read your calendar events."),
+            title: "Query Calendar",
+            explain: "Allows LLM to read your calendar events.",
             key: "wiki.qaq.ModelTools.QueryCalendarTool.enabled",
             defaultValue: true,
             annotation: .boolean

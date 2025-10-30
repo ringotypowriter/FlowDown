@@ -22,19 +22,19 @@ extension ChatView {
             }
         }
 
-        var title: String {
+        var title: String.LocalizationValue {
             switch self {
-            case .full: String(localized: "Unique Model Name")
-            case .trimmed: String(localized: "Model Name Only")
-            case .none: String(localized: "Do Not Display")
+            case .full: "Unique Model Name"
+            case .trimmed: "Model Name Only"
+            case .none: "Do Not Display"
             }
         }
     }
 
     static let editorModelNameStyle: ConfigurableObject = .init(
         icon: "increase.quotelevel",
-        title: String(localized: "Model Name Style"),
-        explain: String(localized: "Show full model name and information in the quick setting bar under the input box or not."),
+        title: "Model Name Style",
+        explain: "Show full model name and information in the quick setting bar under the input box or not.",
         key: "app.chat.model.picker.style",
         defaultValue: EditorModelNameStyle.trimmed.rawValue,
         annotation: .list {
@@ -50,8 +50,8 @@ extension ChatView {
 
     static let editorApplyModelToDefault: ConfigurableObject = .init(
         icon: "checkmark.seal",
-        title: String(localized: "Select as Default"),
-        explain: String(localized: "When selecting a new chat model, also set it as the default model."),
+        title: "Select as Default",
+        explain: "When selecting a new chat model, also set it as the default model.",
         key: "app.chat.model.picker.apply.to.default",
         defaultValue: true,
         annotation: .boolean

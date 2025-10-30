@@ -11,13 +11,13 @@ import Foundation
 import MarkdownView
 
 extension MarkdownTheme.FontScale {
-    var title: String {
+    var title: String.LocalizationValue {
         switch self {
-        case .tiny: NSLocalizedString("Tiny", comment: "Font Size")
-        case .small: NSLocalizedString("Small", comment: "Font Size")
-        case .middle: NSLocalizedString("Middle", comment: "Font Size")
-        case .large: NSLocalizedString("Large", comment: "Font Size")
-        case .huge: NSLocalizedString("Huge", comment: "Font Size")
+        case .tiny: "Tiny"
+        case .small: "Small"
+        case .middle: "Middle"
+        case .large: "Large"
+        case .huge: "Huge"
         }
     }
 }
@@ -30,8 +30,8 @@ extension MarkdownTheme {
 
     static let configurableObject: ConfigurableObject = .init(
         icon: "wand.and.rays",
-        title: String(localized: "Font Size"),
-        explain: String(localized: "Adjust the font size of the markdown content."),
+        title: "Font Size",
+        explain: "Adjust the font size of the markdown content.",
         key: storageKey,
         defaultValue: MarkdownTheme.FontScale.middle.rawValue,
         annotation: .list {

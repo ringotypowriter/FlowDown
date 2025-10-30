@@ -44,16 +44,16 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "iCloud Sync")
+                    header: "iCloud Sync"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             let syncToggle = ConfigurableToggleActionView()
             syncToggle.configure(icon: UIImage(systemName: "icloud"))
-            syncToggle.configure(title: String(localized: "Enable iCloud Sync"))
+            syncToggle.configure(title: "Enable iCloud Sync")
             syncToggle.configure(
-                description: String(localized: "Enable iCloud sync to keep data consistent across your devices. Turning off does not delete existing data.")
+                description: "Enable iCloud sync to keep data consistent across your devices. Turning off does not delete existing data."
             )
             syncToggle.boolValue = SyncEngine.isSyncEnabled
             syncToggle.actionBlock = { [weak self] value in
@@ -83,8 +83,8 @@ extension SettingController.SettingContent {
             // Sync scope submenu
             let syncScopeMenu = ConfigurableObject(
                 icon: "slider.horizontal.3",
-                title: String(localized: "Sync Scope"),
-                explain: String(localized: "Configure which data groups sync with iCloud."),
+                title: "Sync Scope",
+                explain: "Configure which data groups sync with iCloud.",
                 ephemeralAnnotation: .action { [weak self] _ in
                     guard let self else { return }
                     let controller = SyncScopePage()
@@ -96,22 +96,22 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "When sync is off, no new changes are shared. Existing data remains intact. Re‑enable sync to fetch the latest state before resuming.")
+                    footer: "When sync is off, no new changes are shared. Existing data remains intact. Re‑enable sync to fetch the latest state before resuming."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Database")
+                    header: "Database"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             let importDatabase = ConfigurableObject(
                 icon: "square.and.arrow.down",
-                title: String(localized: "Import Database"),
-                explain: String(localized: "Replace all local data with a previous database export."),
+                title: "Import Database",
+                explain: "Replace all local data with a previous database export.",
                 ephemeralAnnotation: .action { [weak self] controller in
                     guard let controller else { return }
                     self?.presentImportConfirmation(from: controller)
@@ -122,7 +122,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Database Export")
+                    header: "Database Export"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -130,8 +130,8 @@ extension SettingController.SettingContent {
             var exportDatabaseReader: UIView?
             let exportDatabase = ConfigurableObject(
                 icon: "square.and.arrow.up",
-                title: String(localized: "Export Database"),
-                explain: String(localized: "Export the database file."),
+                title: "Export Database",
+                explain: "Export the database file.",
                 ephemeralAnnotation: .action { controller in
                     guard let controller else { return }
                     Indicator.progress(
@@ -183,22 +183,22 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Exported database contains all conversations data and cloud model configurations, but does not include local model data, also known as weights, and application settings. To export local models, please go to the model management page. Application settings are not supported for export.")
+                    footer: "Exported database contains all conversations data and cloud model configurations, but does not include local model data, also known as weights, and application settings. To export local models, please go to the model management page. Application settings are not supported for export."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Conversation")
+                    header: "Conversation"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             let deleteAllConv = ConfigurableObject(
                 icon: "trash",
-                title: String(localized: "Delete All Conversations"),
-                explain: String(localized: "Delete all conversations and related data."),
+                title: "Delete All Conversations",
+                explain: "Delete all conversations and related data.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
                         title: String(localized: "Delete All Conversations"),
@@ -227,22 +227,22 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "These operations cannot be undone.")
+                    footer: "These operations cannot be undone."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Cache")
+                    header: "Cache"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             let downloadCache = ConfigurableObject(
                 icon: "snowflake",
-                title: String(localized: "Clean Cache"),
-                explain: String(localized: "Clean image caches, remove partial downloads and more."),
+                title: "Clean Cache",
+                explain: "Clean image caches, remove partial downloads and more.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
                         title: String(localized: "Clean Cache"),
@@ -270,8 +270,8 @@ extension SettingController.SettingContent {
 
             let removeTempDir = ConfigurableObject(
                 icon: "folder.badge.minus",
-                title: String(localized: "Reset Temporary Items"),
-                explain: String(localized: "This will remove all contents inside temporary directory."),
+                title: "Reset Temporary Items",
+                explain: "This will remove all contents inside temporary directory.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
                         title: String(localized: "Reset Temporary Items"),
@@ -301,14 +301,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Usually, you don't need to clean caches and temporary files. But if you have any issues, try these.")
+                    footer: "Usually, you don't need to clean caches and temporary files. But if you have any issues, try these."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Reset")
+                    header: "Reset"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -316,8 +316,8 @@ extension SettingController.SettingContent {
             // Bring back Delete iCloud Data (dangerous)
             let deleteICloud = ConfigurableObject(
                 icon: "icloud.slash",
-                title: String(localized: "Delete iCloud Data ..."),
-                explain: String(localized: "Delete data stored in iCloud."),
+                title: "Delete iCloud Data ...",
+                explain: "Delete data stored in iCloud.",
                 ephemeralAnnotation: .action { [weak self] controller in
                     guard let self, let controller else { return }
 
@@ -367,8 +367,8 @@ extension SettingController.SettingContent {
 
             let resetApp = ConfigurableObject(
                 icon: "arrow.counterclockwise",
-                title: String(localized: "Reset App"),
-                explain: String(localized: "If you encounter any issues, you can try to reset the app. This will remove all content and reset the entire database."),
+                title: "Reset App",
+                explain: "If you encounter any issues, you can try to reset the app. This will remove all content and reset the entire database.",
                 ephemeralAnnotation: .action { controller in
                     let alert = AlertViewController(
                         title: String(localized: "Reset App"),
@@ -409,7 +409,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "These operations cannot be undone.")
+                    footer: "These operations cannot be undone."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

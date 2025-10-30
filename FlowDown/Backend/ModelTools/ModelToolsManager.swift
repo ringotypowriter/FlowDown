@@ -26,8 +26,8 @@ class ModelToolsManager {
         .init().with {
             $0.actionBlock = { skipConfirmationValue = $0 }
             $0.configure(icon: UIImage(systemName: "hammer"))
-            $0.configure(title: String(localized: "Skip Tool Confirmation"))
-            $0.configure(description: String(localized: "Skip the confirmation dialog when executing tools."))
+            $0.configure(title: "Skip Tool Confirmation")
+            $0.configure(description: "Skip the confirmation dialog when executing tools.")
             $0.boolValue = skipConfirmationValue
         }
     }

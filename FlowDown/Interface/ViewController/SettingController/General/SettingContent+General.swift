@@ -33,8 +33,8 @@ extension SettingController.SettingContent {
 
         let autoCollapse = ConfigurableObject(
             icon: "arrow.down.right.and.arrow.up.left",
-            title: String(localized: "Collapse Reasoning Content"),
-            explain: String(localized: "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response."),
+            title: "Collapse Reasoning Content",
+            explain: "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response.",
             key: ModelManager.shared.collapseReasoningSectionWhenCompleteKey,
             defaultValue: false,
             annotation: .boolean

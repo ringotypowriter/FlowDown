@@ -71,8 +71,8 @@ final class SyncScopePage: StackScrollController {
 
         let refreshAction = ConfigurableObject(
             icon: "arrow.clockwise.icloud",
-            title: String(localized: "Fetch Updates Now"),
-            explain: String(localized: "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete"),
+            title: "Fetch Updates Now",
+            explain: "This will request the latest changes from iCloud immediately, but depending on the amount of data and network conditions, it may take some time to complete",
             ephemeralAnnotation: .action { controller in
                 guard let controller else { return }
 

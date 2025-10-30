@@ -34,8 +34,8 @@ extension ConversationManager {
     static let removeAllEditorObjectsPublisher: PassthroughSubject<Void, Never> = .init()
     static let removeAllEditorObjects: ConfigurableObject = .init(
         icon: "eraser",
-        title: String(localized: "Clear Editing"),
-        explain: String(localized: "This will delete all edits, including unsent conversation text and attachments."),
+        title: "Clear Editing",
+        explain: "This will delete all edits, including unsent conversation text and attachments.",
         ephemeralAnnotation: .action { controller in
             let alert = AlertViewController(
                 title: String(localized: "Clear Editing"),

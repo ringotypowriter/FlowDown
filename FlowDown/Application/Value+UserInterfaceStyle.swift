@@ -26,12 +26,12 @@ extension UIUserInterfaceStyle {
         }
     }
 
-    var title: String {
+    var title: String.LocalizationValue {
         switch self {
-        case .light: String(localized: "Light")
-        case .dark: String(localized: "Dark")
-        case .unspecified: String(localized: "System")
-        @unknown default: String(localized: "System")
+        case .light: "Light"
+        case .dark: "Dark"
+        case .unspecified: "System"
+        @unknown default: "System"
         }
     }
 
@@ -56,8 +56,8 @@ extension UIUserInterfaceStyle {
 
     static let configurableObject: ConfigurableObject = .init(
         icon: "lightbulb",
-        title: String(localized: "Appearance"),
-        explain: String(localized: "Override system appearance, either light or dark."),
+        title: "Appearance",
+        explain: "Override system appearance, either light or dark.",
         key: storageKey,
         defaultValue: UIUserInterfaceStyle.unspecified.rawValue,
         annotation: .list {

@@ -55,8 +55,8 @@ class MTLocationTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "location.circle",
-            title: String(localized: "Location Access"),
-            explain: String(localized: "Allows LLM to access your current location information."),
+            title: "Location Access",
+            explain: "Allows LLM to access your current location information.",
             key: "wiki.qaq.ModelTools.LocationTool.enabled",
             defaultValue: true,
             annotation: .boolean

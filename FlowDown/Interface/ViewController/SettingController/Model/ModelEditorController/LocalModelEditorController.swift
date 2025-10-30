@@ -100,7 +100,7 @@ class LocalModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Metadata"))
+                .with(header: "Metadata")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -120,8 +120,8 @@ class LocalModelEditorController: StackScrollController {
             ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
         }
         idView.configure(icon: .init(systemName: "person.crop.square.filled.and.at.rectangle"))
-        idView.configure(title: String(localized: "Identifier"))
-        idView.configure(description: String(localized: "Unique identifier of this model."))
+        idView.configure(title: "Identifier")
+        idView.configure(description: "Unique identifier of this model.")
         idView.configure(value: model?.model_identifier ?? "")
         stackView.addArrangedSubviewWithMargin(idView)
         stackView.addArrangedSubview(SeparatorView())
@@ -138,8 +138,8 @@ class LocalModelEditorController: StackScrollController {
             ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
         }
         sizeView.configure(icon: .init(systemName: "internaldrive"))
-        sizeView.configure(title: String(localized: "Size"))
-        sizeView.configure(description: String(localized: "Model size on your local disk."))
+        sizeView.configure(title: "Size")
+        sizeView.configure(description: "Model size on your local disk.")
         sizeView.configure(value: ByteCountFormatter.string(fromByteCount: Int64(model?.size ?? 0), countStyle: .file))
         stackView.addArrangedSubviewWithMargin(sizeView)
         stackView.addArrangedSubview(SeparatorView())
@@ -161,22 +161,22 @@ class LocalModelEditorController: StackScrollController {
             ), anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY))
         }
         dateView.configure(icon: .init(systemName: "timer"))
-        dateView.configure(title: String(localized: "Download Date"))
-        dateView.configure(description: String(localized: "The date when the model was downloaded."))
+        dateView.configure(title: "Download Date")
+        dateView.configure(description: "The date when the model was downloaded.")
         dateView.configure(value: dateFormatter.string(from: model?.downloaded ?? .distantPast))
         stackView.addArrangedSubviewWithMargin(dateView)
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "Metadata of a local model cannot be changed."))
+                .with(footer: "Metadata of a local model cannot be changed.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         if !ModelCapabilities.localModelEditable.isEmpty {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView()
-                    .with(header: String(localized: "Capabilities"))
+                    .with(header: "Capabilities")
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
@@ -202,21 +202,21 @@ class LocalModelEditorController: StackScrollController {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView()
-                    .with(footer: String(localized: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors."))
+                    .with(footer: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors.")
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
         }
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Context"))
+                .with(header: "Context")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         let contextListViewAnnotation = ConfigurableInfoView()
         contextListViewAnnotation.configure(icon: .init(systemName: "list.bullet"))
-        contextListViewAnnotation.configure(title: String(localized: "Context Length"))
-        contextListViewAnnotation.configure(description: String(localized: "The context length for inference refers to the amount of information the model can retain and process at a given time. This context serves as the model’s memory, allowing it to understand and generate responses based on prior input."))
+        contextListViewAnnotation.configure(title: "Context Length")
+        contextListViewAnnotation.configure(description: "The context length for inference refers to the amount of information the model can retain and process at a given time. This context serves as the model’s memory, allowing it to understand and generate responses based on prior input.")
         let value = model?.context.title ?? String(localized: "Not Configured")
         contextListViewAnnotation.configure(value: value)
         contextListViewAnnotation.setTapBlock { view in
@@ -240,13 +240,13 @@ class LocalModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "We cannot determine the context length supported by the model. Please choose the correct configuration here. Configuring a context length smaller than the capacity can save costs. A context that is too long may be truncated during inference."))
+                .with(footer: "We cannot determine the context length supported by the model. Please choose the correct configuration here. Configuring a context length smaller than the capacity can save costs. A context that is too long may be truncated during inference.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Parameters"))
+                .with(header: "Parameters")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -304,8 +304,8 @@ class LocalModelEditorController: StackScrollController {
             )
         }
         localTemperatureView.configure(icon: .init(systemName: "sparkles"))
-        localTemperatureView.configure(title: String(localized: "Imagination"))
-        localTemperatureView.configure(description: String(localized: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature."))
+        localTemperatureView.configure(title: "Imagination")
+        localTemperatureView.configure(description: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature.")
         localTemperatureView.configure(
             value: ModelManager.shared.displayTextForTemperature(
                 preference: model?.temperature_preference ?? .inherit,
@@ -317,7 +317,7 @@ class LocalModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Verification"))
+                .with(header: "Verification")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -356,20 +356,20 @@ class LocalModelEditorController: StackScrollController {
             }
         }
         verifyButton.configure(icon: UIImage(systemName: "testtube.2"))
-        verifyButton.configure(title: String(localized: "Verify Model"))
-        verifyButton.configure(description: String(localized: "Verify this model with corresponding capabilities."))
+        verifyButton.configure(title: "Verify Model")
+        verifyButton.configure(description: "Verify this model with corresponding capabilities.")
         stackView.addArrangedSubviewWithMargin(verifyButton)
         verifyButtonReader = verifyButton.superview
         stackView.addArrangedSubview(SeparatorView())
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "Local models will use different loaders based on the selected capabilities. For visual models, make sure to enable visual capabilities. Selecting the wrong model capability may result in a crash. If you still cannot load, try switching the model."))
+                .with(footer: "Local models will use different loaders based on the selected capabilities. For visual models, make sure to enable visual capabilities. Selecting the wrong model capability may result in a crash. If you still cannot load, try switching the model.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Shortcuts"))
+                .with(header: "Shortcuts")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -381,8 +381,8 @@ class LocalModelEditorController: StackScrollController {
             UIApplication.shared.open(url)
         }
         openHuggingFace.configure(icon: UIImage(systemName: "safari"))
-        openHuggingFace.configure(title: String(localized: "Open in Hugging Face"))
-        openHuggingFace.configure(description: String(localized: "View this model on Hugging Face."))
+        openHuggingFace.configure(title: "Open in Hugging Face")
+        openHuggingFace.configure(description: "View this model on Hugging Face.")
         stackView.addArrangedSubviewWithMargin(openHuggingFace)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -420,14 +420,14 @@ class LocalModelEditorController: StackScrollController {
         }
         exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
-        exportOption.configure(title: String(localized: "Export Model"))
-        exportOption.configure(description: String(localized: "Export this model to share with others."))
+        exportOption.configure(title: "Export Model")
+        exportOption.configure(description: "Export this model to share with others.")
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Management"))
+                .with(header: "Management")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
         let deleteAction = ConfigurableActionView { [weak self] _ in
@@ -435,8 +435,8 @@ class LocalModelEditorController: StackScrollController {
             deleteTapped()
         }
         deleteAction.configure(icon: UIImage(systemName: "trash"))
-        deleteAction.configure(title: String(localized: "Delete Model"))
-        deleteAction.configure(description: String(localized: "Delete this model from your local storage."))
+        deleteAction.configure(title: "Delete Model")
+        deleteAction.configure(description: "Delete this model from your local storage.")
         deleteAction.titleLabel.textColor = .systemRed
         deleteAction.iconView.tintColor = .systemRed
         deleteAction.descriptionLabel.textColor = .systemRed

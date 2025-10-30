@@ -72,7 +72,7 @@ class CloudModelEditorController: StackScrollController {
         if let comment = model?.comment, !comment.isEmpty {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView()
-                    .with(header: String(localized: "Comment"))
+                    .with(header: "Comment")
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
@@ -85,7 +85,7 @@ class CloudModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Metadata"))
+                .with(header: "Metadata")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -105,8 +105,8 @@ class CloudModelEditorController: StackScrollController {
             view.parentViewController?.present(input, animated: true)
         }
         endpointView.configure(icon: .init(systemName: "link"))
-        endpointView.configure(title: String(localized: "Inference Endpoint"))
-        endpointView.configure(description: String(localized: "This endpoint is used to send inference requests."))
+        endpointView.configure(title: "Inference Endpoint")
+        endpointView.configure(description: "This endpoint is used to send inference requests.")
         var endpoint = model?.endpoint ?? ""
         if endpoint.isEmpty { endpoint = String(localized: "Not Configured") }
         endpointView.configure(value: endpoint)
@@ -153,8 +153,8 @@ class CloudModelEditorController: StackScrollController {
             view.parentViewController?.present(input, animated: true)
         }
         tokenView.configure(icon: .init(systemName: "square"))
-        tokenView.configure(title: String(localized: "Workgroup (Optional)"))
-        tokenView.configure(description: String(localized: "This value will be added to the request to distinguish the workgroup on the remote."))
+        tokenView.configure(title: "Workgroup (Optional)")
+        tokenView.configure(description: "This value will be added to the request to distinguish the workgroup on the remote.")
         tokenView.configure(
             value: (model?.token.isEmpty ?? true)
                 ? String(localized: "N/A")
@@ -184,8 +184,8 @@ class CloudModelEditorController: StackScrollController {
             view.parentViewController?.navigationController?.pushViewController(textEditor, animated: true)
         }
         headerEditorView.configure(icon: .init(systemName: "pencil"))
-        headerEditorView.configure(title: String(localized: "Additional Header (Optional)"))
-        headerEditorView.configure(description: String(localized: "This value will be added to the request as additional header."))
+        headerEditorView.configure(title: "Additional Header (Optional)")
+        headerEditorView.configure(description: "This value will be added to the request as additional header.")
         headerEditorView.configure(value: model?.headers.isEmpty ?? true ? String(localized: "N/A") : String(localized: "Configured"))
 
         stackView.addArrangedSubviewWithMargin(headerEditorView)
@@ -309,8 +309,8 @@ class CloudModelEditorController: StackScrollController {
             }
         }
         modelIdentifierView.configure(icon: .init(systemName: "circle"))
-        modelIdentifierView.configure(title: String(localized: "Model Identifier"))
-        modelIdentifierView.configure(description: String(localized: "The name of the model to be used."))
+        modelIdentifierView.configure(title: "Model Identifier")
+        modelIdentifierView.configure(description: "The name of the model to be used.")
         var modelIdentifier = model?.model_identifier ?? ""
         if modelIdentifier.isEmpty {
             if modelCanFetchList {
@@ -325,20 +325,20 @@ class CloudModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions."))
+                .with(footer: "The endpoint needs to be written in full path to work. The path is usually /v1/chat/completions.")
         ) {
             $0.top /= 2
             $0.bottom = 0
         }
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "After setting up, click the model identifier to edit it or retrieve a list from the server."))
+                .with(footer: "After setting up, click the model identifier to edit it or retrieve a list from the server.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Capabilities"))
+                .with(header: "Capabilities")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -366,20 +366,20 @@ class CloudModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors."))
+                .with(footer: "We cannot determine whether this model includes additional capabilities. However, if supported, features such as visual recognition can be enabled manually here. Please note that if the model does not actually support these capabilities, attempting to enable them may result in errors.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Context"))
+                .with(header: "Context")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         let contextListViewAnnotation = ConfigurableInfoView()
         contextListViewAnnotation.configure(icon: .init(systemName: "list.bullet"))
-        contextListViewAnnotation.configure(title: String(localized: "Context Length"))
-        contextListViewAnnotation.configure(description: String(localized: "The context length for inference refers to the amount of information the model can retain and process at a given time. This context serves as the model’s memory, allowing it to understand and generate responses based on prior input."))
+        contextListViewAnnotation.configure(title: "Context Length")
+        contextListViewAnnotation.configure(description: "The context length for inference refers to the amount of information the model can retain and process at a given time. This context serves as the model’s memory, allowing it to understand and generate responses based on prior input.")
         let value = model?.context.title ?? String(localized: "Not Configured")
         contextListViewAnnotation.configure(value: value)
         contextListViewAnnotation.setTapBlock { view in
@@ -404,13 +404,13 @@ class CloudModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "We cannot determine the context length supported by the model. Please choose the correct configuration here. Configuring a context length smaller than the capacity can save costs. A context that is too long may be truncated during inference."))
+                .with(footer: "We cannot determine the context length supported by the model. Please choose the correct configuration here. Configuring a context length smaller than the capacity can save costs. A context that is too long may be truncated during inference.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Parameters"))
+                .with(header: "Parameters")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -434,8 +434,8 @@ class CloudModelEditorController: StackScrollController {
             view.parentViewController?.present(input, animated: true)
         }
         nameView.configure(icon: .init(systemName: "tag"))
-        nameView.configure(title: String(localized: "Nickname (Optional)"))
-        nameView.configure(description: String(localized: "Custom display name for this model."))
+        nameView.configure(title: "Nickname (Optional)")
+        nameView.configure(description: "Custom display name for this model.")
         var nameValue = model?.name ?? ""
         if nameValue.isEmpty { nameValue = String(localized: "Not Configured") }
         nameView.configure(value: nameValue)
@@ -496,8 +496,8 @@ class CloudModelEditorController: StackScrollController {
             )
         }
         temperatureView.configure(icon: .init(systemName: "sparkles"))
-        temperatureView.configure(title: String(localized: "Imagination"))
-        temperatureView.configure(description: String(localized: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature."))
+        temperatureView.configure(title: "Imagination")
+        temperatureView.configure(description: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature.")
         let temperatureDisplay = ModelManager.shared.displayTextForTemperature(
             preference: model?.temperature_preference ?? .inherit,
             override: model?.temperature_override
@@ -508,7 +508,7 @@ class CloudModelEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Verification"))
+                .with(header: "Verification")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -547,21 +547,21 @@ class CloudModelEditorController: StackScrollController {
             }
         }
         verifyButton.configure(icon: UIImage(systemName: "testtube.2"))
-        verifyButton.configure(title: String(localized: "Verify Model"))
-        verifyButton.configure(description: String(localized: "Verify the model by sending a test request."))
+        verifyButton.configure(title: "Verify Model")
+        verifyButton.configure(description: "Verify the model by sending a test request.")
         stackView.addArrangedSubviewWithMargin(verifyButton)
         verifyButtonReader = verifyButton.superview
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "Verification process will send a standard inference request to the inference node and verify the returned status code. This process requires the server to return status code: 200. The verification process may incur standard charges from your service provider."))
+                .with(footer: "Verification process will send a standard inference request to the inference node and verify the returned status code. This process requires the server to return status code: 200. The verification process may incur standard charges from your service provider.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Shortcuts"))
+                .with(header: "Shortcuts")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -592,8 +592,8 @@ class CloudModelEditorController: StackScrollController {
         }
         exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
-        exportOption.configure(title: String(localized: "Export Model"))
-        exportOption.configure(description: String(localized: "Export this model to share with others."))
+        exportOption.configure(title: "Export Model")
+        exportOption.configure(description: "Export this model to share with others.")
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -613,20 +613,20 @@ class CloudModelEditorController: StackScrollController {
             }
         }
         duplicateModel.configure(icon: UIImage(systemName: "doc.on.doc"))
-        duplicateModel.configure(title: String(localized: "Duplicate"))
-        duplicateModel.configure(description: String(localized: "Create a new model by copying the current configuration."))
+        duplicateModel.configure(title: "Duplicate")
+        duplicateModel.configure(description: "Create a new model by copying the current configuration.")
         stackView.addArrangedSubviewWithMargin(duplicateModel)
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
-                .with(footer: String(localized: "After creating a copy, you can choose a new model. This is useful if the endpoint provides multiple models."))
+                .with(footer: "After creating a copy, you can choose a new model. This is useful if the endpoint provides multiple models.")
         ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Management"))
+                .with(header: "Management")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
         let deleteAction = ConfigurableActionView { [weak self] _ in
@@ -634,8 +634,8 @@ class CloudModelEditorController: StackScrollController {
             deleteModel()
         }
         deleteAction.configure(icon: UIImage(systemName: "trash"))
-        deleteAction.configure(title: String(localized: "Delete Model"))
-        deleteAction.configure(description: String(localized: "Delete this model from your device."))
+        deleteAction.configure(title: "Delete Model")
+        deleteAction.configure(description: "Delete this model from your device.")
         deleteAction.titleLabel.textColor = .systemRed
         deleteAction.iconView.tintColor = .systemRed
         deleteAction.descriptionLabel.textColor = .systemRed

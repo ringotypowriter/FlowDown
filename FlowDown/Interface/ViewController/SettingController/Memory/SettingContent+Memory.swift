@@ -73,8 +73,8 @@ extension SettingController.SettingContent {
             // View All Memories
             let viewMemories = ConfigurableObject(
                 icon: "waveform.path.ecg",
-                title: String(localized: "Memory List"),
-                explain: String(localized: "Browse, search, and manage stored memories."),
+                title: "Memory List",
+                explain: "Browse, search, and manage stored memories.",
                 ephemeralAnnotation: .page { MemoryListController() }
             ).createView()
             stackView.addArrangedSubviewWithMargin(viewMemories)
@@ -83,8 +83,8 @@ extension SettingController.SettingContent {
             // Export Memories
             let exportMemories = ConfigurableObject(
                 icon: "square.and.arrow.up",
-                title: String(localized: "Export Memories"),
-                explain: String(localized: "Export all memories as JSON file."),
+                title: "Export Memories",
+                explain: "Export all memories as JSON file.",
                 ephemeralAnnotation: .action { controller in
                     guard let controller else { return }
                     Task {
@@ -98,8 +98,8 @@ extension SettingController.SettingContent {
             // Clear All Memories
             let clearMemories = ConfigurableObject(
                 icon: "trash",
-                title: String(localized: "Clear All Memories"),
-                explain: String(localized: "Delete all stored memories permanently."),
+                title: "Clear All Memories",
+                explain: "Delete all stored memories permanently.",
                 ephemeralAnnotation: .action { controller in
                     guard let controller else { return }
                     Task {
