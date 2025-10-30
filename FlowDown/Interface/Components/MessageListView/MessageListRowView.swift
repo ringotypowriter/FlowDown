@@ -68,7 +68,20 @@ class MessageListRowView: ListRowView, UIContextMenuInteractionDelegate {
         configurationForMenuAtLocation location: CGPoint
     ) -> UIContextMenuConfiguration? {
         guard let menu = contextMenuProvider?(location) else { return nil }
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+        return .init {
+            guard let snapshot = self.contentView.snapshotView(afterScreenUpdates: false) else {
+                return nil
+            }
+
+            let controller = UIViewController()
+            controller.preferredContentSize = self.contentView.bounds.size + CGSize(width: 16, height: 16)
+            controller.view.backgroundColor = .systemBackground
+            controller.view.addSubview(snapshot)
+            snapshot.snp.makeConstraints { make in
+                make.edges.equalToSuperview().inset(8)
+            }
+            return controller
+        } actionProvider: { _ in
             menu
         }
     }

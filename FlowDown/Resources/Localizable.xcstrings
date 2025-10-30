@@ -123,6 +123,7 @@
       }
     },
     "%lld%% Finished" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5125,6 +5126,9 @@
           }
         }
       }
+    },
+    "Finished" : {
+
     },
     "Flags" : {
       "comment" : "Emoji Category",
