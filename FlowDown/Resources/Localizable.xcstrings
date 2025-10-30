@@ -2269,6 +2269,7 @@
       }
     },
     "Edit Conversation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

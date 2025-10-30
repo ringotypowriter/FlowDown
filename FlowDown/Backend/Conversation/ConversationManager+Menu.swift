@@ -480,11 +480,6 @@ extension ConversationManager {
         if !convHasEmptyContent { finalChildren.append(automationMenu) }
         if !management.children.isEmpty { finalChildren.append(management) }
 
-        return UIMenu(
-            title: "Edit Conversation",
-            image: UIImage(systemName: "pencil"),
-            options: [.displayInline],
-            children: finalChildren
-        )
+        return UIMenu(children: finalChildren)
     }
 }
