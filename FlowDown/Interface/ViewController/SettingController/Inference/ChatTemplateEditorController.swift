@@ -309,11 +309,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(template).write(to: tempFile, options: .atomic)
-            let exporter = DisposableExporter(
-                deletableItem: tempFile,
-                title: "Export Template"
-            )
-            exporter.execute(presentingViewController: self)
+            DisposableExporter(deletableItem: tempFile, title: "Export Template").run(anchor: exportOptionReader ?? view)
         }
         exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))

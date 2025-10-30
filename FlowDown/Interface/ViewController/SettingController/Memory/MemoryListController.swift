@@ -208,13 +208,7 @@ extension MemoryListController: UITableViewDelegate {
 
             let shareAction = UIAction(title: String(localized: "Share"), image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
                 guard let self else { return }
-                let tempURL = FileManager.default.temporaryDirectory
-                    .appendingPathComponent(UUID().uuidString)
-                    .appendingPathExtension("txt")
-                try? memory.content.write(to: tempURL, atomically: true, encoding: .utf8)
-                DisposableExporter(
-                    deletableItem: tempURL
-                ).run(anchor: view)
+                DisposableExporter(data: Data(memory.content.utf8), pathExtension: "txt").run(anchor: view, mode: .text)
             }
 
             let deleteAction = UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in

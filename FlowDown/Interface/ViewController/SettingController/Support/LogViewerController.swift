@@ -245,15 +245,7 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
 
     @objc private func shareLog() {
         let text = LogStore.shared.readTail(maxBytes: 512 * 1024)
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("txt")
-        do {
-            try text.write(to: tempURL, atomically: true, encoding: .utf8)
-            DisposableExporter(
-                deletableItem: tempURL
-            ).execute(presentingViewController: self)
-        } catch {
-            Logger.ui.error("Failed to create temp file for log sharing: \(error)")
-        }
+        DisposableExporter(data: Data(text.utf8), pathExtension: "txt").run(anchor: view, mode: .text)
     }
 
     @objc private func clearLog() {

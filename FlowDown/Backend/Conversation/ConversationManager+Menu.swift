@@ -130,21 +130,12 @@ extension ConversationManager {
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .plainText) { result in
                                 switch result {
                                 case let .success(content):
-                                    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).txt")
-                                    do {
-                                        try content.write(to: url, atomically: true, encoding: .utf8)
-                                        DisposableExporter(
-                                            deletableItem: url,
-                                            title: "Export Plain Text"
-                                        ).run(anchor: view)
-                                    } catch {
-                                        Indicator.present(
-                                            title: String(localized: "Export Failed"),
-                                            preset: .error,
-                                            haptic: .error,
-                                            referencingView: view
-                                        )
-                                    }
+                                    DisposableExporter(
+                                        data: Data(content.utf8),
+                                        name: "Exported-\(Int(Date().timeIntervalSince1970))",
+                                        pathExtension: "txt",
+                                        title: "Export Plain Text"
+                                    ).run(anchor: view)
                                 case .failure:
                                     Indicator.present(
                                         title: String(localized: "Export Failed"),
@@ -162,21 +153,12 @@ extension ConversationManager {
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .markdown) { result in
                                 switch result {
                                 case let .success(content):
-                                    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970)).md")
-                                    do {
-                                        try content.write(to: url, atomically: true, encoding: .utf8)
-                                        DisposableExporter(
-                                            deletableItem: url,
-                                            title: "Export Markdown"
-                                        ).run(anchor: view)
-                                    } catch {
-                                        Indicator.present(
-                                            title: String(localized: "Export Failed"),
-                                            preset: .error,
-                                            haptic: .error,
-                                            referencingView: view
-                                        )
-                                    }
+                                    DisposableExporter(
+                                        data: Data(content.utf8),
+                                        name: "Exported-\(Int(Date().timeIntervalSince1970))",
+                                        pathExtension: "md",
+                                        title: "Export Markdown"
+                                    ).run(anchor: view)
                                 case .failure:
                                     Indicator.present(
                                         title: String(localized: "Export Failed"),

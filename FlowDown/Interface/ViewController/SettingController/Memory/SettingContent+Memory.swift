@@ -159,9 +159,7 @@ extension SettingController.SettingContent {
                     documentPicker.modalPresentationStyle = .formSheet
                     controller.present(documentPicker, animated: true)
                 #else
-                    DisposableExporter(
-                        deletableItem: fileURL
-                    ).execute(presentingViewController: controller)
+                    DisposableExporter(deletableItem: fileURL).run(anchor: controller.view)
                 #endif
             } catch {
                 let alert = AlertViewController(

@@ -347,11 +347,7 @@ extension SettingController.SettingContent.MCPController {
             let data = try encoder.encode(server)
             try data.write(to: tempFile, options: .atomic)
 
-            let exporter = DisposableExporter(
-                deletableItem: tempFile,
-                title: "Export MCP Server"
-            )
-            exporter.execute(presentingViewController: self)
+            DisposableExporter(deletableItem: tempFile, title: "Export MCP Server").run(anchor: view)
         } catch {
             Logger.app.errorFile("failed to export MCP server: \(error)")
         }

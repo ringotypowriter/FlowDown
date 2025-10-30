@@ -181,15 +181,7 @@ final class MessageListView: UIView {
             UIMenu(options: [.displayInline], children: [
                 UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }
-                    let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("url")
-                    do {
-                        try link.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
-                        DisposableExporter(
-                            deletableItem: tempURL
-                        ).run(anchor: self)
-                    } catch {
-                        Logger.ui.error("Failed to create temp file for URL sharing: \(error)")
-                    }
+                    DisposableExporter(data: Data(link.absoluteString.utf8), pathExtension: "url").run(anchor: self, mode: .text)
                 },
                 UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }

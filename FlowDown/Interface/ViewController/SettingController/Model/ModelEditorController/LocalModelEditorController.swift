@@ -394,7 +394,7 @@ class LocalModelEditorController: StackScrollController {
                 title: String(localized: "Exporting Model"),
                 controller: self
             ) { completionHandler in
-                ModelManager.shared.pack(model: model) { url, cleanup in
+                ModelManager.shared.pack(model: model) { url, _ in
                     completionHandler {
                         guard let url else {
                             Indicator.present(
@@ -405,11 +405,8 @@ class LocalModelEditorController: StackScrollController {
                             )
                             return
                         }
-                        let exporter = DisposableExporter(
-                            deletableItem: url,
-                            title: "Export Model"
-                        )
-                        exporter.execute(presentingViewController: self)
+                        DisposableExporter(deletableItem: url, title: "Export Model")
+                            .run(anchor: exportOptionReader ?? self.view)
                     }
                 }
             }

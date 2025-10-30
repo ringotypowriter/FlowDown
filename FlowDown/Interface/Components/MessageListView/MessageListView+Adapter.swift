@@ -452,13 +452,7 @@ extension MessageListView: ListViewAdapter {
                     },
                     UIAction(title: String(localized: "Share"), image: .init(systemName: "doc.on.doc")) { [weak self] _ in
                         guard let self else { return }
-                        let tempURL = FileManager.default.temporaryDirectory
-                            .appendingPathComponent(UUID().uuidString)
-                            .appendingPathExtension("txt")
-                        try? representation.content.write(to: tempURL, atomically: true, encoding: .utf8)
-                        DisposableExporter(
-                            deletableItem: tempURL
-                        ).run(anchor: self)
+                        DisposableExporter(data: Data(representation.content.utf8), pathExtension: "txt").run(anchor: self, mode: .text)
                     },
                 ]),
                 UIMenu(options: [.displayInline], children: [

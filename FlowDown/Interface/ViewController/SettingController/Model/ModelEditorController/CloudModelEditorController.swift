@@ -580,11 +580,7 @@ class CloudModelEditorController: StackScrollController {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(model).write(to: tempFile, options: .atomic)
-            let exporter = DisposableExporter(
-                deletableItem: tempFile,
-                title: "Export Model"
-            )
-            exporter.execute(presentingViewController: self)
+            DisposableExporter(deletableItem: tempFile, title: "Export Model").run(anchor: exportOptionReader ?? view)
         }
         exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))

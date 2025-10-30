@@ -150,9 +150,7 @@ extension SettingController.SettingContent {
                                     controller.present(documentPicker, animated: true)
                                     self?.documentPickerExportTempItems.append(url)
                                 #else
-                                    DisposableExporter(
-                                        deletableItem: url
-                                    ).execute(presentingViewController: controller)
+                                    DisposableExporter(deletableItem: url).run(anchor: exportDatabaseReader ?? controller.view)
                                 #endif
                             case let .failure(err):
                                 let alert = AlertViewController(

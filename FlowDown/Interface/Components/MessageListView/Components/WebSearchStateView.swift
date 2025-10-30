@@ -73,13 +73,7 @@ final class WebSearchStateView: MessageListRowView {
                 UIMenu(title: String(localized: "Share") + " " + (result.url.host ?? ""), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
                         guard let self else { return }
-                        let tempURL = FileManager.default.temporaryDirectory
-                            .appendingPathComponent(UUID().uuidString)
-                            .appendingPathExtension("txt")
-                        try? result.url.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
-                        DisposableExporter(
-                            deletableItem: tempURL
-                        ).run(anchor: self)
+                        DisposableExporter(data: Data(result.url.absoluteString.utf8), pathExtension: "txt").run(anchor: self, mode: .text)
                     },
                     UIAction(
                         title: String(localized: "Open in Default Browser"),
