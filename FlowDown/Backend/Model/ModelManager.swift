@@ -153,6 +153,8 @@ class ModelManager: NSObject {
     }
 
     func checkDefaultModels() {
+        defer { modelChangedPublisher.send() }
+
         let appleIntelligenceId: String? = if #available(iOS 26.0, macCatalyst 26.0, *) {
             AppleIntelligenceModel.shared.modelIdentifier
         } else {
