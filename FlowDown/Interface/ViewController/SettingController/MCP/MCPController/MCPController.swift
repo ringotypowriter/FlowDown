@@ -348,8 +348,8 @@ extension SettingController.SettingContent.MCPController {
             try data.write(to: tempFile, options: .atomic)
 
             let exporter = DisposableExporter(
-                item: tempFile,
-                exportTitle: String(localized: "Export MCP Server")
+                deletableItem: tempFile,
+                title: "Export MCP Server"
             )
             exporter.execute(presentingViewController: self)
         } catch {

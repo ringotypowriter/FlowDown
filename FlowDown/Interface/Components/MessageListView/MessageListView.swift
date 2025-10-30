@@ -185,7 +185,7 @@ final class MessageListView: UIView {
                     do {
                         try link.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
                         DisposableExporter(
-                            item: tempURL
+                            deletableItem: tempURL
                         ).run(anchor: self)
                     } catch {
                         Logger.ui.error("Failed to create temp file for URL sharing: \(error)")

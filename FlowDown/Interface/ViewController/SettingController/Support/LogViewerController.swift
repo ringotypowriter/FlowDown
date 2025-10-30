@@ -249,7 +249,7 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         do {
             try text.write(to: tempURL, atomically: true, encoding: .utf8)
             DisposableExporter(
-                item: tempURL
+                deletableItem: tempURL
             ).execute(presentingViewController: self)
         } catch {
             Logger.ui.error("Failed to create temp file for log sharing: \(error)")

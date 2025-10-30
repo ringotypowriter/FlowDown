@@ -172,8 +172,8 @@ extension SettingController.SettingContent.ModelController {
             try data.write(to: tempFile, options: .atomic)
 
             let exporter = DisposableExporter(
-                item: tempFile,
-                exportTitle: String(localized: "Export Model")
+                deletableItem: tempFile,
+                title: "Export Model"
             )
             exporter.execute(presentingViewController: self)
         } catch {

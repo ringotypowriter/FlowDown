@@ -310,8 +310,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             encoder.outputFormat = .xml
             try? encoder.encode(template).write(to: tempFile, options: .atomic)
             let exporter = DisposableExporter(
-                item: tempFile,
-                exportTitle: String(localized: "Export Template")
+                deletableItem: tempFile,
+                title: "Export Template"
             )
             exporter.execute(presentingViewController: self)
         }

@@ -457,7 +457,7 @@ extension MessageListView: ListViewAdapter {
                             .appendingPathExtension("txt")
                         try? representation.content.write(to: tempURL, atomically: true, encoding: .utf8)
                         DisposableExporter(
-                            item: tempURL
+                            deletableItem: tempURL
                         ).run(anchor: self)
                     },
                 ]),

@@ -111,8 +111,8 @@ extension ConversationManager {
                                     FileManager.default.createFile(atPath: url.path(), contents: png)
 
                                     DisposableExporter(
-                                        item: url,
-                                        exportTitle: String(localized: "Save Image")
+                                        deletableItem: url,
+                                        title: "Save Image"
                                     ).run(anchor: view)
                                 }
                             }
@@ -134,8 +134,8 @@ extension ConversationManager {
                                     do {
                                         try content.write(to: url, atomically: true, encoding: .utf8)
                                         DisposableExporter(
-                                            item: url,
-                                            exportTitle: String(localized: "Export Plain Text")
+                                            deletableItem: url,
+                                            title: "Export Plain Text"
                                         ).run(anchor: view)
                                     } catch {
                                         Indicator.present(
@@ -166,8 +166,8 @@ extension ConversationManager {
                                     do {
                                         try content.write(to: url, atomically: true, encoding: .utf8)
                                         DisposableExporter(
-                                            item: url,
-                                            exportTitle: String(localized: "Export Markdown")
+                                            deletableItem: url,
+                                            title: "Export Markdown"
                                         ).run(anchor: view)
                                     } catch {
                                         Indicator.present(

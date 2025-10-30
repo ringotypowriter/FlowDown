@@ -78,7 +78,7 @@ final class WebSearchStateView: MessageListRowView {
                             .appendingPathExtension("txt")
                         try? result.url.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
                         DisposableExporter(
-                            item: tempURL
+                            deletableItem: tempURL
                         ).run(anchor: self)
                     },
                     UIAction(

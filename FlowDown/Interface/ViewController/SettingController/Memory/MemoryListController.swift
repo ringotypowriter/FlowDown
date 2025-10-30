@@ -213,7 +213,7 @@ extension MemoryListController: UITableViewDelegate {
                     .appendingPathExtension("txt")
                 try? memory.content.write(to: tempURL, atomically: true, encoding: .utf8)
                 DisposableExporter(
-                    item: tempURL
+                    deletableItem: tempURL
                 ).run(anchor: view)
             }
 
