@@ -88,9 +88,8 @@ final class WebSearchStateView: MessageListRowView {
                     UIAction(
                         title: String(localized: "Open in Default Browser"),
                         image: UIImage(systemName: "safari")
-                    ) { [weak self] _ in
-                        guard let self else { return }
-                        Indicator.open(result.url, referencedView: self)
+                    ) { _ in
+                        UIApplication.shared.open(result.url)
                     },
                 ]),
             ])

@@ -87,60 +87,15 @@ enum Indicator {
         }
     }
 
-    static func present(_ url: URL, showThirdPartyContentWarning: Bool = true, referencedView: UIView?) {
-        if showThirdPartyContentWarning {
-            let alert = AlertViewController(
-                title: "Third Party Content",
-                message: "We are not responsible for the content of this website you are about to visit."
-            ) { context in
-                context.addAction(title: "Cancel") {
-                    context.dispose()
-                }
-                context.addAction(title: "Open", attribute: .accent) {
-                    context.dispose {
-                        #if targetEnvironment(macCatalyst)
-                            UIApplication.shared.open(url)
-                        #else
-                            let safari = SFSafariViewController(url: url)
-                            safari.modalPresentationStyle = .formSheet
-                            safari.preferredContentSize = CGSize(width: 555, height: 555)
-                            referencedView?.parentViewController?.present(safari, animated: true)
-                        #endif
-                    }
-                }
-            }
-            referencedView?.parentViewController?.present(alert, animated: true)
-        } else {
-            #if targetEnvironment(macCatalyst)
-                UIApplication.shared.open(url)
-            #else
-                let safari = SFSafariViewController(url: url)
-                safari.modalPresentationStyle = .formSheet
-                safari.preferredContentSize = CGSize(width: 555, height: 555)
-                referencedView?.parentViewController?.present(safari, animated: true)
-            #endif
-        }
-    }
-
-    static func open(_ url: URL, showThirdPartyContentWarning: Bool = true, referencedView: UIView?) {
-        if showThirdPartyContentWarning {
-            let alert = AlertViewController(
-                title: "Third Party Content",
-                message: "We are not responsible for the content of this website you are about to visit."
-            ) { context in
-                context.addAction(title: "Cancel") {
-                    context.dispose()
-                }
-                context.addAction(title: "Open", attribute: .accent) {
-                    context.dispose {
-                        UIApplication.shared.open(url)
-                    }
-                }
-            }
-            referencedView?.parentViewController?.present(alert, animated: true)
-        } else {
+    static func present(_ url: URL, referencedView: UIView?) {
+        #if targetEnvironment(macCatalyst)
             UIApplication.shared.open(url)
-        }
+        #else
+            let safari = SFSafariViewController(url: url)
+            safari.modalPresentationStyle = .formSheet
+            safari.preferredContentSize = CGSize(width: 555, height: 555)
+            referencedView?.parentViewController?.present(safari, animated: true)
+        #endif
     }
 }
 

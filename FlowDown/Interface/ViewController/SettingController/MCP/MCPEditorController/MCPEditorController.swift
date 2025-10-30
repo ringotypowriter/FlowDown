@@ -159,8 +159,8 @@ class MCPEditorController: StackScrollController {
         typeView.configure(title: "Connection Type")
         typeView.configure(description: "The transport protocol to use for this client.")
         typeView.configure(value: server.type.rawValue.uppercased())
-        typeView.setTapBlock { view in
-            let children = [
+        typeView.use {
+            [
                 UIAction(
                     title: String(localized: "Streamble HTTP"),
                     image: UIImage(systemName: "network")
@@ -169,13 +169,9 @@ class MCPEditorController: StackScrollController {
                         $0.update(\.type, to: .http)
                     }
                     self.refreshUI()
-                    view.configure(value: String(localized: "Streamble HTTP"))
+                    typeView.configure(value: String(localized: "Streamble HTTP"))
                 },
             ]
-            view.present(
-                menu: .init(title: String(localized: "Connection Type"), children: children),
-                anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
         }
         stackView.addArrangedSubviewWithMargin(typeView)
         stackView.addArrangedSubview(SeparatorView())

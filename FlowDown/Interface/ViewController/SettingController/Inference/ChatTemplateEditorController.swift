@@ -240,27 +240,23 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         promptBehaviorView.configure(description: "Regarding whether the prompt from the application should be inherited or ignored when creating a new conversation from this template.")
         let behaviorTitle = template.inheritApplicationPrompt ? String(localized: "Inherit") : String(localized: "Ignore")
         promptBehaviorView.configure(value: behaviorTitle)
-        promptBehaviorView.setTapBlock { view in
-            let children = [
+        promptBehaviorView.use {
+            [
                 UIAction(
                     title: String(localized: "Inherit"),
                     image: UIImage(systemName: "arrow.down.circle")
                 ) { _ in
                     self.template = self.template.with { $0.inheritApplicationPrompt = true }
-                    view.configure(value: String(localized: "Inherit"))
+                    promptBehaviorView.configure(value: String(localized: "Inherit"))
                 },
                 UIAction(
                     title: String(localized: "Ignore"),
                     image: UIImage(systemName: "xmark.circle")
                 ) { _ in
                     self.template = self.template.with { $0.inheritApplicationPrompt = false }
-                    view.configure(value: String(localized: "Ignore"))
+                    promptBehaviorView.configure(value: String(localized: "Ignore"))
                 },
             ]
-            view.present(
-                menu: .init(title: String(localized: "Prompt Behavior"), children: children),
-                anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
         }
         stackView.addArrangedSubviewWithMargin(promptBehaviorView)
         stackView.addArrangedSubview(SeparatorView())

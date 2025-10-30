@@ -267,8 +267,8 @@ class CloudModelEditorController: StackScrollController {
         contextListViewAnnotation.configure(description: "The context length for inference refers to the amount of information the model can retain and process at a given time. This context serves as the model’s memory, allowing it to understand and generate responses based on prior input.")
         let value = model?.context.title ?? String(localized: "Not Configured")
         contextListViewAnnotation.configure(value: value)
-        contextListViewAnnotation.setTapBlock { view in
-            let children = ModelContextLength.allCases.map { item in
+        contextListViewAnnotation.use {
+            ModelContextLength.allCases.map { item in
                 UIAction(
                     title: item.title,
                     image: UIImage(systemName: item.icon)
@@ -276,13 +276,9 @@ class CloudModelEditorController: StackScrollController {
                     ModelManager.shared.editCloudModel(identifier: model?.id) {
                         $0.update(\.context, to: item)
                     }
-                    view.configure(value: item.title)
+                    contextListViewAnnotation.configure(value: item.title)
                 }
             }
-            view.present(
-                menu: .init(title: String(localized: "Context Length"), children: children),
-                anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
         }
         stackView.addArrangedSubviewWithMargin(contextListViewAnnotation)
         stackView.addArrangedSubview(SeparatorView())
@@ -327,17 +323,19 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(nameView)
         stackView.addArrangedSubview(SeparatorView())
 
-        let temperatureView = ConfigurableInfoView().setTapBlock { [weak self] view in
+        let temperatureView = ConfigurableInfoView()
+        temperatureView.configure(icon: .init(systemName: "sparkles"))
+        temperatureView.configure(title: "Imagination")
+        temperatureView.configure(description: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature.")
+        let temperatureDisplay = ModelManager.shared.displayTextForTemperature(
+            preference: model?.temperature_preference ?? .inherit,
+            override: model?.temperature_override
+        )
+        temperatureView.configure(value: temperatureDisplay)
+        temperatureView.use { [weak self] in
             guard let self,
                   let model = ModelManager.shared.cloudModel(identifier: identifier)
-            else { return }
-
-            func updateDisplay(_ preference: ModelTemperaturePreference, override: Double?) {
-                view.configure(value: ModelManager.shared.displayTextForTemperature(
-                    preference: preference,
-                    override: override
-                ))
-            }
+            else { return [] }
 
             var actions: [UIMenuElement] = []
 
@@ -349,7 +347,10 @@ class CloudModelEditorController: StackScrollController {
                     item.update(\.temperature_preference, to: .inherit)
                     item.update(\.temperature_override, to: nil)
                 }
-                updateDisplay(.inherit, override: nil)
+                temperatureView.configure(value: ModelManager.shared.displayTextForTemperature(
+                    preference: .inherit,
+                    override: nil
+                ))
             }
             inheritAction.state = model.temperature_preference == .inherit ? .on : .off
             actions.append(inheritAction)
@@ -363,7 +364,10 @@ class CloudModelEditorController: StackScrollController {
                         item.update(\.temperature_preference, to: .custom)
                         item.update(\.temperature_override, to: preset.value)
                     }
-                    updateDisplay(.custom, override: preset.value)
+                    temperatureView.configure(value: ModelManager.shared.displayTextForTemperature(
+                        preference: .custom,
+                        override: preset.value
+                    ))
                 }
                 if model.temperature_preference == .custom,
                    let value = model.temperature_override,
@@ -374,20 +378,8 @@ class CloudModelEditorController: StackScrollController {
                 actions.append(action)
             }
 
-            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
-            view.present(
-                menu: menu,
-                anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)
-            )
+            return actions
         }
-        temperatureView.configure(icon: .init(systemName: "sparkles"))
-        temperatureView.configure(title: "Imagination")
-        temperatureView.configure(description: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature.")
-        let temperatureDisplay = ModelManager.shared.displayTextForTemperature(
-            preference: model?.temperature_preference ?? .inherit,
-            override: model?.temperature_override
-        )
-        temperatureView.configure(value: temperatureDisplay)
         stackView.addArrangedSubviewWithMargin(temperatureView)
         stackView.addArrangedSubview(SeparatorView())
 

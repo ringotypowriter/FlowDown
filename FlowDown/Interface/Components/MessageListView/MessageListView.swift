@@ -180,7 +180,7 @@ final class MessageListView: UIView {
             }
             context.addAction(title: "Open", attribute: .accent) {
                 context.dispose {
-                    Indicator.open(link, referencedView: self)
+                    UIApplication.shared.open(link)
                 }
             }
         }

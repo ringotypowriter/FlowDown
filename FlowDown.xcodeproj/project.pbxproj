@@ -34,7 +34,6 @@
 		50CB4E752DE30A57009C58E1 /* Digger in Frameworks */ = {isa = PBXBuildFile; productRef = 50CB4E742DE30A57009C58E1 /* Digger */; };
 		50D2848C2D72E8EE0048CE31 /* OpenSourceLicenses.md in Resources */ = {isa = PBXBuildFile; fileRef = 50D2848B2D72E8EE0048CE31 /* OpenSourceLicenses.md */; };
 		50DDB1712DDF16F200351E46 /* ListViewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 50DDB1702DDF16F200351E46 /* ListViewKit */; };
-		50E2CA432EB3851E00E83841 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 50E2CA422EB3851E00E83841 /* ChidoriMenu */; };
 		50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50E3FA082D6D7FB8000405BD /* GPTEncoder */; };
 		50FBFC6C2DEA2E5400098EC4 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 50FBFC6B2DEA2E5400098EC4 /* XMLCoder */; };
 		86B4FDC22E1190C000C6DC8F /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 86B4FDC12E1190C000C6DC8F /* MCP */; };
@@ -124,7 +123,6 @@
 				505742472E1B8B8100A26090 /* DpkgVersion in Frameworks */,
 				5050EB0B2D46DCB900634B81 /* MLXLMCommon in Frameworks */,
 				50E3FA092D6D7FB8000405BD /* GPTEncoder in Frameworks */,
-				50E2CA432EB3851E00E83841 /* ChidoriMenu in Frameworks */,
 				5050EACF2D46D41400634B81 /* MLX in Frameworks */,
 				ED16359C2D5C5BDA0081BD0B /* ChatClientKit in Frameworks */,
 				50B5149B2D2316EC0092284C /* SwifterSwift in Frameworks */,
@@ -258,7 +256,6 @@
 				50FBFC6B2DEA2E5400098EC4 /* XMLCoder */,
 				86B4FDC12E1190C000C6DC8F /* MCP */,
 				505742462E1B8B8100A26090 /* DpkgVersion */,
-				50E2CA422EB3851E00E83841 /* ChidoriMenu */,
 			);
 			productName = FlowDown;
 			productReference = 503498BD2D23053D004672BD /* FlowDown.app */;
@@ -310,7 +307,6 @@
 				50FBFC6A2DEA2E5400098EC4 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 				86B4FDBE2E1190AD00C6DC8F /* XCRemoteSwiftPackageReference "swift-sdk" */,
 				505742432E1B8B2A00A26090 /* XCRemoteSwiftPackageReference "DpkgVersion" */,
-				50E2CA412EB3851E00E83841 /* XCRemoteSwiftPackageReference "ChidoriMenu" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -785,14 +781,6 @@
 				minimumVersion = 1.1.6;
 			};
 		};
-		50E2CA412EB3851E00E83841 /* XCRemoteSwiftPackageReference "ChidoriMenu" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Lakr233/ChidoriMenu";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.1;
-			};
-		};
 		50E3FA072D6D7F6A000405BD /* XCRemoteSwiftPackageReference "GPTEncoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/alfianlosari/GPTEncoder";
@@ -934,11 +922,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50DDB16F2DDF16F200351E46 /* XCRemoteSwiftPackageReference "ListViewKit" */;
 			productName = ListViewKit;
-		};
-		50E2CA422EB3851E00E83841 /* ChidoriMenu */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 50E2CA412EB3851E00E83841 /* XCRemoteSwiftPackageReference "ChidoriMenu" */;
-			productName = ChidoriMenu;
 		};
 		50E3FA082D6D7FB8000405BD /* GPTEncoder */ = {
 			isa = XCSwiftPackageProductDependency;

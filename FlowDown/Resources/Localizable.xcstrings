@@ -2336,6 +2336,7 @@
       }
     },
     "Copy Link" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8823,6 +8824,7 @@
       }
     },
     "Prompt Behavior" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10947,6 +10949,7 @@
       }
     },
     "Third Party Content" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12662,6 +12665,7 @@
       }
     },
     "We are not responsible for the content of this website you are about to visit." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

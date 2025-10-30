@@ -125,11 +125,7 @@ class MTURLTool: ModelTool, @unchecked Sendable {
                 context.addAction(title: "Open", attribute: .accent) {
                     context.dispose {
                         if isWebURL {
-                            Indicator.present(
-                                url,
-                                showThirdPartyContentWarning: false,
-                                referencedView: referencedView
-                            )
+                            Indicator.present(url, referencedView: referencedView)
                         } else {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
                         }
