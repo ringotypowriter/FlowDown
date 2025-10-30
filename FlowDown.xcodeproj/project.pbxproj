@@ -13,7 +13,6 @@
 		502B98062D535F25003200B6 /* Emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 502B98052D535F25003200B6 /* Emoji.json */; };
 		502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 502BCBD02D43DB2B00500180 /* ConfigurableKit */; };
 		50383CEA2D2E1E0D00426941 /* BetterCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 50383CE92D2E1E0D00426941 /* BetterCodable */; };
-		5050E8D82D466E5E00634B81 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 5050E8D72D466E5E00634B81 /* ChidoriMenu */; };
 		5050EACF2D46D41400634B81 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EACE2D46D41400634B81 /* MLX */; };
 		5050EB092D46DCB400634B81 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB082D46DCB400634B81 /* MLXLLM */; };
 		5050EB0B2D46DCB900634B81 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 5050EB0A2D46DCB900634B81 /* MLXLMCommon */; };
@@ -134,7 +133,6 @@
 				505BC6F92D42A73600894BB0 /* AlertController in Frameworks */,
 				500373C52D62757700585574 /* ScrubberKit in Frameworks */,
 				5050EB7C2D4789A300634B81 /* Transformers in Frameworks */,
-				5050E8D82D466E5E00634B81 /* ChidoriMenu in Frameworks */,
 				50383CEA2D2E1E0D00426941 /* BetterCodable in Frameworks */,
 				502BCBD12D43DB2B00500180 /* ConfigurableKit in Frameworks */,
 				5050EB092D46DCB400634B81 /* MLXLLM in Frameworks */,
@@ -238,7 +236,6 @@
 				50C9035A2D428DAD00E6E3A8 /* Storage */,
 				505BC6F82D42A73600894BB0 /* AlertController */,
 				502BCBD02D43DB2B00500180 /* ConfigurableKit */,
-				5050E8D72D466E5E00634B81 /* ChidoriMenu */,
 				5050EACE2D46D41400634B81 /* MLX */,
 				5050EB082D46DCB400634B81 /* MLXLLM */,
 				5050EB0A2D46DCB900634B81 /* MLXLMCommon */,
@@ -294,7 +291,6 @@
 				50B514982D2316CA0092284C /* XCRemoteSwiftPackageReference "SwifterSwift" */,
 				50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */,
 				502BCBCE2D43DADD00500180 /* XCRemoteSwiftPackageReference "ConfigurableKit" */,
-				5050E8DC2D46725C00634B81 /* XCRemoteSwiftPackageReference "ChidoriMenu" */,
 				5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */,
 				5050EB072D46DC9300634B81 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 				5050EB7A2D4789A300634B81 /* XCRemoteSwiftPackageReference "swift-transformers" */,
@@ -697,14 +693,6 @@
 				minimumVersion = 0.4.0;
 			};
 		};
-		5050E8DC2D46725C00634B81 /* XCRemoteSwiftPackageReference "ChidoriMenu" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Lakr233/ChidoriMenu";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.1;
-			};
-		};
 		5050EA6C2D46B44000634B81 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ml-explore/mlx-swift";
@@ -850,10 +838,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50383CE82D2E1DF200426941 /* XCRemoteSwiftPackageReference "BetterCodable" */;
 			productName = BetterCodable;
-		};
-		5050E8D72D466E5E00634B81 /* ChidoriMenu */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ChidoriMenu;
 		};
 		5050EACE2D46D41400634B81 /* MLX */ = {
 			isa = XCSwiftPackageProductDependency;

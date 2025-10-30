@@ -6,7 +6,6 @@
 //
 
 import AlertController
-import ChidoriMenu
 import ConfigurableKit
 import MLX
 import Storage
