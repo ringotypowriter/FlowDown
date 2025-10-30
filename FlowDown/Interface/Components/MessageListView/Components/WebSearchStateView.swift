@@ -11,15 +11,22 @@ import UIKit
 final class WebSearchStateView: MessageListRowView {
     private let searchIndicatorView: SearchIndicatorView = .init()
     private var results: [Message.WebSearchStatus.SearchResult] = []
+    private lazy var menuButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.backgroundColor = .clear
+        b.showsMenuAsPrimaryAction = true
+        b.accessibilityLabel = String(localized: "Web Search Results")
+        return b
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         contentView.addSubview(searchIndicatorView)
+        contentView.addSubview(menuButton)
 
-        searchIndicatorView.isUserInteractionEnabled = true
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        searchIndicatorView.addGestureRecognizer(gesture)
+        // Use an overlay button to present system UIMenu
+        searchIndicatorView.isUserInteractionEnabled = false
     }
 
     override func layoutSubviews() {
@@ -32,6 +39,8 @@ final class WebSearchStateView: MessageListRowView {
             width: min(indicatorSize.width, contentView.bounds.width),
             height: contentView.bounds.height
         )
+
+        menuButton.frame = contentView.bounds
     }
 
     @available(*, unavailable)
@@ -86,10 +95,7 @@ final class WebSearchStateView: MessageListRowView {
                 ]),
             ])
         })
-        searchIndicatorView.present(menu: menu, anchorPoint: .init(
-            x: searchIndicatorView.frame.midX,
-            y: searchIndicatorView.frame.maxY + 16
-        ))
+        menuButton.menu = menu
     }
 }
 
