@@ -225,15 +225,18 @@ extension QuickSettingBar: UIContextMenuInteractionDelegate {
 
         return nil
     }
-    
+
     private func makePreviewController(for view: UIView?) -> UIViewController? {
         guard let view else { return nil }
         guard let snapshot = view.snapshotView(afterScreenUpdates: false) else {
             return nil
         }
-        
+
         let controller = UIViewController()
-        controller.preferredContentSize = view.bounds.size + CGSize(width: 16, height: 16)
+        controller.preferredContentSize = .init(
+            width: view.bounds.size.width + 16,
+            height: view.bounds.size.height + 16
+        )
         controller.view.backgroundColor = .systemBackground
         controller.view.addSubview(snapshot)
         snapshot.translatesAutoresizingMaskIntoConstraints = false
