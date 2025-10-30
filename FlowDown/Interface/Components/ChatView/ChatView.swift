@@ -266,7 +266,9 @@ extension ChatView {
         }
 
         let menuButton = EasyMenuButton().with {
-            $0.image = UIImage(systemName: "chevron.down")
+            var config = UIButton.Configuration.plain()
+            config.image = UIImage(systemName: "chevron.down")
+            $0.configuration = config
             $0.tintColor = .gray.withAlphaComponent(0.5)
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.showsMenuAsPrimaryAction = true
@@ -324,14 +326,11 @@ extension ChatView {
                 icon.alpha = 0
             #endif
 
-            // Setup menu button
-            menuButton.menu = UIDeferredMenuElement.uncached { [weak self] completion in
-                guard let self else {
-                    completion([])
-                    return
-                }
-                completion([self.buildMenu() ?? .init()])
-            }
+            menuButton.menu = UIMenu(children: [
+                UIDeferredMenuElement.uncached { [weak self] completion in
+                    completion(self?.buildMenu()?.children ?? [])
+                },
+            ])
 
             ConversationManager.shared.conversations
                 .ensureMainThread()
@@ -451,7 +450,7 @@ extension ChatView {
 }
 
 extension ChatView.TitleBar {
-    class EasyMenuButton: UIImageView {
+    class EasyMenuButton: UIButton {
         open var easyHitInsets: UIEdgeInsets = .init(top: -16, left: -16, bottom: -16, right: -16)
 
         override open func point(inside point: CGPoint, with _: UIEvent?) -> Bool {
