@@ -97,8 +97,9 @@ class SearchContentController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !searchController.searchBar.isFirstResponder {
-            searchController.searchBar.becomeFirstResponder()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.searchController.searchBar.becomeFirstResponder()
         }
     }
 
