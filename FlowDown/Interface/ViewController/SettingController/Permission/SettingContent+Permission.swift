@@ -80,7 +80,7 @@ extension SettingController.SettingContent {
             #if !targetEnvironment(macCatalyst)
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionHeaderView().with(
-                        header: String(localized: "Media")
+                        header: "Media"
                     )
                 ) { $0.bottom /= 2 }
                 stackView.addArrangedSubview(SeparatorView())
@@ -91,7 +91,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Audio")
+                    header: "Audio"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -102,14 +102,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "We have requested your system to prioritize local processing of your audio data. However, there still remains a possibility that your audio data may be sent to Apple’s servers for processing. We are unable to determine whether your data has been sent to Apple’s servers.")
+                    footer: "We have requested your system to prioritize local processing of your audio data. However, there still remains a possibility that your audio data may be sent to Apple’s servers for processing. We are unable to determine whether your data has been sent to Apple’s servers."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Calendar")
+                    header: "Calendar"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -118,14 +118,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider.")
+                    footer: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Location")
+                    header: "Location"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -134,14 +134,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider.")
+                    footer: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Network")
+                    header: "Network"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -172,7 +172,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Shortcuts")
+                    header: "Shortcuts"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -190,7 +190,7 @@ extension SettingController.SettingContent {
             #if !targetEnvironment(macCatalyst)
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionFooterView().with(
-                        footer: String(localized: "You can grant unrestricted pasteboard access in Settings for convenience.")
+                        footer: "You can grant unrestricted pasteboard access in Settings for convenience."
                     )
                 ) {
                     $0.top /= 2
@@ -199,7 +199,7 @@ extension SettingController.SettingContent {
             #endif
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "To change the language used by the software, please go to the system settings.")
+                    footer: "To change the language used by the software, please go to the system settings."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

@@ -70,7 +70,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Conversation")
+                    header: "Conversation"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -92,7 +92,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Task Model")
+                    header: "Task Model"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -104,14 +104,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Using a local or mini model for this purpose will lower overall costs while maintaining a consistent experience.")
+                    footer: "Using a local or mini model for this purpose will lower overall costs while maintaining a consistent experience."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Visual Assessment")
+                    header: "Visual Assessment"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -123,7 +123,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible.")
+                    footer: "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -132,7 +132,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Parameters")
+                    header: "Parameters"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -151,7 +151,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "The above parameters will be applied to all conversations.")
+                    footer: "The above parameters will be applied to all conversations."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -160,7 +160,7 @@ extension SettingController.SettingContent {
             if #available(iOS 26.0, macCatalyst 26.0, *) {
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionHeaderView().with(
-                        header: String(localized: "Apple Intelligence")
+                        header: "Apple Intelligence"
                     )
                 ) { $0.bottom /= 2 }
                 stackView.addArrangedSubview(SeparatorView())
@@ -176,7 +176,7 @@ extension SettingController.SettingContent {
 
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionFooterView().with(
-                        footer: String(localized: "Apple Intelligence provides on-device AI capabilities when available.")
+                        footer: "Apple Intelligence provides on-device AI capabilities when available."
                     )
                 ) { $0.top /= 2 }
                 stackView.addArrangedSubview(SeparatorView())
@@ -194,7 +194,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "MLX is only available on Apple Silicon devices with Metal 3 support.")
+                    footer: "MLX is only available on Apple Silicon devices with Metal 3 support."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

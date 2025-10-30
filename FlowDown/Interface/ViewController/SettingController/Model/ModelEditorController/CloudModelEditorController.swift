@@ -77,8 +77,9 @@ class CloudModelEditorController: StackScrollController {
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
-                ConfigurableSectionFooterView()
-                    .with(footer: comment)
+                ConfigurableSectionFooterView().with {
+                    $0.titleLabel.text = comment
+                }
             )
             stackView.addArrangedSubview(SeparatorView())
         }

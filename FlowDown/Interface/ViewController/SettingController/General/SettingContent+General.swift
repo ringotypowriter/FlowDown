@@ -46,7 +46,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Display")
+                    header: "Display"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -62,14 +62,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "The above setting only adjusts the text size in conversations. To change the font size globally, please go to the system settings, as this app follows the system’s font size preferences.")
+                    footer: "The above setting only adjusts the text size in conversations. To change the font size globally, please go to the system settings, as this app follows the system’s font size preferences."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Chat")
+                    header: "Chat"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -79,14 +79,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "The above setting will take effect at conversation page.")
+                    footer: "The above setting will take effect at conversation page."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Editor")
+                    header: "Editor"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -100,14 +100,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Regardless of whether image compression is enabled, the EXIF information of the image will be removed. This will delete information such as the shooting date and location.")
+                    footer: "Regardless of whether image compression is enabled, the EXIF information of the image will be removed. This will delete information such as the shooting date and location."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Model Selector")
+                    header: "Model Selector"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -120,7 +120,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "If this switch is turned off, the newly selected model in the conversation will not be used for new conversations.")
+                    footer: "If this switch is turned off, the newly selected model in the conversation will not be used for new conversations."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

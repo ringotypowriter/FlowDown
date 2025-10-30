@@ -29,42 +29,42 @@ final class SyncScopePage: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView().with(
-                header: String(localized: "Syncing Scope")
+                header: "Syncing Scope"
             )
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         addGroupToggle(
             icon: "text.bubble",
-            title: String(localized: "Conversations, Messages, Attachments"),
-            desc: String(localized: "Sync chats and their messages and files."),
+            title: "Conversations, Messages, Attachments",
+            desc: "Sync chats and their messages and files.",
             group: .conversations
         )
 
         addGroupToggle(
             icon: "brain.head.profile",
-            title: String(localized: "Memory"),
-            desc: String(localized: "Sync your AI memory entries."),
+            title: "Memory",
+            desc: "Sync your AI memory entries.",
             group: .memory
         )
 
         addGroupToggle(
             icon: "rectangle.3.group.bubble.left",
-            title: String(localized: "MCP Servers"),
-            desc: String(localized: "Sync configured MCP connections."),
+            title: "MCP Servers",
+            desc: "Sync configured MCP connections.",
             group: .mcp
         )
 
         addGroupToggle(
             icon: "icloud",
-            title: String(localized: "Models"),
-            desc: String(localized: "Sync cloud model configurations."),
+            title: "Models",
+            desc: "Sync cloud model configurations.",
             group: .models
         )
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView().with(
-                header: String(localized: "Shortcuts")
+                header: "Shortcuts"
             )
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
@@ -125,7 +125,7 @@ final class SyncScopePage: StackScrollController {
 }
 
 extension SyncScopePage {
-    func addGroupToggle(icon: String, title: String, desc: String, group: SyncPreferences.Group) {
+    func addGroupToggle(icon: String, title: String.LocalizationValue, desc: String.LocalizationValue, group: SyncPreferences.Group) {
         let toggle = ConfigurableToggleActionView()
         toggle.configure(icon: UIImage(systemName: icon))
         toggle.configure(title: title)

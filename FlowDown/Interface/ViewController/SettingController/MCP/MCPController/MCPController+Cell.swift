@@ -66,7 +66,6 @@ extension SettingController.SettingContent.MCPController {
             }
 
             configurableView.configure(icon: icon)
-
             configurableView.configure(title: client.displayName)
 
             var descriptions: [String] = []

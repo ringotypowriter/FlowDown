@@ -35,7 +35,7 @@ extension SettingController.SettingContent {
             // Memory Tools Section
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Memory Tools")
+                    header: "Memory Tools"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -57,7 +57,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "These tools allow the AI to store, recall, and manage important information from conversations for better context awareness.")
+                    footer: "These tools allow the AI to store, recall, and manage important information from conversations for better context awareness."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -65,7 +65,7 @@ extension SettingController.SettingContent {
             // Data Management Section
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Data Management")
+                    header: "Data Management"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -112,7 +112,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "All memory data is stored locally on your device. Export operations allow you to backup your memory data.")
+                    footer: "All memory data is stored locally on your device. Export operations allow you to backup your memory data."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

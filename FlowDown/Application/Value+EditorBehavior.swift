@@ -19,8 +19,8 @@ extension EditorBehavior {
 
     static let useConfirmationOnSendConfigurableObject: ConfigurableObject = .init(
         icon: "checkmark.circle",
-        title: String(localized: "Confirmation on Send"),
-        explain: String(localized: "Enable this to require Command + Enter to send message. On touch devices, you will need to tap the send button manually."),
+        title: "Confirmation on Send",
+        explain: "Enable this to require Command + Enter to send message. On touch devices, you will need to tap the send button manually.",
         key: useConfirmationOnSendKey,
         defaultValue: false,
         annotation: .boolean
@@ -28,8 +28,8 @@ extension EditorBehavior {
 
     static let pasteAsFileConfigurableObject: ConfigurableObject = .init(
         icon: "doc.text",
-        title: String(localized: "Paste as File"),
-        explain: String(localized: "When enabled, large content pasted into the editor will be attached as a file. You can tap on the file to edit it."),
+        title: "Paste as File",
+        explain: "When enabled, large content pasted into the editor will be attached as a file. You can tap on the file to edit it.",
         key: pasteAsFileStorageKey,
         defaultValue: true,
         annotation: .boolean
@@ -37,8 +37,8 @@ extension EditorBehavior {
 
     static let compressImageConfigurableObject: ConfigurableObject = .init(
         icon: "text.below.photo",
-        title: String(localized: "Compress Image"),
-        explain: String(localized: "If enabled, images will be compressed before added to chat. Compressed image will be easier to upload but may lose some quality."),
+        title: "Compress Image",
+        explain: "If enabled, images will be compressed before added to chat. Compressed image will be easier to upload but may lose some quality.",
         key: compressImageStorageKey,
         defaultValue: true,
         annotation: .boolean
