@@ -18,7 +18,6 @@ let package = Package(
         .package(url: "https://github.com/Lakr233/ColorfulX", from: "6.0.0"),
         .package(url: "https://github.com/Lakr233/ScrubberKit", from: "0.1.0"),
         .package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
-
         .package(path: "../Logger"),
     ],
     targets: [
@@ -28,7 +27,6 @@ let package = Package(
             .product(name: "ColorfulX", package: "ColorfulX"),
             .product(name: "ScrubberKit", package: "ScrubberKit"),
             .product(name: "OrderedCollections", package: "swift-collections"),
-
             .product(name: "Logger", package: "Logger"),
         ]),
     ]

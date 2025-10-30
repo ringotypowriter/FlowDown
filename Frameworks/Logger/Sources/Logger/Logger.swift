@@ -13,11 +13,11 @@ public extension Logger {
 
     static let database = Logger(subsystem: Self.loggingSubsystem, category: "Database")
     static let syncEngine = Logger(subsystem: Self.loggingSubsystem, category: "SyncEngine")
+    static let chatService = Logger(subsystem: Self.loggingSubsystem, category: "ChatService")
     static let app = Logger(subsystem: Self.loggingSubsystem, category: "App")
     static let ui = Logger(subsystem: Self.loggingSubsystem, category: "UI")
     static let network = Logger(subsystem: Self.loggingSubsystem, category: "Network")
     static let model = Logger(subsystem: Self.loggingSubsystem, category: "Model")
-    static let chatService = Logger(subsystem: Self.loggingSubsystem, category: "ChatService")
 }
 
 public enum LogLevel: String {
