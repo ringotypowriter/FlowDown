@@ -17,12 +17,11 @@ class NewChatButton: UIButton {
         setImage(UIImage(systemName: "plus"), for: .normal)
         tintColor = .label
         imageView?.contentMode = .scaleAspectFit
-        showsMenuAsPrimaryAction = true
         updateMenu()
 
-        // Subscribe to template changes
         ChatTemplateManager.shared.$templates
-            .ensureMainThread()
+            // it's a object will change
+            .delay(for: .seconds(0.1), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.updateMenu()
             }
@@ -37,7 +36,25 @@ class NewChatButton: UIButton {
     weak var delegate: Delegate?
 
     private func updateMenu() {
-        menu = UIMenu(children: buildMenu())
+        let templates = ChatTemplateManager.shared.templates
+        
+        if templates.isEmpty {
+            // No templates, use direct tap action
+            showsMenuAsPrimaryAction = false
+            removeTarget(nil, action: nil, for: .touchUpInside)
+            addTarget(self, action: #selector(createNewConversation), for: .touchUpInside)
+            menu = nil
+        } else {
+            // Has templates, show menu
+            showsMenuAsPrimaryAction = true
+            removeTarget(nil, action: nil, for: .touchUpInside)
+            menu = UIMenu(children: buildMenu())
+        }
+    }
+    
+    @objc private func createNewConversation() {
+        let conv = ConversationManager.shared.createNewConversation()
+        delegate?.newChatDidCreated(conv.id)
     }
 
     private func buildMenu() -> [UIMenuElement] {
