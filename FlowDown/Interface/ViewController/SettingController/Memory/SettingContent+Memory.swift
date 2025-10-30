@@ -86,9 +86,7 @@ extension SettingController.SettingContent {
                 title: "Export Memories",
                 explain: "Export all memories as JSON file.",
                 ephemeralAnnotation: .action { controller in
-                    Task {
-                        await self.exportMemories(from: controller)
-                    }
+                    await self.exportMemories(from: controller)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(exportMemories)
@@ -100,9 +98,7 @@ extension SettingController.SettingContent {
                 title: "Clear All Memories",
                 explain: "Delete all stored memories permanently.",
                 ephemeralAnnotation: .action { controller in
-                    Task {
-                        await self.clearAllMemories(from: controller)
-                    }
+                    await self.clearAllMemories(from: controller)
                 }
             ).createView()
             stackView.addArrangedSubviewWithMargin(clearMemories)
@@ -177,27 +173,25 @@ extension SettingController.SettingContent {
                 }
                 context.addAction(title: String(localized: "Clear All"), attribute: .dangerous) {
                     context.dispose {
-                        Task {
-                            do {
-                                try await MemoryStore.shared.deleteAllMemoriesAsync()
-                                await MainActor.run {
-                                    Indicator.present(
-                                        title: "Memories Cleared",
-                                        referencingView: controller.view
-                                    )
-                                }
-                            } catch {
-                                await MainActor.run {
-                                    let errorAlert = AlertViewController(
-                                        title: String(localized: "Error"),
-                                        message: String(localized: "Failed to clear memories: \(error.localizedDescription)")
-                                    ) { context in
-                                        context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
-                                            context.dispose()
-                                        }
+                        do {
+                            try await MemoryStore.shared.deleteAllMemoriesAsync()
+                            await MainActor.run {
+                                Indicator.present(
+                                    title: "Memories Cleared",
+                                    referencingView: controller.view
+                                )
+                            }
+                        } catch {
+                            await MainActor.run {
+                                let errorAlert = AlertViewController(
+                                    title: String(localized: "Error"),
+                                    message: String(localized: "Failed to clear memories: \(error.localizedDescription)")
+                                ) { context in
+                                    context.addAction(title: String(localized: "OK"), attribute: .dangerous) {
+                                        context.dispose()
                                     }
-                                    controller.present(errorAlert, animated: true)
                                 }
+                                controller.present(errorAlert, animated: true)
                             }
                         }
                     }

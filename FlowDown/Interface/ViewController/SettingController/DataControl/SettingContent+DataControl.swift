@@ -331,23 +331,18 @@ extension SettingController.SettingContent {
                         }
                         context.addAction(title: String(localized: "Reset"), attribute: .dangerous) {
                             context.dispose {
-                                Task {
-                                    /// 停掉同步,避免同步继续执行会占用db连接，导致后面无法关闭db
-                                    try? await syncEngine.stopSyncIfNeeded()
-                                    SyncEngine.resetCachedState()
+                                /// 停掉同步,避免同步继续执行会占用db连接，导致后面无法关闭db
+                                try? await syncEngine.stopSyncIfNeeded()
+                                SyncEngine.resetCachedState()
+                                try? FileManager.default.removeItem(at: FileManager.default.temporaryDirectory)
+                                try? FileManager.default.removeItem(at: ModelManager.shared.localModelDir)
 
-                                    await MainActor.run {
-                                        try? FileManager.default.removeItem(at: FileManager.default.temporaryDirectory)
-                                        try? FileManager.default.removeItem(at: ModelManager.shared.localModelDir)
-
-                                        /// 在主线程中释放db链接
-                                        sdb.reset()
-                                        // close the app
-                                        UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            exit(0)
-                                        }
-                                    }
+                                /// 在主线程中释放db链接
+                                sdb.reset()
+                                // close the app
+                                UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    exit(0)
                                 }
                             }
                         }
