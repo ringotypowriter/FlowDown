@@ -94,29 +94,14 @@ extension ConversationManager {
                             }
                         }
 
-                        guard let image else {
-                            Indicator.present(
-                                title: "Unable to Export",
-                                preset: .error,
-                                referencingView: view
-                            )
-                            return
-                        }
-                        let url = FileManager.default
-                            .temporaryDirectory
-                            .appendingPathComponent("DisposableResources")
-                            .appendingPathComponent("Exported-\(Int(Date().timeIntervalSince1970))".sanitizedFileName)
-                            .appendingPathExtension("png")
-                        try? FileManager.default.createDirectory(
-                            at: url.deletingLastPathComponent(),
-                            withIntermediateDirectories: true
+                        guard let image, let png = image.pngData() else { throw NSError() }
+                        let exporter = DisposableExporter(
+                            data: png,
+                            name: "Exported-\(Int(Date().timeIntervalSince1970))".sanitizedFileName,
+                            pathExtension: "png",
+                            title: "Export Image"
                         )
-                        let png = image.pngData()
-                        FileManager.default.createFile(atPath: url.path(), contents: png)
-
-                        await completion {
-                            DisposableExporter(deletableItem: url, title: "Save Image").run(anchor: view)
-                        }
+                        await completion { exporter.run(anchor: view) }
                     }
                 },
                 UIMenu(

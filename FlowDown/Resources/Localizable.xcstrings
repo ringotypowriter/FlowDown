@@ -2692,6 +2692,9 @@
         }
       }
     },
+    "Export Image" : {
+
+    },
     "Export Markdown" : {
       "localizations" : {
         "zh-Hans" : {
@@ -7402,6 +7405,7 @@
       }
     },
     "Unable to Export" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

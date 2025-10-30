@@ -73,7 +73,8 @@ final class WebSearchStateView: MessageListRowView {
                 UIMenu(title: String(localized: "Share") + " " + (result.url.host ?? ""), options: [.displayInline], children: [
                     UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
                         guard let self else { return }
-                        DisposableExporter(data: Data(result.url.absoluteString.utf8), pathExtension: "txt").run(anchor: self, mode: .text)
+                        DisposableExporter(data: Data(result.url.absoluteString.utf8), pathExtension: "txt")
+                            .run(anchor: self, mode: .text)
                     },
                     UIAction(
                         title: String(localized: "Open in Default Browser"),
