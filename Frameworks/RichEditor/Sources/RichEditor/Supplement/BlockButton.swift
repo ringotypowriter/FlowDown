@@ -39,6 +39,10 @@ class BlockButton: UIView {
         tapGesture.addTarget(self, action: #selector(onTapped))
         addGestureRecognizer(tapGesture)
         isUserInteractionEnabled = true
+
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
+            self.applyDefaultAppearance()
+        }
     }
 
     @available(*, unavailable)
@@ -51,11 +55,6 @@ class BlockButton: UIView {
             width: ceil(inset + iconSize + spacing + titleLabel.intrinsicContentSize.width + inset),
             height: ceil(max(iconSize, titleLabel.intrinsicContentSize.height) + inset * 2)
         )
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        applyDefaultAppearance()
     }
 
     override func layoutSubviews() {

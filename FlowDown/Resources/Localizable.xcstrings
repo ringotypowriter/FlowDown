@@ -7199,7 +7199,14 @@
       }
     },
     "Tool execution cancelled by user" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具调用被用户取消"
+          }
+        }
+      }
     },
     "Tool execution failed: %@" : {
       "localizations" : {
