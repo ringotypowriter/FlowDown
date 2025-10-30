@@ -5,15 +5,15 @@
 //  Created by king on 2025/10/14.
 //
 
-import Foundation
-import OSLog
+@_exported import Foundation
+@_exported import OSLog
 
 public extension Logger {
-    static let loggingSubsystem: String = "wiki.qaq.flowdown"
+    static let loggingSubsystem: String = Bundle.main.bundleIdentifier!
 
-    // Categories
     static let database = Logger(subsystem: Self.loggingSubsystem, category: "Database")
     static let syncEngine = Logger(subsystem: Self.loggingSubsystem, category: "SyncEngine")
+    static let chatService = Logger(subsystem: Self.loggingSubsystem, category: "ChatService")
     static let app = Logger(subsystem: Self.loggingSubsystem, category: "App")
     static let ui = Logger(subsystem: Self.loggingSubsystem, category: "UI")
     static let network = Logger(subsystem: Self.loggingSubsystem, category: "Network")
@@ -26,7 +26,6 @@ public enum LogLevel: String {
     case error = "ERROR"
 }
 
-/// Lightweight log store with size-based rotation.
 public final class LogStore {
     public static let shared = LogStore()
 

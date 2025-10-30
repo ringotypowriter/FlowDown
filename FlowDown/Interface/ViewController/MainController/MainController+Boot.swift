@@ -8,7 +8,6 @@
 import AlertController
 import Combine
 import Foundation
-import OSLog
 import UIKit
 
 extension MainController {

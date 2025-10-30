@@ -7,7 +7,6 @@
 
 import CommonCrypto
 import Foundation
-import OSLog
 import Storage
 
 extension CloudModel {

@@ -7,7 +7,6 @@
 
 import ChatClientKit
 import Foundation
-import OSLog
 
 extension ConversationSession {
     func removeOutOfContextContents(

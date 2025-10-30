@@ -8,7 +8,6 @@
 import ChatClientKit
 import Combine
 import Foundation
-import OSLog
 import RichEditor
 @preconcurrency import ScrubberKit
 import Storage

@@ -5,7 +5,6 @@
 //  Created by 秋星桥 on 7/9/25.
 //
 
-import OSLog
 import UIKit
 
 extension SearchContentController: UITableViewDelegate {

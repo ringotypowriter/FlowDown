@@ -1,8 +1,7 @@
+import Foundation
 @_exported import Runestone
 @_exported import RunestoneLanguageSupport
 @_exported import RunestoneThemeSupport
-
-import Foundation
 
 public typealias RunestoneEditorView = TextView
 

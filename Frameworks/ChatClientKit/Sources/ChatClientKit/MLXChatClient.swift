@@ -23,7 +23,7 @@ public class MLXChatClientQueue {
         runningItems.insert(token)
         lock.unlock()
 
-        print("[+]", #function, token)
+        logger.debug("MLXChatClientQueue.acquire token: \(token.uuidString)")
         sem.wait()
         return token
     }
@@ -35,7 +35,7 @@ public class MLXChatClientQueue {
             return
         }
         runningItems.remove(token)
-        print("[+]", #function, token)
+        logger.debug("MLXChatClientQueue.release token: \(token.uuidString)")
         sem.signal()
     }
 
@@ -61,6 +61,8 @@ open class MLXChatClient: ChatService {
     }
 
     public func chatCompletionRequest(body: ChatRequestBody) async throws -> ChatResponseBody {
+        logger.info("starting non-streaming chat completion request with \(body.messages.count) messages")
+        let startTime = Date()
         let choiceMessage: ChoiceMessage = try await streamingChatCompletionRequest(body: body)
             .compactMap { chunk -> ChatCompletionChunk? in
                 switch chunk {
@@ -81,6 +83,8 @@ open class MLXChatClient: ChatService {
                 }
             }
         let timestamp = Int(Date.now.timeIntervalSince1970)
+        let duration = Date().timeIntervalSince(startTime)
+        logger.info("completed non-streaming request in \(String(format: "%.2f", duration))s, content length: \(choiceMessage.content?.count ?? 0)")
         return .init(
             choices: [.init(message: choiceMessage)],
             created: timestamp,
@@ -91,10 +95,12 @@ open class MLXChatClient: ChatService {
     public func streamingChatCompletionRequest(
         body: ChatRequestBody
     ) async throws -> AnyAsyncSequence<ChatServiceStreamObject> {
+        logger.info("starting streaming chat completion request with \(body.messages.count) messages, max tokens: \(body.maxCompletionTokens ?? 4096)")
         let token = MLXChatClientQueue.shared.acquire()
         do {
             return try await streamingChatCompletionRequestExecute(body: body, token: token)
         } catch {
+            logger.error("streaming request failed: \(error.localizedDescription)")
             MLXChatClientQueue.shared.release(token: token)
             throw error
         }
@@ -109,16 +115,22 @@ open class MLXChatClient: ChatService {
         var userInput = userInput(body: body)
         let generateParameters = generateParameters(body: body)
         let container: ModelContainer
+        let modelConfiguration = modelConfiguration
         do {
+            logger.debug("attempting to load LLM model from \(modelConfiguration.modelDirectory().absoluteString)")
             container = try await LLMModelFactory.shared.loadContainer(configuration: modelConfiguration)
+            logger.info("successfully loaded LLM model: \(modelConfiguration.name)")
             // llm, remove image if found
             userInput.images = []
         } catch {
             do {
+                logger.debug("LLM load failed, attempting VLM model")
                 container = try await VLMModelFactory.shared.loadContainer(configuration: modelConfiguration)
+                logger.info("successfully loaded VLM model: \(modelConfiguration.name)")
                 // vlm, check for images
                 if userInput.images.isEmpty { userInput.images.append(.ciImage(emptyImage)) }
             } catch {
+                logger.error("failed to load model: \(error.localizedDescription)")
                 throw error
             }
         }
@@ -204,6 +216,7 @@ open class MLXChatClient: ChatService {
                             // for reasoning models, still expect something in return
                             // this is mainly because title generation requires that
                             if regularContentOutputLength >= body.maxCompletionTokens ?? 4096 {
+                                logger.info("reached max completion tokens: \(regularContentOutputLength)")
                                 return .stop
                             }
 
@@ -214,13 +227,13 @@ open class MLXChatClient: ChatService {
                                     shouldTerminate = true
                                 }
                                 if shouldTerminate {
-                                    print("[*] terminating due to additional terminator: \(terminator)")
+                                    logger.info("terminating due to additional terminator: \(terminator)")
                                     return .stop
                                 }
                             }
 
                             if Task.isCancelled {
-                                print("[-] cancelling current inference due to Task.isCancelled")
+                                logger.debug("cancelling current inference due to Task.isCancelled")
                                 return .stop
                             }
 
@@ -232,9 +245,11 @@ open class MLXChatClient: ChatService {
                             continuation.yield(ChatServiceStreamObject.chatCompletionChunk(chunk: chunk))
                         }
 
+                        logger.info("inference completed, total output length: \(output.count), regular content: \(regularContentOutputLength)")
                         MLXChatClientQueue.shared.release(token: token)
                         continuation.finish()
                     } catch {
+                        logger.error("inference failed: \(error.localizedDescription)")
                         MLXChatClientQueue.shared.release(token: token)
                         continuation.finish(throwing: error)
                     }

@@ -12,7 +12,6 @@ import Foundation
 import Hub
 import MLX
 import MLXLLM
-import OSLog
 import Storage
 import ZIPFoundation
 

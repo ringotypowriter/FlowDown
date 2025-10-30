@@ -9,7 +9,6 @@ import ChatClientKit
 import ConfigurableKit
 import Foundation
 import OrderedCollections
-import OSLog
 import Storage
 import UIKit
 import XMLCoder

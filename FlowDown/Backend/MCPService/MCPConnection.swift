@@ -8,7 +8,6 @@
 import Combine
 import Foundation
 import MCP
-import OSLog
 import Storage
 
 // MARK: - Connection Manager

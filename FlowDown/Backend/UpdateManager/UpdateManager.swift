@@ -2,7 +2,6 @@ import AlertController
 import Combine
 import DpkgVersion
 import Foundation
-import OSLog
 import UIKit
 
 private enum DistributionChannel: String, Equatable, Hashable {

@@ -10,7 +10,6 @@ import CryptoKit
 import Digger
 import Foundation
 import Hub
-import OSLog
 import Storage
 
 private let api = HubApi()

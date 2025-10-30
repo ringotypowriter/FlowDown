@@ -13,7 +13,6 @@ import MLX
 import MLXLLM
 import MLXLMCommon
 import MLXVLM
-import OSLog
 import Storage
 
 extension ModelManager {

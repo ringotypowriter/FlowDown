@@ -7,7 +7,6 @@ import AlertController
 import ListViewKit
 import Litext
 import MarkdownView
-import OSLog
 import RichEditor
 import Storage
 import UIKit

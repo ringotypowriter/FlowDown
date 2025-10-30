@@ -6,7 +6,6 @@
 //
 
 import AlertController
-import OSLog
 import UIKit
 
 class JsonStringMapEditorController: CodeEditorController {

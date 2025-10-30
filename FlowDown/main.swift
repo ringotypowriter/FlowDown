@@ -6,6 +6,7 @@
 //
 
 @_exported import Foundation
+@_exported import Logger
 @_exported import SnapKit
 @_exported import SwifterSwift
 @_exported import UIKit
@@ -33,11 +34,8 @@ import Storage
     }
 #endif
 
-import OSLog
-
 let logger = Logger.app
 _ = LogStore.shared
-
 import ConfigurableKit
 import MLX
 
@@ -48,7 +46,6 @@ import MLX
     ConfigurableKit.set(value: true, forKey: MLX.GPU.isSupportedKey)
     assert(MLX.GPU.isSupported)
 #endif
-
 import Storage
 
 let sdb: Storage = {

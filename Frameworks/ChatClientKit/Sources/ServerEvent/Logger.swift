@@ -7,4 +7,4 @@ import Foundation
 
 @_exported import Logger
 
-let logger = Logger.chatService
+let logger = Logger.network

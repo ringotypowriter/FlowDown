@@ -9,7 +9,6 @@ import Combine
 import ConfigurableKit
 import Foundation
 import MarkdownView
-import OSLog
 
 extension MarkdownTheme.FontScale {
     var title: String {

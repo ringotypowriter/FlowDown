@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import os.log
 import WCDBSwift
 
 package extension Storage {

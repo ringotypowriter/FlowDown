@@ -2,7 +2,6 @@ import AlertController
 import Combine
 import ConfigurableKit
 import MCP
-import OSLog
 import Storage
 import UIKit
 

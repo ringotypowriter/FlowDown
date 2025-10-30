@@ -11,7 +11,6 @@ import Combine
 import ConfigurableKit
 import Foundation
 import MCP
-import OSLog
 import UIKit
 
 // MARK: - MCPService Tools Extension

@@ -8,7 +8,6 @@
 import AlertController
 import ChatClientKit
 import ConfigurableKit
-import OSLog
 import RegexBuilder
 import RichEditor
 import ScrubberKit

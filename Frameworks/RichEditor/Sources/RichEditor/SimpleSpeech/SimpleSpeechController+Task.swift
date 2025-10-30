@@ -5,6 +5,7 @@
 //  Created by 秋星桥 on 1/18/25.
 //
 
+import AVFAudio
 import Speech
 import UIKit
 
@@ -46,7 +47,7 @@ extension SimpleSpeechController {
 
     private func startTranscriptEx() throws {
         SFSpeechRecognizer.requestAuthorization { _ in }
-        AVAudioSession.sharedInstance().requestRecordPermission { _ in }
+        AVAudioApplication.requestRecordPermission(completionHandler: { _ in })
 
         guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
             throw NSError(domain: "SpeechRecognizer", code: 0, userInfo: [
@@ -54,7 +55,7 @@ extension SimpleSpeechController {
             ])
         }
 
-        guard AVAudioSession.sharedInstance().recordPermission == .granted else {
+        guard AVAudioApplication.shared.recordPermission == .granted else {
             throw NSError(domain: "SpeechRecognizer", code: 0, userInfo: [
                 NSLocalizedDescriptionKey: NSLocalizedString("Microphone is not authorized.", bundle: .module, comment: ""),
             ])

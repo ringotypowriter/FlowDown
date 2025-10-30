@@ -7,7 +7,6 @@
 
 import CloudKit
 import OrderedCollections
-import os.log
 
 package final class MockSyncEngine: SyncEngineProtocol {
     package let database: MockCloudDatabase

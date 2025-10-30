@@ -8,7 +8,6 @@
 import ChatClientKit
 import Combine
 import Foundation
-import OSLog
 import SwifterSwift
 import UIKit
 import Vision

@@ -25,6 +25,10 @@ class ToggleBlockButton: BlockButton {
     override init(text: String, icon: String) {
         super.init(text: text, icon: icon)
         super.actionBlock = { [weak self] in self?.isOn.toggle() }
+
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
+            self.updateUI()
+        }
     }
 
     var strikeThrough: Bool = false {
@@ -34,11 +38,6 @@ class ToggleBlockButton: BlockButton {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        updateUI()
     }
 
     func updateUI() {

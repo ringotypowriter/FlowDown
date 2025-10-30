@@ -5,6 +5,9 @@
       location = "group:FlowDown.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Frameworks/Logger">
+   </FileRef>
+   <FileRef
       location = "group:Frameworks/Storage">
    </FileRef>
    <FileRef
