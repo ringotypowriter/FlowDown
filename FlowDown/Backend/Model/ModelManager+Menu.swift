@@ -11,6 +11,12 @@ import Foundation
 import Storage
 import UIKit
 
+#if targetEnvironment(macCatalyst)
+    let modelGroupImage: UIImage? = .init(systemName: "folder")
+#else
+    let modelGroupImage: UIImage? = nil
+#endif
+
 extension ModelManager {
     private func openModelManagementPage(controller: UIViewController?) {
         guard let controller else { return }
@@ -75,7 +81,7 @@ extension ModelManager {
             let key = key.isEmpty ? String(localized: "Ungrouped") : key
             localMenuChildren.append(UIMenu(
                 title: key,
-                image: UIImage(systemName: "folder"),
+                image: modelGroupImage,
                 options: localMenuChildrenOptions,
                 children: items.map { item in
                     UIAction(title: item.0, state: item.1.id == currentSelection ? .on : .off) { _ in
@@ -91,7 +97,7 @@ extension ModelManager {
             let key = key.isEmpty ? String(localized: "Ungrouped") : key
             cloudMenuChildren.append(UIMenu(
                 title: key,
-                image: UIImage(systemName: "folder"),
+                image: modelGroupImage,
                 options: cloudMenuChildrenOptions,
                 children: items.map { item in
                     UIAction(title: item.0, state: item.1.id == currentSelection ? .on : .off) { _ in
