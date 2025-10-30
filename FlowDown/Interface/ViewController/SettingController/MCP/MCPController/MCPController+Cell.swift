@@ -151,11 +151,8 @@ extension SettingController.SettingContent.MCPController {
             encoder.outputFormat = .xml
             try? encoder.encode(server).write(to: tempFile, options: .atomic)
 
-            let exporter = Exporter(
+            let exporter = DisposableExporter(
                 item: tempFile,
-                completion: {
-                    try? FileManager.default.removeItem(at: tempFileDir)
-                },
                 exportTitle: String(localized: "Export MCP Server")
             )
             exporter.execute(presentingViewController: parentViewController)

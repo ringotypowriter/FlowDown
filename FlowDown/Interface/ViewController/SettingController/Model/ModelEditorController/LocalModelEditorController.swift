@@ -405,11 +405,8 @@ class LocalModelEditorController: StackScrollController {
                             )
                             return
                         }
-                        let exporter = Exporter(
+                        let exporter = DisposableExporter(
                             item: url,
-                            completion: {
-                                cleanup()
-                            },
                             exportTitle: String(localized: "Export Model")
                         )
                         exporter.execute(presentingViewController: self)

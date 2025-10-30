@@ -86,11 +86,8 @@ class MCPEditorController: StackScrollController {
             let data = try encoder.encode(server)
             try data.write(to: tempFile, options: .atomic)
 
-            let exporter = Exporter(
+            let exporter = DisposableExporter(
                 item: tempFile,
-                completion: {
-                    try? FileManager.default.removeItem(at: tempFileDir)
-                },
                 exportTitle: String(localized: "Export MCP Server")
             )
             exporter.execute(presentingViewController: self)

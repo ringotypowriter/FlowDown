@@ -171,11 +171,8 @@ extension SettingController.SettingContent.ModelController {
             let data = try encoder.encode(model)
             try data.write(to: tempFile, options: .atomic)
 
-            let exporter = Exporter(
+            let exporter = DisposableExporter(
                 item: tempFile,
-                completion: {
-                    try? FileManager.default.removeItem(at: tempFileDir)
-                },
                 exportTitle: String(localized: "Export Model")
             )
             exporter.execute(presentingViewController: self)

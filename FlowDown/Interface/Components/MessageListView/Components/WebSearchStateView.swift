@@ -77,7 +77,7 @@ final class WebSearchStateView: MessageListRowView {
                             .appendingPathComponent(UUID().uuidString)
                             .appendingPathExtension("txt")
                         try? result.url.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
-                        Exporter(
+                        DisposableExporter(
                             item: tempURL
                         ).run(anchor: self)
                     },

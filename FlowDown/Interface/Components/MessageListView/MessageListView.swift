@@ -184,7 +184,7 @@ final class MessageListView: UIView {
                     let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("url")
                     do {
                         try link.absoluteString.write(to: tempURL, atomically: true, encoding: .utf8)
-                        Exporter(
+                        DisposableExporter(
                             item: tempURL
                         ).run(anchor: self)
                     } catch {

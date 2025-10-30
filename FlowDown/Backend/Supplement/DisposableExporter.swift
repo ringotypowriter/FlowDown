@@ -1,18 +1,15 @@
 import Foundation
 import UIKit
 
-class Exporter: NSObject {
+class DisposableExporter: NSObject {
     private let item: URL
-    private let completion: (() -> Void)?
     private let exportTitle: String?
 
     init(
         item: URL,
-        completion: (() -> Void)? = nil,
         exportTitle: String? = nil
     ) {
         self.item = item
-        self.completion = completion
         self.exportTitle = exportTitle
         super.init()
     }
@@ -29,7 +26,6 @@ class Exporter: NSObject {
                 guard let self else { return }
                 // Always clean up the temporary file after sharing
                 try? FileManager.default.removeItem(at: item)
-                completion?()
             }
             presentingViewController.present(activityVC, animated: true, completion: nil)
         #endif
@@ -41,17 +37,16 @@ class Exporter: NSObject {
     }
 }
 
-extension Exporter: UIDocumentPickerDelegate {
+extension DisposableExporter: UIDocumentPickerDelegate {
     // MARK: - UIDocumentPickerDelegate
 
     #if targetEnvironment(macCatalyst)
         func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt _: [URL]) {
             try? FileManager.default.removeItem(at: item)
-            completion?()
         }
 
         func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
-            completion?()
+            try? FileManager.default.removeItem(at: item)
         }
     #endif
 }

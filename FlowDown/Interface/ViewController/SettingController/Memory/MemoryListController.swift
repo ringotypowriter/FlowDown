@@ -212,7 +212,7 @@ extension MemoryListController: UITableViewDelegate {
                     .appendingPathComponent(UUID().uuidString)
                     .appendingPathExtension("txt")
                 try? memory.content.write(to: tempURL, atomically: true, encoding: .utf8)
-                Exporter(
+                DisposableExporter(
                     item: tempURL
                 ).run(anchor: view)
             }

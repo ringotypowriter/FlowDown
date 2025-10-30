@@ -248,7 +248,7 @@ final class LogViewerController: UIViewController, UITableViewDataSource, UITabl
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("share-\(UUID().uuidString)").appendingPathExtension("txt")
         do {
             try text.write(to: tempURL, atomically: true, encoding: .utf8)
-            Exporter(
+            DisposableExporter(
                 item: tempURL
             ).execute(presentingViewController: self)
         } catch {

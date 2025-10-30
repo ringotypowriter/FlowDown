@@ -456,7 +456,7 @@ extension MessageListView: ListViewAdapter {
                             .appendingPathComponent(UUID().uuidString)
                             .appendingPathExtension("txt")
                         try? representation.content.write(to: tempURL, atomically: true, encoding: .utf8)
-                        Exporter(
+                        DisposableExporter(
                             item: tempURL
                         ).run(anchor: self)
                     },

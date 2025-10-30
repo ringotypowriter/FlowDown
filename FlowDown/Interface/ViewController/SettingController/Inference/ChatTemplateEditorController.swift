@@ -309,11 +309,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(template).write(to: tempFile, options: .atomic)
-            let exporter = Exporter(
+            let exporter = DisposableExporter(
                 item: tempFile,
-                completion: {
-                    try? FileManager.default.removeItem(at: tempFileDir)
-                },
                 exportTitle: String(localized: "Export Template")
             )
             exporter.execute(presentingViewController: self)
