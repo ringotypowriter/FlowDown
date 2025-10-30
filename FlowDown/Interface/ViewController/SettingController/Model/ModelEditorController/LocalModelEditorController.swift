@@ -299,7 +299,7 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubview(SeparatorView())
 
         var verifyButtonReader: UIView?
-        let verifyButton = ConfigurableActionView { [weak self] _ in
+        let verifyButton = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             guard let model = ModelManager.shared.localModel(identifier: identifier) else { return }
             verifyButtonReader?.isUserInteractionEnabled = false
@@ -342,7 +342,7 @@ class LocalModelEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        let openHuggingFace = ConfigurableActionView { [weak self] _ in
+        let openHuggingFace = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             guard let url = URL(string: "https://huggingface.co/\(identifier)") else {
                 return
@@ -355,7 +355,7 @@ class LocalModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(openHuggingFace)
         stackView.addArrangedSubview(SeparatorView())
 
-        let exportOption = ConfigurableActionView { [weak self] controller in
+        let exportOption = ConfigurableActionView { @MainActor [weak self] controller in
             guard let self else { return }
             guard let model = ModelManager.shared.localModel(identifier: identifier) else { return }
             Indicator.progress(
@@ -385,7 +385,7 @@ class LocalModelEditorController: StackScrollController {
                 .with(header: "Management")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
-        let deleteAction = ConfigurableActionView { [weak self] _ in
+        let deleteAction = ConfigurableActionView { @MainActor [weak self] _ in
             guard let self else { return }
             deleteTapped()
         }

@@ -39,7 +39,9 @@ class BlockButton: UIButton {
         textLabel.text = text
         applyDefaultAppearance()
 
-        addTarget(self, action: #selector(onTapped), for: .touchUpInside)
+        isUserInteractionEnabled = true
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(onTapped))
+        addGestureRecognizer(gesture)
 
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
             self.applyDefaultAppearance()
@@ -76,6 +78,9 @@ class BlockButton: UIButton {
     }
 
     @objc private func onTapped() {
+        guard !showsMenuAsPrimaryAction else { return }
+        let text = textLabel.text ?? ""
+        logger.info("BlockButton tapped: \(text)")
         puddingAnimate()
         actionBlock()
     }
