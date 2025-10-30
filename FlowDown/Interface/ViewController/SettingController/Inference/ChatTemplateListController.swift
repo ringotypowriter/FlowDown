@@ -213,7 +213,7 @@ extension ChatTemplateListController {
 
         func contextMenuInteraction(
             _: UIContextMenuInteraction,
-            configurationForMenuAtLocation location: CGPoint
+            configurationForMenuAtLocation _: CGPoint
         ) -> UIContextMenuConfiguration? {
             guard let identifier else { return nil }
             let menu = UIMenu(options: [.displayInline], children: [

@@ -560,10 +560,10 @@ class CloudModelEditorController: StackScrollController {
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
-        var exportOptionReader: UIView?
-        let exportOption = ConfigurableActionView { [weak self] _ in
-            guard let self else { return }
-            guard let model = ModelManager.shared.cloudModel(identifier: identifier) else { return }
+        let exportOption = ConfigurableActionView { [weak self] controller in
+            guard let self,
+                  let model = ModelManager.shared.cloudModel(identifier: identifier)
+            else { return }
             let tempFileDir = FileManager.default.temporaryDirectory
                 .appendingPathComponent("DisposableResources")
                 .appendingPathComponent(UUID().uuidString)
@@ -575,9 +575,8 @@ class CloudModelEditorController: StackScrollController {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(model).write(to: tempFile, options: .atomic)
-            DisposableExporter(deletableItem: tempFile, title: "Export Model").run(anchor: exportOptionReader ?? view)
+            DisposableExporter(deletableItem: tempFile, title: "Export Model").run(anchor: controller.view)
         }
-        exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Model")
         exportOption.configure(description: "Export this model to share with others.")

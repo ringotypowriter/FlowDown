@@ -46,7 +46,7 @@ extension SettingController.SettingContent.ModelController: UITableViewDelegate 
         return UISwipeActionsConfiguration(actions: [delete])
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         guard let itemIdentifier = dataSource.itemIdentifier(for: indexPath) else {
             return nil
         }

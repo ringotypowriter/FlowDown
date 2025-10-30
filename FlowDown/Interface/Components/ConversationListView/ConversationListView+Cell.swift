@@ -10,7 +10,7 @@ import Storage
 import UIKit
 
 extension ConversationListView {
-    class Cell: UITableViewCell {
+    class Cell: UITableViewCell, UIContextMenuInteractionDelegate {
         let stack = UIStackView().with {
             $0.axis = .horizontal
             $0.spacing = 12
@@ -62,6 +62,9 @@ extension ConversationListView {
             #if targetEnvironment(macCatalyst)
                 contentView.backgroundColor = .accent.withAlphaComponent(0.001)
             #endif
+
+            let contextMenuInteraction = UIContextMenuInteraction(delegate: self)
+            contentView.addInteraction(contextMenuInteraction)
         }
 
         @available(*, unavailable)
@@ -83,15 +86,23 @@ extension ConversationListView {
         }
 
         func presentMenu() {
-            guard let menu = ConversationManager.shared.menu(
-                forConversation: conversationIdentifier,
-                view: self,
-                suggestNewSelection: selectNewConv(id:)
-            ) else { return }
-            contentView.present(
-                menu: menu,
-                anchorPoint: .init(x: bounds.midX, y: titleLabel.frame.maxY + 4)
-            )
+            // This method is kept for compatibility but context menu is now handled by UIContextMenuInteraction
+        }
+
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            configurationForMenuAtLocation _: CGPoint
+        ) -> UIContextMenuConfiguration? {
+            guard let conversationIdentifier else { return nil }
+
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                guard let self else { return nil }
+                return ConversationManager.shared.menu(
+                    forConversation: conversationIdentifier,
+                    view: self,
+                    suggestNewSelection: selectNewConv(id:)
+                )
+            }
         }
 
         @objc func didSelectCell() {

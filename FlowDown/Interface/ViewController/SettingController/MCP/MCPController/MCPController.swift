@@ -136,7 +136,7 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [delete])
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
 
         let menu = UIMenu(options: [.displayInline], children: [

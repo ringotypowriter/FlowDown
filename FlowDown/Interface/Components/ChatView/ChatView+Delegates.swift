@@ -217,19 +217,29 @@ extension ChatView: RichEditorView.Delegate {
         let menu = UIMenu(title: String(localized: "Shortcuts"), children: [
             { () -> UIAction? in
                 guard !isAppleIntelligence, let id = modelIdentifier(), !id.isEmpty else { return nil }
-                return UIAction(title: String(localized: "Edit Model")) { [weak self] _ in
+                return UIAction(
+                    title: String(localized: "Edit Model"),
+                    image: UIImage(systemName: "slider.horizontal.3")
+                ) { [weak self] _ in
                     SettingController.setNextEntryPage(.modelEditor(model: id))
                     let settingController = SettingController()
                     self?.parentViewController?.present(settingController, animated: true)
                 }
             }(),
-            UIAction(title: String(localized: "Inference Settings")) { [weak self] _ in
+            UIAction(
+                title: String(localized: "Inference Settings"),
+                image: UIImage(systemName: "gearshape")
+            ) { [weak self] _ in
                 SettingController.setNextEntryPage(.inference)
                 let settingController = SettingController()
                 self?.parentViewController?.present(settingController, animated: true)
             },
         ].compactMap(\.self))
-        anchor.present(menu: menu)
+
+        // Use UIContextMenuInteraction instead of present(menu:)
+        if let interaction = anchor.interactions.first(where: { $0 is UIContextMenuInteraction }) as? UIContextMenuInteraction {
+            interaction.updateVisibleMenu { _ in menu }
+        }
     }
 
     func onRichEditorShowAlternativeToolsMenu(anchor: UIView) {
@@ -296,12 +306,18 @@ extension ChatView: RichEditorView.Delegate {
         let settingsMenu = UIMenu(
             title: String(localized: "Shortcuts"),
             children: [
-                UIAction(title: String(localized: "MCP Settings")) { [weak self] _ in
+                UIAction(
+                    title: String(localized: "MCP Settings"),
+                    image: UIImage(systemName: "server.rack")
+                ) { [weak self] _ in
                     SettingController.setNextEntryPage(.mcp)
                     let settingController = SettingController()
                     self?.parentViewController?.present(settingController, animated: true)
                 },
-                UIAction(title: String(localized: "Tools Settings")) { [weak self] _ in
+                UIAction(
+                    title: String(localized: "Tools Settings"),
+                    image: UIImage(systemName: "wrench.and.screwdriver")
+                ) { [weak self] _ in
                     SettingController.setNextEntryPage(.tools)
                     let settingController = SettingController()
                     self?.parentViewController?.present(settingController, animated: true)
@@ -310,7 +326,12 @@ extension ChatView: RichEditorView.Delegate {
         )
         toolMenuItems.append(settingsMenu)
 
-        anchor.present(menu: .init(options: [.displayInline], children: toolMenuItems))
+        let menu = UIMenu(options: [.displayInline], children: toolMenuItems)
+
+        // Use UIContextMenuInteraction instead of present(menu:)
+        if let interaction = anchor.interactions.first(where: { $0 is UIContextMenuInteraction }) as? UIContextMenuInteraction {
+            interaction.updateVisibleMenu { _ in menu }
+        }
     }
 
     func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool {

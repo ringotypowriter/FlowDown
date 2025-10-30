@@ -113,7 +113,7 @@ extension SettingController.SettingContent.MCPController {
 
         func contextMenuInteraction(
             _: UIContextMenuInteraction,
-            configurationForMenuAtLocation location: CGPoint
+            configurationForMenuAtLocation _: CGPoint
         ) -> UIContextMenuConfiguration? {
             guard let clientId else { return nil }
             let menu = UIMenu(options: [.displayInline], children: [

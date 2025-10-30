@@ -361,76 +361,99 @@ extension ChatView {
         }
 
         @objc func tapped() {
-            guard let conv else { return }
+            // Trigger context menu programmatically
+            if let interaction = menuButton.interactions.first(where: { $0 is UIContextMenuInteraction }) as? UIContextMenuInteraction {
+                interaction.updateVisibleMenu { _ in
+                    self.buildMenu() ?? .init()
+                }
+            }
+        }
+
+        func contextMenuInteraction(
+            _: UIContextMenuInteraction,
+            configurationForMenuAtLocation _: CGPoint
+        ) -> UIContextMenuConfiguration? {
+            UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                self?.buildMenu()
+            }
+        }
+
+        private func buildMenu() -> UIMenu? {
+            guard let conv else { return nil }
             guard let convMenu = ConversationManager.shared.menu(
                 forConversation: conv,
                 view: self,
                 suggestNewSelection: onSuggestSelection ?? { _ in }
-            ) else { return }
+            ) else { return nil }
 
             #if targetEnvironment(macCatalyst)
                 // On Catalyst, only show conversation menu (new chat button is handled by sidebar)
                 if let mainController = parentViewController as? MainController,
                    mainController.isSidebarCollapsed
                 {
-                    menuButton.present(menu: .init(children: [
+                    return UIMenu(children: [
                         convMenu,
                         UIAction(title: String(localized: "Show Sidebar"), image: UIImage(systemName: "sidebar.left")) { _ in
                             mainController.openSidebar()
                         },
-                    ]))
+                    ])
                 } else {
-                    menuButton.present(menu: convMenu)
+                    return convMenu
                 }
             #else
                 // On iOS, show both new chat options and conversation menu
-                let templates = ChatTemplateManager.shared.templates
-                var newChatOptions: [UIMenuElement] = []
-
-                if templates.isEmpty {
-                    // No templates, just show "Start New Chat"
-                    newChatOptions.append(UIAction(
-                        title: String(localized: "Start New Chat"),
-                        image: UIImage(systemName: "plus")
-                    ) { [weak self] _ in
-                        self?.onCreateNewChat?()
-                    })
-                } else {
-                    // Show template options
-                    newChatOptions.append(UIAction(
-                        title: String(localized: "Start New Chat"),
-                        image: UIImage(systemName: "plus")
-                    ) { [weak self] _ in
-                        self?.onCreateNewChat?()
-                    })
-
-                    var templatesMenuActions: [UIAction] = []
-                    for template in templates.values {
-                        templatesMenuActions.append(UIAction(
-                            title: template.name,
-                            image: UIImage(data: template.avatar)
-                        ) { [weak self] _ in
-                            let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
-                            self?.onSuggestSelection?(convId)
-                        })
+                return UIDeferredMenuElement.uncached { [weak self] completion in
+                    guard let self else {
+                        completion([])
+                        return
                     }
-                    newChatOptions.append(UIMenu(
-                        title: String(localized: "Choose Template"),
-                        image: UIImage(systemName: "folder"),
-                        children: templatesMenuActions
-                    ))
-                }
 
-                menuButton.present(menu: .init(
-                    children: [
+                    let templates = ChatTemplateManager.shared.templates
+                    var newChatOptions: [UIMenuElement] = []
+
+                    if templates.isEmpty {
+                        // No templates, just show "Start New Chat"
+                        newChatOptions.append(UIAction(
+                            title: String(localized: "Start New Chat"),
+                            image: UIImage(systemName: "plus")
+                        ) { [weak self] _ in
+                            self?.onCreateNewChat?()
+                        })
+                    } else {
+                        // Show template options
+                        newChatOptions.append(UIAction(
+                            title: String(localized: "Start New Chat"),
+                            image: UIImage(systemName: "plus")
+                        ) { [weak self] _ in
+                            self?.onCreateNewChat?()
+                        })
+
+                        var templatesMenuActions: [UIAction] = []
+                        for template in templates.values {
+                            templatesMenuActions.append(UIAction(
+                                title: template.name,
+                                image: UIImage(data: template.avatar)
+                            ) { [weak self] _ in
+                                let convId = ChatTemplateManager.shared.createConversationFromTemplate(template)
+                                self?.onSuggestSelection?(convId)
+                            })
+                        }
+                        newChatOptions.append(UIMenu(
+                            title: String(localized: "Choose Template"),
+                            image: UIImage(systemName: "folder"),
+                            children: templatesMenuActions
+                        ))
+                    }
+
+                    completion([
                         UIMenu(
                             title: String(localized: "New Conversation"),
                             options: [.displayInline],
                             children: newChatOptions
                         ),
                         convMenu,
-                    ]
-                ))
+                    ])
+                }
             #endif
         }
     }

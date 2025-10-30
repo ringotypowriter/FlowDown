@@ -286,8 +286,7 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
         stackView.addArrangedSubviewWithMargin(copyAction)
         stackView.addArrangedSubview(SeparatorView())
 
-        var exportOptionReader: UIView?
-        let exportOption = ConfigurableActionView { [weak self] _ in
+        let exportOption = ConfigurableActionView { [weak self] controller in
             guard let self else { return }
             let tempFileDir = FileManager.default.temporaryDirectory
                 .appendingPathComponent("DisposableResources")
@@ -300,9 +299,8 @@ class ChatTemplateEditorController: StackScrollController, UITextViewDelegate {
             let encoder = PropertyListEncoder()
             encoder.outputFormat = .xml
             try? encoder.encode(template).write(to: tempFile, options: .atomic)
-            DisposableExporter(deletableItem: tempFile, title: "Export Template").run(anchor: exportOptionReader ?? view)
+            DisposableExporter(deletableItem: tempFile, title: "Export Template").run(anchor: controller.view)
         }
-        exportOptionReader = exportOption
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
         exportOption.configure(title: "Export Template")
         exportOption.configure(description: "Export this chat template as a .fdtemplate file for sharing or backup.")
