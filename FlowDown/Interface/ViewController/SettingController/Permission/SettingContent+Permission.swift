@@ -28,38 +28,38 @@ extension SettingController.SettingContent {
 
         let cameraUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "camera"))
-            $0.configure(title: String(localized: "Camera"))
-            $0.configure(description: String(localized: "We use your camera to take picture. Your photo may be uploaded by your choice."))
+            $0.configure(title: "Camera")
+            $0.configure(description: "We use your camera to take picture. Your photo may be uploaded by your choice.")
         }
 
         let microphoneUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "mic"))
-            $0.configure(title: String(localized: "Microphone"))
-            $0.configure(description: String(localized: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation."))
+            $0.configure(title: "Microphone")
+            $0.configure(description: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.")
         }
 
         let speechRecognizeUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "waveform"))
-            $0.configure(title: String(localized: "Speech Recognition"))
-            $0.configure(description: String(localized: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation."))
+            $0.configure(title: "Speech Recognition")
+            $0.configure(description: "We use your audio data for speech recognition. Your data is processed by system, we do not collect those infomation.")
         }
 
         let lanUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "network"))
-            $0.configure(title: String(localized: "Local Area Network"))
-            $0.configure(description: String(localized: "We requires LAN access for interact with local service providers. We do not collect any information from your LAN."))
+            $0.configure(title: "Local Area Network")
+            $0.configure(description: "We requires LAN access for interact with local service providers. We do not collect any information from your LAN.")
         }
 
         let calendarUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "calendar"))
-            $0.configure(title: String(localized: "Calendar"))
-            $0.configure(description: String(localized: "We use calendar access to allow the assistant to view, create and modify events in your calendar. Calendar data is only accessed when you explicitly use calendar-related features."))
+            $0.configure(title: "Calendar")
+            $0.configure(description: "We use calendar access to allow the assistant to view, create and modify events in your calendar. Calendar data is only accessed when you explicitly use calendar-related features.")
         }
 
         let locationUsage = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "location.circle"))
-            $0.configure(title: String(localized: "Location"))
-            $0.configure(description: String(localized: "We use your location data to provide location-based services when requested. Your location is only accessed when you explicitly use location-related features."))
+            $0.configure(title: "Location")
+            $0.configure(description: "We use your location data to provide location-based services when requested. Your location is only accessed when you explicitly use location-related features.")
         }
 
         override func viewDidLoad() {
@@ -80,7 +80,7 @@ extension SettingController.SettingContent {
             #if !targetEnvironment(macCatalyst)
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionHeaderView().with(
-                        header: String(localized: "Media")
+                        header: "Media"
                     )
                 ) { $0.bottom /= 2 }
                 stackView.addArrangedSubview(SeparatorView())
@@ -91,7 +91,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Audio")
+                    header: "Audio"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -102,14 +102,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "We have requested your system to prioritize local processing of your audio data. However, there still remains a possibility that your audio data may be sent to Apple’s servers for processing. We are unable to determine whether your data has been sent to Apple’s servers.")
+                    footer: "We have requested your system to prioritize local processing of your audio data. However, there still remains a possibility that your audio data may be sent to Apple’s servers for processing. We are unable to determine whether your data has been sent to Apple’s servers."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Calendar")
+                    header: "Calendar"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -118,14 +118,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider.")
+                    footer: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Location")
+                    header: "Location"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -134,14 +134,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider.")
+                    footer: "Please note that if you use cloud-based models to process your request, your data may be sent to your service provider."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Network")
+                    header: "Network"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -172,7 +172,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Shortcuts")
+                    header: "Shortcuts"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -181,8 +181,8 @@ extension SettingController.SettingContent {
                 UIApplication.shared.openSettings()
             }.with {
                 $0.configure(icon: UIImage(systemName: "gearshape"))
-                $0.configure(title: String(localized: "Open Setting"))
-                $0.configure(description: String(localized: "Open the setting page."))
+                $0.configure(title: "Open Setting")
+                $0.configure(description: "Open the setting page.")
             }
             stackView.addArrangedSubviewWithMargin(openSetting)
             stackView.addArrangedSubview(SeparatorView())
@@ -190,7 +190,7 @@ extension SettingController.SettingContent {
             #if !targetEnvironment(macCatalyst)
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionFooterView().with(
-                        footer: String(localized: "You can grant unrestricted pasteboard access in Settings for convenience.")
+                        footer: "You can grant unrestricted pasteboard access in Settings for convenience."
                     )
                 ) {
                     $0.top /= 2
@@ -199,7 +199,7 @@ extension SettingController.SettingContent {
             #endif
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "To change the language used by the software, please go to the system settings.")
+                    footer: "To change the language used by the software, please go to the system settings."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())

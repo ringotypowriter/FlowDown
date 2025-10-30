@@ -53,8 +53,8 @@ extension ModelContextLength {
 extension ModelManager {
     static let defaultPromptConfigurableObject: ConfigurableObject = .init(
         icon: "text.quote",
-        title: String(localized: "Default Prompt"),
-        explain: String(localized: "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards."),
+        title: "Default Prompt",
+        explain: "The default prompt shapes the model's responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards.",
         key: "CONFKIT.Model.Inference.Prompt.Default",
         defaultValue: PromptType.complete.rawValue,
         annotation: .list {
@@ -68,8 +68,8 @@ extension ModelManager {
 
     static let extraPromptConfigurableObject: ConfigurableObject = .init(
         icon: "text.append",
-        title: String(localized: "Additional Prompt"),
-        explain: String(localized: "The additional prompt will be appended to the default prompt. You can make requests here, such as language preferences, response formats, etc."),
+        title: "Additional Prompt",
+        explain: "The additional prompt will be appended to the default prompt. You can make requests here, such as language preferences, response formats, etc.",
         ephemeralAnnotation: TextEditorAnnotation { view in
             assert(view.parentViewController?.navigationController != nil)
             let controller = TextEditorContentController()
@@ -84,8 +84,8 @@ extension ModelManager {
 
     static let includeDynamicSystemInfo = ConfigurableObject(
         icon: "info.circle",
-        title: String(localized: "Runtime System Prompt"),
-        explain: String(localized: "Insert the current model name, date, and locale in the system prompt for each request. Turn this off if your use caching systems to save cost."),
+        title: "Runtime System Prompt",
+        explain: "Insert the current model name, date, and locale in the system prompt for each request. Turn this off if your use caching systems to save cost.",
         key: ModelManager.shared.includeDynamicSystemInfoKey,
         defaultValue: true,
         annotation: .boolean
@@ -93,45 +93,45 @@ extension ModelManager {
 
     static let temperatureConfigurableObject: ConfigurableObject = .init(
         icon: "sparkles",
-        title: String(localized: "Imagination"),
-        explain: String(localized: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature."),
+        title: "Imagination",
+        explain: "This parameter can be used to control the personality of the model. The more imaginative, the more unstable the output. This parameter is also known as temperature.",
         key: "CONFKIT.Model.Inference.Temperature",
         defaultValue: 0.75,
         annotation: .list {
             [
                 .init(
                     icon: "snowflake",
-                    title: String(localized: "Freezing @ 0.0"),
+                    title: "Freezing @ 0.0",
                     rawValue: 0.1
                 ),
                 .init(
                     icon: "thermometer.low",
-                    title: String(localized: "Precise @ 0.25"),
+                    title: "Precise @ 0.25",
                     rawValue: 0.25
                 ),
                 .init(
                     icon: "thermometer.low",
-                    title: String(localized: "Stable @ 0.5"),
+                    title: "Stable @ 0.5",
                     rawValue: 0.5
                 ),
                 .init(
                     icon: "thermometer.medium",
-                    title: String(localized: "Humankind @ 0.75"),
+                    title: "Humankind @ 0.75",
                     rawValue: 0.75
                 ),
                 .init(
                     icon: "thermometer.medium",
-                    title: String(localized: "Creative @ 1.0"),
+                    title: "Creative @ 1.0",
                     rawValue: 1
                 ),
                 .init(
                     icon: "thermometer.high",
-                    title: String(localized: "Imaginative @ 1.5"),
+                    title: "Imaginative @ 1.5",
                     rawValue: 1.5
                 ),
                 .init(
                     icon: "thermometer.high",
-                    title: String(localized: "Magical @ 2.0"),
+                    title: "Magical @ 2.0",
                     rawValue: 2.0
                 ),
             ]
@@ -145,14 +145,14 @@ extension ModelManager {
         case balanced
         case proactive
 
-        var title: String {
+        var title: String.LocalizationValue {
             switch self {
             case .essential:
-                NSLocalizedString("Essential", comment: "Search Strategy")
+                "Essential"
             case .balanced:
-                NSLocalizedString("Balanced", comment: "Search Strategy")
+                "Balanced"
             case .proactive:
-                NSLocalizedString("Proactive", comment: "Search Strategy")
+                "Proactive"
             }
         }
 
@@ -219,8 +219,8 @@ extension ModelManager {
 
     static let searchSensitivityConfigurableObject: ConfigurableObject = .init(
         icon: "list.bullet.clipboard",
-        title: String(localized: "Search Strategy"),
-        explain: String(localized: "Adjust how aggressively web searches are triggered."),
+        title: "Search Strategy",
+        explain: "Adjust how aggressively web searches are triggered.",
         key: "Model.Inference.SearchSensitivity",
         defaultValue: SearchSensitivity.balanced.rawValue,
         annotation: .list {
@@ -237,11 +237,11 @@ extension ModelManager {
         case minimal
         case complete
 
-        var title: String {
+        var title: String.LocalizationValue {
             switch self {
-            case .none: String(localized: "None")
-            case .minimal: NSLocalizedString("Minimal", comment: "Prompt Type")
-            case .complete: String(localized: "Complete")
+            case .none: "None"
+            case .minimal: "Minimal"
+            case .complete: "Complete"
             }
         }
 

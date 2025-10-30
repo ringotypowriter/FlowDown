@@ -3453,7 +3453,7 @@
       }
     },
     "Huge" : {
-      "comment" : "Font Size\nModel Context",
+      "comment" : "Model Context",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4525,6 +4525,9 @@
         }
       }
     },
+    "MLX" : {
+      "shouldTranslate" : false
+    },
     "MLX is only available on Apple Silicon devices with Metal 3 support." : {
       "localizations" : {
         "zh-Hans" : {
@@ -5241,7 +5244,7 @@
         }
       }
     },
-    "Pages that exceed the model’s context length will be ignored. Too many pages may increase network usage and slow down inference." : {
+    "Pages that exceed the model's context length will be ignored. Too many pages may increase network usage and slow down inference." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -6727,7 +6730,7 @@
         }
       }
     },
-    "The default prompt shapes the model’s responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards." : {
+    "The default prompt shapes the model's responses. We provide presets with common instructions and information to enhance performance. A more detailed prompt can improve results but may increase costs. Please notice that system prompt is decided when creating new conversation, and will not be updated afterwards." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

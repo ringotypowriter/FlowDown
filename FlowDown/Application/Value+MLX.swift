@@ -24,12 +24,12 @@ extension MLX.GPU {
             case unrestricted
         #endif
 
-        var title: String {
+        var title: String.LocalizationValue {
             switch self {
-            case .notAllowed: return String(localized: "Not Allowed")
-            case .allowedInForeground: return String(localized: "Allowed in Foreground")
+            case .notAllowed: return "Not Allowed"
+            case .allowedInForeground: return "Allowed in Foreground"
             #if targetEnvironment(macCatalyst)
-                case .unrestricted: return String(localized: "Unrestricted")
+                case .unrestricted: return "Unrestricted"
             #endif
             }
         }
@@ -37,8 +37,8 @@ extension MLX.GPU {
 
     static let configurableObject: ConfigurableObject = .init(
         icon: "aqi.medium",
-        title: String(localized: "Inference Cache"),
-        explain: String(localized: "Set the strategy for handling runtime resource cache. Allowing the use of cache can speed up inference and save energy, but may cause the software to close unexpectedly."),
+        title: "Inference Cache",
+        explain: "Set the strategy for handling runtime resource cache. Allowing the use of cache can speed up inference and save energy, but may cause the software to close unexpectedly.",
         key: storageKey,
         defaultValue: CacheSizeLimit.notAllowed.rawValue,
         annotation: .list {

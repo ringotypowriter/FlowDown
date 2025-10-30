@@ -43,8 +43,8 @@ class MTListMemoriesTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "list.bullet.clipboard",
-            title: String(localized: "List Memories"),
-            explain: String(localized: "Allows AI to list memories with IDs for management operations."),
+            title: "List Memories",
+            explain: "Allows AI to list memories with IDs for management operations.",
             key: "wiki.qaq.ModelTools.ListMemoriesTool.enabled",
             defaultValue: true,
             annotation: .boolean

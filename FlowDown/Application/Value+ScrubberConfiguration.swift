@@ -22,51 +22,51 @@ extension ScrubberConfiguration {
 
     static let engineConfigChanged: PassthroughSubject<Void, Never> = .init()
 
-    static let googleEnabledConfigurableObject: ConfigurableObject = .init(
+    nonisolated(unsafe) static let googleEnabledConfigurableObject: ConfigurableObject = .init(
         icon: "sparkle.magnifyingglass",
-        title: String(localized: "Google Search"),
-        explain: String(localized: "Web search will fetch results from Google if enabled."),
+        title: "Google Search",
+        explain: "Web search will fetch results from Google if enabled.",
         key: googleEnabledKey,
         defaultValue: true,
         annotation: .boolean
     )
-    static let duckduckgoEnabledConfigurableObject: ConfigurableObject = .init(
+    nonisolated(unsafe) static let duckduckgoEnabledConfigurableObject: ConfigurableObject = .init(
         icon: "sparkle.magnifyingglass",
-        title: String(localized: "Duck Duck Go Search"),
-        explain: String(localized: "Web search will fetch results from Duck Duck Go if enabled."),
+        title: "Duck Duck Go Search",
+        explain: "Web search will fetch results from Duck Duck Go if enabled.",
         key: duckduckgoEnabledKey,
         defaultValue: true,
         annotation: .boolean
     )
-    static let yahooEnabledConfigurableObject: ConfigurableObject = .init(
+    nonisolated(unsafe) static let yahooEnabledConfigurableObject: ConfigurableObject = .init(
         icon: "sparkle.magnifyingglass",
-        title: String(localized: "Yahoo Search"),
-        explain: String(localized: "Web search will fetch results from Yahoo if enabled."),
+        title: "Yahoo Search",
+        explain: "Web search will fetch results from Yahoo if enabled.",
         key: yahooEnabledKey,
         defaultValue: true,
         annotation: .boolean
     )
-    static let bingEnabledConfigurableObject: ConfigurableObject = .init(
+    nonisolated(unsafe) static let bingEnabledConfigurableObject: ConfigurableObject = .init(
         icon: "sparkle.magnifyingglass",
-        title: String(localized: "Bing Search"),
-        explain: String(localized: "Web search will fetch results from Bing if enabled."),
+        title: "Bing Search",
+        explain: "Web search will fetch results from Bing if enabled.",
         key: bingEnabledKey,
         defaultValue: true,
         annotation: .boolean
     )
 
-    static let limitConfigurableObject: ConfigurableObject = .init(
+    nonisolated(unsafe) static let limitConfigurableObject: ConfigurableObject = .init(
         icon: "number.circle",
-        title: String(localized: "Search Limit"),
-        explain: String(localized: "The maximum number of search results to fetch."),
+        title: "Search Limit",
+        explain: "The maximum number of search results to fetch.",
         key: limitKey,
         defaultValue: 20,
         annotation: .list { [
-            .init(title: String(localized: "5 Pages"), rawValue: 5),
-            .init(title: String(localized: "10 Pages"), rawValue: 10),
-            .init(title: String(localized: "15 Pages"), rawValue: 15),
-            .init(title: String(localized: "20 Pages"), rawValue: 20),
-            .init(title: String(localized: "Unlimited Pages"), rawValue: 100),
+            .init(title: "5 Pages", rawValue: 5),
+            .init(title: "10 Pages", rawValue: 10),
+            .init(title: "15 Pages", rawValue: 15),
+            .init(title: "20 Pages", rawValue: 20),
+            .init(title: "Unlimited Pages", rawValue: 100),
         ] }
     )
 

@@ -13,8 +13,8 @@ import UIKit
 class BrandingLabel: GlyphixTextLabel {
     static let configurableObject = ConfigurableObject(
         icon: "pencil",
-        title: String(localized: "Edit Branding Name"),
-        explain: String(localized: "Change the branding name display in the app. Leave it empty to use FlowDown."),
+        title: "Edit Branding Name",
+        explain: "Change the branding name display in the app. Leave it empty to use FlowDown.",
         key: "BrandingLabel.Text",
         defaultValue: .init(String(localized: "FlowDown")),
         annotation: .action { controller in

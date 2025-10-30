@@ -48,8 +48,8 @@ class MTWebScraperTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "globe",
-            title: String(localized: "Web Scraper"),
-            explain: String(localized: "Allows LLM to fetch and read content from web pages."),
+            title: "Web Scraper",
+            explain: "Allows LLM to fetch and read content from web pages.",
             key: "wiki.qaq.ModelTools.WebScraperTool.enabled",
             defaultValue: true,
             annotation: .boolean

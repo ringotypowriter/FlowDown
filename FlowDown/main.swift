@@ -39,6 +39,11 @@ _ = LogStore.shared
 import ConfigurableKit
 import MLX
 
+#if DEBUG
+    logger.infoFile("Running in DEBUG mode")
+    ConfigurableKit.storage = UserDefaultKeyValueStorage(suite: .standard, prefix: "in-house.")
+#endif
+
 #if targetEnvironment(simulator) || arch(x86_64)
     ConfigurableKit.set(value: false, forKey: MLX.GPU.isSupportedKey)
     assert(!MLX.GPU.isSupported)
@@ -46,6 +51,7 @@ import MLX
     ConfigurableKit.set(value: true, forKey: MLX.GPU.isSupportedKey)
     assert(MLX.GPU.isSupported)
 #endif
+
 import Storage
 
 let sdb: Storage = {

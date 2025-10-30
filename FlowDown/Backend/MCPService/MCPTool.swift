@@ -59,8 +59,8 @@ class MCPTool: ModelTool, @unchecked Sendable {
         assertionFailure()
         return .init(
             icon: "hammer",
-            title: String(localized: "MCP Tool"),
-            explain: String(localized: "Tools from connected MCP servers"),
+            title: "MCP Tool",
+            explain: "Tools from connected MCP servers",
             key: "MCP.Tools.Enabled",
             defaultValue: true,
             annotation: .boolean

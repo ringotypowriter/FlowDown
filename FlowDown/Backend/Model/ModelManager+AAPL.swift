@@ -52,23 +52,23 @@ final class AppleIntelligenceModel {
         }
     }
 
-    var availabilityDescription: String {
+    var availabilityDescription: String.LocalizationValue {
         if #available(iOS 26.0, macCatalyst 26.0, *) {
             let model = SystemLanguageModel.default
             switch model.availability {
             case .available:
-                return String(localized: "Apple Intelligence is available and ready to use on this device.")
+                return "Apple Intelligence is available and ready to use on this device."
             case .unavailable(.deviceNotEligible):
-                return String(localized: "This device is not eligible for Apple Intelligence. Requires compatible hardware.")
+                return "This device is not eligible for Apple Intelligence. Requires compatible hardware."
             case .unavailable(.appleIntelligenceNotEnabled):
-                return String(localized: "Apple Intelligence is not enabled. Check your device settings.")
+                return "Apple Intelligence is not enabled. Check your device settings."
             case .unavailable(.modelNotReady):
-                return String(localized: "Apple Intelligence model is not ready. Try again later.")
+                return "Apple Intelligence model is not ready. Try again later."
             case let .unavailable(other):
-                return String(localized: "Apple Intelligence is unavailable: \(String(describing: other))")
+                return "Apple Intelligence is unavailable: \(String(describing: other))"
             }
         } else {
-            return String(localized: "Apple Intelligence requires iOS 26 or later.")
+            return "Apple Intelligence requires iOS 26 or later."
         }
     }
 

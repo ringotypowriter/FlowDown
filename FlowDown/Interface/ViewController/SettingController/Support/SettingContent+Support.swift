@@ -32,7 +32,7 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubview(SeparatorView())
 
             for section in settingSections {
-                if !section.title.isEmpty {
+                if !String(localized: section.title).isEmpty {
                     stackView.addArrangedSubviewWithMargin(
                         ConfigurableSectionHeaderView().with(header: section.title)
                     ) { $0.bottom /= 2 }
@@ -49,18 +49,18 @@ extension SettingController.SettingContent {
 
 extension SettingController.SettingContent.SupportController {
     typealias SettingSection = (
-        title: String,
+        title: String.LocalizationValue,
         objects: [ConfigurableObject]
     )
     var documentObject: SettingSection { (
-        title: String(localized: "Read Documents"),
+        title: "Read Documents",
         objects: [
             ConfigurableObject(
                 icon: "safari",
-                title: String(localized: "Open Documentation"),
-                explain: String(localized: "We provided a comprehensive documentation to help you understand how to use this app effectively."),
+                title: "Open Documentation",
+                explain: "We provided a comprehensive documentation to help you understand how to use this app effectively.",
                 ephemeralAnnotation: .openLink(
-                    title: String(localized: "Open..."),
+                    title: "Open...",
                     url: URL(string: "https://apps.qaq.wiki/docs/flowdown/")!
                 )
             ),
@@ -68,39 +68,39 @@ extension SettingController.SettingContent.SupportController {
     ) }
 
     var contactObject: SettingSection { (
-        title: String(localized: "Contact Us"),
+        title: "Contact Us",
         objects: [
             ConfigurableObject(
                 icon: "envelope",
-                title: String(localized: "Email"),
-                explain: String(localized: "Send us an email."),
+                title: "Email",
+                explain: "Send us an email.",
                 ephemeralAnnotation: .openLink(
-                    title: String(localized: "Open..."),
+                    title: "Open...",
                     url: URL(string: "mailto:flowdownapp@qaq.wiki")!
                 )
             ),
             ConfigurableObject(
                 icon: "safari",
-                title: String(localized: "GitHub"),
-                explain: String(localized: "Leave a message on GitHub issue."),
+                title: "GitHub",
+                explain: "Leave a message on GitHub issue.",
                 ephemeralAnnotation: .openLink(
-                    title: String(localized: "Open..."),
+                    title: "Open...",
                     url: URL(string: "https://github.com/Lakr233/FlowDown-Beta/issues")!
                 )
             ),
             ConfigurableObject(
                 icon: "bubble.left",
-                title: String(localized: "Discord"),
-                explain: String(localized: "Join our Discord server."),
+                title: "Discord",
+                explain: "Join our Discord server.",
                 ephemeralAnnotation: .openLink(
-                    title: String(localized: "Open..."),
+                    title: "Open...",
                     url: URL(string: "https://discord.gg/UHKMRyJcgc")!
                 )
             ),
             ConfigurableObject(
                 icon: "doc.richtext",
-                title: String(localized: "View Logs"),
-                explain: String(localized: "Inspect recent application logs for troubleshooting."),
+                title: "View Logs",
+                explain: "Inspect recent application logs for troubleshooting.",
                 ephemeralAnnotation: .action { controller in
                     controller?.navigationController?.pushViewController(LogViewerController(), animated: true)
                 }
@@ -109,12 +109,12 @@ extension SettingController.SettingContent.SupportController {
     ) }
 
     var openSourceObject: SettingSection { (
-        title: String(localized: "Software Resources"),
+        title: "Software Resources",
         objects: [
             ConfigurableObject(
                 icon: "flag.filled.and.flag.crossed",
-                title: String(localized: "Open Source Licenses"),
-                explain: String(localized: "These are the open-source licenses for the frameworks used in this app."),
+                title: "Open Source Licenses",
+                explain: "These are the open-source licenses for the frameworks used in this app.",
                 ephemeralAnnotation: .action { controller in
                     controller?.navigationController?.pushViewController(OpenSourceLicenseController(), animated: true)
                 }
@@ -123,12 +123,12 @@ extension SettingController.SettingContent.SupportController {
     ) }
 
     var agreementsObject: SettingSection { (
-        title: String(localized: "Agreements"),
+        title: "Agreements",
         objects: [
             ConfigurableObject(
                 icon: "lock",
-                title: String(localized: "Privacy Policy"),
-                explain: String(localized: "Tells you how we handle your data."),
+                title: "Privacy Policy",
+                explain: "Tells you how we handle your data.",
                 ephemeralAnnotation: .action { controller in
                     controller?.navigationController?.pushViewController(PrivacyPolicyController(), animated: true)
                 }

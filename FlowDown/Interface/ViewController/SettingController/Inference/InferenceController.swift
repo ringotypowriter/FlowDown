@@ -29,8 +29,8 @@ extension SettingController.SettingContent {
 
         private let defaultConversationModel = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "quote.bubble"))
-            $0.configure(title: String(localized: "Default Model"))
-            $0.configure(description: String(localized: "The model used for new conversations."))
+            $0.configure(title: "Default Model")
+            $0.configure(description: "The model used for new conversations.")
         }
 
         private let defaultAuxiliaryModelAlignWithChatModel = ConfigurableBooleanBlockView(storage: .init(
@@ -39,26 +39,26 @@ extension SettingController.SettingContent {
             storage: UserDefaultKeyValueStorage(suite: .standard)
         )).with {
             $0.configure(icon: UIImage(systemName: "quote.bubble"))
-            $0.configure(title: String(localized: "Use Chat Model"))
-            $0.configure(description: String(localized: "Utilize the current chat model to assist with auxiliary tasks."))
+            $0.configure(title: "Use Chat Model")
+            $0.configure(description: "Utilize the current chat model to assist with auxiliary tasks.")
         }
 
         private let defaultAuxiliaryModel = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "ellipsis.bubble"))
-            $0.configure(title: String(localized: "Task Model"))
-            $0.configure(description: String(localized: "The model is used for auxiliary tasks such as generating conversation titles and web search keywords."))
+            $0.configure(title: "Task Model")
+            $0.configure(description: "The model is used for auxiliary tasks such as generating conversation titles and web search keywords.")
         }
 
         private let defaultAuxiliaryVisualModel = ConfigurableInfoView().with {
             $0.configure(icon: UIImage(systemName: "eye"))
-            $0.configure(title: String(localized: "Auxiliary Visual Model"))
-            $0.configure(description: String(localized: "The model is used for visual input when the current model does not support it. It will extract information before using the current model for inference."))
+            $0.configure(title: "Auxiliary Visual Model")
+            $0.configure(description: "The model is used for visual input when the current model does not support it. It will extract information before using the current model for inference.")
         }
 
         private let skipVisualAssessmentView = ConfigurableObject(
             icon: "arrowshape.zigzag.forward",
-            title: String(localized: "Skip Recognization If Possible"),
-            explain: String(localized: "Skip the visual assessment process when the conversation model natively supports visual input. Enabling this option can improve the efficiency when using visual models, but if you switch to a model that does not support visual input after using it, the image information will be lost."),
+            title: "Skip Recognization If Possible",
+            explain: "Skip the visual assessment process when the conversation model natively supports visual input. Enabling this option can improve the efficiency when using visual models, but if you switch to a model that does not support visual input after using it, the image information will be lost.",
             key: ModelManager.shared.defaultModelForAuxiliaryVisualTaskSkipIfPossibleKey,
             defaultValue: true,
             annotation: .boolean
@@ -70,7 +70,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Conversation")
+                    header: "Conversation"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -81,8 +81,8 @@ extension SettingController.SettingContent {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableObject(
                     icon: "character.bubble",
-                    title: String(localized: "Chat Template"),
-                    explain: String(localized: "The template used for new conversations. You can customize the system prompt and other parameters here. Also known as assistant."),
+                    title: "Chat Template",
+                    explain: "The template used for new conversations. You can customize the system prompt and other parameters here. Also known as assistant.",
                     ephemeralAnnotation: .page {
                         ChatTemplateListController()
                     }
@@ -92,7 +92,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Task Model")
+                    header: "Task Model"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -104,14 +104,14 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "Using a local or mini model for this purpose will lower overall costs while maintaining a consistent experience.")
+                    footer: "Using a local or mini model for this purpose will lower overall costs while maintaining a consistent experience."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Visual Assessment")
+                    header: "Visual Assessment"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -123,7 +123,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible.")
+                    footer: "While using a visual assessment model may result in some loss of information, it can make tasks requiring visual input possible."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -132,7 +132,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView().with(
-                    header: String(localized: "Parameters")
+                    header: "Parameters"
                 )
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -151,7 +151,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "The above parameters will be applied to all conversations.")
+                    footer: "The above parameters will be applied to all conversations."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -160,14 +160,14 @@ extension SettingController.SettingContent {
             if #available(iOS 26.0, macCatalyst 26.0, *) {
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionHeaderView().with(
-                        header: String(localized: "Apple Intelligence")
+                        header: "Apple Intelligence"
                     )
                 ) { $0.bottom /= 2 }
                 stackView.addArrangedSubview(SeparatorView())
 
                 let appleIntelligenceStatusView = ConfigurableInfoView().with {
                     $0.configure(icon: UIImage(systemName: "apple.intelligence"))
-                    $0.configure(title: String(localized: "Apple Intelligence"))
+                    $0.configure(title: "Apple Intelligence")
                     $0.configure(description: AppleIntelligenceModel.shared.availabilityDescription)
                     $0.configure(value: AppleIntelligenceModel.shared.availabilityStatus)
                 }
@@ -176,7 +176,7 @@ extension SettingController.SettingContent {
 
                 stackView.addArrangedSubviewWithMargin(
                     ConfigurableSectionFooterView().with(
-                        footer: String(localized: "Apple Intelligence provides on-device AI capabilities when available.")
+                        footer: "Apple Intelligence provides on-device AI capabilities when available."
                     )
                 ) { $0.top /= 2 }
                 stackView.addArrangedSubview(SeparatorView())
@@ -194,7 +194,7 @@ extension SettingController.SettingContent {
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView().with(
-                    footer: String(localized: "MLX is only available on Apple Silicon devices with Metal 3 support.")
+                    footer: "MLX is only available on Apple Silicon devices with Metal 3 support."
                 )
             ) { $0.top /= 2 }
             stackView.addArrangedSubview(SeparatorView())
@@ -214,7 +214,7 @@ extension SettingController.SettingContent {
                 defaultConversationModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
                 // Add availability status as subtitle when Apple Intelligence is selected
                 if !AppleIntelligenceModel.shared.isAvailable {
-                    defaultConversationModel.configure(description: String(localized: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)"))
+                    defaultConversationModel.configure(description: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)")
                 }
                 defaultConversationModel.setTapBlock { [weak self] view in
                     ModelManager.shared.presentModelSelectionMenu(
@@ -254,7 +254,7 @@ extension SettingController.SettingContent {
                 defaultAuxiliaryModel.configure(value: AppleIntelligenceModel.shared.modelDisplayName)
                 // Add availability status as subtitle when Apple Intelligence is selected
                 if !AppleIntelligenceModel.shared.isAvailable {
-                    defaultAuxiliaryModel.configure(description: String(localized: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)"))
+                    defaultAuxiliaryModel.configure(description: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)")
                 }
                 handledAuxModel = true
             }

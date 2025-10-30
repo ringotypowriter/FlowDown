@@ -16,53 +16,53 @@ extension SettingController {
             .init(name: "xmark", distinctStyle: .border, inset: 8)
         }
 
-        let objects: [ConfigurableObject] = [
+        nonisolated(unsafe) let objects: [ConfigurableObject] = [
             .init(
                 icon: "gear",
-                title: String(localized: "General"),
-                explain: String(localized: "Change the behavior of the application, adjust text sizes, and more."),
+                title: "General",
+                explain: "Change the behavior of the application, adjust text sizes, and more.",
                 ephemeralAnnotation: .page { GeneralController() }
             ),
             .init(
                 icon: "bolt",
-                title: String(localized: "Inference"),
-                explain: String(localized: "Configure global prompt, adjust parameters when inferencing."),
+                title: "Inference",
+                explain: "Configure global prompt, adjust parameters when inferencing.",
                 ephemeralAnnotation: .page { InferenceController() }
             ),
             .init(
                 icon: "doc.text.magnifyingglass",
-                title: String(localized: "Model Management"),
-                explain: String(localized: "Manage language model providers or download local models."),
+                title: "Model Management",
+                explain: "Manage language model providers or download local models.",
                 ephemeralAnnotation: .page { ModelController() }
             ),
             .init(
                 icon: "hammer",
-                title: String(localized: "Tools Configuration"),
-                explain: String(localized: "Configure tool settings, choose search engine for internet searches."),
+                title: "Tools Configuration",
+                explain: "Configure tool settings, choose search engine for internet searches.",
                 ephemeralAnnotation: .page { ToolsController() }
             ),
             .init(
                 icon: "moon.stars",
-                title: String(localized: "Memory Management"),
-                explain: String(localized: "Manage AI memory tools and stored conversation memories."),
+                title: "Memory Management",
+                explain: "Manage AI memory tools and stored conversation memories.",
                 ephemeralAnnotation: .page { MemoryController() }
             ),
             .init(
                 icon: "lock.shield",
-                title: String(localized: "Data Control"),
-                explain: String(localized: "Get control of your data, export or delete."),
+                title: "Data Control",
+                explain: "Get control of your data, export or delete.",
                 ephemeralAnnotation: .page { DataControlController() }
             ),
             .init(
                 icon: "key",
-                title: String(localized: "Permission List"),
-                explain: String(localized: "Manage permissions for the application. Your privacy is important to us."),
+                title: "Permission List",
+                explain: "Manage permissions for the application. Your privacy is important to us.",
                 ephemeralAnnotation: .page { PermissionController() }
             ),
             .init(
                 icon: "envelope",
-                title: String(localized: "Support"),
-                explain: String(localized: "Have any questions or just wanna keep in touch? Contact us."),
+                title: "Support",
+                explain: "Have any questions or just wanna keep in touch? Contact us.",
                 ephemeralAnnotation: .page { SupportController() }
             ),
         ]

@@ -51,8 +51,8 @@ class MTAddCalendarTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "calendar",
-            title: String(localized: "Add to Calendar"),
-            explain: String(localized: "Allows LLM to save events to your calendar."),
+            title: "Add to Calendar",
+            explain: "Allows LLM to save events to your calendar.",
             key: "wiki.qaq.ModelTools.AddCalendarTool.enabled",
             defaultValue: true,
             annotation: .boolean

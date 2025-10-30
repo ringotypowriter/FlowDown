@@ -51,8 +51,8 @@ class MTURLTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "link.circle",
-            title: String(localized: "URL Access"),
-            explain: String(localized: "Allows LLM to suggest URLs for you to open."),
+            title: "URL Access",
+            explain: "Allows LLM to suggest URLs for you to open.",
             key: "wiki.qaq.ModelTools.URLTool.enabled",
             defaultValue: true,
             annotation: .boolean

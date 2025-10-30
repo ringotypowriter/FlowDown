@@ -127,13 +127,13 @@ class MCPEditorController: StackScrollController {
         if !server.comment.isEmpty {
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionHeaderView()
-                    .with(header: String(localized: "Comment"))
+                    .with(header: "Comment")
             ) { $0.bottom /= 2 }
             stackView.addArrangedSubview(SeparatorView())
 
             stackView.addArrangedSubviewWithMargin(
                 ConfigurableSectionFooterView()
-                    .with(footer: server.comment)
+                    .with(rawFooter: server.comment)
             )
         }
 
@@ -152,8 +152,8 @@ class MCPEditorController: StackScrollController {
             }
         }
         enabledView.configure(icon: .init(systemName: "power"))
-        enabledView.configure(title: String(localized: "Enabled"))
-        enabledView.configure(description: String(localized: "Determine if this MCP server is enabled. Tools are only updated when this server is enabled."))
+        enabledView.configure(title: "Enabled")
+        enabledView.configure(description: "Determine if this MCP server is enabled. Tools are only updated when this server is enabled.")
         stackView.addArrangedSubviewWithMargin(enabledView)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -161,14 +161,14 @@ class MCPEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Connection"))
+                .with(header: "Connection")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         let typeView = ConfigurableInfoView()
         typeView.configure(icon: .init(systemName: "gear"))
-        typeView.configure(title: String(localized: "Connection Type"))
-        typeView.configure(description: String(localized: "The transport protocol to use for this client."))
+        typeView.configure(title: "Connection Type")
+        typeView.configure(description: "The transport protocol to use for this client.")
         typeView.configure(value: server.type.rawValue.uppercased())
         typeView.setTapBlock { view in
             let children = [
@@ -209,8 +209,8 @@ class MCPEditorController: StackScrollController {
             view.parentViewController?.present(input, animated: true)
         }
         endpointView.configure(icon: .init(systemName: "link"))
-        endpointView.configure(title: String(localized: "Endpoint"))
-        endpointView.configure(description: String(localized: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix."))
+        endpointView.configure(title: "Endpoint")
+        endpointView.configure(description: "The URL endpoint for this MCP server. Most of them requires /mcp/ suffix.")
         endpointView.configure(value: server.endpoint.isEmpty ? String(localized: "Not Configured") : server.endpoint)
         stackView.addArrangedSubviewWithMargin(endpointView)
         stackView.addArrangedSubview(SeparatorView())
@@ -237,8 +237,8 @@ class MCPEditorController: StackScrollController {
             view.parentViewController?.navigationController?.pushViewController(textEditor, animated: true)
         }
         headerView.configure(icon: .init(systemName: "list.bullet"))
-        headerView.configure(title: String(localized: "Headers"))
-        headerView.configure(description: String(localized: "This value will be added to the request as additional header."))
+        headerView.configure(title: "Headers")
+        headerView.configure(description: "This value will be added to the request as additional header.")
         headerView.configure(value: server.header.isEmpty ? String(localized: "No Headers") : String(localized: "Configured"))
         stackView.addArrangedSubviewWithMargin(headerView)
         stackView.addArrangedSubview(SeparatorView())
@@ -247,7 +247,7 @@ class MCPEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Customization"))
+                .with(header: "Customization")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -268,8 +268,8 @@ class MCPEditorController: StackScrollController {
             view.parentViewController?.present(input, animated: true)
         }
         nicknameView.configure(icon: .init(systemName: "tag"))
-        nicknameView.configure(title: String(localized: "Nickname"))
-        nicknameView.configure(description: String(localized: "Custom display name for this MCP server."))
+        nicknameView.configure(title: "Nickname")
+        nicknameView.configure(description: "Custom display name for this MCP server.")
         nicknameView.configure(
             value: server.name.isEmpty ? String(localized: "Not Configured") : server.name
         )
@@ -280,7 +280,7 @@ class MCPEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Verification"))
+                .with(header: "Verification")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -289,8 +289,8 @@ class MCPEditorController: StackScrollController {
             testConfiguration()
         }
         testAction.configure(icon: UIImage(systemName: "testtube.2"))
-        testAction.configure(title: String(localized: "Verify Configuration"))
-        testAction.configure(description: String(localized: "Verify the configuration of this MCP server and list available tools for your inform."))
+        testAction.configure(title: "Verify Configuration")
+        testAction.configure(description: "Verify the configuration of this MCP server and list available tools for your inform.")
         stackView.addArrangedSubviewWithMargin(testAction)
         stackView.addArrangedSubview(SeparatorView())
         stackView.addArrangedSubviewWithMargin(testFooterView) { $0.top /= 2 }
@@ -300,7 +300,7 @@ class MCPEditorController: StackScrollController {
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
-                .with(header: String(localized: "Management"))
+                .with(header: "Management")
         ) { $0.bottom /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
@@ -309,8 +309,8 @@ class MCPEditorController: StackScrollController {
             exportTapped()
         }
         exportOption.configure(icon: UIImage(systemName: "square.and.arrow.up"))
-        exportOption.configure(title: String(localized: "Export Server"))
-        exportOption.configure(description: String(localized: "Export this MCP server as a .fdmcp file for sharing or backup."))
+        exportOption.configure(title: "Export Server")
+        exportOption.configure(description: "Export this MCP server as a .fdmcp file for sharing or backup.")
         stackView.addArrangedSubviewWithMargin(exportOption)
         stackView.addArrangedSubview(SeparatorView())
 
@@ -319,8 +319,8 @@ class MCPEditorController: StackScrollController {
             deleteTapped()
         }
         deleteAction.configure(icon: UIImage(systemName: "trash"))
-        deleteAction.configure(title: String(localized: "Delete Server"))
-        deleteAction.configure(description: String(localized: "Delete this MCP server permanently."))
+        deleteAction.configure(title: "Delete Server")
+        deleteAction.configure(description: "Delete this MCP server permanently.")
         deleteAction.titleLabel.textColor = .systemRed
         deleteAction.iconView.tintColor = .systemRed
         deleteAction.descriptionLabel.textColor = .systemRed
@@ -397,7 +397,7 @@ extension MCPEditorController {
                             haptic: .success,
                             referencingView: self.view
                         )
-                        self.testFooterView.with(footer: String(localized: "Available tool(s): \(tools)"))
+                        self.testFooterView.with(footer: "Available tool(s): \(tools)")
                     case let .failure(error):
                         let alert = AlertViewController(
                             title: String(localized: "Verification Failed"),
@@ -408,7 +408,7 @@ extension MCPEditorController {
                             }
                         }
                         self.present(alert, animated: true)
-                        self.testFooterView.with(footer: error.localizedDescription)
+                        self.testFooterView.with(rawFooter: error.localizedDescription)
                     }
                 }
             }

@@ -54,7 +54,10 @@ extension CloudModel {
     var tags: [String] {
         var input: [String] = []
         input.append(auxiliaryIdentifier)
-        let caps = ModelCapabilities.allCases.filter { capabilities.contains($0) }.map(\.title)
+        let caps = ModelCapabilities.allCases
+            .filter { capabilities.contains($0) }
+            .map(\.title)
+            .map { String(localized: $0) }
         input.append(contentsOf: caps)
         return input.filter { !$0.isEmpty }
     }

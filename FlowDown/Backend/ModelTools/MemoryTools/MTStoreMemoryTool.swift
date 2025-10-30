@@ -44,8 +44,8 @@ class MTStoreMemoryTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "square.and.arrow.down",
-            title: String(localized: "Store Memory"),
-            explain: String(localized: "Allows AI to store important information for future conversations."),
+            title: "Store Memory",
+            explain: "Allows AI to store important information for future conversations.",
             key: "wiki.qaq.ModelTools.StoreMemoryTool.enabled",
             defaultValue: true,
             annotation: .boolean

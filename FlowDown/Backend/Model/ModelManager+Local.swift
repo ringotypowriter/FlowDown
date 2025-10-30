@@ -41,23 +41,19 @@ extension ModelCapabilities {
         }
     }
 
-    var title: String {
+    var title: String.LocalizationValue {
         switch self {
-        case .visual: String(localized: "Visual")
-//        case .stream: String(localized: "Stream")
-        case .tool: String(localized: "Tool")
-//        case .reasoning: String(localized: "Reasoning")
-        case .developerRole: String(localized: "Developer Role")
+        case .visual: "Visual"
+        case .tool: "Tool"
+        case .developerRole: "Developer Role"
         }
     }
 
-    var description: String {
+    var description: String.LocalizationValue {
         switch self {
-        case .visual: String(localized: "Visual model can be used for image recognition.")
-//        case .stream: String(localized: "This model can generate streaming text output.")
-        case .tool: String(localized: "This model can use client provided tools.")
-//        case .reasoning: String(localized: "This model can provide reasoning output.")
-        case .developerRole: String(localized: "This model requires developer role when dealing with prompt.")
+        case .visual: "Visual model can be used for image recognition."
+        case .tool: "This model can use client provided tools."
+        case .developerRole: "This model requires developer role when dealing with prompt."
         }
     }
 }
@@ -97,7 +93,10 @@ extension LocalModel {
     var tags: [String] {
         var input: [String] = []
         input.append(auxiliaryIdentifier)
-        let caps = ModelCapabilities.allCases.filter { capabilities.contains($0) }.map(\.title)
+        let caps = ModelCapabilities.allCases
+            .filter { capabilities.contains($0) }
+            .map(\.title)
+            .map { String(localized: $0) }
         input.append(contentsOf: caps)
         return input.filter { !$0.isEmpty }
     }

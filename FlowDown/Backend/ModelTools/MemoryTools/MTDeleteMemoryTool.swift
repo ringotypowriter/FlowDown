@@ -47,8 +47,8 @@ class MTDeleteMemoryTool: ModelTool, @unchecked Sendable {
     override class var controlObject: ConfigurableObject {
         .init(
             icon: "trash.circle",
-            title: String(localized: "Delete Memory"),
-            explain: String(localized: "Allows AI to delete specific memories that are no longer needed."),
+            title: "Delete Memory",
+            explain: "Allows AI to delete specific memories that are no longer needed.",
             key: "wiki.qaq.ModelTools.DeleteMemoryTool.enabled",
             defaultValue: true,
             annotation: .boolean
