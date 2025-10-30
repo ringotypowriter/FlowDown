@@ -162,7 +162,7 @@ class MCPEditorController: StackScrollController {
         typeView.setTapBlock { view in
             let children = [
                 UIAction(
-                    title: "Streamble HTTP",
+                    title: String(localized: "Streamble HTTP"),
                     image: UIImage(systemName: "network")
                 ) { _ in
                     MCPService.shared.edit(identifier: self.serverId) {
@@ -173,7 +173,7 @@ class MCPEditorController: StackScrollController {
                 },
             ]
             view.present(
-                menu: .init(title: "Connection Type", children: children),
+                menu: .init(title: String(localized: "Connection Type"), children: children),
                 anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
             )
         }

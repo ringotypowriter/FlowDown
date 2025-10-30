@@ -109,7 +109,7 @@ extension ModelManager {
 
         if allowSelectionWithNone {
             finalChildren.append(UIAction(
-                title: "Use None",
+                title: String(localized: "Use None"),
                 image: .init(systemName: "circle.dashed")
             ) { _ in
                 onCompletion("")

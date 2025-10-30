@@ -178,13 +178,10 @@ final class MessageListView: UIView {
             context.addAction(title: "Cancel") {
                 context.dispose()
             }
-            context.addAction(title: "Copy Link") {
-                UIPasteboard.general.string = link.absoluteString
-                context.dispose()
-            }
             context.addAction(title: "Open", attribute: .accent) {
-                Indicator.open(link, referencedView: self)
-                context.dispose()
+                context.dispose {
+                    Indicator.open(link, referencedView: self)
+                }
             }
         }
         parentViewController?.present(alert, animated: true)

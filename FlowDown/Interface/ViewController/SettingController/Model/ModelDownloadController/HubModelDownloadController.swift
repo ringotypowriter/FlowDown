@@ -109,11 +109,7 @@ class HubModelDownloadController: UIViewController {
         isFirstAppear = false
         let warning = AlertViewController(
             title: "Warning",
-            message: """
-            Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution.
-
-            Ready to dive in? Select a model to see its size and details.
-            """
+            message: "Features provided by this page are suitable for users who have experience deploying large language models. Running models that exceed the resources of the device may cause the application or system to crash. Please proceed with caution.\n\nReady to dive in? Select a model to see its size and details."
         ) { context in
             context.addAction(title: "Cancel") {
                 context.dispose { [weak self] in
@@ -147,18 +143,18 @@ class HubModelDownloadController: UIViewController {
     func createFilterMenuItems() -> [UIMenuElement] {
         [
             UIMenu(
-                title: "Filter Options",
+                title: String(localized: "Filter Options"),
                 options: [.displayInline],
                 children: [
                     UIAction(
-                        title: "Text Model Only",
+                        title: String(localized: "Text Model Only"),
                         image: UIImage(systemName: "text.append"),
                         state: anchorToTextGenerationModels ? .on : .off
                     ) { [weak self] _ in
                         self?.anchorToTextGenerationModels.toggle()
                     },
                     UIAction(
-                        title: "Verified Model Only",
+                        title: String(localized: "Verified Model Only"),
                         image: UIImage(systemName: "rosette"),
                         state: anchorToVerifiedAuthorMLX ? .on : .off
                     ) { [weak self] _ in

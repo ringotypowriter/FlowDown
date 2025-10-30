@@ -280,7 +280,7 @@ class CloudModelEditorController: StackScrollController {
                 }
             }
             view.present(
-                menu: .init(title: "Context Length", children: children),
+                menu: .init(title: String(localized: "Context Length"), children: children),
                 anchorPoint: .init(x: view.bounds.maxX, y: view.bounds.maxY)
             )
         }
@@ -342,7 +342,7 @@ class CloudModelEditorController: StackScrollController {
             var actions: [UIMenuElement] = []
 
             let inheritAction = UIAction(
-                title: "Inference default",
+                title: String(localized: "Inference default"),
                 image: UIImage(systemName: "circle.dashed")
             ) { _ in
                 ModelManager.shared.editCloudModel(identifier: model.id) { item in

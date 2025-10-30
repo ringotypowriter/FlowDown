@@ -16,7 +16,7 @@ extension SettingController.SettingContent.ModelController {
     private func createCloudModelMenuItems() -> [UIMenuElement] {
         [
             UIMenu(
-                title: "pollinations.ai (free)",
+                title: String(localized: "pollinations.ai (free)"),
                 image: .init(systemName: "network"),
                 children: CloudModel.BuiltinModel.allCases.map(\.model).map { model in
                     UIAction(
@@ -33,7 +33,7 @@ extension SettingController.SettingContent.ModelController {
                 }
             ),
             UIAction(
-                title: "Empty Model",
+                title: String(localized: "Empty Model"),
                 image: .init(systemName: "square.dashed")
             ) { [weak self] _ in
                 guard let self else { return }
@@ -48,12 +48,12 @@ extension SettingController.SettingContent.ModelController {
     private func createLocalModelMenuItems() -> [UIMenuElement] {
         [
             UIAction(
-                title: "Download @ Hugging Face",
+                title: String(localized: "Download @ Hugging Face"),
                 image: .init(systemName: "icloud.and.arrow.down")
             ) { [weak self] _ in
                 guard MLX.GPU.isSupported else {
                     let alert = AlertViewController(
-                        title: "Unsupporte",
+                        title: "Unsupported",
                         message: "Your device does not support MLX."
                     ) { context in
                         context.addAction(title: "OK", attribute: .accent) {
@@ -67,7 +67,7 @@ extension SettingController.SettingContent.ModelController {
                 nav.pushViewController(HubModelDownloadController(), animated: true)
             },
             UIAction(
-                title: "Connect @ OLLAMA",
+                title: String(localized: "Connect @ OLLAMA"),
                 image: .init(systemName: "cable.connector.horizontal")
             ) { [weak self] _ in
                 let profile = CloudModel(deviceId: Storage.deviceId)
@@ -76,7 +76,7 @@ extension SettingController.SettingContent.ModelController {
                 self?.navigationController?.pushViewController(controller, animated: true)
             },
             UIAction(
-                title: "Connect @ LM Studio",
+                title: String(localized: "Connect @ LM Studio"),
                 image: .init(systemName: "cable.connector.horizontal")
             ) { [weak self] _ in
                 let profile = CloudModel(deviceId: Storage.deviceId)
@@ -90,21 +90,21 @@ extension SettingController.SettingContent.ModelController {
     func createAddModelMenuItems() -> [UIMenuElement] {
         [
             UIMenu(
-                title: "Cloud Model",
+                title: String(localized: "Cloud Model"),
                 options: [.displayInline],
                 children: createCloudModelMenuItems()
             ),
             UIMenu(
-                title: "Local Model",
+                title: String(localized: "Local Model"),
                 options: [.displayInline],
                 children: createLocalModelMenuItems()
             ),
             UIMenu(
-                title: "Import Model",
+                title: String(localized: "Import Model"),
                 options: [.displayInline],
                 children: [
                     UIAction(
-                        title: "Import from File",
+                        title: String(localized: "Import from File"),
                         image: .init(systemName: "arrow.down.doc")
                     ) { [weak self] _ in
                         guard let self else { return }

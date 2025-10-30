@@ -245,7 +245,7 @@ class LocalModelEditorController: StackScrollController {
             var actions: [UIMenuElement] = []
 
             let inheritAction = UIAction(
-                title: "Inference default",
+                title: String(localized: "Inference default"),
                 image: UIImage(systemName: "circle.dashed")
             ) { _ in
                 ModelManager.shared.editLocalModel(identifier: latestModel.id) { item in

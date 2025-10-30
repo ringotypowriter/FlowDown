@@ -465,6 +465,6 @@ extension ConversationManager {
         if !convHasEmptyContent { finalChildren.append(automationMenu) }
         if !management.children.isEmpty { finalChildren.append(management) }
 
-        return UIMenu(children: finalChildren)
+        return UIMenu(options: [.displayInline], children: finalChildren)
     }
 }

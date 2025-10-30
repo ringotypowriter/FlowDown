@@ -268,6 +268,7 @@ extension ChatView {
         let menuButton = EasyMenuButton().with {
             var config = UIButton.Configuration.plain()
             config.image = UIImage(systemName: "chevron.down")
+            $0.imageView?.contentMode = .scaleAspectFit
             $0.configuration = config
             $0.tintColor = .gray.withAlphaComponent(0.5)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -392,7 +393,7 @@ extension ChatView {
                 }
             #else
                 // On iOS, show both new chat options and conversation menu
-                return UIDeferredMenuElement.uncached { [weak self] completion in
+                let mainMenu = UIDeferredMenuElement.uncached { [weak self] completion in
                     guard let self else {
                         completion([])
                         return
@@ -444,6 +445,7 @@ extension ChatView {
                         convMenu,
                     ])
                 }
+                return .init(children: [mainMenu])
             #endif
         }
     }
