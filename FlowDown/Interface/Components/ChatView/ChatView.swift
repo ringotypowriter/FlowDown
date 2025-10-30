@@ -269,6 +269,7 @@ extension ChatView {
             $0.image = UIImage(systemName: "chevron.down")
             $0.tintColor = .gray.withAlphaComponent(0.5)
             $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.showsMenuAsPrimaryAction = true
         }
 
         let bg = UIView().with { $0.backgroundColor = .background }
@@ -323,15 +324,14 @@ extension ChatView {
                 icon.alpha = 0
             #endif
 
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
-            #if targetEnvironment(macCatalyst)
-                menuButton.addGestureRecognizer(gesture)
-                menuButton.isUserInteractionEnabled = true
-            #else
-                addGestureRecognizer(gesture)
-                isUserInteractionEnabled = true
-            #endif
-            rightClick.install(on: self) { [weak self] in self?.tapped() }
+            // Setup menu button
+            menuButton.menu = UIDeferredMenuElement.uncached { [weak self] completion in
+                guard let self else {
+                    completion([])
+                    return
+                }
+                completion([self.buildMenu() ?? .init()])
+            }
 
             ConversationManager.shared.conversations
                 .ensureMainThread()
@@ -358,15 +358,6 @@ extension ChatView {
             let conversation = ConversationManager.shared.conversation(identifier: identifier)
             textLabel.text = conversation?.title ?? String(localized: "Untitled")
             icon.image = conversation?.interfaceImage
-        }
-
-        @objc func tapped() {
-            // Trigger context menu programmatically
-            if let interaction = menuButton.interactions.first(where: { $0 is UIContextMenuInteraction }) as? UIContextMenuInteraction {
-                interaction.updateVisibleMenu { _ in
-                    self.buildMenu() ?? .init()
-                }
-            }
         }
 
         func contextMenuInteraction(

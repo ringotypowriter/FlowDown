@@ -11,7 +11,7 @@ FlowDown is a Swift-based AI/LLM client for iOS and macOS (Catalyst) with a priv
 - Reach for `xcbeautify -qq` when running `xcodebuild` locally to keep logs concise.
 
 ## Platform Requirements & Dependencies
-- Target platforms reflect framework minimums: iOS 16.0+, macCatalyst 16.0+, macOS 13.3+ (ChatClientKit).
+- Target platforms reflect framework minimums: iOS 17.0+, macCatalyst 17.0+.
 - Toolchain: Swift 5.9+ is required to satisfy package manifests (`swift-tools-version: 5.9`).
 - Core dependencies (via SwiftPM): MLX/MLX-examples for on-device models, WCDB for storage, MarkdownView for rendering, and dedicated UI/editor libraries like RichEditor and RunestoneEditor.
 - MLX GPU support is automatically detected and disabled in simulator/x86_64 builds (see `main.swift`)
