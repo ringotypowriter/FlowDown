@@ -13,18 +13,16 @@ extension SettingController.SettingContent.MCPController {
     func createAddClientMenuItems() -> [UIMenuElement] {
         [
             UIMenu(title: String(localized: "MCP Server"), options: [.displayInline], children: [
-                UIMenu(title: String(localized: "MCP Server"), options: [.displayInline], children: [
-                    UIAction(title: String(localized: "Create Server"), image: UIImage(systemName: "plus")) { [weak self] _ in
-                        let client = MCPService.shared.create()
-                        let controller = MCPEditorController(clientId: client.id)
-                        self?.navigationController?.pushViewController(controller, animated: true)
-                    },
-                ]),
-                UIMenu(title: String(localized: "Import"), options: [.displayInline], children: [
-                    UIAction(title: String(localized: "Import from File"), image: UIImage(systemName: "doc")) { [weak self] _ in
-                        self?.presentDocumentPicker()
-                    },
-                ]),
+                UIAction(title: String(localized: "Create Server"), image: UIImage(systemName: "plus")) { [weak self] _ in
+                    let client = MCPService.shared.create()
+                    let controller = MCPEditorController(clientId: client.id)
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                },
+            ]),
+            UIMenu(title: String(localized: "Import"), options: [.displayInline], children: [
+                UIAction(title: String(localized: "Import from File"), image: UIImage(systemName: "doc")) { [weak self] _ in
+                    self?.presentDocumentPicker()
+                },
             ]),
         ]
     }

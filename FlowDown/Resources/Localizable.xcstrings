@@ -3890,6 +3890,16 @@
         }
       }
     },
+    "Enable" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
+          }
+        }
+      }
+    },
     "Enable iCloud Sync" : {
       "localizations" : {
         "en" : {

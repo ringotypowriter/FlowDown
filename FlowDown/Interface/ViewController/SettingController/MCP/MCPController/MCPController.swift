@@ -136,15 +136,31 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
     }
 
     func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
-        guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        guard let clientId = dataSource.itemIdentifier(for: indexPath),
+              let server = MCPService.shared.server(with: clientId) else { return nil }
 
-        let menu = UIMenu(options: [.displayInline], children: [
-            UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
-                self.exportServer(clientId)
-            },
-            UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                MCPService.shared.remove(clientId)
-            },
+        let menu = UIMenu(children: [
+            UIMenu(options: [.displayInline], children: [
+                UIAction(
+                    title: server.isEnabled ? String(localized: "Disable") : String(localized: "Enable"),
+                    image: UIImage(systemName: server.isEnabled ? "pause.circle" : "play.circle")
+                ) { _ in
+                    MCPService.shared.edit(identifier: clientId) {
+                        $0.update(\.isEnabled, to: !$0.isEnabled)
+                    }
+                    self.tableView.reloadData()
+                },
+            ]),
+            UIMenu(options: [.displayInline], children: [
+                UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                    self.exportServer(clientId)
+                },
+            ]),
+            UIMenu(options: [.displayInline], children: [
+                UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                    MCPService.shared.remove(clientId)
+                },
+            ]),
         ])
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
