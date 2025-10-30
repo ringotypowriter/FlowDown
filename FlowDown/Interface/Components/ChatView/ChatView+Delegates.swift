@@ -49,9 +49,7 @@ extension ChatView: RichEditorView.Delegate {
                     message: "You need to select a model to use."
                 ) { context in
                     context.addAction(title: "OK", attribute: .accent) {
-                        context.dispose { [weak self] in
-                            self?.editor.scheduleModelSelection()
-                        }
+                        context.dispose()
                     }
                 }
                 parentViewController?.present(alert, animated: true)
@@ -187,13 +185,12 @@ extension ChatView: RichEditorView.Delegate {
         modelIdentifier()
     }
 
-    func onRichEditorPickModel(anchor: UIView, completion: @escaping () -> Void) {
-        guard let conversationIdentifier else { return }
+    func onRichEditorBuildModelSelectionMenu(completion: @escaping () -> Void) -> [UIMenuElement] {
+        guard let conversationIdentifier else { return [] }
         let modelIdentifier = ConversationManager.shared.conversation(
             identifier: conversationIdentifier
         )?.modelId
-        ModelManager.shared.presentModelSelectionMenu(
-            anchoringView: anchor,
+        return ModelManager.shared.buildModelSelectionMenu(
             currentSelection: modelIdentifier
         ) { modelIdentifier in
             ConversationManager.shared.editConversation(identifier: conversationIdentifier) {
@@ -206,7 +203,7 @@ extension ChatView: RichEditorView.Delegate {
         }
     }
 
-    func onRichEditorShowAlternativeModelMenu(anchor: UIView) {
+    func onRichEditorBuildAlternativeModelMenu() -> [UIMenuElement] {
         let isAppleIntelligence: Bool = {
             guard let id = modelIdentifier(), !id.isEmpty else { return false }
             if #available(iOS 26.0, macCatalyst 26.0, *) {
@@ -214,7 +211,7 @@ extension ChatView: RichEditorView.Delegate {
             }
             return false
         }()
-        let menu = UIMenu(title: String(localized: "Shortcuts"), children: [
+        return [
             { () -> UIAction? in
                 guard !isAppleIntelligence, let id = modelIdentifier(), !id.isEmpty else { return nil }
                 return UIAction(
@@ -234,15 +231,10 @@ extension ChatView: RichEditorView.Delegate {
                 let settingController = SettingController()
                 self?.parentViewController?.present(settingController, animated: true)
             },
-        ].compactMap(\.self))
-
-        // Use UIContextMenuInteraction instead of present(menu:)
-        if let interaction = anchor.interactions.first(where: { $0 is UIContextMenuInteraction }) as? UIContextMenuInteraction {
-            interaction.updateVisibleMenu { _ in menu }
-        }
+        ].compactMap(\.self)
     }
 
-    func onRichEditorShowAlternativeToolsMenu(anchor: UIView) {
+    func onRichEditorBuildAlternativeToolsMenu() -> [UIMenuElement] {
         let mcpServers = MCPService.shared.servers.value
 
         var toolMenuItems: [UIMenuElement] = []
@@ -326,12 +318,7 @@ extension ChatView: RichEditorView.Delegate {
         )
         toolMenuItems.append(settingsMenu)
 
-        let menu = UIMenu(options: [.displayInline], children: toolMenuItems)
-
-        // Use UIContextMenuInteraction instead of present(menu:)
-        if let interaction = anchor.interactions.first(where: { $0 is UIContextMenuInteraction }) as? UIContextMenuInteraction {
-            interaction.updateVisibleMenu { _ in menu }
-        }
+        return toolMenuItems
     }
 
     func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool {

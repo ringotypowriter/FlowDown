@@ -24,20 +24,14 @@ extension ModelManager {
         }
     }
 
-    func presentModelSelectionMenu(
-        anchoringView: UIView,
+    func buildModelSelectionMenu(
         currentSelection: ModelIdentifier? = nil,
         requiresCapabilities: Set<ModelCapabilities> = [],
         allowSelectionWithNone: Bool = false,
         onCompletion: @escaping (ModelIdentifier) -> Void
-    ) {
-        guard let controller = anchoringView.parentViewController else {
-            assertionFailure()
-            return
-        }
-
+    ) -> [UIMenuElement] {
         let localModels = ModelManager.shared.localModels.value.filter {
-            !$0.model_identifier.isEmpty // just in case
+            !$0.model_identifier.isEmpty
         }.filter { requiresCapabilities.isSubset(of: $0.capabilities) }
         let cloudModels = ModelManager.shared.cloudModels.value.filter {
             !$0.model_identifier.isEmpty
@@ -54,30 +48,7 @@ extension ModelManager {
         }
 
         if localModels.isEmpty, cloudModels.isEmpty, !appleIntelligenceAvailable {
-            let alert = AlertViewController(
-                title: "No Model Available",
-                message: requiresCapabilities.isEmpty
-                    ? "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
-                    : "No model is available for the required capabilities."
-            ) { context in
-                context.addAction(title: "Cancel") {
-                    context.dispose()
-                }
-                context.addAction(title: "Add", attribute: .accent) {
-                    context.dispose {
-                        if let nav = controller.navigationController {
-                            let controller = SettingController.SettingContent.ModelController()
-                            nav.pushViewController(controller, animated: true)
-                        } else {
-                            let setting = SettingController()
-                            SettingController.setNextEntryPage(.modelManagement)
-                            controller.present(setting, animated: true)
-                        }
-                    }
-                }
-            }
-            controller.present(alert, animated: true)
-            return
+            return []
         }
 
         var localBuildSections: [String: [(String, LocalModel)]] = [:]
@@ -159,7 +130,7 @@ extension ModelManager {
 
         if !localMenuChildren.isEmpty {
             finalChildren.append(UIMenu(
-                title: "Local Models",
+                title: String(localized: "Local Models"),
                 image: .modelLocal,
                 options: finalOptions,
                 children: localMenuChildren
@@ -167,18 +138,57 @@ extension ModelManager {
         }
         if !cloudMenuChildren.isEmpty {
             finalChildren.append(UIMenu(
-                title: "Cloud Models",
+                title: String(localized: "Cloud Models"),
                 image: .modelCloud,
                 options: finalOptions,
                 children: cloudMenuChildren
             ))
         }
 
-        let menu = UIMenu(
-            title: "Choose Model",
-            options: .displayInline,
-            children: finalChildren
+        return finalChildren
+    }
+
+    func presentModelSelectionMenu(
+        anchoringView: UIView,
+        currentSelection: ModelIdentifier? = nil,
+        requiresCapabilities: Set<ModelCapabilities> = [],
+        allowSelectionWithNone: Bool = false,
+        onCompletion: @escaping (ModelIdentifier) -> Void
+    ) {
+        guard let controller = anchoringView.parentViewController else {
+            assertionFailure()
+            return
+        }
+
+        let elements = buildModelSelectionMenu(
+            currentSelection: currentSelection,
+            requiresCapabilities: requiresCapabilities,
+            allowSelectionWithNone: allowSelectionWithNone,
+            onCompletion: onCompletion
         )
-        anchoringView.present(menu: menu)
+
+        if !elements.isEmpty {
+            let menu = UIMenu(title: "Choose Model", options: .displayInline, children: elements)
+            anchoringView.present(menu: menu)
+            return
+        }
+
+        // No models available
+        let alert = AlertViewController(
+            title: "No Model Available",
+            message: requiresCapabilities.isEmpty
+                ? "Please add some models to use. You can choose to download models, or use cloud model from well known service providers."
+                : "No model is available for the required capabilities."
+        ) { context in
+            context.addAction(title: "Cancel") {
+                context.dispose()
+            }
+            context.addAction(title: "Add", attribute: .accent) {
+                context.dispose {
+                    self.openModelManagementPage(controller: controller)
+                }
+            }
+        }
+        controller.present(alert, animated: true)
     }
 }

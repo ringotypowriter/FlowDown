@@ -264,18 +264,18 @@ extension RichEditorView: AttachmentsBar.Delegate {
 }
 
 extension RichEditorView: QuickSettingBar.Delegate {
-    func quickSettingBarPickModel() {
-        delegate?.onRichEditorPickModel(anchor: quickSettingBar.modelPicker) { [weak self] in
+    func quickSettingBarBuildModelSelectionMenu() -> [UIMenuElement] {
+        delegate?.onRichEditorBuildModelSelectionMenu { [weak self] in
             self?.updateModelInfo()
-        }
+        } ?? []
     }
 
-    func quickSettingBarShowAlternativeModelMenu() {
-        delegate?.onRichEditorShowAlternativeModelMenu(anchor: quickSettingBar.modelPicker)
+    func quickSettingBarBuildAlternativeModelMenu() -> [UIMenuElement] {
+        delegate?.onRichEditorBuildAlternativeModelMenu() ?? []
     }
 
-    func quickSettingBarShowAlternativeToolsMenu() {
-        delegate?.onRichEditorShowAlternativeToolsMenu(anchor: quickSettingBar.toolsToggle)
+    func quickSettingBarBuildAlternativeToolsMenu() -> [UIMenuElement] {
+        delegate?.onRichEditorBuildAlternativeToolsMenu() ?? []
     }
 
     func updateModelInfo(postUpdate: Bool = true) {

@@ -16,9 +16,9 @@ public extension RichEditorView {
         func onRichEditorUpdateObject(object: Object)
         func onRichEditorRequestCurrentModelName() -> String?
         func onRichEditorRequestCurrentModelIdentifier() -> String?
-        func onRichEditorPickModel(anchor: UIView, completion: @escaping () -> Void)
-        func onRichEditorShowAlternativeModelMenu(anchor: UIView)
+        func onRichEditorBuildModelSelectionMenu(completion: @escaping () -> Void) -> [UIMenuElement]
+        func onRichEditorBuildAlternativeModelMenu() -> [UIMenuElement]
         func onRichEditorCheckIfModelSupportsToolCall(_ modelIdentifier: String) -> Bool
-        func onRichEditorShowAlternativeToolsMenu(anchor: UIView)
+        func onRichEditorBuildAlternativeToolsMenu() -> [UIMenuElement]
     }
 }

@@ -216,9 +216,9 @@ extension SettingController.SettingContent {
                 if !AppleIntelligenceModel.shared.isAvailable {
                     defaultConversationModel.configure(description: "Status: \(AppleIntelligenceModel.shared.availabilityStatus)")
                 }
-                defaultConversationModel.setTapBlock { [weak self] view in
-                    ModelManager.shared.presentModelSelectionMenu(
-                        anchoringView: view.valueLabel,
+                defaultConversationModel.use { [weak self] in
+                    guard let self else { return [] }
+                    return ModelManager.shared.buildModelSelectionMenu(
                         currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
                         allowSelectionWithNone: true
                     ) { [weak self] identifier in
@@ -236,9 +236,9 @@ extension SettingController.SettingContent {
                 } else {
                     defaultConversationModel.configure(value: String(localized: "Not Configured"))
                 }
-                defaultConversationModel.setTapBlock { [weak self] view in
-                    ModelManager.shared.presentModelSelectionMenu(
-                        anchoringView: view.valueLabel,
+                defaultConversationModel.use { [weak self] in
+                    guard let self else { return [] }
+                    return ModelManager.shared.buildModelSelectionMenu(
                         currentSelection: ModelManager.ModelIdentifier.defaultModelForConversation,
                         allowSelectionWithNone: true
                     ) { [weak self] identifier in
@@ -268,12 +268,12 @@ extension SettingController.SettingContent {
                 }
             }
 
-            defaultAuxiliaryModel.setTapBlock { [weak self] view in
-                if self?.defaultAuxiliaryModelAlignWithChatModel.boolValue == true {
-                    return
+            defaultAuxiliaryModel.use { [weak self] in
+                guard let self else { return [] }
+                if defaultAuxiliaryModelAlignWithChatModel.boolValue == true {
+                    return []
                 }
-                ModelManager.shared.presentModelSelectionMenu(
-                    anchoringView: view.valueLabel,
+                return ModelManager.shared.buildModelSelectionMenu(
                     currentSelection: ModelManager.ModelIdentifier.defaultModelForAuxiliaryTask,
                     allowSelectionWithNone: true
                 ) { [weak self] identifier in
@@ -304,9 +304,9 @@ extension SettingController.SettingContent {
                 defaultAuxiliaryVisualModel.configure(value: String(localized: "Not Configured"))
             }
 
-            defaultAuxiliaryVisualModel.setTapBlock { [weak self] view in
-                ModelManager.shared.presentModelSelectionMenu(
-                    anchoringView: view.valueLabel,
+            defaultAuxiliaryVisualModel.use { [weak self] in
+                guard let self else { return [] }
+                return ModelManager.shared.buildModelSelectionMenu(
                     currentSelection: ModelManager.ModelIdentifier.defaultModelForAuxiliaryVisualTask,
                     requiresCapabilities: [.visual],
                     allowSelectionWithNone: true

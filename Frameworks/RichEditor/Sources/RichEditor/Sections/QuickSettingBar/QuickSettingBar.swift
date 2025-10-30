@@ -75,16 +75,49 @@ public class QuickSettingBar: EditorSectionView {
 
         setModelName(nil)
 
-        modelPicker.actionBlock = { [weak self] in
-            self?.delegate?.quickSettingBarPickModel()
-            self?.scrollToBeforeModelItem()
-        }
+        // Setup model picker menu - add a transparent button overlay for menu
+        let modelPickerMenuButton = UIButton(type: .system)
+        modelPickerMenuButton.backgroundColor = .clear
+        modelPickerMenuButton.showsMenuAsPrimaryAction = true
+        modelPicker.addSubview(modelPickerMenuButton)
+        modelPickerMenuButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            modelPickerMenuButton.topAnchor.constraint(equalTo: modelPicker.topAnchor),
+            modelPickerMenuButton.leadingAnchor.constraint(equalTo: modelPicker.leadingAnchor),
+            modelPickerMenuButton.trailingAnchor.constraint(equalTo: modelPicker.trailingAnchor),
+            modelPickerMenuButton.bottomAnchor.constraint(equalTo: modelPicker.bottomAnchor),
+        ])
+
+        // Build menu dynamically
+        modelPickerMenuButton.menu = UIMenu(children: [
+            UIDeferredMenuElement.uncached { [weak self] completion in
+                guard let self else {
+                    completion([])
+                    return
+                }
+                scrollToBeforeModelItem()
+                let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
+                completion(elements)
+            },
+        ])
+
+        // Disable the original tap gesture since we're using the button
+        modelPicker.actionBlock = {}
+
+        // Setup alternative model menu (right-click/long-press) with UIContextMenuInteraction
+        let modelPickerInteraction = UIContextMenuInteraction(delegate: self)
+        modelPicker.addInteraction(modelPickerInteraction)
+
         modelPickerRightClickFinder.install(on: modelPicker) { [weak self] in
-            self?.delegate?.quickSettingBarShowAlternativeModelMenu()
+            // Right-click will be handled by UIContextMenuInteraction
         }
 
+        // Setup tools menu with UIContextMenuInteraction
+        let toolsToggleInteraction = UIContextMenuInteraction(delegate: self)
+        toolsToggle.addInteraction(toolsToggleInteraction)
+
         toolsToggleRightClickFinder.install(on: toolsToggle) { [weak self] in
-            self?.delegate?.quickSettingBarShowAlternativeToolsMenu()
+            // Right-click will be handled by UIContextMenuInteraction
         }
 
         toolsToggle.contextMenuChecker = { [weak toolsToggleRightClickFinder] in
@@ -176,8 +209,42 @@ public class QuickSettingBar: EditorSectionView {
     func show() {
         isOpen = true
     }
+}
 
-    @objc func longPressOnModelPicker() {
-        delegate?.quickSettingBarShowAlternativeModelMenu()
+// MARK: - UIContextMenuInteractionDelegate
+
+extension QuickSettingBar: UIContextMenuInteractionDelegate {
+    public func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        // Determine which view triggered the interaction
+        let view = interaction.view
+
+        if view === modelPicker {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                guard let self else { return nil }
+                let elements = delegate?.quickSettingBarBuildModelSelectionMenu() ?? []
+                return elements.isEmpty ? nil : UIMenu(children: elements)
+            }
+        } else if view === toolsToggle {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                guard let self else { return nil }
+                let elements = delegate?.quickSettingBarBuildAlternativeToolsMenu() ?? []
+                return elements.isEmpty ? nil : UIMenu(children: elements)
+            }
+        }
+
+        return nil
+    }
+
+    public func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        willDisplayMenuFor _: UIContextMenuConfiguration,
+        animator _: UIContextMenuInteractionAnimating?
+    ) {
+        if interaction.view === modelPicker {
+            scrollToBeforeModelItem()
+        }
     }
 }
