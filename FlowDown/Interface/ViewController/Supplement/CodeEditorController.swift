@@ -20,6 +20,11 @@ class CodeEditorController: UIViewController {
         action: #selector(done)
     )
     private lazy var spinnerBarButtonItem: UIBarButtonItem = .init(customView: indicator)
+    private lazy var cancelBarButtonItem: UIBarButtonItem = .init(
+        barButtonSystemItem: .cancel,
+        target: self,
+        action: #selector(dispose)
+    )
 
     private func updateRightBarButtonItems() {
         if indicator.isAnimating {
@@ -96,12 +101,6 @@ class CodeEditorController: UIViewController {
         assert(collector == nil)
         assert(textView.isEditable)
         collector = block
-        navigationItem.leftBarButtonItems = [
-            UIBarButtonItem(
-                barButtonSystemItem: .cancel,
-                target: self,
-                action: #selector(dispose)
-            ),
-        ]
+        navigationItem.leftBarButtonItems = [cancelBarButtonItem]
     }
 }
