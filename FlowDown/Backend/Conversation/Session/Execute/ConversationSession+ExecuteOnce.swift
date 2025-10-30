@@ -191,6 +191,7 @@ extension ConversationSession {
                     toolStatus.message = error.localizedDescription
                     toolMessage.update(\.toolStatus, to: toolStatus)
                     await requestUpdate(view: currentMessageListView)
+                    requestMessages.append(.tool(content: .text("Tool execution failed. Reason: \(error.localizedDescription)"), toolCallID: request.id.uuidString))
                 }
             }
         }
