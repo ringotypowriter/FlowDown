@@ -6,7 +6,6 @@
 //
 
 import AlertController
-import OSLog
 import SnapKit
 import Storage
 import UIKit

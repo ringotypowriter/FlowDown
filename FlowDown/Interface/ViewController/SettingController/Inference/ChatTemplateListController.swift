@@ -9,7 +9,6 @@ import AlertController
 import Combine
 import ConfigurableKit
 import Foundation
-import OSLog
 import Storage
 import UIKit
 import UniformTypeIdentifiers

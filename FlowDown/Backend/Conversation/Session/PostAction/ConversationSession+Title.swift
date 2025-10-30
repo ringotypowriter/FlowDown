@@ -8,7 +8,6 @@
 import ChatClientKit
 import Foundation
 import FoundationModels
-import OSLog
 import Storage
 import XMLCoder
 

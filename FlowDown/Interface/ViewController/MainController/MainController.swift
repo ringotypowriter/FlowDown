@@ -7,7 +7,6 @@
 
 import AlertController
 import Combine
-import OSLog
 import RichEditor
 import Storage
 import UIKit

@@ -9,7 +9,6 @@ import AlertController
 import ChatClientKit
 import ConfigurableKit
 import Foundation
-import OSLog
 import UIKit
 
 class ModelToolsManager {

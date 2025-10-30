@@ -8,7 +8,6 @@
 import CloudKit
 import Foundation
 import OrderedCollections
-import OSLog
 
 public final class ConversationNotificationInfo: Sendable {
     public let modifications: [Conversation.ID]

@@ -7,7 +7,6 @@
 
 import Compression
 import Foundation
-import os.log
 import WCDBSwift
 
 private enum SyncPayloadCoder {

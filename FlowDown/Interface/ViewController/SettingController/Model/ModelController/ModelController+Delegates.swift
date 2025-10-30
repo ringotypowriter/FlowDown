@@ -7,7 +7,6 @@
 
 import AlertController
 import Foundation
-import OSLog
 import Storage
 import UIKit
 

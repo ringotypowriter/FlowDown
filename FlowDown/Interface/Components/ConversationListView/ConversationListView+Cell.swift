@@ -6,7 +6,6 @@
 //
 
 import AlertController
-import OSLog
 import Storage
 import UIKit
 

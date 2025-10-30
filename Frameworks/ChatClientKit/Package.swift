@@ -1,15 +1,13 @@
 // swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let package = Package(
     name: "ChatClientKit",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v16),
-        .macCatalyst(.v16),
-        .macOS("13.3"),
+        .iOS(.v17),
+        .macCatalyst(.v17),
     ],
     products: [
         .library(name: "ChatClientKit", targets: ["ChatClientKit"]),

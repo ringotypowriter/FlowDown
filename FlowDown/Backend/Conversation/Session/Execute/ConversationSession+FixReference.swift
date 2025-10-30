@@ -8,7 +8,6 @@
 import ChatClientKit
 import Foundation
 import MarkdownParser
-import OSLog
 import RegexBuilder
 import Storage
 

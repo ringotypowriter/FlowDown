@@ -8,7 +8,6 @@
 import ChatClientKit
 import Foundation
 import FoundationModels
-import OSLog
 import UIKit
 
 // MARK: - Apple Intelligence Model

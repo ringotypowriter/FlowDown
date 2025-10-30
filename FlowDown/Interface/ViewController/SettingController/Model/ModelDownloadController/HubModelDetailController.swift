@@ -9,7 +9,6 @@ import AlertController
 import ConfigurableKit
 import MarkdownParser
 import MarkdownView
-import OSLog
 import UIKit
 
 class HubModelDetailController: StackScrollController {

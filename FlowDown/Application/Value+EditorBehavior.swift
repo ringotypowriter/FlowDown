@@ -8,7 +8,6 @@
 import Combine
 import ConfigurableKit
 import Foundation
-import OSLog
 import RichEditor
 
 extension EditorBehavior {

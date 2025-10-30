@@ -7,7 +7,6 @@
 
 import AlertController
 import ChatClientKit
-import OSLog
 import RichEditor
 import ScrubberKit
 import Storage

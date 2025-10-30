@@ -7,7 +7,6 @@
 
 import CloudKit
 import Foundation
-import os.log
 import WCDBSwift
 
 package final class SyncMetadata: Identifiable, Codable, TableNamed, TableCodable {
