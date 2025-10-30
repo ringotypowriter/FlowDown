@@ -259,7 +259,14 @@
       }
     },
     "All Categories" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有分类"
+          }
+        }
+      }
     },
     "All day" : {
       "localizations" : {
@@ -1436,7 +1443,14 @@
       }
     },
     "Copy Message" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制消息"
+          }
+        }
+      }
     },
     "Could not determine current location." : {
       "localizations" : {
@@ -3175,10 +3189,24 @@
       }
     },
     "Filter by Category" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按分类过滤"
+          }
+        }
+      }
     },
     "Filter by Level" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按级别过滤"
+          }
+        }
+      }
     },
     "Filter Options" : {
       "localizations" : {
@@ -4823,7 +4851,14 @@
       }
     },
     "No categories" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无分类"
+          }
+        }
+      }
     },
     "No Chat Templates" : {
       "localizations" : {
@@ -5662,7 +5697,14 @@
       }
     },
     "Refresh" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新"
+          }
+        }
+      }
     },
     "Refresh from iCloud" : {
       "extractionState" : "manual",
@@ -5947,7 +5989,14 @@
       }
     },
     "Search logs..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索日志..."
+          }
+        }
+      }
     },
     "Search memories..." : {
       "localizations" : {
