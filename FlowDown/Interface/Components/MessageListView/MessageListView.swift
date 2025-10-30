@@ -173,7 +173,7 @@ final class MessageListView: UIView {
 
         let alert = AlertViewController(
             title: "Open Link",
-            message: "Do you want to open this link in your browser?\n\n\(link.absoluteString)"
+            message: "Do you want to open this link in your default browser?\n\n\(link.absoluteString)"
         ) { context in
             context.addAction(title: "Cancel") {
                 context.dispose()
