@@ -132,16 +132,16 @@ extension SettingController.SettingContent.ModelController {
 
     @objc func filterBarItemTapped() {
         guard let bar = navigationController?.navigationBar else { return }
-        let menu = UIMenu(title: "Filter Options", children: [
+        let menu = UIMenu(title: String(localized: "Filter Options"), children: [
             UIAction(
-                title: "Show Local Models",
+                title: String(localized: "Show Local Models"),
                 image: .modelLocal,
                 state: showLocalModels ? .on : .off
             ) { [weak self] _ in
                 self?.showLocalModels.toggle()
             },
             UIAction(
-                title: "Show Cloud Models",
+                title: String(localized: "Show Cloud Models"),
                 image: .modelCloud,
                 state: showCloudModels ? .on : .off
             ) { [weak self] _ in

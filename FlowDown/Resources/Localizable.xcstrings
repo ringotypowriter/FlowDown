@@ -2268,17 +2268,6 @@
         }
       }
     },
-    "Edit Conversation" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑对话"
-          }
-        }
-      }
-    },
     "Edit Endpoint" : {
       "localizations" : {
         "zh-Hans" : {

@@ -140,10 +140,10 @@ extension SettingController.SettingContent.MCPController: UITableViewDelegate {
         guard let clientId = dataSource.itemIdentifier(for: indexPath) else { return nil }
 
         let menu = UIMenu(options: [.displayInline], children: [
-            UIAction(title: "Export Server", image: UIImage(systemName: "square.and.arrow.up")) { _ in
+            UIAction(title: String(localized: "Export Server"), image: UIImage(systemName: "square.and.arrow.up")) { _ in
                 self.exportServer(clientId)
             },
-            UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+            UIAction(title: String(localized: "Delete"), image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                 MCPService.shared.remove(clientId)
             },
         ])

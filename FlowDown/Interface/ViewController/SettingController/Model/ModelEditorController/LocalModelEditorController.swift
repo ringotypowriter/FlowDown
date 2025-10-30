@@ -294,7 +294,7 @@ class LocalModelEditorController: StackScrollController {
                 actions.append(action)
             }
 
-            let menu = UIMenu(title: "Imagination", children: actions)
+            let menu = UIMenu(title: String(localized: "Imagination"), children: actions)
             view.present(
                 menu: menu,
                 anchorPoint: CGPoint(x: view.bounds.maxX, y: view.bounds.maxY)

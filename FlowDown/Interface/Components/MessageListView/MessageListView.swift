@@ -172,18 +172,18 @@ final class MessageListView: UIView {
             return
         }
         let menu = UIMenu(children: [
-            UIMenu(title: "From \(host)", options: [.displayInline], children: [
-                UIAction(title: "View", image: UIImage(systemName: "eye")) { [weak self] _ in
+            UIMenu(title: String(localized: "From \(host)"), options: [.displayInline], children: [
+                UIAction(title: String(localized: "View"), image: UIImage(systemName: "eye")) { [weak self] _ in
                     guard let self else { return }
                     Indicator.present(link, referencedView: self)
                 },
             ]),
             UIMenu(options: [.displayInline], children: [
-                UIAction(title: "Share", image: UIImage(systemName: "safari")) { [weak self] _ in
+                UIAction(title: String(localized: "Share"), image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }
                     DisposableExporter(data: Data(link.absoluteString.utf8), pathExtension: "url").run(anchor: self, mode: .text)
                 },
-                UIAction(title: "Open in Default Browser", image: UIImage(systemName: "safari")) { [weak self] _ in
+                UIAction(title: String(localized: "Open in Default Browser"), image: UIImage(systemName: "safari")) { [weak self] _ in
                     guard let self else { return }
                     Indicator.open(link, referencedView: self)
                 },

@@ -214,11 +214,11 @@ extension ChatView: RichEditorView.Delegate {
             }
             return false
         }()
-        let menu = UIMenu(title: "Shortcuts", children: [
+        let menu = UIMenu(title: String(localized: "Shortcuts"), children: [
             { () -> UIAction? in
                 guard !isAppleIntelligence, let id = modelIdentifier(), !id.isEmpty else { return nil }
                 return UIAction(
-                    title: "Edit Model",
+                    title: String(localized: "Edit Model"),
                     image: UIImage(systemName: "slider.horizontal.3")
                 ) { [weak self] _ in
                     SettingController.setNextEntryPage(.modelEditor(model: id))
@@ -227,7 +227,7 @@ extension ChatView: RichEditorView.Delegate {
                 }
             }(),
             UIAction(
-                title: "Inference Settings",
+                title: String(localized: "Inference Settings"),
                 image: UIImage(systemName: "gearshape")
             ) { [weak self] _ in
                 SettingController.setNextEntryPage(.inference)
@@ -262,12 +262,12 @@ extension ChatView: RichEditorView.Delegate {
         }
 
         toolMenuItems.append(UIMenu(
-            title: "Built-in Tools",
+            title: String(localized: "Built-in Tools"),
             options: [.displayInline],
             children: createAction(for: ModelToolsManager.shared.configurableTools)
         ))
         toolMenuItems.append(UIMenu(
-            title: "Memory Tools",
+            title: String(localized: "Memory Tools"),
 //            options: [.displayInline],
             children: createAction(for: ModelToolsManager.shared.tools.filter { tool in
                 false
@@ -281,7 +281,7 @@ extension ChatView: RichEditorView.Delegate {
 
         if !mcpServers.isEmpty {
             let mcpServersMenu = UIMenu(
-                title: "MCP Servers",
+                title: String(localized: "MCP Servers"),
                 options: mcpServers.count < 5 ? [.displayInline] : [],
                 children: mcpServers.map { server in
                     let name = server.name.isEmpty
@@ -304,10 +304,10 @@ extension ChatView: RichEditorView.Delegate {
         }
 
         let settingsMenu = UIMenu(
-            title: "Shortcuts",
+            title: String(localized: "Shortcuts"),
             children: [
                 UIAction(
-                    title: "MCP Settings",
+                    title: String(localized: "MCP Settings"),
                     image: UIImage(systemName: "server.rack")
                 ) { [weak self] _ in
                     SettingController.setNextEntryPage(.mcp)
@@ -315,7 +315,7 @@ extension ChatView: RichEditorView.Delegate {
                     self?.parentViewController?.present(settingController, animated: true)
                 },
                 UIAction(
-                    title: "Tools Settings",
+                    title: String(localized: "Tools Settings"),
                     image: UIImage(systemName: "wrench.and.screwdriver")
                 ) { [weak self] _ in
                     SettingController.setNextEntryPage(.tools)

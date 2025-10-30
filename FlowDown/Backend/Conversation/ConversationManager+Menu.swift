@@ -40,7 +40,7 @@ extension ConversationManager {
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: "Rename",
+                    title: String(localized: "Rename"),
                     image: UIImage(systemName: "pencil.tip.crop.circle.badge.arrow.forward")
                 ) { _ in
                     let alert = AlertInputViewController(
@@ -58,7 +58,7 @@ extension ConversationManager {
                     controller.present(alert, animated: true)
                 },
                 UIAction(
-                    title: "Pick New Icon",
+                    title: String(localized: "Pick New Icon"),
                     image: UIImage(systemName: "person.crop.circle.badge.plus")
                 ) { _ in
                     let picker = EmojiPickerViewController(sourceView: view) { emoji in
@@ -77,7 +77,7 @@ extension ConversationManager {
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: "Save Image",
+                    title: String(localized: "Save Image"),
                     image: UIImage(systemName: "text.below.photo")
                 ) { _ in
                     let captureView = ConversationCaptureView(session: session)
@@ -120,11 +120,11 @@ extension ConversationManager {
                     }
                 },
                 UIMenu(
-                    title: "Export Document",
+                    title: String(localized: "Export Document"),
                     image: UIImage(systemName: "doc"),
                     children: [
                         UIAction(
-                            title: "Export Plain Text",
+                            title: String(localized: "Export Plain Text"),
                             image: UIImage(systemName: "doc.plaintext")
                         ) { _ in
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .plainText) { result in
@@ -146,7 +146,7 @@ extension ConversationManager {
                             }
                         },
                         UIAction(
-                            title: "Export Markdown",
+                            title: String(localized: "Export Markdown"),
                             image: UIImage(systemName: "doc.richtext")
                         ) { _ in
                             ConversationManager.shared.exportConversation(identifier: conv.id, exportFormat: .markdown) { result in
@@ -173,11 +173,11 @@ extension ConversationManager {
         )
 
         let automationMenu = UIMenu(
-            title: "Automation",
+            title: String(localized: "Automation"),
             options: [.displayInline],
             children: [
                 UIAction(
-                    title: "Generate New Icon",
+                    title: String(localized: "Generate New Icon"),
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
@@ -204,7 +204,7 @@ extension ConversationManager {
                     }
                 },
                 UIAction(
-                    title: "Generate New Title",
+                    title: String(localized: "Generate New Title"),
                     image: UIImage(systemName: "arrow.clockwise")
                 ) { _ in
                     Indicator.progress(
@@ -236,7 +236,7 @@ extension ConversationManager {
             { () -> UIMenuElement? in
                 if conv.isFavorite {
                     return UIAction(
-                        title: "Unfavorite",
+                        title: String(localized: "Unfavorite"),
                         image: UIImage(systemName: "star.slash")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
@@ -250,7 +250,7 @@ extension ConversationManager {
             { () -> UIMenuElement? in
                 if !conv.isFavorite {
                     return UIAction(
-                        title: "Favorite",
+                        title: String(localized: "Favorite"),
                         image: UIImage(systemName: "star")
                     ) { _ in
                         ConversationManager.shared.editConversation(identifier: conv.id) {
@@ -274,7 +274,7 @@ extension ConversationManager {
                 } else {
                     return UIMenu(options: [.displayInline], children: [
                         UIAction(
-                            title: "Compress to New Chat",
+                            title: String(localized: "Compress to New Chat"),
                             image: UIImage(systemName: "arrow.down.doc")
                         ) { _ in
                             let model = session.models.chat
@@ -334,7 +334,7 @@ extension ConversationManager {
                             controller.present(alert, animated: true)
                         },
                         UIAction(
-                            title: "Generate Chat Template",
+                            title: String(localized: "Generate Chat Template"),
                             image: UIImage(systemName: "wind")
                         ) { _ in
                             let model = session.models.chat
@@ -397,7 +397,7 @@ extension ConversationManager {
                             controller.present(alert, animated: true)
                         },
                         UIAction(
-                            title: "Duplicate",
+                            title: String(localized: "Duplicate"),
                             image: UIImage(systemName: "doc.on.doc")
                         ) { _ in
                             if let id = ConversationManager.shared.duplicateConversation(identifier: conv.id) {
@@ -410,7 +410,7 @@ extension ConversationManager {
             { () -> UIMenuElement? in
                 if convHasEmptyContent {
                     return UIAction(
-                        title: "Delete",
+                        title: String(localized: "Delete"),
                         image: UIImage(systemName: "trash"),
                         attributes: .destructive
                     ) { _ in
@@ -421,13 +421,13 @@ extension ConversationManager {
                     }
                 } else {
                     return UIMenu(
-                        title: "Delete",
+                        title: String(localized: "Delete"),
                         options: [.displayInline],
                         children: [
                             { () -> UIAction? in
                                 if !conv.icon.isEmpty {
                                     UIAction(
-                                        title: "Delete Icon",
+                                        title: String(localized: "Delete Icon"),
                                         image: UIImage(systemName: "trash"),
                                         attributes: .destructive
                                     ) { _ in
@@ -438,7 +438,7 @@ extension ConversationManager {
                                 } else { nil }
                             }(),
                             UIAction(
-                                title: "Delete Conversation",
+                                title: String(localized: "Delete Conversation"),
                                 image: UIImage(systemName: "trash"),
                                 attributes: .destructive
                             ) { _ in
@@ -454,7 +454,7 @@ extension ConversationManager {
         ].compactMap(\.self)
 
         let management = UIMenu(
-            title: "Other",
+            title: String(localized: "Other"),
             image: UIImage(systemName: "ellipsis.circle"),
             options: managementGroup.count <= 1 ? .displayInline : [],
             children: managementGroup
@@ -466,7 +466,7 @@ extension ConversationManager {
             finalChildren.append(
                 UIMenu(options: [.displayInline], children: [
                     UIAction(
-                        title: "Terminate",
+                        title: String(localized: "Terminate"),
                         image: UIImage(systemName: "stop.circle"),
                         attributes: [.destructive]
                     ) { _ in
