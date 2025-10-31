@@ -191,6 +191,38 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubviewWithMargin(headerEditorView)
         stackView.addArrangedSubview(SeparatorView())
 
+        // additional body fields
+        let bodyFieldsEditorView = ConfigurableInfoView().setTapBlock { view in
+            guard let model = ModelManager.shared.cloudModel(identifier: model?.id) else { return }
+            var text = model.bodyFields
+            if text.isEmpty { text = "{}" }
+            let textEditor = JsonEditorController(text: text)
+            textEditor.title = String(localized: "Edit Additional Body Fields")
+            textEditor.collectEditedContent { result in
+                // Validate JSON
+                guard let data = result.data(using: .utf8),
+                      (try? JSONSerialization.jsonObject(with: data)) != nil
+                else {
+                    return
+                }
+                // Normalize empty JSON objects to empty string
+                let normalizedResult = Self.isEmptyJsonObject(result) ? "" : result
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.bodyFields, to: normalizedResult)
+                }
+                view.configure(value: normalizedResult.isEmpty ? String(localized: "N/A") : String(localized: "Configured"))
+            }
+            view.parentViewController?.navigationController?.pushViewController(textEditor, animated: true)
+        }
+        bodyFieldsEditorView.configure(icon: .init(systemName: "pencil"))
+        bodyFieldsEditorView.configure(title: "Additional Body Fields (Optional)")
+        bodyFieldsEditorView.configure(description: "This value will be added to the request body as additional fields. Accepts JSON.")
+        let hasBodyFields = !(model?.bodyFields.isEmpty ?? true) && !Self.isEmptyJsonObject(model?.bodyFields ?? "")
+        bodyFieldsEditorView.configure(value: hasBodyFields ? String(localized: "Configured") : String(localized: "N/A"))
+
+        stackView.addArrangedSubviewWithMargin(bodyFieldsEditorView)
+        stackView.addArrangedSubview(SeparatorView())
+
         let modelIdentifierView = ConfigurableInfoView()
         modelIdentifierView.configure(icon: .init(systemName: "circle"))
         modelIdentifierView.configure(title: "Model Identifier")
@@ -645,6 +677,16 @@ class CloudModelEditorController: StackScrollController {
         }
 
         return children
+    }
+
+    /// Check if a JSON string represents an empty object (e.g., "{}", "{ }", "{  \n  }")
+    private static func isEmptyJsonObject(_ jsonString: String) -> Bool {
+        guard let data = jsonString.data(using: .utf8),
+              let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else {
+            return false
+        }
+        return jsonObject.isEmpty
     }
 }
 

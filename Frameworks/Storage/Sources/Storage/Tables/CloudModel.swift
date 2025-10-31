@@ -25,6 +25,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public package(set) var endpoint: String = ""
     public package(set) var token: String = ""
     public package(set) var headers: [String: String] = [:] // additional headers
+    public package(set) var bodyFields: String = "" // additional body fields as JSON string
     public package(set) var capabilities: Set<ModelCapabilities> = []
     public package(set) var context: ModelContextLength = .short_8k
     public package(set) var temperature_preference: ModelTemperaturePreference = .inherit
@@ -52,6 +53,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(endpoint, isNotNull: true, defaultTo: "")
             BindColumnConstraint(token, isNotNull: true, defaultTo: "")
             BindColumnConstraint(headers, isNotNull: true, defaultTo: [String: String]())
+            BindColumnConstraint(bodyFields, isNotNull: true, defaultTo: "")
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: Set<ModelCapabilities>())
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
@@ -71,6 +73,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case endpoint
         case token
         case headers
+        case bodyFields
         case capabilities
         case context
         case comment
@@ -91,6 +94,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         endpoint: String = "",
         token: String = "",
         headers: [String: String] = [:],
+        bodyFields: String = "",
         context _: ModelContextLength = .medium_64k,
         capabilities: Set<ModelCapabilities> = [],
         comment: String = "",
@@ -107,6 +111,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.endpoint = endpoint
         self.token = token
         self.headers = headers
+        self.bodyFields = bodyFields
         self.capabilities = capabilities
         self.comment = comment
         self.name = name
@@ -125,6 +130,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         endpoint = try container.decodeIfPresent(String.self, forKey: .endpoint) ?? ""
         token = try container.decodeIfPresent(String.self, forKey: .token) ?? ""
         headers = try container.decodeIfPresent([String: String].self, forKey: .headers) ?? [:]
+        bodyFields = try container.decodeIfPresent(String.self, forKey: .bodyFields) ?? ""
         capabilities = try container.decodeIfPresent(Set<ModelCapabilities>.self, forKey: .capabilities) ?? []
         context = try container.decodeIfPresent(ModelContextLength.self, forKey: .context) ?? .short_8k
         comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
@@ -153,6 +159,7 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(endpoint)
         hasher.combine(token)
         hasher.combine(headers)
+        hasher.combine(bodyFields)
         hasher.combine(capabilities)
         hasher.combine(context)
         hasher.combine(comment)

@@ -331,6 +331,22 @@
         }
       }
     },
+    "Additional Body Fields (Optional)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Additional Body Fields (Optional)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外请求体字段（可选）"
+          }
+        }
+      }
+    },
     "Additional Header (Optional)" : {
       "localizations" : {
         "en" : {
@@ -2319,6 +2335,23 @@
         }
       }
     },
+    "Copy Link" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Link"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制链接"
+          }
+        }
+      }
+    },
     "Copy Message" : {
       "localizations" : {
         "en" : {
@@ -3547,6 +3580,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑"
+          }
+        }
+      }
+    },
+    "Edit Additional Body Fields" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Additional Body Fields"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑额外请求体字段"
           }
         }
       }
@@ -6357,6 +6406,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加入我们的 Discord 服务器。"
+          }
+        }
+      }
+    },
+    "JSON must be an object (dictionary), not an array or primitive." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON must be an object (dictionary), not an array or primitive."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON 必须是对象（字典），不能是数组或基本类型。"
           }
         }
       }
@@ -11084,6 +11149,22 @@
         }
       }
     },
+    "This value will be added to the request body as additional fields. Accepts JSON." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This value will be added to the request body as additional fields. Accepts JSON."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此处的数据将会在请求额外添加到请求报文中，并覆盖已有的任何同名字段。使用 JSON。"
+          }
+        }
+      }
+    },
     "This value will be added to the request to distinguish the workgroup on the remote." : {
       "localizations" : {
         "en" : {
@@ -11707,6 +11788,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法打开链接。"
+          }
+        }
+      }
+    },
+    "Unable to parse JSON: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to parse JSON: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解析 JSON：%@"
           }
         }
       }

@@ -255,6 +255,20 @@ extension ModelManager {
             return AppleIntelligenceChatClient()
         }
         if let model = cloudModel(identifier: identifier) {
+            // Parse model's bodyFields JSON string
+            var mergedBodyFields: [String: Any] = [:]
+            if !model.bodyFields.isEmpty,
+               let data = model.bodyFields.data(using: .utf8),
+               let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+            {
+                mergedBodyFields = jsonObject
+            }
+
+            // Merge with runtime additionalBodyField (runtime takes precedence)
+            for (key, value) in additionalBodyField {
+                mergedBodyFields[key] = value
+            }
+
             return RemoteChatClient(
                 model: model.model_identifier,
                 baseURL: model.endpoint,
@@ -263,7 +277,7 @@ extension ModelManager {
                     "HTTP-Referer": "https://flowdown.ai/",
                     "X-Title": "FlowDown",
                 ],
-                additionalBodyField: additionalBodyField
+                additionalBodyField: mergedBodyFields
             )
         } else if let model = localModel(identifier: identifier) {
             return MLXChatClient(url: modelContent(for: model))

@@ -488,3 +488,22 @@ struct MigrationV2ToV3: DBMigration {
         Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
     }
 }
+
+struct MigrationV3ToV4: DBMigration {
+    let fromVersion: DBVersion = .Version3
+    let toVersion: DBVersion = .Version4
+    let requiresDataMigration: Bool = false
+
+    func migrate(db: Database) throws {
+        let start = Date.now
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) begin")
+
+        // Add bodyFields column to CloudModel table
+        try db.create(table: CloudModel.tableName, of: CloudModel.self)
+
+        try db.exec(StatementPragma().pragma(.userVersion).to(toVersion.rawValue))
+
+        let elapsed = Date.now.timeIntervalSince(start) * 1000.0
+        Logger.database.info("[*] migrate version \(fromVersion.rawValue) -> \(toVersion.rawValue) end elapsed \(Int(elapsed), privacy: .public)ms")
+    }
+}
