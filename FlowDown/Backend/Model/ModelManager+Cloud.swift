@@ -17,7 +17,7 @@ extension CloudModel {
         }
 
         // Fall back to original logic
-        var ret = model_identifier
+        var ret = inferenceModelIdentifier
         let scope = scopeIdentifier
         if !scope.isEmpty, ret.hasPrefix(scopeIdentifier + "/") {
             ret.removeFirst(scopeIdentifier.count + 1)
@@ -29,9 +29,33 @@ extension CloudModel {
     var modelFullName: String {
         let host = URL(string: endpoint)?.host
         return [
-            model_identifier,
+            inferenceModelIdentifier,
             host,
         ].compactMap(\.self).joined(separator: "@")
+    }
+
+    var inferenceModelIdentifier: String {
+        guard isThinkingModeActive else { return model_identifier }
+        switch thinkingMode {
+        case let .alternateModel(name):
+            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? model_identifier : trimmed
+        case .extraField, .disabled:
+            return model_identifier
+        }
+    }
+
+    var thinkingModeBodyFields: [String: Any] {
+        guard isThinkingModeActive else { return [:] }
+        return thinkingMode.mergedPayload().body
+    }
+
+    var hasThinkingModeConfiguration: Bool {
+        thinkingMode.isConfigurable
+    }
+
+    var isThinkingModeActive: Bool {
+        thinkingModeEnabled && hasThinkingModeConfiguration
     }
 
     var scopeIdentifier: String {

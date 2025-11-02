@@ -30,6 +30,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public package(set) var context: ModelContextLength = .short_8k
     public package(set) var temperature_preference: ModelTemperaturePreference = .inherit
     public package(set) var temperature_override: Double?
+    public package(set) var thinkingMode: CloudModelThinkingMode = .disabledMode
+    public package(set) var thinkingModeEnabled: Bool = false
 
     // can be used when loading model from our server
     // present to user on the top of the editor page
@@ -56,6 +58,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(bodyFields, isNotNull: true, defaultTo: "")
             BindColumnConstraint(capabilities, isNotNull: true, defaultTo: Set<ModelCapabilities>())
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
+            BindColumnConstraint(thinkingMode, isNotNull: true, defaultTo: CloudModelThinkingMode.disabledMode)
+            BindColumnConstraint(thinkingModeEnabled, isNotNull: true, defaultTo: false)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(temperature_preference, isNotNull: true, defaultTo: ModelTemperaturePreference.inherit)
@@ -76,6 +80,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case bodyFields
         case capabilities
         case context
+        case thinkingMode
+        case thinkingModeEnabled
         case comment
         case name
         case temperature_preference
@@ -100,7 +106,9 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         comment: String = "",
         name: String = "",
         temperature_preference: ModelTemperaturePreference = .inherit,
-        temperature_override: Double? = nil
+        temperature_override: Double? = nil,
+        thinkingMode: CloudModelThinkingMode = .disabledMode,
+        thinkingModeEnabled: Bool = false
     ) {
         self.deviceId = deviceId
         self.objectId = objectId
@@ -113,6 +121,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.headers = headers
         self.bodyFields = bodyFields
         self.capabilities = capabilities
+        self.thinkingMode = thinkingMode
+        self.thinkingModeEnabled = thinkingModeEnabled
         self.comment = comment
         self.name = name
         self.temperature_preference = temperature_preference
@@ -133,6 +143,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         bodyFields = try container.decodeIfPresent(String.self, forKey: .bodyFields) ?? ""
         capabilities = try container.decodeIfPresent(Set<ModelCapabilities>.self, forKey: .capabilities) ?? []
         context = try container.decodeIfPresent(ModelContextLength.self, forKey: .context) ?? .short_8k
+        thinkingMode = try container.decodeIfPresent(CloudModelThinkingMode.self, forKey: .thinkingMode) ?? .disabledMode
+        thinkingModeEnabled = try container.decodeIfPresent(Bool.self, forKey: .thinkingModeEnabled) ?? false
         comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         temperature_preference = try container.decodeIfPresent(ModelTemperaturePreference.self, forKey: .temperature_preference) ?? .inherit
@@ -162,6 +174,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(bodyFields)
         hasher.combine(capabilities)
         hasher.combine(context)
+        hasher.combine(thinkingMode)
+        hasher.combine(thinkingModeEnabled)
         hasher.combine(comment)
         hasher.combine(name)
         hasher.combine(temperature_preference)

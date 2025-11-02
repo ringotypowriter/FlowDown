@@ -252,12 +252,75 @@ class CloudModelEditorController: StackScrollController {
         }
         bodyFieldsEditorView.configure(icon: .init(systemName: "pencil"))
         bodyFieldsEditorView.configure(title: "Additional Body Fields (Optional)")
-        bodyFieldsEditorView.configure(description: "This value will be added to the request body as additional fields.")
+        bodyFieldsEditorView.configure(description: "This value will be added to the request body as additional fields. Accepts JSON.")
         let hasBodyFields = !(model?.bodyFields.isEmpty ?? true) && !Self.isEmptyJsonObject(model?.bodyFields ?? "")
         bodyFieldsEditorView.configure(value: hasBodyFields ? String(localized: "Configured") : String(localized: "N/A"))
 
         stackView.addArrangedSubviewWithMargin(bodyFieldsEditorView)
         stackView.addArrangedSubview(SeparatorView())
+
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionHeaderView()
+                .with(header: String.LocalizationValue("Thinking Mode"))
+        ) { $0.bottom /= 2 }
+        stackView.addArrangedSubview(SeparatorView())
+
+        let thinkingModeView = ConfigurableInfoView()
+        thinkingModeView.configure(icon: .init(systemName: "lightbulb"))
+        thinkingModeView.configure(title: String.LocalizationValue("Thinking Mode"))
+        thinkingModeView.configure(description: String.LocalizationValue("Select which reasoning preset to apply."))
+        stackView.addArrangedSubviewWithMargin(thinkingModeView)
+        stackView.addArrangedSubview(SeparatorView())
+
+        let alternateModelView = ConfigurableInfoView()
+        alternateModelView.configure(icon: .init(systemName: "textformat.alt"))
+        alternateModelView.configure(title: String.LocalizationValue("Alternate Model Name"))
+        alternateModelView.configure(description: String.LocalizationValue("When enabled, requests will use this model identifier instead."))
+        stackView.addArrangedSubviewWithMargin(alternateModelView)
+        let alternateSeparator = SeparatorView()
+        stackView.addArrangedSubview(alternateSeparator)
+
+        let thinkingFooterView = ConfigurableSectionFooterView()
+            .with(footer: String.LocalizationValue("Future updates may expose advanced reasoning parameters such as reasoning effort."))
+        stackView.addArrangedSubviewWithMargin(thinkingFooterView) {
+            $0.top /= 2
+        }
+        stackView.addArrangedSubview(SeparatorView())
+
+        func updateThinkingSection() {
+            guard let currentModel = ModelManager.shared.cloudModel(identifier: identifier) else { return }
+            thinkingModeView.configure(value: currentModel.thinkingMode.displayTitle)
+            thinkingModeView.configure(description: currentModel.thinkingMode.detailDescription)
+
+            var alternateNameDisplay = String(localized: "Not Configured")
+            var showAlternate = false
+            if case let .alternateModel(name) = currentModel.thinkingMode {
+                showAlternate = true
+                let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    alternateNameDisplay = trimmed
+                }
+            }
+            alternateModelView.isHidden = !showAlternate
+            alternateSeparator.isHidden = !showAlternate
+            alternateModelView.configure(value: alternateNameDisplay)
+        }
+
+        alternateModelView.use { [weak self, weak altView = alternateModelView] in
+            guard let self, let view = altView else { return [] }
+            return buildAlternateModelMenu(for: identifier, view: view) {
+                updateThinkingSection()
+            }
+        }
+
+        thinkingModeView.use { [weak self] in
+            guard let self else { return [] }
+            return buildThinkingModeMenu(for: identifier) {
+                updateThinkingSection()
+            }
+        }
+
+        updateThinkingSection()
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionFooterView()
@@ -632,7 +695,12 @@ class CloudModelEditorController: StackScrollController {
                     return
                 }
 
-                let menuElements = self.buildModelSelectionMenu(from: list, modelId: modelId, view: view)
+                let menuElements = self.buildModelSelectionMenu(from: list) { selection in
+                    ModelManager.shared.editCloudModel(identifier: model.id) {
+                        $0.update(\.model_identifier, to: selection)
+                    }
+                    view.configure(value: selection)
+                }
                 completion(menuElements)
             }
         }
@@ -647,7 +715,144 @@ class CloudModelEditorController: StackScrollController {
         ]
     }
 
-    private func buildModelSelectionMenu(from list: [String], modelId: CloudModel.ID, view: ConfigurableInfoView) -> [UIMenuElement] {
+    private func buildThinkingModeMenu(for modelId: CloudModel.ID, refresh: @escaping () -> Void) -> [UIMenuElement] {
+        guard let model = ModelManager.shared.cloudModel(identifier: modelId) else { return [] }
+        let current = model.thinkingMode
+        let currentAlternateName: String = {
+            if case let .alternateModel(name) = current {
+                return name
+            }
+            return model.model_identifier
+        }()
+
+        let options: [(String.LocalizationValue, CloudModelThinkingMode)] = [
+            (String.LocalizationValue("Disabled"), .disabled),
+            (
+                String.LocalizationValue("Alternate Model"),
+                .alternateModel(name: currentAlternateName)
+            ),
+            (
+                String.LocalizationValue("\"enable_thinking\" Flag"),
+                .enableThinkingFlag
+            ),
+            (
+                String.LocalizationValue("\"thinking_mode\" Payload"),
+                .thinkingModeDictionary
+            ),
+            (
+                String.LocalizationValue("Reasoning Payload"),
+                .reasoningDictionary
+            ),
+        ]
+
+        return options.map { title, mode in
+            let action = UIAction(
+                title: String(localized: title),
+                image: mode.menuIconSystemName.flatMap { UIImage(systemName: $0) }
+            ) { _ in
+                ModelManager.shared.editCloudModel(identifier: modelId) {
+                    $0.update(\.thinkingMode, to: mode)
+                    if mode.isConfigurable {
+                        $0.update(\.thinkingModeEnabled, to: true)
+                    } else {
+                        $0.update(\.thinkingModeEnabled, to: false)
+                    }
+                }
+                DispatchQueue.main.async {
+                    refresh()
+                }
+            }
+            action.state = mode == current ? .on : .off
+            return action
+        }
+    }
+
+    private func buildAlternateModelMenu(
+        for modelId: CloudModel.ID,
+        view: ConfigurableInfoView,
+        refresh: @escaping () -> Void
+    ) -> [UIMenuElement] {
+        let editAction = UIAction(
+            title: String(localized: "Edit"),
+            image: UIImage(systemName: "character.cursor.ibeam")
+        ) { [weak view] _ in
+            guard let view,
+                  let currentModel = ModelManager.shared.cloudModel(identifier: modelId),
+                  case let .alternateModel(name) = currentModel.thinkingMode
+            else { return }
+
+            let input = AlertInputViewController(
+                title: "Alternate Model Name",
+                message: "Override the model field sent to the endpoint when thinking mode uses Alternate Model.",
+                placeholder: currentModel.model_identifier,
+                text: name
+            ) { output in
+                let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
+                ModelManager.shared.editCloudModel(identifier: currentModel.id) {
+                    $0.update(\.thinkingMode, to: .alternateModel(name: trimmed))
+                }
+                DispatchQueue.main.async {
+                    refresh()
+                }
+            }
+
+            view.parentViewController?.present(input, animated: true)
+        }
+
+        let deferredElement = UIDeferredMenuElement.uncached { [weak self] completion in
+            guard let self else {
+                completion([])
+                return
+            }
+
+            Task { @MainActor in
+                guard let currentModel = ModelManager.shared.cloudModel(identifier: modelId) else {
+                    completion([])
+                    return
+                }
+
+                let list = await withCheckedContinuation { continuation in
+                    ModelManager.shared.fetchModelList(identifier: currentModel.id) { list in
+                        continuation.resume(returning: list)
+                    }
+                }
+
+                if list.isEmpty {
+                    let emptyAction = UIAction(
+                        title: String(localized: "(None)"),
+                        attributes: .disabled
+                    ) { _ in }
+                    completion([emptyAction])
+                    return
+                }
+
+                let menuElements = self.buildModelSelectionMenu(from: list) { selection in
+                    ModelManager.shared.editCloudModel(identifier: currentModel.id) {
+                        $0.update(\.thinkingMode, to: .alternateModel(name: selection))
+                    }
+                    DispatchQueue.main.async {
+                        refresh()
+                    }
+                }
+
+                completion(menuElements)
+            }
+        }
+
+        return [
+            editAction,
+            UIMenu(
+                title: String(localized: "Select from Server"),
+                image: UIImage(systemName: "icloud.and.arrow.down"),
+                children: [deferredElement]
+            ),
+        ]
+    }
+
+    private func buildModelSelectionMenu(
+        from list: [String],
+        selectionHandler: @escaping (String) -> Void
+    ) -> [UIMenuElement] {
         var buildSections: [String: [(String, String)]] = [:]
         for item in list {
             var scope = ""
@@ -673,10 +878,7 @@ class CloudModelEditorController: StackScrollController {
                 options: options,
                 children: items.map { item in
                     UIAction(title: item.0) { _ in
-                        ModelManager.shared.editCloudModel(identifier: modelId) {
-                            $0.update(\.model_identifier, to: item.1)
-                        }
-                        view.configure(value: item.1)
+                        selectionHandler(item.1)
                     }
                 }
             ))

@@ -8,10 +8,34 @@
 import UIKit
 
 public class QuickSettingBar: EditorSectionView {
+    public struct ThinkingModeState {
+        public let title: String
+        public let isActive: Bool
+        public let isVisible: Bool
+
+        public init(title: String, isActive: Bool, isVisible: Bool) {
+            self.title = title
+            self.isActive = isActive
+            self.isVisible = isVisible
+        }
+    }
+
     let scrollView = UIScrollView()
 
     let modelPicker = BlockButton(text: "", icon: "asterisk")
     let modelPickerRightClickFinder = RightClickFinder()
+    let thinkingModeButton: BlockButton = {
+        let button = BlockButton(
+            text: String(localized: "Reasoning"),
+            icon: "sparkles"
+        )
+        if let symbol = UIImage(systemName: "lightbulb")?.withRenderingMode(.alwaysTemplate) {
+            button.iconView.image = symbol
+            button.iconView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        }
+        return button
+    }()
+
     let browsingToggle = ToggleBlockButton(
         text: NSLocalizedString("Web Browsing", bundle: .module, comment: ""),
         icon: "server"
@@ -23,6 +47,7 @@ public class QuickSettingBar: EditorSectionView {
 
     lazy var buttons: [BlockButton] = [
         modelPicker,
+        thinkingModeButton,
         browsingToggle,
         toolsToggle,
     ]
@@ -33,7 +58,7 @@ public class QuickSettingBar: EditorSectionView {
 
     var height: CGFloat {
         if isOpen {
-            buttons.map(\.intrinsicContentSize.height).max() ?? 0
+            buttons.filter { !$0.isHidden }.map(\.intrinsicContentSize.height).max() ?? 0
         } else {
             0
         }
@@ -99,8 +124,17 @@ public class QuickSettingBar: EditorSectionView {
         toolsToggle.showsMenuAsPrimaryAction = true
         toolsToggle.actionBlock = {}
 
+        thinkingModeButton.showsMenuAsPrimaryAction = false
+        thinkingModeButton.actionBlock = { [weak self] in
+            guard let self else { return }
+            delegate?.quickSettingBarToggleThinkingMode()
+            refreshThinkingModeButton()
+        }
+        thinkingModeButton.isHidden = true
+
         heightPublisher.send(height)
         updateToolCallAvailability(false)
+        refreshThinkingModeButton()
     }
 
     override public func layoutSubviews() {
@@ -122,14 +156,15 @@ public class QuickSettingBar: EditorSectionView {
         guard isOpen else { return }
 
         buttons.forEach { $0.transform = .identity }
-        let sizes = buttons.map(\.intrinsicContentSize)
+        let visibleButtons = buttons.filter { !$0.isHidden }
+        let sizes = visibleButtons.map(\.intrinsicContentSize)
 
         var anchorX: CGFloat = horizontalAdjustment
-        for idx in 0 ..< buttons.count {
-            let size = sizes[idx]
+        for (index, button) in visibleButtons.enumerated() {
+            let size = sizes[index]
             assert(size.width > 0)
             assert(size.height > 0)
-            buttons[idx].frame = .init(
+            button.frame = .init(
                 x: anchorX,
                 y: 0,
                 width: size.width,
@@ -138,7 +173,7 @@ public class QuickSettingBar: EditorSectionView {
             anchorX += size.width + 10
         }
 
-        let lastOne = buttons.last?.frame.maxX ?? 0
+        let lastOne = visibleButtons.last?.frame.maxX ?? 0
         let contentSizeWidth = lastOne + horizontalAdjustment
         scrollView.contentSize = .init(width: contentSizeWidth, height: height)
     }
@@ -182,5 +217,40 @@ public class QuickSettingBar: EditorSectionView {
 
     func show() {
         isOpen = true
+    }
+
+    func updateThinkingModeButton(state: ThinkingModeState?) {
+        guard let state, state.isVisible else {
+            if !thinkingModeButton.isHidden {
+                thinkingModeButton.isHidden = true
+                heightPublisher.send(height)
+                setNeedsLayout()
+            }
+            return
+        }
+
+        thinkingModeButton.isHidden = false
+        thinkingModeButton.textLabel.text = String(localized: "Reasoning")
+        thinkingModeButton.applyDefaultAppearance()
+
+        if state.isActive {
+            thinkingModeButton.borderView.layer.borderColor = UIColor.accent.cgColor
+            thinkingModeButton.borderView.backgroundColor = .accent
+            thinkingModeButton.iconView.tintColor = .white
+            thinkingModeButton.textLabel.textColor = .white
+        } else {
+            thinkingModeButton.borderView.layer.borderColor = UIColor.label.withAlphaComponent(0.1).cgColor
+            thinkingModeButton.borderView.backgroundColor = .clear
+            thinkingModeButton.iconView.tintColor = .label
+            thinkingModeButton.textLabel.textColor = .label
+        }
+
+        heightPublisher.send(height)
+        setNeedsLayout()
+    }
+
+    func refreshThinkingModeButton() {
+        let state = delegate?.quickSettingBarRequestThinkingModeState()
+        updateThinkingModeButton(state: state)
     }
 }

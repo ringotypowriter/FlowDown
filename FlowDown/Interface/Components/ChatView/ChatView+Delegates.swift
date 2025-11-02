@@ -203,6 +203,32 @@ extension ChatView: RichEditorView.Delegate {
         }
     }
 
+    func onRichEditorRequestThinkingModeState() -> QuickSettingBar.ThinkingModeState? {
+        guard let modelIdentifier = modelIdentifier(),
+              let model = ModelManager.shared.cloudModel(identifier: modelIdentifier)
+        else { return nil }
+
+        guard model.hasThinkingModeConfiguration else { return nil }
+
+        return QuickSettingBar.ThinkingModeState(
+            title: model.thinkingMode.displayTitle,
+            isActive: model.isThinkingModeActive,
+            isVisible: model.hasThinkingModeConfiguration
+        )
+    }
+
+    func onRichEditorToggleThinkingMode() {
+        guard let modelIdentifier = modelIdentifier(),
+              let model = ModelManager.shared.cloudModel(identifier: modelIdentifier),
+              model.hasThinkingModeConfiguration
+        else { return }
+
+        let newValue = !model.isThinkingModeActive
+        ModelManager.shared.editCloudModel(identifier: model.id) {
+            $0.update(\.thinkingModeEnabled, to: newValue)
+        }
+    }
+
     func onRichEditorBuildAlternativeModelMenu() -> [UIMenuElement] {
         let isAppleIntelligence: Bool = {
             guard let id = modelIdentifier(), !id.isEmpty else { return false }

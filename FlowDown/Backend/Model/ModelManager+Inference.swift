@@ -155,8 +155,8 @@ extension ModelManager {
     }
 
     func testCloudModel(_ model: CloudModel, completion: @escaping (Result<Void, Error>) -> Void) {
-        let dic: [String: Any] = [
-            "model": model.model_identifier,
+        var dic: [String: Any] = [
+            "model": model.inferenceModelIdentifier,
             "stream": true,
             "messages": [
                 [
@@ -169,6 +169,10 @@ extension ModelManager {
                 ],
             ],
         ]
+        let additional = mergedBodyFields(for: model, runtime: [:])
+        for (key, value) in additional where dic[key] == nil {
+            dic[key] = value
+        }
         guard let data = try? JSONSerialization.data(withJSONObject: dic),
               let endpoint = URL(string: model.endpoint)
         else {
@@ -255,22 +259,10 @@ extension ModelManager {
             return AppleIntelligenceChatClient()
         }
         if let model = cloudModel(identifier: identifier) {
-            // Parse model's bodyFields JSON string
-            var mergedBodyFields: [String: Any] = [:]
-            if !model.bodyFields.isEmpty,
-               let data = model.bodyFields.data(using: .utf8),
-               let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-            {
-                mergedBodyFields = jsonObject
-            }
-
-            // Merge with runtime additionalBodyField (runtime takes precedence)
-            for (key, value) in additionalBodyField {
-                mergedBodyFields[key] = value
-            }
+            let mergedBodyFields = mergedBodyFields(for: model, runtime: additionalBodyField)
 
             return RemoteChatClient(
-                model: model.model_identifier,
+                model: model.inferenceModelIdentifier,
                 baseURL: model.endpoint,
                 apiKey: model.token,
                 additionalHeaders: model.headers + [
@@ -579,5 +571,24 @@ extension ModelManager {
         let tokens = encoder.encode(text: estimatedInferenceText)
 
         return tokens.count + estimatedAdditionalTokens
+    }
+
+    private func mergedBodyFields(for model: CloudModel, runtime: [String: Any]) -> [String: Any] {
+        var merged: [String: Any] = [:]
+        if !model.bodyFields.isEmpty,
+           let data = model.bodyFields.data(using: .utf8),
+           let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        {
+            merged = jsonObject
+        }
+
+        for (key, value) in model.thinkingModeBodyFields {
+            merged[key] = value
+        }
+
+        for (key, value) in runtime {
+            merged[key] = value
+        }
+        return merged
     }
 }

@@ -7,6 +7,12 @@
     "..." : {
       "shouldTranslate" : false
     },
+    "\"Enable_thinking\" Flag" : {
+
+    },
+    "\"thinking_mode\" Payload" : {
+
+    },
     "(None)" : {
       "localizations" : {
         "en" : {
@@ -682,6 +688,15 @@
           }
         }
       }
+    },
+    "Alternate Model" : {
+
+    },
+    "Alternate Model · %@" : {
+
+    },
+    "Alternate Model Name" : {
+
     },
     "An error occurred during compression: %@" : {
       "localizations" : {
@@ -3971,6 +3986,9 @@
         }
       }
     },
+    "Enable Thinking Flag" : {
+
+    },
     "Enable this to automatically collapse reasoning content after the reasoning is completed. This is useful for keeping the chat interface clean and focused on the final response." : {
       "localizations" : {
         "en" : {
@@ -5276,6 +5294,9 @@
           }
         }
       }
+    },
+    "Future updates may expose advanced reasoning parameters such as reasoning effort." : {
+
     },
     "General" : {
       "localizations" : {
@@ -8916,6 +8937,9 @@
         }
       }
     },
+    "Reasoning Payload" : {
+
+    },
     "Rebuild sync state and fetch everything new from iCloud. Local data is preserved." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9558,6 +9582,9 @@
           }
         }
       }
+    },
+    "Select which reasoning preset to apply." : {
+
     },
     "Send us an email." : {
       "localizations" : {
@@ -10960,6 +10987,12 @@
         }
       }
     },
+    "Thinking Mode" : {
+
+    },
+    "Thinking Mode Payload" : {
+
+    },
     "This conversation is based on the template: %@." : {
       "localizations" : {
         "en" : {
@@ -11137,6 +11170,7 @@
       }
     },
     "This value will be added to the request body as additional fields." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -11145,6 +11179,9 @@
           }
         }
       }
+    },
+    "This value will be added to the request body as additional fields. Accepts JSON." : {
+
     },
     "This value will be added to the request to distinguish the workgroup on the remote." : {
       "localizations" : {
@@ -13068,6 +13105,9 @@
           }
         }
       }
+    },
+    "When enabled, requests will use this model identifier instead." : {
+
     },
     "When selecting a new chat model, also set it as the default model." : {
       "localizations" : {

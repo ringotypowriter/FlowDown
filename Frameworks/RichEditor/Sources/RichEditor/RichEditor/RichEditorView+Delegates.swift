@@ -278,6 +278,15 @@ extension RichEditorView: QuickSettingBar.Delegate {
         delegate?.onRichEditorBuildAlternativeToolsMenu(isEnabled: isEnabled, requestReload: requestReload) ?? []
     }
 
+    func quickSettingBarRequestThinkingModeState() -> QuickSettingBar.ThinkingModeState? {
+        delegate?.onRichEditorRequestThinkingModeState()
+    }
+
+    func quickSettingBarToggleThinkingMode() {
+        delegate?.onRichEditorToggleThinkingMode()
+        quickSettingBar.refreshThinkingModeButton()
+    }
+
     func updateModelInfo(postUpdate: Bool = true) {
         let newModel = delegate?.onRichEditorRequestCurrentModelName()
         withAnimation { self.quickSettingBar.setModelName(newModel) }
@@ -288,6 +297,7 @@ extension RichEditorView: QuickSettingBar.Delegate {
             supportsToolCall = delegate?.onRichEditorCheckIfModelSupportsToolCall(newModelIdentifier) ?? false
         }
         quickSettingBar.updateToolCallAvailability(supportsToolCall)
+        quickSettingBar.refreshThinkingModeButton()
         if postUpdate {
             delegate?.onRichEditorUpdateObject(object: collectObject())
         }
