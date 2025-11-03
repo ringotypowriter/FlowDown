@@ -496,6 +496,16 @@
           }
         }
       }
+    },
+    "Effort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

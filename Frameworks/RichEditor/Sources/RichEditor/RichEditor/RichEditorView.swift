@@ -25,7 +25,7 @@ public class RichEditorView: EditorSectionView {
 
     let attachmentsBar = AttachmentsBar()
     let inputEditor = InputEditor()
-    let quickSettingBar = QuickSettingBar()
+    public let quickSettingBar = QuickSettingBar()
     let controlPanel = ControlPanel()
 
     let shadowContainer = UIView()

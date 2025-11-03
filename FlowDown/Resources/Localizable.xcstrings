@@ -7,7 +7,7 @@
     "..." : {
       "shouldTranslate" : false
     },
-    "\"Enable_thinking\" Flag" : {
+    "\"enable_thinking\" Flag" : {
 
     },
     "\"thinking_mode\" Payload" : {
@@ -413,6 +413,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "调整标记文本的字体大小。"
+          }
+        }
+      }
+    },
+    "Adjust the intensity of reasoning parameters when supported. Availability depends on your provider." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjust the intensity of reasoning parameters when supported. Availability depends on your provider."
           }
         }
       }
@@ -3841,6 +3851,27 @@
         }
       }
     },
+    "Effort · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort · %@"
+          }
+        }
+      }
+    },
+    "Effort · Disabled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort · Disabled"
+          }
+        }
+      }
+    },
     "Either model is corrupted or not supported." : {
       "localizations" : {
         "en" : {
@@ -5295,9 +5326,6 @@
         }
       }
     },
-    "Future updates may expose advanced reasoning parameters such as reasoning effort." : {
-
-    },
     "General" : {
       "localizations" : {
         "en" : {
@@ -5502,6 +5530,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "报头"
+          }
+        }
+      }
+    },
+    "High" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High"
           }
         }
       }
@@ -6759,6 +6797,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "较长"
+          }
+        }
+      }
+    },
+    "Low" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low"
           }
         }
       }
@@ -8933,6 +8981,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查看文档"
+          }
+        }
+      }
+    },
+    "Reasoning Effort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reasoning Effort"
+          }
+        }
+      }
+    },
+    "Reasoning effort support depends on the configured provider. Disable the field if the endpoint rejects the additional parameters." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reasoning effort support depends on the configured provider. Disable the field if the endpoint rejects the additional parameters."
           }
         }
       }

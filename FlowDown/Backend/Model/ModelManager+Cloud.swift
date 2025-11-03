@@ -47,7 +47,11 @@ extension CloudModel {
 
     var thinkingModeBodyFields: [String: Any] {
         guard isThinkingModeActive else { return [:] }
-        return thinkingMode.mergedPayload().body
+        var body = thinkingMode.mergedPayload().body
+        if let effortFields = thinkingModeReasoningEffortBodyFields {
+            body.mergeRecursively(with: effortFields)
+        }
+        return body
     }
 
     var hasThinkingModeConfiguration: Bool {
@@ -56,6 +60,21 @@ extension CloudModel {
 
     var isThinkingModeActive: Bool {
         thinkingModeEnabled && hasThinkingModeConfiguration
+    }
+
+    var hasReasoningEffortConfiguration: Bool {
+        thinkingMode.supportsReasoningEffort
+    }
+
+    var isReasoningEffortActive: Bool {
+        hasReasoningEffortConfiguration && thinkingModeEffortEnabled
+    }
+
+    private var thinkingModeReasoningEffortBodyFields: [String: Any]? {
+        guard isReasoningEffortActive,
+              let payload = thinkingMode.reasoningEffortPayload(for: thinkingModeEffort)
+        else { return nil }
+        return payload
     }
 
     var scopeIdentifier: String {
@@ -84,6 +103,21 @@ extension CloudModel {
             .map { String(localized: $0) }
         input.append(contentsOf: caps)
         return input.filter { !$0.isEmpty }
+    }
+}
+
+private extension [String: Any] {
+    mutating func mergeRecursively(with other: [String: Any]) {
+        for (key, value) in other {
+            if var existing = self[key] as? [String: Any],
+               let addition = value as? [String: Any]
+            {
+                existing.mergeRecursively(with: addition)
+                self[key] = existing
+            } else {
+                self[key] = value
+            }
+        }
     }
 }
 

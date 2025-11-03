@@ -257,6 +257,10 @@ class CloudModelEditorController: StackScrollController {
         bodyFieldsEditorView.configure(value: hasBodyFields ? String(localized: "Configured") : String(localized: "N/A"))
 
         stackView.addArrangedSubviewWithMargin(bodyFieldsEditorView)
+        stackView.addArrangedSubviewWithMargin(
+            ConfigurableSectionFooterView()
+                .with(footer: "Extra headers and body fields are optional, and can be used to add extra information to the request. They should be in JSON format with key-value pairs.")
+        ) { $0.top /= 2 }
         stackView.addArrangedSubview(SeparatorView())
 
         stackView.addArrangedSubviewWithMargin(
@@ -269,20 +273,29 @@ class CloudModelEditorController: StackScrollController {
         thinkingModeView.configure(icon: .init(systemName: "lightbulb"))
         thinkingModeView.configure(title: String.LocalizationValue("Thinking Mode"))
         thinkingModeView.configure(description: String.LocalizationValue("Select which reasoning preset to apply."))
-        stackView.addArrangedSubviewWithMargin(thinkingModeView)
-        stackView.addArrangedSubview(SeparatorView())
+        let thinkingModeContainer = stackView.addArrangedSubviewWithMargin(thinkingModeView)
+        let thinkingSeparator = SeparatorView()
+        stackView.addArrangedSubview(thinkingSeparator)
+
+        let reasoningEffortView = ConfigurableInfoView()
+        reasoningEffortView.configure(icon: .init(systemName: "speedometer"))
+        reasoningEffortView.configure(title: String.LocalizationValue("Reasoning Effort"))
+        reasoningEffortView.configure(description: String.LocalizationValue("Adjust the intensity of reasoning parameters when supported. Availability depends on your provider."))
+        let reasoningEffortContainer = stackView.addArrangedSubviewWithMargin(reasoningEffortView)
+        let reasoningSeparator = SeparatorView()
+        stackView.addArrangedSubview(reasoningSeparator)
 
         let alternateModelView = ConfigurableInfoView()
         alternateModelView.configure(icon: .init(systemName: "textformat.alt"))
         alternateModelView.configure(title: String.LocalizationValue("Alternate Model Name"))
         alternateModelView.configure(description: String.LocalizationValue("When enabled, requests will use this model identifier instead."))
-        stackView.addArrangedSubviewWithMargin(alternateModelView)
+        let alternateModelContainer = stackView.addArrangedSubviewWithMargin(alternateModelView)
         let alternateSeparator = SeparatorView()
         stackView.addArrangedSubview(alternateSeparator)
 
         let thinkingFooterView = ConfigurableSectionFooterView()
-            .with(footer: String.LocalizationValue("Future updates may expose advanced reasoning parameters such as reasoning effort."))
-        stackView.addArrangedSubviewWithMargin(thinkingFooterView) {
+            .with(footer: String.LocalizationValue("Reasoning effort support depends on the configured provider. Disable the field if the endpoint rejects the additional parameters."))
+        let thinkingFooterContainer = stackView.addArrangedSubviewWithMargin(thinkingFooterView) {
             $0.top /= 2
         }
         stackView.addArrangedSubview(SeparatorView())
@@ -291,6 +304,23 @@ class CloudModelEditorController: StackScrollController {
             guard let currentModel = ModelManager.shared.cloudModel(identifier: identifier) else { return }
             thinkingModeView.configure(value: currentModel.thinkingMode.displayTitle)
             thinkingModeView.configure(description: currentModel.thinkingMode.detailDescription)
+
+            let supportsEffort = currentModel.hasReasoningEffortConfiguration
+            thinkingModeContainer.isHidden = false
+            thinkingSeparator.isHidden = false
+            reasoningEffortView.isHidden = !supportsEffort
+            reasoningEffortContainer.isHidden = !supportsEffort
+            reasoningSeparator.isHidden = !supportsEffort
+
+            if supportsEffort {
+                if currentModel.thinkingModeEffortEnabled {
+                    reasoningEffortView.configure(value: currentModel.thinkingModeEffort.displayTitle)
+                } else {
+                    reasoningEffortView.configure(value: String(localized: "Disabled"))
+                }
+            } else {
+                reasoningEffortView.configure(value: String(localized: "Disabled"))
+            }
 
             var alternateNameDisplay = String(localized: "Not Configured")
             var showAlternate = false
@@ -302,8 +332,11 @@ class CloudModelEditorController: StackScrollController {
                 }
             }
             alternateModelView.isHidden = !showAlternate
+            alternateModelContainer.isHidden = !showAlternate
             alternateSeparator.isHidden = !showAlternate
             alternateModelView.configure(value: alternateNameDisplay)
+
+            thinkingFooterContainer.isHidden = !supportsEffort && !showAlternate
         }
 
         alternateModelView.use { [weak self, weak altView = alternateModelView] in
@@ -320,13 +353,14 @@ class CloudModelEditorController: StackScrollController {
             }
         }
 
-        updateThinkingSection()
+        reasoningEffortView.use { [weak self] in
+            guard let self else { return [] }
+            return buildReasoningEffortMenu(for: identifier) {
+                updateThinkingSection()
+            }
+        }
 
-        stackView.addArrangedSubviewWithMargin(
-            ConfigurableSectionFooterView()
-                .with(footer: "Extra headers and body fields are optional, and can be used to add extra information to the request. They should be in JSON format with key-value pairs.")
-        ) { $0.top /= 2 }
-        stackView.addArrangedSubview(SeparatorView())
+        updateThinkingSection()
 
         stackView.addArrangedSubviewWithMargin(
             ConfigurableSectionHeaderView()
@@ -765,6 +799,47 @@ class CloudModelEditorController: StackScrollController {
             action.state = mode == current ? .on : .off
             return action
         }
+    }
+
+    private func buildReasoningEffortMenu(for modelId: CloudModel.ID, refresh: @escaping () -> Void) -> [UIMenuElement] {
+        guard let model = ModelManager.shared.cloudModel(identifier: modelId),
+              model.hasReasoningEffortConfiguration
+        else { return [] }
+
+        let isEnabled = model.thinkingModeEffortEnabled
+        let currentLevel = model.thinkingModeEffort
+
+        var elements: [UIAction] = []
+
+        let disabledAction = UIAction(title: String(localized: "Disabled"), image: nil) { _ in
+            ModelManager.shared.editCloudModel(identifier: modelId) {
+                $0.update(\.thinkingModeEffortEnabled, to: false)
+            }
+            DispatchQueue.main.async {
+                refresh()
+            }
+        }
+        disabledAction.state = isEnabled ? .off : .on
+        elements.append(disabledAction)
+
+        let levelActions = CloudModelReasoningEffortLevel.allCases.map { level -> UIAction in
+            let action = UIAction(
+                title: level.displayTitle,
+                image: UIImage(systemName: level.menuIconSystemName)
+            ) { _ in
+                ModelManager.shared.editCloudModel(identifier: modelId) {
+                    $0.update(\.thinkingModeEffortEnabled, to: true)
+                    $0.update(\.thinkingModeEffort, to: level)
+                }
+                DispatchQueue.main.async {
+                    refresh()
+                }
+            }
+            action.state = (isEnabled && level == currentLevel) ? .on : .off
+            return action
+        }
+
+        return elements + levelActions
     }
 
     private func buildAlternateModelMenu(

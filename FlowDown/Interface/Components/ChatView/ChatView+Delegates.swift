@@ -227,6 +227,59 @@ extension ChatView: RichEditorView.Delegate {
         ModelManager.shared.editCloudModel(identifier: model.id) {
             $0.update(\.thinkingModeEnabled, to: newValue)
         }
+        DispatchQueue.main.async { [weak self] in
+            self?.editor.quickSettingBar.refreshReasoningEffortButton()
+        }
+    }
+
+    func onRichEditorRequestReasoningEffortState() -> QuickSettingBar.ReasoningEffortState? {
+        guard let modelIdentifier = modelIdentifier(),
+              let model = ModelManager.shared.cloudModel(identifier: modelIdentifier)
+        else { return nil }
+
+        guard model.isThinkingModeActive,
+              model.hasReasoningEffortConfiguration,
+              model.thinkingModeEffortEnabled
+        else {
+            return nil
+        }
+
+        let title = String(format: String(localized: "Effort · %@"), model.thinkingModeEffort.displayTitle)
+
+        return QuickSettingBar.ReasoningEffortState(
+            title: title,
+            isActive: model.isReasoningEffortActive,
+            isVisible: true
+        )
+    }
+
+    func onRichEditorBuildReasoningEffortMenu() -> [UIMenuElement] {
+        guard let modelIdentifier = modelIdentifier(),
+              let model = ModelManager.shared.cloudModel(identifier: modelIdentifier),
+              model.hasReasoningEffortConfiguration
+        else { return [] }
+
+        let currentLevel = model.thinkingModeEffort
+
+        let levelActions = CloudModelReasoningEffortLevel.allCases.map { level -> UIAction in
+            let action = UIAction(
+                title: level.displayTitle,
+                image: UIImage(systemName: level.menuIconSystemName)
+            ) { [weak self] _ in
+                ModelManager.shared.editCloudModel(identifier: model.id) {
+                    $0.update(\.thinkingModeEffortEnabled, to: true)
+                    $0.update(\.thinkingModeEffort, to: level)
+                }
+                DispatchQueue.main.async {
+                    self?.editor.quickSettingBar.refreshReasoningEffortButton()
+                }
+            }
+            let isEnabled = model.thinkingModeEffortEnabled
+            action.state = (isEnabled && level == currentLevel) ? .on : .off
+            return action
+        }
+
+        return levelActions
     }
 
     func onRichEditorBuildAlternativeModelMenu() -> [UIMenuElement] {

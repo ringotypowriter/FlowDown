@@ -83,6 +83,7 @@ public class Storage {
                 MigrationV2ToV3(),
                 MigrationV3ToV4(),
                 MigrationV4ToV5(),
+                MigrationV5ToV6(),
             ]
         } else {
             initVersion = .Version1
@@ -91,6 +92,7 @@ public class Storage {
                 MigrationV2ToV3(),
                 MigrationV3ToV4(),
                 MigrationV4ToV5(),
+                MigrationV5ToV6(),
             ]
         }
 

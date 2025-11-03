@@ -32,6 +32,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
     public package(set) var temperature_override: Double?
     public package(set) var thinkingMode: CloudModelThinkingMode = .disabledMode
     public package(set) var thinkingModeEnabled: Bool = false
+    public package(set) var thinkingModeEffort: CloudModelReasoningEffortLevel = .defaultLevel
+    public package(set) var thinkingModeEffortEnabled: Bool = true
 
     // can be used when loading model from our server
     // present to user on the top of the editor page
@@ -60,6 +62,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
             BindColumnConstraint(context, isNotNull: true, defaultTo: ModelContextLength.short_8k)
             BindColumnConstraint(thinkingMode, isNotNull: true, defaultTo: CloudModelThinkingMode.disabledMode)
             BindColumnConstraint(thinkingModeEnabled, isNotNull: true, defaultTo: false)
+            BindColumnConstraint(thinkingModeEffort, isNotNull: true, defaultTo: CloudModelReasoningEffortLevel.defaultLevel)
+            BindColumnConstraint(thinkingModeEffortEnabled, isNotNull: true, defaultTo: true)
             BindColumnConstraint(comment, isNotNull: true, defaultTo: "")
             BindColumnConstraint(name, isNotNull: true, defaultTo: "")
             BindColumnConstraint(temperature_preference, isNotNull: true, defaultTo: ModelTemperaturePreference.inherit)
@@ -82,6 +86,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         case context
         case thinkingMode
         case thinkingModeEnabled
+        case thinkingModeEffort
+        case thinkingModeEffortEnabled
         case comment
         case name
         case temperature_preference
@@ -108,7 +114,9 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         temperature_preference: ModelTemperaturePreference = .inherit,
         temperature_override: Double? = nil,
         thinkingMode: CloudModelThinkingMode = .disabledMode,
-        thinkingModeEnabled: Bool = false
+        thinkingModeEnabled: Bool = false,
+        thinkingModeEffort: CloudModelReasoningEffortLevel = .defaultLevel,
+        thinkingModeEffortEnabled: Bool = true
     ) {
         self.deviceId = deviceId
         self.objectId = objectId
@@ -123,6 +131,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         self.capabilities = capabilities
         self.thinkingMode = thinkingMode
         self.thinkingModeEnabled = thinkingModeEnabled
+        self.thinkingModeEffort = thinkingModeEffort
+        self.thinkingModeEffortEnabled = thinkingModeEffortEnabled
         self.comment = comment
         self.name = name
         self.temperature_preference = temperature_preference
@@ -145,6 +155,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         context = try container.decodeIfPresent(ModelContextLength.self, forKey: .context) ?? .short_8k
         thinkingMode = try container.decodeIfPresent(CloudModelThinkingMode.self, forKey: .thinkingMode) ?? .disabledMode
         thinkingModeEnabled = try container.decodeIfPresent(Bool.self, forKey: .thinkingModeEnabled) ?? false
+        thinkingModeEffort = try container.decodeIfPresent(CloudModelReasoningEffortLevel.self, forKey: .thinkingModeEffort) ?? .defaultLevel
+        thinkingModeEffortEnabled = try container.decodeIfPresent(Bool.self, forKey: .thinkingModeEffortEnabled) ?? true
         comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         temperature_preference = try container.decodeIfPresent(ModelTemperaturePreference.self, forKey: .temperature_preference) ?? .inherit
@@ -176,6 +188,8 @@ public final class CloudModel: Identifiable, Codable, Equatable, Hashable, Table
         hasher.combine(context)
         hasher.combine(thinkingMode)
         hasher.combine(thinkingModeEnabled)
+        hasher.combine(thinkingModeEffort)
+        hasher.combine(thinkingModeEffortEnabled)
         hasher.combine(comment)
         hasher.combine(name)
         hasher.combine(temperature_preference)

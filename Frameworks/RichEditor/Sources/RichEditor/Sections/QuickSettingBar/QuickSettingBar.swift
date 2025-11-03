@@ -20,6 +20,18 @@ public class QuickSettingBar: EditorSectionView {
         }
     }
 
+    public struct ReasoningEffortState {
+        public let title: String
+        public let isActive: Bool
+        public let isVisible: Bool
+
+        public init(title: String, isActive: Bool, isVisible: Bool) {
+            self.title = title
+            self.isActive = isActive
+            self.isVisible = isVisible
+        }
+    }
+
     let scrollView = UIScrollView()
 
     let modelPicker = BlockButton(text: "", icon: "asterisk")
@@ -30,6 +42,18 @@ public class QuickSettingBar: EditorSectionView {
             icon: "sparkles"
         )
         if let symbol = UIImage(systemName: "lightbulb")?.withRenderingMode(.alwaysTemplate) {
+            button.iconView.image = symbol
+            button.iconView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        }
+        return button
+    }()
+
+    let reasoningEffortButton: BlockButton = {
+        let button = BlockButton(
+            text: String(localized: "Effort"),
+            icon: "sparkles"
+        )
+        if let symbol = UIImage(systemName: "speedometer")?.withRenderingMode(.alwaysTemplate) {
             button.iconView.image = symbol
             button.iconView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
         }
@@ -48,6 +72,7 @@ public class QuickSettingBar: EditorSectionView {
     lazy var buttons: [BlockButton] = [
         modelPicker,
         thinkingModeButton,
+        reasoningEffortButton,
         browsingToggle,
         toolsToggle,
     ]
@@ -129,12 +154,30 @@ public class QuickSettingBar: EditorSectionView {
             guard let self else { return }
             delegate?.quickSettingBarToggleThinkingMode()
             refreshThinkingModeButton()
+            refreshReasoningEffortButton()
         }
         thinkingModeButton.isHidden = true
+
+        reasoningEffortButton.showsMenuAsPrimaryAction = true
+        reasoningEffortButton.menu = UIMenu(children: [
+            UIDeferredMenuElement.uncached { [weak self] completion in
+                guard let self else {
+                    completion([])
+                    return
+                }
+                let elements = delegate?.quickSettingBarBuildReasoningEffortMenu() ?? []
+                completion(elements)
+            },
+        ])
+        reasoningEffortButton.addAction(UIAction { [weak self] _ in
+            self?.reasoningEffortButton.puddingAnimate()
+        }, for: .touchUpInside)
+        reasoningEffortButton.isHidden = true
 
         heightPublisher.send(height)
         updateToolCallAvailability(false)
         refreshThinkingModeButton()
+        refreshReasoningEffortButton()
     }
 
     override public func layoutSubviews() {
@@ -249,8 +292,85 @@ public class QuickSettingBar: EditorSectionView {
         setNeedsLayout()
     }
 
-    func refreshThinkingModeButton() {
+    public func refreshThinkingModeButton() {
         let state = delegate?.quickSettingBarRequestThinkingModeState()
         updateThinkingModeButton(state: state)
+        refreshReasoningEffortButton()
+    }
+
+    func updateReasoningEffortButton(state: ReasoningEffortState?) {
+        let animationDuration: TimeInterval = 0.25
+
+        guard let state, state.isVisible else {
+            guard !reasoningEffortButton.isHidden else { return }
+            setNeedsLayout()
+            UIView.animate(
+                withDuration: animationDuration,
+                delay: 0,
+                options: [.curveEaseInOut, .allowUserInteraction]
+            ) { [weak self] in
+                guard let self else { return }
+                layoutIfNeeded()
+                reasoningEffortButton.alpha = 0
+                reasoningEffortButton.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
+            } completion: { [weak self] _ in
+                guard let self else { return }
+                reasoningEffortButton.isHidden = true
+                reasoningEffortButton.alpha = 1
+                reasoningEffortButton.transform = .identity
+                setNeedsLayout()
+                layoutIfNeeded()
+                heightPublisher.send(height)
+            }
+            return
+        }
+
+        if reasoningEffortButton.isHidden {
+            reasoningEffortButton.alpha = 0
+            reasoningEffortButton.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
+            reasoningEffortButton.isHidden = false
+            heightPublisher.send(height)
+            setNeedsLayout()
+            layoutIfNeeded()
+            UIView.animate(
+                withDuration: animationDuration,
+                delay: 0,
+                usingSpringWithDamping: 0.85,
+                initialSpringVelocity: 0,
+                options: [.curveEaseInOut, .allowUserInteraction]
+            ) { [weak self] in
+                guard let self else { return }
+                layoutIfNeeded()
+                reasoningEffortButton.alpha = 1
+                reasoningEffortButton.transform = .identity
+            } completion: { [weak self] _ in
+                guard let self else { return }
+                setNeedsLayout()
+                layoutIfNeeded()
+                heightPublisher.send(height)
+            }
+        }
+
+        reasoningEffortButton.textLabel.text = state.title
+        reasoningEffortButton.applyDefaultAppearance()
+
+        if state.isActive {
+            reasoningEffortButton.borderView.layer.borderColor = UIColor.accent.cgColor
+            reasoningEffortButton.borderView.backgroundColor = .accent
+            reasoningEffortButton.iconView.tintColor = .white
+            reasoningEffortButton.textLabel.textColor = .white
+        } else {
+            reasoningEffortButton.borderView.layer.borderColor = UIColor.label.withAlphaComponent(0.1).cgColor
+            reasoningEffortButton.borderView.backgroundColor = .clear
+            reasoningEffortButton.iconView.tintColor = .label
+            reasoningEffortButton.textLabel.textColor = .label
+        }
+
+        setNeedsLayout()
+    }
+
+    public func refreshReasoningEffortButton() {
+        let state = delegate?.quickSettingBarRequestReasoningEffortState()
+        updateReasoningEffortButton(state: state)
     }
 }

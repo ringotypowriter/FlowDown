@@ -169,7 +169,7 @@ extension ModelManager {
                 ],
             ],
         ]
-        let additional = mergedBodyFields(for: model, runtime: [:])
+        let additional = mergedBodyFields(for: model, runtime: [:], includeThinkingOverrides: true)
         for (key, value) in additional where dic[key] == nil {
             dic[key] = value
         }
@@ -254,12 +254,20 @@ extension ModelManager {
 extension ModelManager {
     static let indicatorText = " ●"
 
-    private func chatService(for identifier: ModelIdentifier, additionalBodyField: [String: Any]) throws -> any ChatService {
+    private func chatService(
+        for identifier: ModelIdentifier,
+        additionalBodyField: [String: Any],
+        includeThinkingOverrides: Bool
+    ) throws -> any ChatService {
         if #available(iOS 26.0, macCatalyst 26.0, *), identifier == AppleIntelligenceModel.shared.modelIdentifier {
             return AppleIntelligenceChatClient()
         }
         if let model = cloudModel(identifier: identifier) {
-            let mergedBodyFields = mergedBodyFields(for: model, runtime: additionalBodyField)
+            let mergedBodyFields = mergedBodyFields(
+                for: model,
+                runtime: additionalBodyField,
+                includeThinkingOverrides: includeThinkingOverrides
+            )
 
             return RemoteChatClient(
                 model: model.inferenceModelIdentifier,
@@ -322,9 +330,14 @@ extension ModelManager {
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
         tools: [ChatRequestBody.Tool]? = nil,
-        additionalBodyField: [String: Any] = [:]
+        additionalBodyField: [String: Any] = [:],
+        includeThinkingOverrides: Bool = true
     ) async throws -> InferenceMessage {
-        let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
+        let client = try chatService(
+            for: modelID,
+            additionalBodyField: additionalBodyField,
+            includeThinkingOverrides: includeThinkingOverrides
+        )
         let requestTemperature: Double = switch temperatureStrategy(for: modelID) {
         case let .send(value):
             value
@@ -360,9 +373,14 @@ extension ModelManager {
         maxCompletionTokens: Int? = nil,
         input: [ChatRequestBody.Message],
         tools: [ChatRequestBody.Tool]? = nil,
-        additionalBodyField: [String: Any] = [:]
+        additionalBodyField: [String: Any] = [:],
+        includeThinkingOverrides: Bool = true
     ) async throws -> AsyncThrowingStream<InferenceMessage, any Error> {
-        let client = try chatService(for: modelID, additionalBodyField: additionalBodyField)
+        let client = try chatService(
+            for: modelID,
+            additionalBodyField: additionalBodyField,
+            includeThinkingOverrides: includeThinkingOverrides
+        )
         client.collectedErrors = nil
         let requestTemperature: Double = switch temperatureStrategy(for: modelID) {
         case let .send(value):
@@ -573,7 +591,11 @@ extension ModelManager {
         return tokens.count + estimatedAdditionalTokens
     }
 
-    private func mergedBodyFields(for model: CloudModel, runtime: [String: Any]) -> [String: Any] {
+    private func mergedBodyFields(
+        for model: CloudModel,
+        runtime: [String: Any],
+        includeThinkingOverrides: Bool
+    ) -> [String: Any] {
         var merged: [String: Any] = [:]
         if !model.bodyFields.isEmpty,
            let data = model.bodyFields.data(using: .utf8),
@@ -582,8 +604,10 @@ extension ModelManager {
             merged = jsonObject
         }
 
-        for (key, value) in model.thinkingModeBodyFields {
-            merged[key] = value
+        if includeThinkingOverrides {
+            for (key, value) in model.thinkingModeBodyFields {
+                merged[key] = value
+            }
         }
 
         for (key, value) in runtime {

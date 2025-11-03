@@ -97,6 +97,35 @@ public extension CloudModelThinkingMode {
     }
 }
 
+public extension CloudModelThinkingMode {
+    var supportsReasoningEffort: Bool {
+        switch self {
+        case .extraField(key: "enable_thinking", value: .bool):
+            true
+        case .extraField(key: "thinking_mode", value: .dictionary):
+            true
+        case .extraField(key: "reasoning", value: .dictionary):
+            true
+        default:
+            false
+        }
+    }
+
+    func reasoningEffortPayload(for level: CloudModelReasoningEffortLevel) -> [String: Any]? {
+        guard supportsReasoningEffort else { return nil }
+        switch self {
+        case .extraField(key: "enable_thinking", value: .bool):
+            return ["thinking_budget": level.thinkingBudgetTokens]
+        case .extraField(key: "thinking_mode", value: .dictionary):
+            return ["reasoning_effort": level.rawValue]
+        case .extraField(key: "reasoning", value: .dictionary):
+            return ["reasoning": ["effort": level.rawValue]]
+        default:
+            return nil
+        }
+    }
+}
+
 extension CloudModelThinkingMode.Value {
     func toJSONObject() -> Any {
         switch self {

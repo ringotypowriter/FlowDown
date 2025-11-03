@@ -22,5 +22,7 @@ public extension RichEditorView {
         func onRichEditorBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement]
         func onRichEditorToggleThinkingMode()
         func onRichEditorRequestThinkingModeState() -> QuickSettingBar.ThinkingModeState?
+        func onRichEditorBuildReasoningEffortMenu() -> [UIMenuElement]
+        func onRichEditorRequestReasoningEffortState() -> QuickSettingBar.ReasoningEffortState?
     }
 }

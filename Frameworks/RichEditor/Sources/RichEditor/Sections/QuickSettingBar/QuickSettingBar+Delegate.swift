@@ -15,5 +15,7 @@ extension QuickSettingBar {
         func quickSettingBarBuildAlternativeToolsMenu(isEnabled: Bool, requestReload: @escaping (Bool) -> Void) -> [UIMenuElement]
         func quickSettingBarToggleThinkingMode()
         func quickSettingBarRequestThinkingModeState() -> QuickSettingBar.ThinkingModeState?
+        func quickSettingBarBuildReasoningEffortMenu() -> [UIMenuElement]
+        func quickSettingBarRequestReasoningEffortState() -> QuickSettingBar.ReasoningEffortState?
     }
 }

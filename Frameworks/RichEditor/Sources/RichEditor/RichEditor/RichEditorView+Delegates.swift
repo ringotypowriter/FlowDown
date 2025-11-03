@@ -282,6 +282,14 @@ extension RichEditorView: QuickSettingBar.Delegate {
         delegate?.onRichEditorRequestThinkingModeState()
     }
 
+    func quickSettingBarBuildReasoningEffortMenu() -> [UIMenuElement] {
+        delegate?.onRichEditorBuildReasoningEffortMenu() ?? []
+    }
+
+    func quickSettingBarRequestReasoningEffortState() -> QuickSettingBar.ReasoningEffortState? {
+        delegate?.onRichEditorRequestReasoningEffortState()
+    }
+
     func quickSettingBarToggleThinkingMode() {
         delegate?.onRichEditorToggleThinkingMode()
         quickSettingBar.refreshThinkingModeButton()
