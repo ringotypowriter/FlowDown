@@ -11320,6 +11320,22 @@
         }
       }
     },
+    "Thinking Mode Option Title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thinking Mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "思考推理方案"
+          }
+        }
+      }
+    },
     "Thinking Mode Payload": {
       "localizations": {
         "en": {
@@ -11530,7 +11546,6 @@
       }
     },
     "This value will be added to the request body as additional fields.": {
-      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -11542,22 +11557,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "此处的数据将会在请求额外添加到请求报文中，并覆盖已有的任何同名字段。"
-          }
-        }
-      }
-    },
-    "This value will be added to the request body as additional fields. Accepts JSON.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This value will be added to the request body as additional fields. Accepts JSON."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "此值将作为额外字段添加到请求正文中。接受 JSON 格式。"
           }
         }
       }
