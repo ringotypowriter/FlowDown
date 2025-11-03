@@ -244,7 +244,9 @@ extension ChatView: RichEditorView.Delegate {
             return nil
         }
 
-        let title = String(format: String(localized: "Effort · %@"), model.thinkingModeEffort.displayTitle)
+        let richEditorBundle = Bundle(for: QuickSettingBar.self)
+        let format = NSLocalizedString("Effort · %@", bundle: richEditorBundle, comment: "")
+        let title = String(format: format, model.thinkingModeEffort.displayTitle)
 
         return QuickSettingBar.ReasoningEffortState(
             title: title,

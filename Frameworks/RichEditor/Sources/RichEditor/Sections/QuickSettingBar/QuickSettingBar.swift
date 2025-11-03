@@ -38,7 +38,7 @@ public class QuickSettingBar: EditorSectionView {
     let modelPickerRightClickFinder = RightClickFinder()
     let thinkingModeButton: BlockButton = {
         let button = BlockButton(
-            text: String(localized: "Reasoning"),
+            text: NSLocalizedString("Reasoning", bundle: .module, comment: ""),
             icon: "sparkles"
         )
         if let symbol = UIImage(systemName: "lightbulb")?.withRenderingMode(.alwaysTemplate) {
@@ -50,10 +50,10 @@ public class QuickSettingBar: EditorSectionView {
 
     let reasoningEffortButton: BlockButton = {
         let button = BlockButton(
-            text: String(localized: "Effort"),
+            text: NSLocalizedString("Effort", bundle: .module, comment: ""),
             icon: "sparkles"
         )
-        if let symbol = UIImage(systemName: "speedometer")?.withRenderingMode(.alwaysTemplate) {
+        if let symbol = UIImage(systemName: "slider.horizontal.3")?.withRenderingMode(.alwaysTemplate) {
             button.iconView.image = symbol
             button.iconView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
         }
@@ -273,7 +273,7 @@ public class QuickSettingBar: EditorSectionView {
         }
 
         thinkingModeButton.isHidden = false
-        thinkingModeButton.textLabel.text = String(localized: "Reasoning")
+        thinkingModeButton.textLabel.text = NSLocalizedString("Reasoning", bundle: .module, comment: "")
         thinkingModeButton.applyDefaultAppearance()
 
         if state.isActive {

@@ -278,9 +278,9 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubview(thinkingSeparator)
 
         let reasoningEffortView = ConfigurableInfoView()
-        reasoningEffortView.configure(icon: .init(systemName: "speedometer"))
+        reasoningEffortView.configure(icon: .init(systemName: "arrow.up.and.down.and.sparkles"))
         reasoningEffortView.configure(title: String.LocalizationValue("Reasoning Effort"))
-        reasoningEffortView.configure(description: String.LocalizationValue("Adjust the intensity of reasoning parameters when supported. Availability depends on your provider."))
+        reasoningEffortView.configure(description: String.LocalizationValue("Adjust the intensity of reasoning parameters when supported. Availability depends on your inference endpoint provider."))
         let reasoningEffortContainer = stackView.addArrangedSubviewWithMargin(reasoningEffortView)
         let reasoningSeparator = SeparatorView()
         stackView.addArrangedSubview(reasoningSeparator)

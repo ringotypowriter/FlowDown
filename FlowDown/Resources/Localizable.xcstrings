@@ -299,6 +299,23 @@
         }
       }
     },
+    "Add \"thinking_mode\":{\"type\":\"enabled\"} to enable reasoning on services such as Volcano Engine.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add \"thinking_mode\":{\"type\":\"enabled\"} to enable reasoning on services such as Volcano Engine."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加 \"thinking_mode\":{\"type\":\"enabled\"} 以在火山引擎等服务上启用深度思考功能。"
+          }
+        }
+      }
+    },
     "Add Model": {
       "localizations": {
         "en": {
@@ -443,7 +460,24 @@
         }
       }
     },
+    "Adjust the intensity of reasoning parameters when supported. Availability depends on your inference endpoint provider.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjust the expected token usage for reasoning when supported. Availability depends on your inference endpoint provider."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调整模型用于深度思考的令牌用量预期（如支持）。可用性取决于你的推理服务提供商。"
+          }
+        }
+      }
+    },
     "Adjust the intensity of reasoning parameters when supported. Availability depends on your provider.": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -860,6 +894,23 @@
         }
       }
     },
+    "Append 'enable_thinking': true to the body. Works for platforms like Alibaba Bailian that require an explicit reasoning flag.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Append 'enable_thinking': true to the body. Works for platforms like Alibaba Cloud Bailian that require an explicit reasoning flag."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在请求体中添加 'enable_thinking': true。适用于阿里云百炼等需要该标志的平台。"
+          }
+        }
+      }
+    },
     "Apple Intelligence": {
       "localizations": {
         "en": {
@@ -1144,6 +1195,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "你确定要删除临时文件夹内的所有内容吗？"
+          }
+        }
+      }
+    },
+    "Attach \"reasoning\":{\"enabled\":true} for providers that expect a reasoning object in the payload.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attach \"reasoning\":{\"enabled\":true} for providers that expect a reasoning object in the payload (such as OpenRouter)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为期望在负载中包含 Reasoning 对象的提供商（例如 OpenRouter）附加 \"reasoning\":{\"enabled\":true}。"
           }
         }
       }
@@ -1864,7 +1932,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "折叠推理"
+            "value": "折叠思考过程"
           }
         }
       }
@@ -3933,7 +4001,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "强度 · %@"
+            "value": "深度 · %@"
           }
         }
       }
@@ -4111,7 +4179,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "启用思考标识"
+            "value": "Enable Thinking 标识"
           }
         }
       }
@@ -4127,7 +4195,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "启用这个选项将在推理结束时自动折叠推理内容。"
+            "value": "启用这个选项将在推理结束时自动折叠思考内容。"
           }
         }
       }
@@ -4775,16 +4843,16 @@
     },
     "Extra headers and body fields are optional, and can be used to add extra information to the request. They should be in JSON format with key-value pairs.": {
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "额外的请求头和请求体字段是可选的，可用于向请求中添加额外信息。这些字段应采用包含键值对的JSON格式。"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Extra headers and body fields are optional, and can be used to add extra information to the request. They should be in JSON format with key-value pairs."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "额外的请求头和请求体字段是可选的，可用于向请求中添加额外信息。这些字段应采用包含键值对的JSON格式。"
           }
         }
       }
@@ -5288,16 +5356,16 @@
     },
     "Finished": {
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已完成"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Finished"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成"
           }
         }
       }
@@ -7780,16 +7848,16 @@
     },
     "Networking": {
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "网络"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Networking"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "网络"
           }
         }
       }
@@ -9122,7 +9190,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "推理强度"
+            "value": "思考深度"
           }
         }
       }
@@ -9138,7 +9206,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "推理强度支持取决于所配置的服务提供商。如果端点拒绝额外参数，请禁用此字段。"
+            "value": "思考深度支持取决于所配置的服务提供商。如果端点拒绝额外参数，请调整为禁用。"
           }
         }
       }
@@ -9154,7 +9222,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "推理参数负载"
+            "value": "Reasoning 参数负载"
           }
         }
       }
@@ -9366,6 +9434,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用之前导出的数据库替换所有本地数据。"
+          }
+        }
+      }
+    },
+    "Replace the request model identifier with the alternate name. Recommended for endpoints such as DeepSeek that expect a dedicated model slug.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use an alternate model identifier as replacement. Recommended for endpoints such as DeepSeek that expect a dedicated model slug."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用另一个替换模型的标识符。推荐用于 DeepSeek 等需要专用模型标识的端点。"
           }
         }
       }
@@ -11246,7 +11331,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "思考模式负载"
+            "value": "Thinking Mode 负载"
           }
         }
       }
@@ -11411,6 +11496,23 @@
         }
       }
     },
+    "This preset appends custom fields required by the target provider to activate reasoning features.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This preset appends custom fields required by the target provider to activate reasoning features."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此预设会附加目标提供商所需的自定义字段以激活推理功能。"
+          }
+        }
+      }
+    },
     "This value will be added to the request as additional header.": {
       "localizations": {
         "en": {
@@ -11430,16 +11532,16 @@
     "This value will be added to the request body as additional fields.": {
       "extractionState": "stale",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "此处的数据将会在请求额外添加到请求报文中，并覆盖已有的任何同名字段。"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "This value will be added to the request body as additional fields."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此处的数据将会在请求额外添加到请求报文中，并覆盖已有的任何同名字段。"
           }
         }
       }
@@ -13363,6 +13465,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "网站"
+          }
+        }
+      }
+    },
+    "When disabled, no additional reasoning parameters are sent with the request.": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When disabled, no additional reasoning parameters are sent with the request."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "禁用时，不会在请求中发送额外的深度推理调整参数。"
           }
         }
       }

@@ -36,7 +36,7 @@ extension CloudModelThinkingMode {
     var menuIconSystemName: String? {
         switch self {
         case .disabled:
-            nil
+            "xmark.circle"
         case .alternateModel:
             "1.circle"
         case .extraField(key: "enable_thinking", value: .bool):
