@@ -286,7 +286,7 @@ class CloudModelEditorController: StackScrollController {
         stackView.addArrangedSubview(reasoningSeparator)
 
         let alternateModelView = ConfigurableInfoView()
-        alternateModelView.configure(icon: .init(systemName: "textformat.alt"))
+        alternateModelView.configure(icon: .init(systemName: "circle"))
         alternateModelView.configure(title: String.LocalizationValue("Alternate Model Name"))
         alternateModelView.configure(description: String.LocalizationValue("When enabled, requests will use this model identifier instead."))
         let alternateModelContainer = stackView.addArrangedSubviewWithMargin(alternateModelView)
@@ -811,7 +811,7 @@ class CloudModelEditorController: StackScrollController {
 
         var elements: [UIAction] = []
 
-        let disabledAction = UIAction(title: String(localized: "Disabled"), image: nil) { _ in
+        let disabledAction = UIAction(title: String(localized: "Disabled"), image: UIImage(systemName: "xmark")) { _ in
             ModelManager.shared.editCloudModel(identifier: modelId) {
                 $0.update(\.thinkingModeEffortEnabled, to: false)
             }
