@@ -243,7 +243,7 @@ class MCPTool: ModelTool, @unchecked Sendable {
         if image.size.width > 1024 || image.size.height > 1024 {
             let aspectWidth = 1024 / image.size.width
             let aspectHeight = 1024 / image.size.height
-            let aspectRatio = max(aspectWidth, aspectHeight)
+            let aspectRatio = min(aspectWidth, aspectHeight)
             let newSize = CGSize(
                 width: image.size.width * aspectRatio,
                 height: image.size.height * aspectRatio
