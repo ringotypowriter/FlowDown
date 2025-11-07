@@ -20,6 +20,7 @@ private extension MessageListView {
         case hint
         case webSearch
         case activityReporting
+        case toolAttachment
         case toolCallHint
     }
 }
@@ -39,6 +40,7 @@ extension MessageListView: ListViewAdapter {
         case .hint: RowType.hint
         case .activityReporting: RowType.activityReporting
         case .reasoningContent: RowType.reasoningContent
+        case .toolAttachment: RowType.toolAttachment
         case .toolCallStatus: RowType.toolCallHint
         }
     }
@@ -64,6 +66,8 @@ extension MessageListView: ListViewAdapter {
             WebSearchStateView()
         case .activityReporting:
             ActivityReportingView()
+        case .toolAttachment:
+            ToolAttachmentView()
         case .toolCallHint:
             ToolHintView()
         }
@@ -123,6 +127,8 @@ extension MessageListView: ListViewAdapter {
                     .font: theme.fonts.body,
                 ])).height
                 return max(contentHeight, ActivityReportingView.loadingSymbolSize.height + 16)
+            case let .toolAttachment(_, _, shouldShowVisionHint):
+                return ToolAttachmentView.height(shouldShowVisionHint: shouldShowVisionHint, maxWidth: bounds.width)
             case .toolCallStatus:
                 return theme.fonts.body.lineHeight + 20
             }
@@ -156,6 +162,10 @@ extension MessageListView: ListViewAdapter {
         } else if let attachmentView = rowView as? UserAttachmentView {
             if case let .userAttachment(_, attachments) = entry {
                 attachmentView.update(with: attachments)
+            } else { assertionFailure() }
+        } else if let toolAttachmentView = rowView as? ToolAttachmentView {
+            if case let .toolAttachment(_, attachments, shouldShowVisionHint) = entry {
+                toolAttachmentView.update(with: attachments, shouldShowVisionHint: shouldShowVisionHint)
             } else { assertionFailure() }
         } else if let aiMessageView = rowView as? AiMessageView {
             if case let .aiContent(_, message) = entry {

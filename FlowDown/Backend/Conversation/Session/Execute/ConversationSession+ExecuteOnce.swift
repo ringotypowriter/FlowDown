@@ -161,31 +161,98 @@ extension ConversationSession {
                     ))
                 }
             } else {
+                // 标准工具调用
                 var toolStatus = Message.ToolStatus(name: tool.interfaceName, state: 0, message: "")
                 let toolMessage = appendNewMessage(role: .toolHint)
                 toolMessage.update(\.toolStatus, to: toolStatus)
                 await requestUpdate(view: currentMessageListView)
 
-                // 标准工具
-                let callResult = ModelToolsManager.shared.perform(
-                    withTool: tool,
-                    parms: request.args,
-                    anchorTo: currentMessageListView
-                )
+                // 使用新方法支持附件
+                let result: Result<ModelToolExecutionResult, Error>
+                do {
+                    let executionResult = try await tool.executeWithAttachments(
+                        with: request.args,
+                        anchorTo: currentMessageListView
+                    )
+                    result = .success(executionResult)
+                } catch {
+                    result = .failure(error)
+                }
 
-                switch callResult {
-                case let .success(result):
+                switch result {
+                case let .success(executionResult):
                     toolStatus.state = 1
-                    toolStatus.message = result
+                    toolStatus.message = executionResult.textContent
                     toolMessage.update(\.toolStatus, to: toolStatus)
+
+                    // 关键：添加附件到工具消息
+                    if !executionResult.attachments.isEmpty {
+                        addAttachments(executionResult.attachments, to: toolMessage)
+                    }
+
                     await requestUpdate(view: currentMessageListView)
-                    requestMessages.append(.tool(content: .text(result), toolCallID: request.id.uuidString))
+
+                    // 处理工具返回结果和图片附件
+                    let toolResultText = executionResult.textContent
+
+                    // 检查是否有图片附件
+                    if !executionResult.attachments.isEmpty {
+                        let imageAttachments = executionResult.attachments.filter { $0.type == .image }
+                        if !imageAttachments.isEmpty {
+                            let modelCapabilities = ModelManager.shared.modelCapabilities(identifier: modelID)
+
+                            if modelCapabilities.contains(.visual) {
+                                // Vision 模型：发送图片给模型
+                                let imageMessages = makeMessageFromAttachments(
+                                    imageAttachments,
+                                    isModelSupportsVision: true
+                                )
+                                if !imageMessages.isEmpty {
+                                    logger.info("[+] sending \(imageMessages.count) tool image(s) as user messages")
+                                    requestMessages.append(.tool(
+                                        content: .text(toolResultText),
+                                        toolCallID: request.id.uuidString
+                                    ))
+                                    requestMessages.append(contentsOf: imageMessages)
+                                } else {
+                                    // 图片处理失败，仅发送文本
+                                    requestMessages.append(.tool(
+                                        content: .text(toolResultText),
+                                        toolCallID: request.id.uuidString
+                                    ))
+                                }
+                            } else {
+                                // 非 Vision 模型：不发送图片，只发送文本
+                                // 图片仍然保存在数据库中供用户查看
+                                requestMessages.append(.tool(
+                                    content: .text(toolResultText),
+                                    toolCallID: request.id.uuidString
+                                ))
+                            }
+                        } else {
+                            // 仅有非图片附件
+                            requestMessages.append(.tool(
+                                content: .text(toolResultText),
+                                toolCallID: request.id.uuidString
+                            ))
+                        }
+                    } else {
+                        // 无附件
+                        requestMessages.append(.tool(
+                            content: .text(toolResultText),
+                            toolCallID: request.id.uuidString
+                        ))
+                    }
+
                 case let .failure(error):
                     toolStatus.state = 2
                     toolStatus.message = error.localizedDescription
                     toolMessage.update(\.toolStatus, to: toolStatus)
                     await requestUpdate(view: currentMessageListView)
-                    requestMessages.append(.tool(content: .text("Tool execution failed. Reason: \(error.localizedDescription)"), toolCallID: request.id.uuidString))
+                    requestMessages.append(.tool(
+                        content: .text("Tool execution failed. Reason: \(error.localizedDescription)"),
+                        toolCallID: request.id.uuidString
+                    ))
                 }
             }
         }

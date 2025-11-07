@@ -8655,6 +8655,16 @@
         }
       }
     },
+    "Note: The tool returned images, but the current model cannot see them." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "注意：工具返回了图片结果，但当前模型不支持"
+          }
+        }
+      }
+    },
     "Objects" : {
       "comment" : "Emoji Category",
       "localizations" : {
@@ -12941,6 +12951,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "工具调用失败：无法展示授权请求。"
+          }
+        }
+      }
+    },
+    "Tool Image %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具图片结果 %lld"
           }
         }
       }

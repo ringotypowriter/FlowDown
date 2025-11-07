@@ -50,6 +50,39 @@ extension ConversationSession {
             case .assistant:
                 guard !message.document.isEmpty else { continue }
                 requestMessages.append(.assistant(content: .text(message.document)))
+            case .toolHint:
+                // 处理工具返回的附件（特别是图片）
+                let toolAttachments: [RichEditorView.Object.Attachment] = attachments(for: message.objectId).compactMap {
+                    guard let type = RichEditorView.Object.Attachment.AttachmentType(rawValue: $0.type) else {
+                        return nil
+                    }
+                    return .init(
+                        type: type,
+                        name: $0.name,
+                        previewImage: $0.previewImageData,
+                        imageRepresentation: $0.imageRepresentation,
+                        textRepresentation: $0.representedDocument,
+                        storageSuffix: $0.storageSuffix
+                    )
+                }
+
+                // 如果有图片附件，需要转发给模型
+                if !toolAttachments.isEmpty {
+                    let imageAttachments = toolAttachments.filter { $0.type == .image }
+                    if !imageAttachments.isEmpty {
+                        if modelCapabilities.contains(.visual) {
+                            // Vision 模型：重新发送图片
+                            let imageMessages = makeMessageFromAttachments(
+                                imageAttachments,
+                                isModelSupportsVision: true
+                            )
+                            if !imageMessages.isEmpty {
+                                requestMessages.append(contentsOf: imageMessages)
+                            }
+                        }
+                        // 非 Vision 模型：不需要额外处理，提示已经在 toolStatus.message 中
+                    }
+                }
             default:
                 continue
             }

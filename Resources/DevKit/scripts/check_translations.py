@@ -42,7 +42,7 @@ for key, value in translatable_strings.items():
         if lang not in locs:
             incomplete.append((key, lang, 'missing localization'))
         elif locs[lang]['stringUnit']['state'] != 'translated':
-            incomplete.append((key, lang, f"state: {locs[lang]['stringUnit']['state']}"))
+            incomplete.append((key, lang, f"state: {locs[lang]['stringUnit']['state']}") )
         elif not locs[lang]['stringUnit'].get('value', '').strip():
             incomplete.append((key, lang, 'empty value'))
 

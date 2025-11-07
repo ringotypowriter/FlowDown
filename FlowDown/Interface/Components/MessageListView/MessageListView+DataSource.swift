@@ -16,6 +16,7 @@ extension MessageListView {
         case hint(String, String)
         case webSearchContent(Message.WebSearchStatus)
         case activityReporting(String)
+        case toolAttachment(Message.ID, Attachments, shouldShowVisionHint: Bool)
         case toolCallStatus(Message.ToolStatus)
 
         var id: String {
@@ -34,6 +35,8 @@ extension MessageListView {
                 "WebSearchContent.\(status.id)"
             case let .activityReporting(content):
                 "ActivityReporting.\(content)"
+            case let .toolAttachment(messageId, attachments, _):
+                "ToolAttachment.\(messageId).\(attachments.id)"
             case let .toolCallStatus(status):
                 "ToolCallStatus.\(status.id)"
             }
@@ -165,8 +168,42 @@ extension MessageListView {
             // MARK: - Tool Call Status
 
             case .toolHint:
+                // 先显示工具状态
                 checkAddDateHint(message.creation)
                 entries.append(.toolCallStatus(message.toolStatus))
+
+                // 获取工具附件（作为返回结果）
+                let attachmentItems: [Attachments.Item] = session.attachments(for: message.objectId).compactMap {
+                    guard let uuid = UUID(uuidString: $0.id) else { return nil }
+                    guard let type = RichEditorView.Object.Attachment.AttachmentType(rawValue: $0.type) else { return nil }
+                    return .init(
+                        id: uuid,
+                        type: type,
+                        name: $0.name,
+                        previewImage: $0.previewImageData,
+                        imageRepresentation: $0.imageRepresentation,
+                        textRepresentation: $0.representedDocument,
+                        storageSuffix: $0.storageSuffix
+                    )
+                }
+
+                // 如果有附件，显示在工具状态下方作为返回结果
+                if !attachmentItems.isEmpty {
+                    // 检查是否需要显示"模型无法查看图片"的提示
+                    let hasImageAttachment = attachmentItems.contains { $0.type == .image }
+                    var shouldShowVisionHint = false
+
+                    if hasImageAttachment, let modelID = session.models.chat {
+                        let modelCapabilities = ModelManager.shared.modelCapabilities(identifier: modelID)
+                        shouldShowVisionHint = !modelCapabilities.contains(.visual)
+                    }
+
+                    entries.append(.toolAttachment(
+                        message.objectId,
+                        .init(items: attachmentItems),
+                        shouldShowVisionHint: shouldShowVisionHint
+                    ))
+                }
 
             // MARK: - Drop Unrelated
 

@@ -9,8 +9,11 @@ import AlertController
 import ChatClientKit
 import ConfigurableKit
 import Foundation
+import Logger
 import MCP
+import RichEditor
 import Storage
+import UIKit
 
 class MCPTool: ModelTool, @unchecked Sendable {
     // MARK: - Properties
@@ -93,6 +96,33 @@ class MCPTool: ModelTool, @unchecked Sendable {
         }
     }
 
+    override func executeWithAttachments(
+        with input: String,
+        anchorTo _: UIView
+    ) async throws -> ModelToolExecutionResult {
+        do {
+            var arguments: [String: Value]?
+            if !input.isEmpty {
+                let data = Data(input.utf8)
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    arguments = json.compactMapValues { value in
+                        convertJSONValueToMCPValue(value)
+                    }
+                }
+            }
+
+            let result = try await mcpService.callTool(
+                name: toolInfo.name,
+                arguments: arguments,
+                from: toolInfo.serverID
+            )
+
+            return formatToolResultWithAttachments(result.content, isError: result.isError)
+        } catch {
+            throw error
+        }
+    }
+
     // MARK: - Private Helper Methods
 
     private func formatToolResult(_ contents: [Tool.Content], isError: Bool?) -> String {
@@ -120,6 +150,138 @@ class MCPTool: ModelTool, @unchecked Sendable {
         }
 
         return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func formatToolResultWithAttachments(
+        _ contents: [Tool.Content],
+        isError: Bool?
+    ) -> ModelToolExecutionResult {
+        var textResult = ""
+        var attachments: [RichEditorView.Object.Attachment] = []
+
+        Logger.network.infoFile("MCP tool returned \(contents.count) content items")
+
+        for (index, content) in contents.enumerated() {
+            switch content {
+            case let .text(text):
+                textResult += text
+                textResult += "\n"
+
+            case let .image(value, mimeType, _):
+                Logger.network.infoFile("  Item \(index): Image, mimeType=\(mimeType)")
+
+                // 尝试提取图片数据
+                if let imageData = extractData(from: value),
+                   let image = UIImage(data: imageData),
+                   let attachment = createImageAttachment(
+                       image: image,
+                       mimeType: mimeType,
+                       index: index
+                   )
+                {
+                    attachments.append(attachment)
+                    textResult += "[Image: \(mimeType)]\n"
+                    Logger.network.infoFile("  Successfully created attachment: size=\(imageData.count) bytes")
+                } else {
+                    textResult += "[Image: \(mimeType) - Failed to process]\n"
+                    Logger.network.warning("Failed to process MCP tool image at index \(index)")
+                }
+
+            case let .resource(uri, text, _):
+                textResult += "[Resource: \(uri)]"
+                if !text.isEmpty {
+                    textResult += "\n\(text)"
+                }
+                textResult += "\n"
+
+            case let .audio(_, mimeType):
+                textResult += "[Audio: \(mimeType)]\n"
+            }
+        }
+
+        if isError == true {
+            textResult = "Error: \(textResult)"
+        }
+
+        let finalText = textResult.trimmingCharacters(in: .whitespacesAndNewlines)
+        return ModelToolExecutionResult(text: finalText, attachments: attachments)
+    }
+
+    // MARK: - Image Processing Helpers
+
+    private func extractData(from base64String: String) -> Data? {
+        // 尝试作为 base64 字符串解码
+        Data(base64Encoded: base64String)
+    }
+
+    private func createImageAttachment(
+        image: UIImage,
+        mimeType: String,
+        index: Int
+    ) -> RichEditorView.Object.Attachment? {
+        guard let compressed = compressImage(image) else {
+            return nil
+        }
+
+        let suffix = "\(UUID().uuidString).\(mimeTypeToExtension(mimeType))"
+        let previewData = image.jpegData(compressionQuality: 0.5) ?? Data()
+
+        return RichEditorView.Object.Attachment(
+            type: .image,
+            name: String(localized: "Tool Image \(index + 1)"),
+            previewImage: previewData,
+            imageRepresentation: compressed,
+            textRepresentation: "",
+            storageSuffix: suffix
+        )
+    }
+
+    private func compressImage(_ image: UIImage) -> Data? {
+        var imageToCompress = image
+
+        // 如果图片太大，先缩小尺寸
+        if image.size.width > 1024 || image.size.height > 1024 {
+            let aspectWidth = 1024 / image.size.width
+            let aspectHeight = 1024 / image.size.height
+            let aspectRatio = max(aspectWidth, aspectHeight)
+            let newSize = CGSize(
+                width: image.size.width * aspectRatio,
+                height: image.size.height * aspectRatio
+            )
+
+            if let resized = resizeImage(image, to: newSize) {
+                imageToCompress = resized
+            }
+        }
+
+        // 压缩为 JPEG
+        return imageToCompress.jpegData(compressionQuality: 0.1)
+    }
+
+    private func resizeImage(_ image: UIImage, to size: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, image.scale)
+        defer { UIGraphicsEndImageContext() }
+        image.draw(in: CGRect(origin: .zero, size: size))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+
+    private func mimeTypeToExtension(_ mimeType: String) -> String {
+        switch mimeType.lowercased() {
+        case "image/png":
+            "png"
+        case "image/jpeg", "image/jpg":
+            "jpg"
+        case "image/gif":
+            "gif"
+        case "image/webp":
+            "webp"
+        case "image/bmp":
+            "bmp"
+        case "image/tiff":
+            "tiff"
+        default:
+            "jpg" // 默认使用 jpg
+        }
     }
 }
 
