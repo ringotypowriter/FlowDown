@@ -3,30 +3,31 @@ import Foundation
 
 struct ImproveWritingMoreProfessionalIntent: AppIntent {
     static var title: LocalizedStringResource {
-        LocalizedStringResource("Improve Writing - Professional", defaultValue: "Improve Writing - Professional")
+        "Improve Writing - Professional"
     }
 
-    static var description = IntentDescription(
-        LocalizedStringResource(
-            "Rewrite text in a more professional tone while preserving meaning.",
-            defaultValue: "Rewrite text in a more professional tone while preserving meaning."
-        )
-    )
+    static var description: IntentDescription {
+        "Rewrite text in a more professional tone while preserving meaning."
+    }
 
-    @Parameter(
-        title: LocalizedStringResource("Model", defaultValue: "Model"),
-        requestValueDialog: IntentDialog("Which model should rewrite the text?")
-    )
+    @Parameter(title: "Model", default: nil, requestValueDialog: "Which model should rewrite the text?")
     var model: ShortcutsEntities.ModelEntity?
 
-    @Parameter(
-        title: LocalizedStringResource("Content", defaultValue: "Content"),
-        requestValueDialog: IntentDialog("What text should be rewritten?")
-    )
+    @Parameter(title: "Content", requestValueDialog: "What text should be rewritten?")
     var text: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Rewrite professionally \(\.$text)")
+        When(\.$model, .hasAnyValue) {
+            Summary("Rewrite the text with a professional tone") {
+                \.$model
+                \.$text
+            }
+        } otherwise: {
+            Summary("Rewrite the text professionally using the default model") {
+                \.$model
+                \.$text
+            }
+        }
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
@@ -50,30 +51,31 @@ struct ImproveWritingMoreProfessionalIntent: AppIntent {
 
 struct ImproveWritingMoreFriendlyIntent: AppIntent {
     static var title: LocalizedStringResource {
-        LocalizedStringResource("Improve Writing - Friendly", defaultValue: "Improve Writing - Friendly")
+        "Improve Writing - Friendly"
     }
 
-    static var description = IntentDescription(
-        LocalizedStringResource(
-            "Rewrite text with a warmer and more approachable tone.",
-            defaultValue: "Rewrite text with a warmer and more approachable tone."
-        )
-    )
+    static var description: IntentDescription {
+        "Rewrite text with a warmer and more approachable tone."
+    }
 
-    @Parameter(
-        title: LocalizedStringResource("Model", defaultValue: "Model"),
-        requestValueDialog: IntentDialog("Which model should rewrite the text?")
-    )
+    @Parameter(title: "Model", default: nil, requestValueDialog: "Which model should rewrite the text?")
     var model: ShortcutsEntities.ModelEntity?
 
-    @Parameter(
-        title: LocalizedStringResource("Content", defaultValue: "Content"),
-        requestValueDialog: IntentDialog("What text should be rewritten?")
-    )
+    @Parameter(title: "Content", requestValueDialog: "What text should be rewritten?")
     var text: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Rewrite friendly \(\.$text)")
+        When(\.$model, .hasAnyValue) {
+            Summary("Rewrite the text with a friendly tone") {
+                \.$model
+                \.$text
+            }
+        } otherwise: {
+            Summary("Rewrite the text in a friendly tone using the default model") {
+                \.$model
+                \.$text
+            }
+        }
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
@@ -97,30 +99,31 @@ struct ImproveWritingMoreFriendlyIntent: AppIntent {
 
 struct ImproveWritingMoreConciseIntent: AppIntent {
     static var title: LocalizedStringResource {
-        LocalizedStringResource("Improve Writing - Concise", defaultValue: "Improve Writing - Concise")
+        "Improve Writing - Concise"
     }
 
-    static var description = IntentDescription(
-        LocalizedStringResource(
-            "Trim text to be more concise without losing the key message.",
-            defaultValue: "Trim text to be more concise without losing the key message."
-        )
-    )
+    static var description: IntentDescription {
+        "Trim text to be more concise without losing the key message."
+    }
 
-    @Parameter(
-        title: LocalizedStringResource("Model", defaultValue: "Model"),
-        requestValueDialog: IntentDialog("Which model should rewrite the text?")
-    )
+    @Parameter(title: "Model", default: nil, requestValueDialog: "Which model should rewrite the text?")
     var model: ShortcutsEntities.ModelEntity?
 
-    @Parameter(
-        title: LocalizedStringResource("Content", defaultValue: "Content"),
-        requestValueDialog: IntentDialog("What text should be rewritten?")
-    )
+    @Parameter(title: "Content", requestValueDialog: "What text should be rewritten?")
     var text: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Rewrite concise \(\.$text)")
+        When(\.$model, .hasAnyValue) {
+            Summary("Make the text more concise") {
+                \.$model
+                \.$text
+            }
+        } otherwise: {
+            Summary("Make the text concise using the default model") {
+                \.$model
+                \.$text
+            }
+        }
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
@@ -149,7 +152,7 @@ enum ImproveWritingIntentHelper {
         directive: String
     ) async throws -> String {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { throw FlowDownShortcutError.emptyMessage }
+        guard !trimmed.isEmpty else { throw ShortcutError.emptyMessage }
 
         let message = [
             directive,

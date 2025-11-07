@@ -21,6 +21,25 @@ except json.JSONDecodeError as e:
 
 strings = data['strings']
 
+removed_stale_keys = []
+for key, value in list(strings.items()):
+    if value.get('extractionState') == 'stale':
+        removed_stale_keys.append(key)
+        del strings[key]
+
+if removed_stale_keys:
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print("Removed stale strings:")
+        for key in removed_stale_keys:
+            print(f"  - {key}")
+    except Exception as e:
+        print(f"Failed to write cleaned file: {e}")
+        sys.exit(1)
+else:
+    print("No stale strings found.")
+
 translatable_strings = {k: v for k, v in strings.items() if v.get('shouldTranslate', True)}
 skipped_count = len(strings) - len(translatable_strings)
 

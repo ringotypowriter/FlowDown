@@ -3,24 +3,26 @@ import Foundation
 
 struct GenerateNewConversationLinkIntent: AppIntent {
     static var title: LocalizedStringResource {
-        LocalizedStringResource("Create Conversation Link", defaultValue: "Create Conversation Link")
+        "Create Conversation Link"
     }
 
-    static var description = IntentDescription(
-        LocalizedStringResource(
-            "Create a FlowDown deep link that starts a new conversation.",
-            defaultValue: "Create a FlowDown deep link that starts a new conversation."
-        )
-    )
+    static var description: IntentDescription {
+        "Create a FlowDown deep link that starts a new conversation."
+    }
 
-    @Parameter(
-        title: LocalizedStringResource("Initial Message", defaultValue: "Initial Message"),
-        requestValueDialog: IntentDialog("What message should FlowDown pre-fill?")
-    )
+    @Parameter(title: "Initial Message", default: nil, requestValueDialog: "What message should we pre-fill?")
     var message: String?
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Create conversation link with \(\.$message)")
+        When(\.$message, .hasAnyValue) {
+            Summary("Create a conversation link with a preset message") {
+                \.$message
+            }
+        } otherwise: {
+            Summary("Create a blank conversation link") {
+                \.$message
+            }
+        }
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
@@ -31,7 +33,7 @@ struct GenerateNewConversationLinkIntent: AppIntent {
         let link = url.absoluteString
 
         let dialogMessage = String(
-            localized: "Use the Open URL action with \(link) to launch FlowDown and start a conversation."
+            localized: "Use the Open URL action with \(link) to launch the app and start a conversation."
         )
 
         let dialog = IntentDialog(.init(stringLiteral: dialogMessage))

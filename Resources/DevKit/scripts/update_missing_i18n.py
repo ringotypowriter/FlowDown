@@ -8,38 +8,104 @@ import json
 import sys
 import os
 
+# you can modify this script to populate localization strings as needed
+# just remember to remove the entries from NEW_STRINGS after committing
 NEW_STRINGS: dict[str, dict[str, str]] = {
-    "Proactive Memory": {"zh-Hans": "主动提供记忆"},
-    "When enabled, FlowDown will include stored memories in system prompts and Shortcuts inference even if memory tools are disabled.": {
-        "zh-Hans": "开启后，即使未启用记忆工具，FlowDown 也会在系统提示词与快捷指令推理中提供已存储的记忆。"
+    "Search saved conversations by keyword and return formatted summaries.": {
+        "zh-Hans": "按关键字搜索已保存的会话，并返回格式化摘要。",
     },
-    "Proactive Memory Context": {"zh-Hans": "主动提供的记忆摘要"},
-    "Choose how FlowDown proactively shares stored memories with the model during conversations and Shortcuts automations.": {
-        "zh-Hans": "选择 FlowDown 在对话与快捷指令自动化中向模型主动提供记忆的方式。"
+    "Result Limit": {
+        "zh-Hans": "结果上限",
     },
-    "Off": {"zh-Hans": "关闭"},
-    "Past Day": {"zh-Hans": "1 天内"},
-    "Past Week": {"zh-Hans": "1 周内"},
-    "Past Month": {"zh-Hans": "1 个月内"},
-    "Past Year": {"zh-Hans": "1 年内"},
-    "Latest 15 Items": {"zh-Hans": "最近 15 项"},
-    "Latest 30 Items": {"zh-Hans": "最近 30 项"},
-    "All Memories": {"zh-Hans": "所有"},
-    "Proactive memory sharing is disabled.": {"zh-Hans": "已关闭主动提供记忆。"},
-    "Memories saved within the past 24 hours.": {"zh-Hans": "包含过去 24 小时内保存的记忆。"},
-    "Memories saved within the past 7 days.": {"zh-Hans": "包含过去 7 天内保存的记忆。"},
-    "Memories saved within the past 30 days.": {"zh-Hans": "包含过去 30 天内保存的记忆。"},
-    "Memories saved within the past year.": {"zh-Hans": "包含过去一年内保存的记忆。"},
-    "The most recent 15 memories.": {"zh-Hans": "包含最近的 15 条记忆。"},
-    "The most recent 30 memories.": {"zh-Hans": "包含最近的 30 条记忆。"},
-    "All stored memories.": {"zh-Hans": "包含所有已存储的记忆。"},
-    "Scope: %@": {"zh-Hans": "范围：%@"},
-    "%d. [%@] %@": {"zh-Hans": "%d. [%@] %@"},
-    "This summary is provided automatically according to the user's proactive memory setting, even when memory tools are disabled.": {
-        "zh-Hans": "该摘要根据用户的主动记忆设置自动提供，即使记忆工具未启用也会附带。"
+    "How many results should FlowDown return?": {
+        "zh-Hans": "FlowDown 应返回多少条结果？",
     },
-    "A proactive memory summary has been provided above according to the user's setting. Treat it as reliable context and keep it updated through memory tools when necessary.": {
-        "zh-Hans": "根据用户的设置，上方已提供主动记忆摘要。请将其视为可靠的上下文，并在需要时通过记忆工具保持更新。"
+    "Browse recent conversations": {
+        "zh-Hans": "浏览最近的对话",
+    },
+    "Classify the provided content using the candidate list": {
+        "zh-Hans": "使用候选列表对提供的内容进行分类",
+    },
+    "Classify the provided image using the candidate list": {
+        "zh-Hans": "使用候选列表对提供的图像进行分类",
+    },
+    "Create a blank conversation link": {
+        "zh-Hans": "创建空白对话链接",
+    },
+    "Create a conversation link with a preset message": {
+        "zh-Hans": "创建带预设消息的对话链接",
+    },
+    "Enable Memory Tools": {
+        "zh-Hans": "启用记忆工具",
+    },
+    "Fetch the latest conversation details": {
+        "zh-Hans": "获取最新的对话详情",
+    },
+    "Generate Model Response": {
+        "zh-Hans": "生成模型回复",
+    },
+    "Generate Model Response with Image": {
+        "zh-Hans": "生成带图像的模型回复",
+    },
+    "If you are unsure, use '%@' for VALUE.": {
+        "zh-Hans": "如果不确定，请将 VALUE 设置为“%@”。",
+    },
+    "List the key points from the text": {
+        "zh-Hans": "列出文本中的关键要点",
+    },
+    "List the key points using the default model": {
+        "zh-Hans": "使用默认模型列出关键要点",
+    },
+    "Make the text concise using the default model": {
+        "zh-Hans": "使用默认模型使文本更简洁",
+    },
+    "Make the text more concise": {
+        "zh-Hans": "让文本更加简洁",
+    },
+    "Respond only with XML formatted as <classification><label>VALUE</label></classification>, replacing VALUE with a label from the candidate list.": {
+        "zh-Hans": "仅返回 XML 格式 <classification><label>VALUE</label></classification>，并将 VALUE 替换为候选列表中的标签。",
+    },
+    "Rewrite the text in a friendly tone using the default model": {
+        "zh-Hans": "使用默认模型以友好语气改写文本",
+    },
+    "Rewrite the text in a friendly tone": {
+        "zh-Hans": "以友好语气改写文本",
+    },
+    "Rewrite the text professionally using the default model": {
+        "zh-Hans": "使用默认模型以专业语气改写文本",
+    },
+    "Rewrite the text with a friendly tone": {
+        "zh-Hans": "使用友好语气改写文本",
+    },
+    "Rewrite the text with a professional tone": {
+        "zh-Hans": "以专业语气改写文本",
+    },
+    "Search saved conversations by keyword": {
+        "zh-Hans": "按关键字搜索已保存的对话",
+    },
+    "Select exactly one label from the candidate list.": {
+        "zh-Hans": "仅从候选列表中选择一个标签。",
+    },
+    "Send your message with the default model": {
+        "zh-Hans": "使用默认模型发送你的消息",
+    },
+    "Send your message with the default model and optional image": {
+        "zh-Hans": "使用默认模型并可选图像发送你的消息",
+    },
+    "Send your message with the selected model": {
+        "zh-Hans": "使用所选模型发送你的消息",
+    },
+    "Send your message with the selected model and optional image": {
+        "zh-Hans": "使用所选模型并可选图像发送你的消息",
+    },
+    "Set the default conversation model": {
+        "zh-Hans": "设置默认对话模型",
+    },
+    "Summarize the provided text": {
+        "zh-Hans": "总结提供的文本",
+    },
+    "Summarize the provided text with the default model": {
+        "zh-Hans": "使用默认模型总结提供的文本",
     },
 }
 
@@ -167,10 +233,10 @@ def update_translations(file_path):
 if __name__ == '__main__':
     # Default path to the Localizable.xcstrings file
     default_file_path = os.path.join(
-        os.path.dirname(__file__), 
-        '..', '..', 
-        'FlowDown', 
-        'Resources', 
+        os.path.dirname(__file__),
+        '..', '..', '..',
+        'FlowDown',
+        'Resources',
         'Localizable.xcstrings'
     )
     

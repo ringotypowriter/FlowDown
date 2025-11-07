@@ -3,30 +3,31 @@ import Foundation
 
 struct SummarizeTextIntent: AppIntent {
     static var title: LocalizedStringResource {
-        LocalizedStringResource("Summarize Text", defaultValue: "Summarize Text")
+        "Summarize Text"
     }
 
-    static var description = IntentDescription(
-        LocalizedStringResource(
-            "Summarize content into a short paragraph.",
-            defaultValue: "Summarize content into a short paragraph."
-        )
-    )
+    static var description: IntentDescription {
+        "Summarize content into a short paragraph."
+    }
 
-    @Parameter(
-        title: LocalizedStringResource("Model", defaultValue: "Model"),
-        requestValueDialog: IntentDialog("Which model should summarize the text?")
-    )
+    @Parameter(title: "Model", default: nil, requestValueDialog: "Which model should summarize the text?")
     var model: ShortcutsEntities.ModelEntity?
 
-    @Parameter(
-        title: LocalizedStringResource("Content", defaultValue: "Content"),
-        requestValueDialog: IntentDialog("What text should be summarized?")
-    )
+    @Parameter(title: "Content", requestValueDialog: "What text should be summarized?")
     var text: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Summarize \(\.$text)")
+        When(\.$model, .hasAnyValue) {
+            Summary("Summarize the provided text") {
+                \.$model
+                \.$text
+            }
+        } otherwise: {
+            Summary("Summarize the provided text with the default model") {
+                \.$model
+                \.$text
+            }
+        }
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
@@ -44,30 +45,31 @@ struct SummarizeTextIntent: AppIntent {
 
 struct SummarizeTextUsingListIntent: AppIntent {
     static var title: LocalizedStringResource {
-        LocalizedStringResource("Summarize Text as List", defaultValue: "Summarize Text as List")
+        "Summarize Text as List"
     }
 
-    static var description = IntentDescription(
-        LocalizedStringResource(
-            "Summarize content into a list of key points.",
-            defaultValue: "Summarize content into a list of key points."
-        )
-    )
+    static var description: IntentDescription {
+        "Summarize content into a list of key points."
+    }
 
-    @Parameter(
-        title: LocalizedStringResource("Model", defaultValue: "Model"),
-        requestValueDialog: IntentDialog("Which model should summarize the text?")
-    )
+    @Parameter(title: "Model", default: nil, requestValueDialog: "Which model should summarize the text?")
     var model: ShortcutsEntities.ModelEntity?
 
-    @Parameter(
-        title: LocalizedStringResource("Content", defaultValue: "Content"),
-        requestValueDialog: IntentDialog("What text should be summarized?")
-    )
+    @Parameter(title: "Content", requestValueDialog: "What text should be summarized?")
     var text: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Summarize as list \(\.$text)")
+        When(\.$model, .hasAnyValue) {
+            Summary("List the key points from the text") {
+                \.$model
+                \.$text
+            }
+        } otherwise: {
+            Summary("List the key points using the default model") {
+                \.$model
+                \.$text
+            }
+        }
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
@@ -90,7 +92,7 @@ enum SummarizeIntentHelper {
         directive: String
     ) async throws -> String {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { throw FlowDownShortcutError.emptyMessage }
+        guard !trimmed.isEmpty else { throw ShortcutError.emptyMessage }
 
         let message = [
             directive,
