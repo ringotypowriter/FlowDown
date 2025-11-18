@@ -73,6 +73,18 @@ extension UIUserInterfaceStyle {
 
     static func subscribeToConfigurableItem() {
         assert(cancellables.isEmpty)
+
+        // Apply the saved value immediately on launch
+        let savedValue: Int? = ConfigurableKit.value(forKey: storageKey)
+        let initialStyle: UIUserInterfaceStyle = {
+            if let savedValue, let style = UIUserInterfaceStyle(rawValue: savedValue) {
+                return style
+            }
+            return .unspecified
+        }()
+        apply(style: initialStyle)
+
+        // Subscribe to future changes
         ConfigurableKit.publisher(forKey: storageKey, type: Int.self)
             .sink { input in
                 var style: UIUserInterfaceStyle = .unspecified
