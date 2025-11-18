@@ -47,13 +47,14 @@ extension ConversationSession {
             message.update(\.reasoningContent, to: reasoningContent)
             message.update(\.document, to: content)
 
+            if !reasoningContent.isEmpty {
+                startThinking(for: message.objectId)
+            }
             if !content.isEmpty {
                 stopThinking(for: message.objectId)
                 if collapseAfterReasoningComplete {
                     message.update(\.isThinkingFold, to: true)
                 }
-            } else if !reasoningContent.isEmpty {
-                startThinking(for: message.objectId)
             }
             await requestUpdate(view: currentMessageListView)
         }
